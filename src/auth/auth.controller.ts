@@ -2,13 +2,13 @@ import { Controller, Post, UseGuards, Req, Get } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
 import { pick } from 'lodash';
-import { PrismaService } from 'src/prisma.service';
 import { Public } from './public.decorator';
+import { UserService } from 'src/user/user.service';
 
 @Controller('auth')
 export class AuthController {
   constructor(
-    private prismaService: PrismaService,
+    private userService: UserService,
     private jwtService: JwtService,
   ) {}
 
@@ -32,14 +32,12 @@ export class AuthController {
       'image',
     ]);
 
+    // data.image is an object that contains avatar images of different sizes,
+    // we only need the main image link
     data.image = data.image.link;
 
-    let user = await this.prismaService.user.findUnique({
-      where: { id: data.id },
-    });
+    const user = await this.userService.findOrCreate(data);
 
-    if (!user) await this.prismaService.user.create({ data });
-
-    return { token: await this.jwtService.signAsync({ id: data.id }) };
+    return { token: await this.jwtService.signAsync({ id: user.id }) };
   }
 }

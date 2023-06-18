@@ -4,11 +4,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as Joi from 'joi';
 import { AuthController } from './auth.controller';
 import { Strategy42 } from './strategies/42.strategy';
-import { PrismaService } from 'src/prisma.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
   imports: [
+    UserModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
@@ -26,7 +27,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
       }),
     }),
   ],
-  providers: [Strategy42, JwtStrategy, PrismaService],
+  providers: [Strategy42, JwtStrategy],
   controllers: [AuthController],
 })
 export class AuthModule {}
