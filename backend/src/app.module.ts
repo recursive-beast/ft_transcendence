@@ -10,8 +10,14 @@ import { UserModule } from './user/user.module';
   imports: [
     AuthModule,
     ConfigModule.forRoot({
+      isGlobal: true,
+      expandVariables: true,
       validationSchema: Joi.object({
         DATABASE_URL: Joi.string().required(),
+        '42_CLIENT_ID': Joi.string().required(),
+        '42_CLIENT_SECRET': Joi.string().required(),
+        '42_CALLBACK_URL': Joi.string().required(),
+        JWT_SECRET: Joi.string().required(),
       }),
     }),
     UserModule,
