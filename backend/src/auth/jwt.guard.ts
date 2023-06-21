@@ -19,13 +19,6 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       return true;
     }
 
-    // this is here in case we're going to use cookies to store the access token.
-
-    // const request = context.switchToHttp().getRequest();
-    // const token = request.cookies.token;
-    // request.headers.authorization = `Bearer ${token}`;
-    // return super.canActivate(context);
-
     return super.canActivate(context);
   }
 }
