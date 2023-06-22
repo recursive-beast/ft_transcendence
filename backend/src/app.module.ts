@@ -18,6 +18,8 @@ import { UserModule } from './user/user.module';
         '42_CLIENT_SECRET': Joi.string().required(),
         '42_CALLBACK_URL': Joi.string().required(),
         JWT_SECRET: Joi.string().required(),
+        JWT_EXPIRES_IN: Joi.string().default('24h'),
+        COOKIE_SECRET: Joi.string().required(),
       }),
     }),
     UserModule,

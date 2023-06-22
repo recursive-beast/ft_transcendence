@@ -1,15 +1,18 @@
-import { Controller, Post, UseGuards, Req, Get } from '@nestjs/common';
+import { Controller, Post, UseGuards, Req, Get, Res } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
 import { pick } from 'lodash';
 import { Public } from './public.decorator';
 import { UserService } from 'src/user/user.service';
+import { ConfigService } from '@nestjs/config';
+import ms from 'ms';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private userService: UserService,
     private jwtService: JwtService,
+    private configService: ConfigService,
   ) {}
 
   @Public()
@@ -22,7 +25,7 @@ export class AuthController {
   @Public()
   @UseGuards(AuthGuard('42'))
   @Get('42/callback')
-  async callback_42(@Req() req) {
+  async callback_42(@Req() req, @Res({ passthrough: true }) res) {
     const data = pick(req.user, [
       'id',
       'login',
@@ -37,7 +40,15 @@ export class AuthController {
     data.image = data.image.link;
 
     const user = await this.userService.findOrCreate(data);
+    const token = await this.jwtService.signAsync({ id: user.id });
 
-    return { token: await this.jwtService.signAsync({ id: user.id }) };
+    res.cookie('token', token, {
+      httpOnly: true,
+      expires: new Date(
+        Date.now() + ms(this.configService.get('JWT_EXPIRES_IN') as string),
+      ),
+    });
+
+    return { token };
   }
 }
