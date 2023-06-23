@@ -1,11 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
+import { pick } from 'lodash';
 import { Strategy } from 'passport-42';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class Strategy42 extends PassportStrategy(Strategy, '42') {
-  constructor(private configService: ConfigService) {
+  constructor(
+    private configService: ConfigService,
+    private userService: UserService,
+  ) {
     super({
       clientID: configService.get('42_CLIENT_ID'),
       clientSecret: configService.get('42_CLIENT_SECRET'),
@@ -14,6 +19,19 @@ export class Strategy42 extends PassportStrategy(Strategy, '42') {
   }
 
   async validate(accessToken, refreshToken, profile) {
-    return profile._json;
+    const data = pick(profile._json, [
+      'id',
+      'login',
+      'first_name',
+      'last_name',
+      'usual_full_name',
+      'image',
+    ]);
+
+    // data.image is an object that contains avatar images of different sizes,
+    // we only need the main image link
+    data.image = data.image.link;
+
+    return await this.userService.findOrCreate(data);
   }
 }
