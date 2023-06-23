@@ -41,7 +41,5 @@ export class AuthController {
         Date.now() + ms(this.configService.get('JWT_EXPIRES_IN') as string),
       ),
     });
-
-    return { token };
   }
 }
