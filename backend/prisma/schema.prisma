@@ -8,12 +8,12 @@ datasource db {
 }
 
 model User {
-  id                  Int       @id
-  login               String
-  first_name          String
-  last_name           String
-  usual_full_name     String
-  image               String
-  created_at          DateTime  @default(now())
-  updated_at          DateTime  @updatedAt
+  id              Int      @id
+  login           String
+  first_name      String
+  last_name       String
+  usual_full_name String
+  image           String
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
 }
