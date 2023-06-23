@@ -1,4 +1,4 @@
-import { Controller, Post, UseGuards, Req, Get, Res } from '@nestjs/common';
+import { Controller, UseGuards, Req, Get, Res } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
 import { pick } from 'lodash';
@@ -17,14 +17,7 @@ export class AuthController {
 
   @Public()
   @UseGuards(AuthGuard('42'))
-  @Post('42')
-  async login_42() {
-    return {};
-  }
-
-  @Public()
-  @UseGuards(AuthGuard('42'))
-  @Get('42/callback')
+  @Get('42')
   async callback_42(@Req() req, @Res({ passthrough: true }) res) {
     const data = pick(req.user, [
       'id',
