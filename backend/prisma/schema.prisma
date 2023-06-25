@@ -14,6 +14,8 @@ model User {
   last_name       String
   usual_full_name String
   image           String
+  otp_secret      String?
+  otp_is_enabled  Boolean  @default(false)
   created_at      DateTime @default(now())
   updated_at      DateTime @updatedAt
 }

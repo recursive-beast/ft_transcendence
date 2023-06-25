@@ -1,9 +1,10 @@
+import { JWTPayload } from '../auth.service';
+import { UserService } from 'src/user/user.service';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Request } from 'express';
-import { UserService } from 'src/user/user.service';
 
 function fromTokenCookie(req: Request) {
   var token = req.cookies.token;
@@ -11,23 +12,25 @@ function fromTokenCookie(req: Request) {
   return null;
 }
 
+export const jwtExtractors = ExtractJwt.fromExtractors([
+  ExtractJwt.fromAuthHeaderAsBearerToken(),
+  fromTokenCookie,
+]);
+
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
+export class JWTStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
     private configService: ConfigService,
     private userService: UserService,
   ) {
     super({
-      jwtFromRequest: ExtractJwt.fromExtractors([
-        ExtractJwt.fromAuthHeaderAsBearerToken(),
-        fromTokenCookie,
-      ]),
+      jwtFromRequest: jwtExtractors,
       ignoreExpiration: false,
       secretOrKey: configService.get('JWT_SECRET'),
     });
   }
 
-  async validate(payload) {
+  async validate(payload: JWTPayload) {
     return await this.userService.findById(payload.id);
   }
 }

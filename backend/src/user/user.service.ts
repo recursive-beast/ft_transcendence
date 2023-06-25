@@ -27,4 +27,26 @@ export class UserService {
     if (!user) throw new NotFoundException();
     return user;
   }
+
+  async setOTPSecret(id: number, secret: string) {
+    return this.prismaService.user.update({
+      where: {
+        id,
+      },
+      data: {
+        otp_secret: secret,
+      },
+    });
+  }
+
+  async enableOTP(id: number) {
+    return this.prismaService.user.update({
+      where: {
+        id,
+      },
+      data: {
+        otp_is_enabled: true,
+      },
+    });
+  }
 }

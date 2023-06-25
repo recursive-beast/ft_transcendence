@@ -3,7 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthModule } from './auth/auth.module';
-import { JwtAuthGuard } from './auth/jwt.guard';
+import { JWTGuard } from './auth/guards/jwt.guard';
 import { UserModule } from './user/user.module';
 
 @Module({
@@ -20,15 +20,10 @@ import { UserModule } from './user/user.module';
         JWT_SECRET: Joi.string().required(),
         JWT_EXPIRES_IN: Joi.string().default('24h'),
         COOKIE_SECRET: Joi.string().required(),
+        APP_NAME: Joi.string().required(),
       }),
     }),
     UserModule,
-  ],
-  providers: [
-    {
-      provide: APP_GUARD,
-      useClass: JwtAuthGuard,
-    },
   ],
 })
 export class AppModule {}
