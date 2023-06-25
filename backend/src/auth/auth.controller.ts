@@ -1,21 +1,21 @@
-import { UserService } from 'src/user/user.service';
-import { AuthService } from './auth.service';
-import { OTPDTO } from './otp-token.dto';
-import { JWTGuard } from './guards/jwt.guard';
 import {
-  Controller,
-  UseGuards,
-  Req,
-  Get,
-  Res,
-  Post,
   Body,
   ConflictException,
+  Controller,
+  Get,
+  Post,
+  Res,
   UnprocessableEntityException,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from '@prisma/client';
-import { Public } from './public.decorator';
+import { UserService } from 'src/user/user.service';
+import { AuthService } from './auth.service';
+import { CurrentUser } from './decorators/current-user.decorator';
+import { Public } from './decorators/public.decorator';
+import { JWTGuard } from './guards/jwt.guard';
+import { OTPDTO } from './otp-token.dto';
 
 @UseGuards(JWTGuard)
 @Controller('auth')
@@ -28,36 +28,30 @@ export class AuthController {
   @Public()
   @UseGuards(AuthGuard('42'))
   @Get('42')
-  async callback_42(@Req() req, @Res({ passthrough: true }) res) {
-    const token = await this.authService.jwtSendTokenCookie(
-      req.user,
-      false,
-      res,
-    );
+  async callback_42(
+    @Res({ passthrough: true }) res,
+    @CurrentUser() user: User,
+  ) {
+    const token = await this.authService.jwtSendTokenCookie(user, false, res);
 
     return { token };
   }
 
   @Post('otp/generate')
-  async generate2FA(@Req() req) {
-    const user: User = req.user;
-    const { secret, QRCode } = await this.authService.otpGenerate(
-      user.login,
-      user.otp_secret,
-    );
+  async generate2FA(@CurrentUser() user: User) {
+    const { otp_secret, qr_code } = await this.authService.otpGenerate(user);
 
-    if (!user.otp_secret) await this.userService.setOTPSecret(user.id, secret);
+    if (!user.otp_secret)
+      await this.userService.setOTPSecret(user.id, otp_secret);
 
-    return { QRCode };
+    return { qr_code };
   }
 
   @Post('otp/enable')
-  async enable2fa(@Body() body: OTPDTO, @Req() req) {
-    const user: User = req.user;
-
+  async enable2fa(@Body() body: OTPDTO, @CurrentUser() user: User) {
     if (user.otp_is_enabled || !user.otp_secret) throw new ConflictException();
 
-    const success = this.authService.otpVerify(user.otp_secret, body.otp);
+    const success = this.authService.otpVerify(user, body.otp);
 
     if (!success) throw new UnprocessableEntityException();
     await this.userService.enableOTP(user.id);
@@ -66,17 +60,12 @@ export class AuthController {
   @Post('otp/verify')
   async verify2fa(
     @Body() body: OTPDTO,
-    @Req() req,
     @Res({ passthrough: true }) res,
+    @CurrentUser() user: User,
   ) {
-    const user: User = req.user;
-
     if (!user.otp_is_enabled) throw new ConflictException();
 
-    const success = this.authService.otpVerify(
-      user.otp_secret as string,
-      body.otp,
-    );
+    const success = this.authService.otpVerify(user, body.otp);
 
     if (!success) throw new UnprocessableEntityException();
 

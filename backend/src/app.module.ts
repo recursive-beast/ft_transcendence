@@ -1,9 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
-import { APP_GUARD } from '@nestjs/core';
 import { AuthModule } from './auth/auth.module';
-import { JWTGuard } from './auth/guards/jwt.guard';
 import { UserModule } from './user/user.module';
 
 @Module({

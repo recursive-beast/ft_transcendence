@@ -1,13 +1,14 @@
-import { JWTPayload } from '../auth.service';
-import { UserService } from 'src/user/user.service';
-import { ExtractJwt, Strategy } from 'passport-jwt';
-import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { PassportStrategy } from '@nestjs/passport';
 import { Request } from 'express';
+import { ExtractJwt, Strategy } from 'passport-jwt';
+import { UserService } from 'src/user/user.service';
+import { JWTPayload } from '../auth.service';
 
 function fromTokenCookie(req: Request) {
-  var token = req.cookies.token;
+  const token = req.cookies.token;
+
   if (typeof token === 'string') return token;
   return null;
 }

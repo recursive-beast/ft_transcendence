@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
+import { User } from '@prisma/client';
+import { Response } from 'express';
+import ms from 'ms';
 import { authenticator } from 'otplib';
 import { toDataURL } from 'qrcode';
-import { Response } from 'express';
-import { User } from '@prisma/client';
-import { JwtService } from '@nestjs/jwt';
-import ms from 'ms';
 
 export interface JWTPayload {
   id: User['id'];
@@ -40,19 +40,22 @@ export class AuthService {
     return token;
   }
 
-  async otpGenerate(accountName: string, secret?: string | null) {
-    if (!secret) secret = authenticator.generateSecret();
+  async otpGenerate(user: User) {
+    let { otp_secret, login } = user;
+
+    if (!otp_secret) otp_secret = authenticator.generateSecret();
     const app_name = this.configService.get('APP_NAME');
-    const otpUrl = authenticator.keyuri(accountName, app_name, secret);
+    const otp_url = authenticator.keyuri(login, app_name, otp_secret);
 
     return {
-      secret,
-      QRCode: await toDataURL(otpUrl),
-      otpUrl,
+      otp_secret,
+      qr_code: await toDataURL(otp_url),
+      otp_url,
     };
   }
 
-  otpVerify(secret: string, token: string) {
-    return authenticator.verify({ secret, token });
+  otpVerify(user: User, token: string) {
+    if (!user.otp_secret) return false;
+    return authenticator.verify({ secret: user.otp_secret, token });
   }
 }

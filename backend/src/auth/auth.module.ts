@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { AuthController } from './auth.controller';
-import { Strategy42 } from './strategies/42.strategy';
-import { JWTStrategy } from './strategies/jwt.strategy';
-import { UserModule } from 'src/user/user.module';
-import { AuthService } from './auth.service';
-import { JWTGuard } from './guards/jwt.guard';
-import { JWTOTPStrategy } from './strategies/jwt-otp.strategy';
+import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
+import { UserModule } from 'src/user/user.module';
+import { AuthController } from './auth.controller';
+import { AuthService } from './auth.service';
 import { JWTOTPGuard } from './guards/jwt-otp.guard';
+import { JWTGuard } from './guards/jwt.guard';
+import { Strategy42 } from './strategies/42.strategy';
+import { JWTOTPStrategy } from './strategies/jwt-otp.strategy';
+import { JWTStrategy } from './strategies/jwt.strategy';
 
 @Module({
   imports: [
