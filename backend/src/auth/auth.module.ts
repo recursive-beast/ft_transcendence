@@ -5,10 +5,9 @@ import { PassportModule } from '@nestjs/passport';
 import { UserModule } from 'src/user/user.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { JWTOTPGuard } from './guards/jwt-otp.guard';
 import { JWTGuard } from './guards/jwt.guard';
+import { OTPGuard } from './guards/otp.guard';
 import { Strategy42 } from './strategies/42.strategy';
-import { JWTOTPStrategy } from './strategies/jwt-otp.strategy';
 import { JWTStrategy } from './strategies/jwt.strategy';
 
 @Module({
@@ -24,14 +23,7 @@ import { JWTStrategy } from './strategies/jwt.strategy';
       inject: [ConfigService],
     }),
   ],
-  providers: [
-    Strategy42,
-    JWTStrategy,
-    JWTOTPStrategy,
-    AuthService,
-    JWTGuard,
-    JWTOTPGuard,
-  ],
+  providers: [Strategy42, JWTStrategy, AuthService, JWTGuard, OTPGuard],
   controllers: [AuthController],
   exports: [JWTGuard],
 })

@@ -32,6 +32,8 @@ export class Strategy42 extends PassportStrategy(Strategy, '42') {
     // we only need the main image link
     data.image = data.image.link;
 
-    return await this.userService.findOrCreate(data);
+    const user = await this.userService.findOrCreate(data);
+
+    if (user) return { user };
   }
 }

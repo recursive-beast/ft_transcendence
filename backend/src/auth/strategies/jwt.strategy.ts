@@ -13,11 +13,6 @@ function fromTokenCookie(req: Request) {
   return null;
 }
 
-export const jwtExtractors = ExtractJwt.fromExtractors([
-  ExtractJwt.fromAuthHeaderAsBearerToken(),
-  fromTokenCookie,
-]);
-
 @Injectable()
 export class JWTStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
@@ -25,13 +20,18 @@ export class JWTStrategy extends PassportStrategy(Strategy, 'jwt') {
     private userService: UserService,
   ) {
     super({
-      jwtFromRequest: jwtExtractors,
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        ExtractJwt.fromAuthHeaderAsBearerToken(),
+        fromTokenCookie,
+      ]),
       ignoreExpiration: false,
       secretOrKey: configService.get('JWT_SECRET'),
     });
   }
 
-  async validate(payload: JWTPayload) {
-    return await this.userService.findById(payload.id);
+  async validate(jwtPayload: JWTPayload) {
+    const user = await this.userService.findById(jwtPayload.id);
+
+    if (user) return { jwtPayload, user };
   }
 }
