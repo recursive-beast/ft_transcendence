@@ -32,18 +32,35 @@ export class AuthController {
   @Public()
   @UseGuards(AuthGuard('42'))
   @Get('42')
-  async authorizeUrl42() {}
+  async fortyTwo() {}
 
   @Public()
   @UseGuards(AuthGuard('42'))
   @Get('42/callback')
-  async callback_42(
+  async fortyTwoCallback(
     @Res({ passthrough: true }) res: Response,
     @CurrentUser() user: User,
   ) {
-    const token = await this.authService.jwtSendTokenCookie(user, false, res);
+    return {
+      token: await this.authService.jwtSendTokenCookie(user, false, res),
+    };
+  }
 
-    return { token };
+  @Public()
+  @UseGuards(AuthGuard('google'))
+  @Get('google')
+  async google() {}
+
+  @Public()
+  @UseGuards(AuthGuard('google'))
+  @Get('google/callback')
+  async googleCallback(
+    @Res({ passthrough: true }) res: Response,
+    @CurrentUser() user: User,
+  ) {
+    return {
+      token: await this.authService.jwtSendTokenCookie(user, false, res),
+    };
   }
 
   @Post('otp/generate')

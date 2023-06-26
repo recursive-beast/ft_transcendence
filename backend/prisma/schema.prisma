@@ -8,14 +8,14 @@ datasource db {
 }
 
 model User {
-  id              Int      @id
-  login           String
-  first_name      String
-  last_name       String
-  usual_full_name String
-  image           String
-  otp_secret      String?
-  otp_is_enabled  Boolean  @default(false)
-  created_at      DateTime @default(now())
-  updated_at      DateTime @updatedAt
+  id             Int      @id @default(autoincrement())
+  forty_two_id   String?
+  google_id      String?
+  display_name   String   @unique
+  full_name      String
+  image          String?
+  otp_secret     String?
+  otp_is_enabled Boolean  @default(false)
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
 }

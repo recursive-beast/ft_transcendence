@@ -41,11 +41,11 @@ export class AuthService {
   }
 
   async otpGenerate(user: User) {
-    let { otp_secret, login } = user;
+    let { otp_secret, display_name } = user;
 
     if (!otp_secret) otp_secret = authenticator.generateSecret();
     const app_name = this.configService.get('APP_NAME');
-    const otp_url = authenticator.keyuri(login, app_name, otp_secret);
+    const otp_url = authenticator.keyuri(display_name, app_name, otp_secret);
 
     return {
       otp_secret,

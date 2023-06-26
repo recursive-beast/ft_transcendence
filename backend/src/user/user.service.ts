@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
 import { PrismaService } from 'nestjs-prisma';
 import { UserEntity } from './user.entity';
 
@@ -8,8 +8,14 @@ export class UserService {
   constructor(private prismaService: PrismaService) {}
 
   async findOrCreate(data: Prisma.UserCreateInput) {
-    let user = await this.findById(data.id);
+    const { forty_two_id, google_id } = data;
+    let user: User | null = null;
+    let where: Prisma.UserWhereInput | null = null;
 
+    if (forty_two_id) where = { forty_two_id };
+    else if (google_id) where = { google_id };
+
+    if (where) user = await this.prismaService.user.findFirst({ where });
     if (!user) user = await this.prismaService.user.create({ data });
     return new UserEntity(user);
   }

@@ -8,6 +8,7 @@ import { AuthService } from './auth.service';
 import { JWTGuard } from './guards/jwt.guard';
 import { OTPGuard } from './guards/otp.guard';
 import { FortyTwoStrategy } from './strategies/42.strategy';
+import { GoogleStrategy } from './strategies/google.strategy';
 import { JWTStrategy } from './strategies/jwt.strategy';
 
 @Module({
@@ -23,7 +24,14 @@ import { JWTStrategy } from './strategies/jwt.strategy';
       inject: [ConfigService],
     }),
   ],
-  providers: [FortyTwoStrategy, JWTStrategy, AuthService, JWTGuard, OTPGuard],
+  providers: [
+    FortyTwoStrategy,
+    JWTStrategy,
+    GoogleStrategy,
+    AuthService,
+    JWTGuard,
+    OTPGuard,
+  ],
   controllers: [AuthController],
   exports: [JWTGuard],
 })

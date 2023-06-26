@@ -7,23 +7,16 @@ export class UserEntity implements User {
   }
 
   id: number;
-
-  login: string;
-
-  first_name: string;
-
-  last_name: string;
-
-  usual_full_name: string;
-
-  image: string;
-
+  @Exclude()
+  forty_two_id: string | null;
+  @Exclude()
+  google_id: string | null;
+  display_name: string;
+  full_name: string;
+  image: string | null;
   @Exclude()
   otp_secret: string | null;
-
   otp_is_enabled: boolean;
-
   created_at: Date;
-
   updated_at: Date;
 }
