@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from '@prisma/client';
+import { Response } from 'express';
 import { UserService } from 'src/user/user.service';
 import { AuthService } from './auth.service';
 import { CurrentUser } from './decorators/current-user.decorator';
@@ -29,7 +30,7 @@ export class AuthController {
   @UseGuards(AuthGuard('42'))
   @Get('42')
   async callback_42(
-    @Res({ passthrough: true }) res,
+    @Res({ passthrough: true }) res: Response,
     @CurrentUser() user: User,
   ) {
     const token = await this.authService.jwtSendTokenCookie(user, false, res);
@@ -60,7 +61,7 @@ export class AuthController {
   @Post('otp/verify')
   async verify2fa(
     @Body() body: OTPDTO,
-    @Res({ passthrough: true }) res,
+    @Res({ passthrough: true }) res: Response,
     @CurrentUser() user: User,
   ) {
     if (!user.otp_is_enabled) throw new ConflictException();

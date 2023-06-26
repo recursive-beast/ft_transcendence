@@ -18,7 +18,7 @@ export class Strategy42 extends PassportStrategy(Strategy, '42') {
     });
   }
 
-  async validate(accessToken, refreshToken, profile) {
+  async validate(accessToken: string, refreshToken: string, profile: any) {
     const data = pick(profile._json, [
       'id',
       'login',
