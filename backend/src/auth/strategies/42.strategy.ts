@@ -6,7 +6,7 @@ import { Strategy } from 'passport-42';
 import { UserService } from 'src/user/user.service';
 
 @Injectable()
-export class Strategy42 extends PassportStrategy(Strategy, '42') {
+export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
   constructor(
     private configService: ConfigService,
     private userService: UserService,
