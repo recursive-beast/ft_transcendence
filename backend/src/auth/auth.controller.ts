@@ -6,6 +6,7 @@ import {
   Post,
   Res,
   UnprocessableEntityException,
+  UseFilters,
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
@@ -17,7 +18,9 @@ import { CurrentUser } from './decorators/current-user.decorator';
 import { Public } from './decorators/public.decorator';
 import { JWTGuard } from './guards/jwt.guard';
 import { OTPDTO } from './otp-token.dto';
+import { TokenErrorFilter } from './token-error.filter';
 
+@UseFilters(TokenErrorFilter)
 @UseGuards(JWTGuard)
 @Controller('auth')
 export class AuthController {
@@ -29,6 +32,11 @@ export class AuthController {
   @Public()
   @UseGuards(AuthGuard('42'))
   @Get('42')
+  async authorizeUrl42() {}
+
+  @Public()
+  @UseGuards(AuthGuard('42'))
+  @Get('42/callback')
   async callback_42(
     @Res({ passthrough: true }) res: Response,
     @CurrentUser() user: User,
