@@ -64,7 +64,7 @@ export class AuthController {
   }
 
   @Post('otp/generate')
-  async generate2FA(@CurrentUser() user: User) {
+  async otpGenerate(@CurrentUser() user: User) {
     const { otp_secret, qr_code } = await this.authService.otpGenerate(user);
 
     if (!user.otp_secret)
@@ -74,7 +74,7 @@ export class AuthController {
   }
 
   @Post('otp/enable')
-  async enable2fa(@Body() body: OTPDTO, @CurrentUser() user: User) {
+  async otpEnable(@Body() body: OTPDTO, @CurrentUser() user: User) {
     if (user.otp_is_enabled || !user.otp_secret) throw new ConflictException();
 
     const success = this.authService.otpVerify(user, body.otp);
@@ -84,7 +84,7 @@ export class AuthController {
   }
 
   @Post('otp/verify')
-  async verify2fa(
+  async otpVerify(
     @Body() body: OTPDTO,
     @Res({ passthrough: true }) res: Response,
     @CurrentUser() user: User,
