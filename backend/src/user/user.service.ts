@@ -1,5 +1,6 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
+import { plainToInstance } from 'class-transformer';
 import { PrismaService } from 'nestjs-prisma';
 import { UserEntity } from './user.entity';
 
@@ -17,13 +18,14 @@ export class UserService {
 
     if (where) user = await this.prismaService.user.findFirst({ where });
     if (!user) user = await this.prismaService.user.create({ data });
-    return new UserEntity(user);
+    return plainToInstance(UserEntity, user, { ignoreDecorators: true });
   }
 
   async findById(id: number) {
     const user = await this.prismaService.user.findUnique({ where: { id } });
 
-    if (user) return new UserEntity(user);
+    if (user)
+      return plainToInstance(UserEntity, user, { ignoreDecorators: true });
     return null;
   }
 
@@ -33,7 +35,7 @@ export class UserService {
       data: { otp_secret: secret },
     });
 
-    return new UserEntity(updated);
+    return plainToInstance(UserEntity, updated, { ignoreDecorators: true });
   }
 
   async enableOTP(id: number) {
@@ -42,6 +44,6 @@ export class UserService {
       data: { otp_is_enabled: true },
     });
 
-    return new UserEntity(updated);
+    return plainToInstance(UserEntity, updated, { ignoreDecorators: true });
   }
 }
