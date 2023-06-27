@@ -1,7 +1,6 @@
-version: '3.8'
+version: "3.8"
 
 services:
-
   db:
     image: postgres:15.3-alpine3.18
     restart: always
@@ -11,12 +10,6 @@ services:
       - 5432:5432
     volumes:
       - db:/var/lib/postgresql/data
-
-  adminer:
-    image: adminer:4.8.1-standalone
-    restart: always
-    ports:
-      - 8080:8080
 
 volumes:
   db:
