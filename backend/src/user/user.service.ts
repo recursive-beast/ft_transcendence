@@ -46,4 +46,13 @@ export class UserService {
 
     return plainToInstance(UserEntity, updated, { ignoreDecorators: true });
   }
+
+  async disableOTP(id: number) {
+    const updated = await this.prismaService.user.update({
+      where: { id },
+      data: { otp_is_enabled: false, otp_secret: null },
+    });
+
+    return plainToInstance(UserEntity, updated, { ignoreDecorators: true });
+  }
 }

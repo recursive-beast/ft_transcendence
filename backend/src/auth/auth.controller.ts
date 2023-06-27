@@ -17,6 +17,7 @@ import { AuthService } from './auth.service';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { Public } from './decorators/public.decorator';
 import { JWTGuard } from './guards/jwt.guard';
+import { OTPGuard } from './guards/otp.guard';
 import { OTPDTO } from './otp-token.dto';
 import { TokenErrorFilter } from './token-error.filter';
 
@@ -81,6 +82,19 @@ export class AuthController {
 
     if (!success) throw new UnprocessableEntityException();
     await this.userService.enableOTP(user.id);
+  }
+
+  @UseGuards(OTPGuard)
+  @Post('otp/disable')
+  async otpDisable(
+    @Res({ passthrough: true }) res: Response,
+    @CurrentUser() user: User,
+  ) {
+    await this.userService.disableOTP(user.id);
+
+    const token = await this.authService.jwtSendTokenCookie(user, false, res);
+
+    return { token };
   }
 
   @Post('otp/verify')
