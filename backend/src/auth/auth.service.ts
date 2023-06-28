@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
@@ -6,11 +6,7 @@ import { Response } from 'express';
 import ms from 'ms';
 import { authenticator } from 'otplib';
 import { toDataURL } from 'qrcode';
-
-export interface JWTPayload {
-  id: User['id'];
-  otp_is_verified: boolean;
-}
+import { JWTPayload } from './types/express';
 
 @Injectable()
 export class AuthService {

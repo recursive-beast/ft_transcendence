@@ -1,10 +1,15 @@
-import { User as PrismaUser } from '@prisma/client';
+import { UserEntity } from 'src/user/user.entity';
 import { JWTPayload } from '../auth.service';
+
+export interface JWTPayload {
+  id: UserEntity['id'];
+  otp_is_verified: boolean;
+}
 
 declare global {
   namespace Express {
     interface User {
-      user: PrismaUser;
+      user: UserEntity;
       jwtPayload?: JWTPayload;
     }
   }
