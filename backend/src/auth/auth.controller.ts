@@ -18,7 +18,7 @@ import { CurrentUser } from './decorators/current-user.decorator';
 import { Public } from './decorators/public.decorator';
 import { JWTGuard } from './guards/jwt.guard';
 import { OTPGuard } from './guards/otp.guard';
-import { OTPDTO } from './otp-token.dto';
+import { OTPDTO } from './otp.dto';
 import { TokenErrorFilter } from './token-error.filter';
 
 @UseFilters(TokenErrorFilter)
@@ -32,8 +32,8 @@ export class AuthController {
 
   @Public()
   @UseGuards(AuthGuard('42'))
-  @Get('42')
-  async fortyTwo() {}
+  @Get('42/authorize')
+  async fortyTwoAuthorize() {}
 
   @Public()
   @UseGuards(AuthGuard('42'))
@@ -49,8 +49,8 @@ export class AuthController {
 
   @Public()
   @UseGuards(AuthGuard('google'))
-  @Get('google')
-  async google() {}
+  @Get('google/authorize')
+  async googleAuthorize() {}
 
   @Public()
   @UseGuards(AuthGuard('google'))
