@@ -29,7 +29,8 @@ export class AuthService {
     response.cookie('token', token, {
       httpOnly: true,
       expires: new Date(
-        Date.now() + ms(this.configService.get('JWT_EXPIRES_IN') as string),
+        Date.now() +
+          ms(this.configService.get<string>('JWT_EXPIRES_IN', '24h')),
       ),
     });
 
