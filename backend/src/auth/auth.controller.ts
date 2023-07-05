@@ -10,12 +10,25 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiConflictResponse,
+  ApiCookieAuth,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+  ApiUnauthorizedResponse,
+  ApiUnprocessableEntityResponse,
+} from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { Response } from 'express';
 import { UserService } from 'src/user/user.service';
 import { AuthService } from './auth.service';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { Public } from './decorators/public.decorator';
+import { Api0AuthUrl } from './decorators/swagger.decorator';
 import { JWTGuard } from './guards/jwt.guard';
 import { OTPGuard } from './guards/otp.guard';
 import { OTPDTO } from './otp.dto';
@@ -23,22 +36,19 @@ import { TokenErrorFilter } from './token-error.filter';
 
 @UseFilters(TokenErrorFilter)
 @UseGuards(JWTGuard)
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(
     private userService: UserService,
     private authService: AuthService,
   ) {}
-
+  @Api0AuthUrl()
+  @ApiOkResponse({ description: 'Returns a JWT token for authentication.' })
   @Public()
   @UseGuards(AuthGuard('42'))
-  @Get('42/authorize')
-  async fortyTwoAuthorize() {}
-
-  @Public()
-  @UseGuards(AuthGuard('42'))
-  @Get('42/callback')
-  async fortyTwoCallback(
+  @Get('42')
+  async fortyTwo(
     @Res({ passthrough: true }) res: Response,
     @CurrentUser() user: User,
   ) {
@@ -47,15 +57,12 @@ export class AuthController {
     };
   }
 
+  @Api0AuthUrl()
+  @ApiOkResponse({ description: 'Returns a JWT token for authentication.' })
   @Public()
   @UseGuards(AuthGuard('google'))
-  @Get('google/authorize')
-  async googleAuthorize() {}
-
-  @Public()
-  @UseGuards(AuthGuard('google'))
-  @Get('google/callback')
-  async googleCallback(
+  @Get('google')
+  async google(
     @Res({ passthrough: true }) res: Response,
     @CurrentUser() user: User,
   ) {
@@ -64,6 +71,19 @@ export class AuthController {
     };
   }
 
+  @ApiOperation({
+    summary: 'Generates an OTP secret and QR code for the current user.',
+    description:
+      'This endpoint generates a new OTP secret and encodes it in a QR code for the current authenticated user. If the user already has an OTP secret, the existing secret will not be changed.',
+  })
+  @ApiCreatedResponse({
+    description: 'Returns The OTP secret encoded in a QR code.',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized: Invalid or expired token',
+  })
+  @ApiBearerAuth()
+  @ApiCookieAuth()
   @Post('otp/generate')
   async otpGenerate(@CurrentUser() user: User) {
     const { otp_secret, qr_code } = await this.authService.otpGenerate(user);
@@ -74,6 +94,29 @@ export class AuthController {
     return { qr_code };
   }
 
+  @ApiOperation({
+    summary: 'Enable OTP for the current user',
+    description:
+      'Enables OTP authentication for the current authenticated user. Requires the user to provide an OTP code to verify their identity.',
+  })
+  @ApiCreatedResponse({
+    description: 'OTP authentication has been enabled.',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized: Invalid or expired token',
+  })
+  @ApiBadRequestResponse({
+    description: 'Bad request due to invalid request body',
+  })
+  @ApiConflictResponse({
+    description:
+      'OTP is already enabled for the user or the user does not have an OTP secret.',
+  })
+  @ApiUnprocessableEntityResponse({
+    description: 'The provided OTP code is invalid.',
+  })
+  @ApiBearerAuth()
+  @ApiCookieAuth()
   @Post('otp/enable')
   async otpEnable(@Body() body: OTPDTO, @CurrentUser() user: User) {
     if (user.otp_is_enabled || !user.otp_secret) throw new ConflictException();
@@ -84,6 +127,15 @@ export class AuthController {
     await this.userService.enableOTP(user.id);
   }
 
+  @ApiOperation({
+    summary: 'Disable OTP for the current user',
+  })
+  @ApiCreatedResponse({ description: 'OTP Disabled, Returns a new JWT token.' })
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized: Invalid or expired token',
+  })
+  @ApiBearerAuth()
+  @ApiCookieAuth()
   @UseGuards(OTPGuard)
   @Post('otp/disable')
   async otpDisable(
@@ -97,6 +149,26 @@ export class AuthController {
     return { token };
   }
 
+  @ApiOperation({
+    summary: 'Verify OTP for the current user',
+    description:
+      'Verify OTP for the current user. Requires the user to provide an OTP code to verify their identity.',
+  })
+  @ApiCreatedResponse({
+    description: 'Successful OTP verification, Returns a new JWT token.',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized: Invalid or expired token',
+  })
+  @ApiBadRequestResponse({
+    description: 'Bad request due to invalid request body',
+  })
+  @ApiConflictResponse({ description: 'OTP is not enabled for the user.' })
+  @ApiUnprocessableEntityResponse({
+    description: 'The provided OTP code is invalid.',
+  })
+  @ApiBearerAuth()
+  @ApiCookieAuth()
   @Post('otp/verify')
   async otpVerify(
     @Body() body: OTPDTO,
