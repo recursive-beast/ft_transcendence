@@ -22,8 +22,8 @@ import {
   ApiUnauthorizedResponse,
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
-import { User } from '@prisma/client';
 import { Response } from 'express';
+import { UserEntity } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
 import { AuthService } from './auth.service';
 import { CurrentUser } from './decorators/current-user.decorator';
@@ -50,7 +50,7 @@ export class AuthController {
   @Get('42')
   async fortyTwo(
     @Res({ passthrough: true }) res: Response,
-    @CurrentUser() user: User,
+    @CurrentUser() user: UserEntity,
   ) {
     return {
       token: await this.authService.jwtSendTokenCookie(user, false, res),
@@ -64,7 +64,7 @@ export class AuthController {
   @Get('google')
   async google(
     @Res({ passthrough: true }) res: Response,
-    @CurrentUser() user: User,
+    @CurrentUser() user: UserEntity,
   ) {
     return {
       token: await this.authService.jwtSendTokenCookie(user, false, res),
@@ -85,7 +85,7 @@ export class AuthController {
   @ApiBearerAuth()
   @ApiCookieAuth()
   @Post('otp/generate')
-  async otpGenerate(@CurrentUser() user: User) {
+  async otpGenerate(@CurrentUser() user: UserEntity) {
     const { otp_secret, qr_code } = await this.authService.otpGenerate(user);
 
     if (!user.otp_secret)
@@ -118,7 +118,7 @@ export class AuthController {
   @ApiBearerAuth()
   @ApiCookieAuth()
   @Post('otp/enable')
-  async otpEnable(@Body() body: OTPDTO, @CurrentUser() user: User) {
+  async otpEnable(@Body() body: OTPDTO, @CurrentUser() user: UserEntity) {
     if (user.otp_is_enabled || !user.otp_secret) throw new ConflictException();
 
     const success = this.authService.otpVerify(user, body.otp);
@@ -140,7 +140,7 @@ export class AuthController {
   @Post('otp/disable')
   async otpDisable(
     @Res({ passthrough: true }) res: Response,
-    @CurrentUser() user: User,
+    @CurrentUser() user: UserEntity,
   ) {
     await this.userService.disableOTP(user.id);
 
@@ -173,7 +173,7 @@ export class AuthController {
   async otpVerify(
     @Body() body: OTPDTO,
     @Res({ passthrough: true }) res: Response,
-    @CurrentUser() user: User,
+    @CurrentUser() user: UserEntity,
   ) {
     if (!user.otp_is_enabled) throw new ConflictException();
 

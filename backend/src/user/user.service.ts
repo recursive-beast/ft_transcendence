@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
 import { PrismaService } from 'nestjs-prisma';
+import { UserEntity } from './user.entity';
 
 @Injectable()
 export class UserService {
@@ -16,31 +17,40 @@ export class UserService {
 
     if (where) user = await this.prismaService.user.findFirst({ where });
     if (!user) user = await this.prismaService.user.create({ data });
-    return user;
+    return UserEntity.fromUser(user);
   }
 
   async findById(id: number) {
-    return await this.prismaService.user.findUnique({ where: { id } });
+    const user = await this.prismaService.user.findUnique({ where: { id } });
+
+    if (user) return UserEntity.fromUser(user);
+    return null;
   }
 
   async setOTPSecret(id: number, secret: string) {
-    return await this.prismaService.user.update({
+    const updated = await this.prismaService.user.update({
       where: { id },
       data: { otp_secret: secret },
     });
+
+    return UserEntity.fromUser(updated);
   }
 
   async enableOTP(id: number) {
-    return await this.prismaService.user.update({
+    const updated = await this.prismaService.user.update({
       where: { id },
       data: { otp_is_enabled: true },
     });
+
+    return UserEntity.fromUser(updated);
   }
 
   async disableOTP(id: number) {
-    return await this.prismaService.user.update({
+    const updated = await this.prismaService.user.update({
       where: { id },
       data: { otp_is_enabled: false, otp_secret: null },
     });
+
+    return UserEntity.fromUser(updated);
   }
 }

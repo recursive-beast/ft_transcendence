@@ -1,6 +1,6 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { User } from '@prisma/client';
-import { Exclude } from 'class-transformer';
+import { Exclude, plainToInstance } from 'class-transformer';
 
 export class UserEntity implements User {
   @ApiProperty({ example: 2 })
@@ -32,4 +32,8 @@ export class UserEntity implements User {
   otp_is_enabled: boolean;
   created_at: Date;
   updated_at: Date;
+
+  static fromUser(user: User) {
+    return plainToInstance(UserEntity, user, { ignoreDecorators: true });
+  }
 }
