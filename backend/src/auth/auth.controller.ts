@@ -3,7 +3,7 @@ import {
   ConflictException,
   Controller,
   Get,
-  Post,
+  Patch,
   Res,
   UnprocessableEntityException,
   UseFilters,
@@ -76,7 +76,7 @@ export class AuthController {
     description:
       'This endpoint generates a new OTP secret and encodes it in a QR code for the current authenticated user. If the user already has an OTP secret, the existing secret will not be changed.',
   })
-  @ApiCreatedResponse({
+  @ApiOkResponse({
     description: 'Returns The OTP secret encoded in a QR code.',
   })
   @ApiUnauthorizedResponse({
@@ -84,7 +84,7 @@ export class AuthController {
   })
   @ApiBearerAuth()
   @ApiCookieAuth()
-  @Post('otp/generate')
+  @Patch('otp/generate')
   async otpGenerate(@CurrentUser() user: UserEntity) {
     const { otp_secret, qr_code } = await this.authService.otpGenerate(user);
 
@@ -99,9 +99,7 @@ export class AuthController {
     description:
       'Enables OTP authentication for the current authenticated user. Requires the user to provide an OTP code to verify their identity.',
   })
-  @ApiCreatedResponse({
-    description: 'OTP authentication has been enabled.',
-  })
+  @ApiOkResponse({ description: 'OTP authentication has been enabled.' })
   @ApiUnauthorizedResponse({
     description: 'Unauthorized: Invalid or expired token',
   })
@@ -117,7 +115,7 @@ export class AuthController {
   })
   @ApiBearerAuth()
   @ApiCookieAuth()
-  @Post('otp/enable')
+  @Patch('otp/enable')
   async otpEnable(@Body() body: OTPDTO, @CurrentUser() user: UserEntity) {
     if (user.otp_is_enabled || !user.otp_secret) throw new ConflictException();
 
@@ -127,17 +125,15 @@ export class AuthController {
     await this.userService.enableOTP(user.id);
   }
 
-  @ApiOperation({
-    summary: 'Disable OTP for the current user',
-  })
-  @ApiCreatedResponse({ description: 'OTP Disabled, Returns a new JWT token.' })
+  @ApiOperation({ summary: 'Disable OTP for the current user' })
+  @ApiOkResponse({ description: 'OTP Disabled, Returns a new JWT token.' })
   @ApiUnauthorizedResponse({
     description: 'Unauthorized: Invalid or expired token',
   })
   @ApiBearerAuth()
   @ApiCookieAuth()
   @UseGuards(OTPGuard)
-  @Post('otp/disable')
+  @Patch('otp/disable')
   async otpDisable(
     @Res({ passthrough: true }) res: Response,
     @CurrentUser() user: UserEntity,
@@ -154,7 +150,7 @@ export class AuthController {
     description:
       'Verify OTP for the current user. Requires the user to provide an OTP code to verify their identity.',
   })
-  @ApiCreatedResponse({
+  @ApiOkResponse({
     description: 'Successful OTP verification, Returns a new JWT token.',
   })
   @ApiUnauthorizedResponse({
@@ -169,7 +165,7 @@ export class AuthController {
   })
   @ApiBearerAuth()
   @ApiCookieAuth()
-  @Post('otp/verify')
+  @Patch('otp/verify')
   async otpVerify(
     @Body() body: OTPDTO,
     @Res({ passthrough: true }) res: Response,
