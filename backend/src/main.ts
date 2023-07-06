@@ -10,39 +10,6 @@ function enableSwagger(app: INestApplication) {
   const configService = app.get(ConfigService);
   const config = new DocumentBuilder()
     .setTitle(configService.getOrThrow('APP_NAME'))
-    .addOAuth2(
-      {
-        type: 'oauth2',
-        name: '42 intra',
-        flows: {
-          authorizationCode: {
-            authorizationUrl: 'https://api.intra.42.fr/oauth/authorize',
-            tokenUrl: 'https://api.intra.42.fr/oauth/token',
-            scopes: {
-              profile: 'View your basic profile information',
-            },
-          },
-        },
-      },
-      '42 intra',
-    )
-    .addOAuth2(
-      {
-        type: 'oauth2',
-        name: 'google',
-        flows: {
-          authorizationCode: {
-            authorizationUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
-            tokenUrl: 'https://oauth2.googleapis.com/token',
-            scopes: {
-              email: 'View your email address',
-              profile: 'View your basic profile information',
-            },
-          },
-        },
-      },
-      'google',
-    )
     .build();
   const document = SwaggerModule.createDocument(app, config);
 
