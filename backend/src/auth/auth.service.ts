@@ -6,7 +6,7 @@ import { Response } from 'express';
 import ms from 'ms';
 import { authenticator } from 'otplib';
 import { toDataURL } from 'qrcode';
-import { JWTPayload } from './types/express';
+import { JWTPayload } from '../types/express';
 
 @Injectable()
 export class AuthService {

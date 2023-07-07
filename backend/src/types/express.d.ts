@@ -1,5 +1,4 @@
 import { UserEntity } from 'src/user/user.entity';
-import { JWTPayload } from '../auth.service';
 
 export interface JWTPayload {
   id: UserEntity['id'];

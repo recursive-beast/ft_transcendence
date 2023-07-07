@@ -4,7 +4,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Request } from 'express';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { UserService } from 'src/user/user.service';
-import { JWTPayload } from '../types/express';
+import { JWTPayload } from '../../types/express';
 
 function fromTokenCookie(req: Request) {
   const token = req.cookies.token;
