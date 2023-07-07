@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
 import { PrismaService } from 'nestjs-prisma';
+import { UpdateUserDTO } from './update.dto';
 import { UserEntity } from './user.entity';
 
 @Injectable()
@@ -25,6 +26,15 @@ export class UserService {
 
     if (user) return UserEntity.fromUser(user);
     return null;
+  }
+
+  async update(id: User['id'], data: UpdateUserDTO) {
+    const updated = await this.prismaService.user.update({
+      where: { id },
+      data,
+    });
+
+    return UserEntity.fromUser(updated);
   }
 
   async setOTPSecret(id: number, secret: string) {

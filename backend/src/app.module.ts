@@ -22,17 +22,18 @@ import { UserModule } from './user/user.module';
       isGlobal: true,
       expandVariables: true,
       validationSchema: Joi.object({
-        DATABASE_URL: Joi.string().required(),
+        DATABASE_URL: Joi.string().uri().required(),
         '42_CLIENT_ID': Joi.string().required(),
         '42_CLIENT_SECRET': Joi.string().required(),
-        '42_CALLBACK_URL': Joi.string().required(),
-        'GOOGLE_CLIENT_ID': Joi.string().required(),
-        'GOOGLE_CLIENT_SECRET': Joi.string().required(),
-        'GOOGLE_CALLBACK_URL': Joi.string().required(),
+        '42_CALLBACK_URL': Joi.string().uri().required(),
+        GOOGLE_CLIENT_ID: Joi.string().required(),
+        GOOGLE_CLIENT_SECRET: Joi.string().required(),
+        GOOGLE_CALLBACK_URL: Joi.string().uri().required(),
         JWT_SECRET: Joi.string().required(),
         JWT_EXPIRES_IN: Joi.string().default('24h'),
         COOKIE_SECRET: Joi.string().required(),
         APP_NAME: Joi.string().required(),
+        APP_URL: Joi.string().uri().required(),
         NODE_ENV: Joi.string()
           .valid('production', 'development')
           .default('development'),
