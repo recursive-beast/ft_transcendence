@@ -17,15 +17,14 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
+  ApiConflictResponse,
   ApiConsumes,
   ApiCookieAuth,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
-  ApiParam,
-  ApiResponse,
-  ApiTags,
-  ApiUnauthorizedResponse,
+  ApiParam, ApiTags,
+  ApiUnauthorizedResponse
 } from '@nestjs/swagger';
 import fs from 'fs/promises';
 import path from 'path';
@@ -34,11 +33,11 @@ import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { JWTGuard } from 'src/auth/guards/jwt.guard';
 import { OTPGuard } from 'src/auth/guards/otp.guard';
 import { ImageFileValidator } from 'src/image.validator';
+import { GROUP_ME } from 'src/serialize-groups';
 import { URL } from 'url';
 import { UpdateUserDTO } from './update.dto';
 import { UserEntity } from './user.entity';
 import { UserService } from './user.service';
-import { GROUP_ME } from 'src/serialize-groups';
 
 @ApiBearerAuth()
 @ApiCookieAuth()
@@ -87,6 +86,7 @@ export class UserController {
       'This endpoint updates the current user with the provided data. If an image file is provided, it is resized to 300x300 pixels.',
   })
   @ApiOkResponse({ description: 'Returns the updated user' })
+  @ApiConflictResponse({ description: 'Conflict: Display name is not unique' })
   @ApiUnauthorizedResponse({
     description: 'Unauthorized: Invalid or expired token',
   })
