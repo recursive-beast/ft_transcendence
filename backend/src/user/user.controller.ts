@@ -46,27 +46,23 @@ export class UserController {
   ) {}
 
   @ApiOkResponse({
-    description: 'Returns the current authenticated user profile',
-    type: UserEntity,
+    description: 'Returns the current authenticated user',
   })
   @ApiUnauthorizedResponse({
     description: 'Unauthorized: Invalid or expired token',
   })
-  @ApiOperation({ summary: 'Get the currently authenticated user profile' })
+  @ApiOperation({ summary: 'Get the currently authenticated user' })
   @Get('me')
   async me(@CurrentUser() user: UserEntity) {
     return user;
   }
 
   @ApiOperation({
-    summary: 'Update the current user profile',
+    summary: 'Update the current user',
     description:
-      'This endpoint updates the current user profile with the provided data. If an image file is provided, it is resized to 300x300 pixels.',
+      'This endpoint updates the current user with the provided data. If an image file is provided, it is resized to 300x300 pixels.',
   })
-  @ApiOkResponse({
-    description: 'Returns the updated user profile',
-    type: UserEntity,
-  })
+  @ApiOkResponse({ description: 'Returns the updated user' })
   @ApiUnauthorizedResponse({
     description: 'Unauthorized: Invalid or expired token',
   })
@@ -90,21 +86,18 @@ export class UserController {
     )
     file?: Express.Multer.File,
   ) {
-    const filename = Date.now() + '.png';
-    const output_path = path.join('public/images', filename);
-    let image_url: string | null = null;
-
     if (file) {
+      const filename = Date.now() + '.png';
+      const output_path = path.join('public/images', filename);
+
       await fs.mkdir('public/images', { recursive: true });
       await sharp(file.buffer).resize(300, 300).toFile(output_path);
 
-      image_url = new URL(
+      body.image = new URL(
         `/static/images/${filename}`,
         this.configService.get('APP_URL'),
       ).href;
     }
-
-    if (image_url) body.image = image_url;
 
     return await this.userService.update(user.id, body);
   }
