@@ -3,8 +3,11 @@ import {
   Controller,
   Get,
   MaxFileSizeValidator,
+  Param,
   ParseFilePipe,
+  ParseIntPipe,
   Patch,
+  SerializeOptions,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -16,8 +19,10 @@ import {
   ApiBearerAuth,
   ApiConsumes,
   ApiCookieAuth,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiParam,
   ApiResponse,
   ApiTags,
   ApiUnauthorizedResponse,
@@ -33,6 +38,7 @@ import { URL } from 'url';
 import { UpdateUserDTO } from './update.dto';
 import { UserEntity } from './user.entity';
 import { UserService } from './user.service';
+import { GROUP_ME } from 'src/serialize-groups';
 
 @ApiBearerAuth()
 @ApiCookieAuth()
@@ -52,9 +58,27 @@ export class UserController {
     description: 'Unauthorized: Invalid or expired token',
   })
   @ApiOperation({ summary: 'Get the currently authenticated user' })
+  @SerializeOptions({ groups: [GROUP_ME] })
   @Get('me')
   async me(@CurrentUser() user: UserEntity) {
     return user;
+  }
+
+  @ApiOkResponse({ description: 'The user record for the specified ID.' })
+  @ApiNotFoundResponse({ description: 'User not found' })
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized: Invalid or expired token',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'The ID of the user',
+    type: 'integer',
+    example: 1,
+  })
+  @ApiOperation({ summary: 'Get a user by ID' })
+  @Get(':id')
+  async getById(@Param('id', ParseIntPipe) id: number) {
+    return this.userService.findByIdOrThrow(id);
   }
 
   @ApiOperation({

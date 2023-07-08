@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
 import { PrismaService } from 'nestjs-prisma';
 import { UpdateUserDTO } from './update.dto';
@@ -26,6 +26,13 @@ export class UserService {
 
     if (user) return UserEntity.fromUser(user);
     return null;
+  }
+
+  async findByIdOrThrow(id: number) {
+    const user = await this.findById(id);
+
+    if (!user) throw new NotFoundException();
+    return user;
   }
 
   async update(id: User['id'], data: UpdateUserDTO) {

@@ -1,5 +1,6 @@
 import { User } from '@prisma/client';
-import { Exclude, plainToInstance } from 'class-transformer';
+import { Exclude, Expose, plainToInstance } from 'class-transformer';
+import { GROUP_ME } from 'src/serialize-groups';
 
 export class UserEntity implements User {
   id: number;
@@ -17,7 +18,9 @@ export class UserEntity implements User {
   @Exclude()
   otp_secret: string | null;
 
+  @Expose({ groups: [GROUP_ME] })
   otp_is_enabled: boolean;
+
   created_at: Date;
   updated_at: Date;
 
