@@ -23,8 +23,9 @@ import {
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
-  ApiParam, ApiTags,
-  ApiUnauthorizedResponse
+  ApiParam,
+  ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import fs from 'fs/promises';
 import path from 'path';
@@ -60,7 +61,7 @@ export class UserController {
   @SerializeOptions({ groups: [GROUP_ME] })
   @Get('me')
   async me(@CurrentUser() user: UserEntity) {
-    return user;
+    return { data: user };
   }
 
   @ApiOkResponse({ description: 'The user record for the specified ID.' })
@@ -77,7 +78,7 @@ export class UserController {
   @ApiOperation({ summary: 'Get a user by ID' })
   @Get(':id')
   async getById(@Param('id', ParseIntPipe) id: number) {
-    return this.userService.findByIdOrThrow(id);
+    return { data: await this.userService.findByIdOrThrow(id) };
   }
 
   @ApiOperation({
@@ -123,6 +124,6 @@ export class UserController {
       ).href;
     }
 
-    return await this.userService.update(user.id, body);
+    return { data: await this.userService.update(user.id, body) };
   }
 }
