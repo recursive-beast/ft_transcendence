@@ -21,7 +21,7 @@ export class BlockedController {
     return this.blockedService.findMany(user.id, query);
   }
 
-  @Put('blocked/:id')
+  @Put(':id')
   async block(
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser() user: UserEntity,
@@ -29,7 +29,7 @@ export class BlockedController {
     return { data: await this.blockedService.block(user.id, id) };
   }
 
-  @Delete('blocked/:id')
+  @Delete(':id')
   async unblock(
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser() user: UserEntity,
