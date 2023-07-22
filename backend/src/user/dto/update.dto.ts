@@ -16,7 +16,7 @@ export class UserUpdateDTO {
   @IsString()
   @Matches(/^[a-zA-Z][a-zA-Z0-9_-]*$/, {
     message:
-      'username name must start with a letter and only contain letters, digits, underscores and hyphens',
+      'username must start with a letter and only contain letters, digits, underscores and hyphens',
   })
   @MinLength(4)
   @MaxLength(30)
@@ -27,9 +27,9 @@ export class UserUpdateDTO {
   @IsOptional()
   @IsNotEmpty()
   @IsString()
-  @Matches(/^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/, {
+  @Matches(/^[a-zA-Z]+([',. -][a-zA-Z]+)*$/, {
     message:
-      'fullname must start with a letter and contain only alphabetical characters, spaces and common punctuation',
+      'fullname must contain only alphabetical characters separated by spaces and common punctuation',
   })
   @NotContains('admin')
   @NotContains('root')
