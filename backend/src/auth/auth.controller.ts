@@ -4,19 +4,17 @@ import {
   Controller,
   Get,
   Patch,
-  Res,
   UnprocessableEntityException,
-  UseGuards,
+  UseGuards
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { Response } from 'express';
-import { UserEntity } from 'src/common/entities/user.entity';
+import { UserEntity } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
 import { AuthService } from './auth.service';
-import { CurrentUser } from './decorators/current-user.decorator';
-import { Public } from './decorators/public.decorator';
-import { skipOTP } from './decorators/skip-otp.decorator';
+import { CurrentUser } from './current-user.decorator';
 import { OTPDTO } from './dto/otp.dto';
+import { Public } from './public.decorator';
+import { skipOTP } from './skip-otp.decorator';
 
 @Controller('auth')
 export class AuthController {

@@ -17,13 +17,13 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import fs from 'fs/promises';
 import path from 'path';
 import sharp from 'sharp';
-import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { CurrentUser } from 'src/auth/current-user.decorator';
 import { ClassTransformerGroups } from 'src/common/enum';
 import { ImageFileValidator } from 'src/common/image.validator';
 import { URL } from 'url';
-import { UserEntity } from '../common/entities/user.entity';
 import { UserQueryDTO } from './dto/query.dto';
 import { UserUpdateDTO } from './dto/update.dto';
+import { UserEntity } from './entities/user.entity';
 import { UserService } from './user.service';
 
 @Controller('users')

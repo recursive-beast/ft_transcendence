@@ -8,10 +8,10 @@ import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import * as Joi from 'joi';
 import { providePrismaClientExceptionFilter } from 'nestjs-prisma';
 import { AuthModule } from './auth/auth.module';
-import { JWTGuard } from './auth/guards/jwt.guard';
-import { OTPGuard } from './auth/guards/otp.guard';
+import { JWTGuard } from './auth/jwt.guard';
+import { OTPGuard } from './auth/otp.guard';
+import { TokenErrorFilter } from './auth/token-error.filter';
 import { UserModule } from './user/user.module';
-import { TokenErrorFilter } from './auth/filters/token-error.filter';
 
 @Module({
   imports: [

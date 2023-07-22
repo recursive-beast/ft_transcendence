@@ -1,8 +1,8 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
-import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
-import { IS_SKIP_OTP_KEY } from '../decorators/skip-otp.decorator';
+import { IS_PUBLIC_KEY } from './public.decorator';
+import { IS_SKIP_OTP_KEY } from './skip-otp.decorator';
 
 @Injectable()
 export class OTPGuard implements CanActivate {

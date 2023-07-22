@@ -2,11 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
-import { Response } from 'express';
-import ms from 'ms';
 import { authenticator } from 'otplib';
 import { toDataURL } from 'qrcode';
-import { JWTPayload } from '../common/types/express';
+import { JWTPayload } from 'src/common/types/express';
 
 @Injectable()
 export class AuthService {

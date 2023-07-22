@@ -7,10 +7,10 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
-import { UserEntity } from 'src/common/entities/user.entity';
+import { CurrentUser } from 'src/auth/current-user.decorator';
 import { BlockedService } from './blocked.service';
 import { UserQueryDTO } from './dto/query.dto';
+import { UserEntity } from './entities/user.entity';
 
 @Controller('users/blocked')
 export class BlockedController {

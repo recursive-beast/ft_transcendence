@@ -1,15 +1,11 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
 import { merge } from 'lodash';
 import { PrismaService } from 'nestjs-prisma';
 import relevancy from 'relevancy';
-import { UserEntity } from '../common/entities/user.entity';
 import { UserQueryDTO } from './dto/query.dto';
 import { UserUpdateDTO } from './dto/update.dto';
+import { UserEntity } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
