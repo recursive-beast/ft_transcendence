@@ -9,16 +9,25 @@ import {
 } from '@nestjs/common';
 import { CurrentUser } from 'src/auth/current-user.decorator';
 import { UserQueryDTO } from './dto/query.dto';
+import { UserDTOFactory } from './dto/user.dto';
 import { UserEntity } from './entities/user.entity';
 import { FriendService } from './friend.service';
 
 @Controller('users/friends')
 export class FriendController {
-  constructor(private friendService: FriendService) {}
+  constructor(
+    private friendService: FriendService,
+    private userDTOFactory: UserDTOFactory,
+  ) {}
 
   @Get()
   async index(@Query() query: UserQueryDTO, @CurrentUser() user: UserEntity) {
-    return this.friendService.findMany(user.id, query);
+    const { data, meta } = await this.friendService.findMany(user.id, query);
+
+    return {
+      meta,
+      data: await this.userDTOFactory.fromUser(data, user.id),
+    };
   }
 
   @Get('mutual/:id')
@@ -27,7 +36,16 @@ export class FriendController {
     @CurrentUser() user: UserEntity,
     @Query() query: UserQueryDTO,
   ) {
-    return this.friendService.findManyMutual(user.id, id, query);
+    const { data, meta } = await this.friendService.findManyMutual(
+      user.id,
+      id,
+      query,
+    );
+
+    return {
+      meta,
+      data: await this.userDTOFactory.fromUser(data, user.id),
+    };
   }
 
   @Put(':id')
@@ -35,7 +53,9 @@ export class FriendController {
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser() user: UserEntity,
   ) {
-    return { data: await this.friendService.add(user.id, id) };
+    const entity = await this.friendService.add(user.id, id);
+
+    return { data: await this.userDTOFactory.fromUser(entity, user.id) };
   }
 
   @Delete(':id')
@@ -43,6 +63,8 @@ export class FriendController {
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser() user: UserEntity,
   ) {
-    return { data: await this.friendService.delete(user.id, id) };
+    const entity = await this.friendService.delete(user.id, id);
+
+    return { data: await this.userDTOFactory.fromUser(entity, user.id) };
   }
 }
