@@ -8,7 +8,7 @@ import { Server } from 'socket.io';
 import { JWTStrategy } from 'src/auth/strategies/jwt.strategy';
 
 @Injectable()
-export class JwtIoAdapter extends IoAdapter {
+export class WSAdapter extends IoAdapter {
   constructor(private app: INestApplication) {
     super(app);
   }
