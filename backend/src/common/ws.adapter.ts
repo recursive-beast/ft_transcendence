@@ -1,7 +1,4 @@
-import {
-  INestApplication,
-  Injectable
-} from '@nestjs/common';
+import { INestApplication, Injectable } from '@nestjs/common';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import { WsException } from '@nestjs/websockets';
 import { Server } from 'socket.io';
@@ -18,8 +15,8 @@ export class WSAdapter extends IoAdapter {
     const strategy = this.app.get(JWTStrategy);
 
     server.use((socket, next) => {
-      strategy.success = (user) => {
-        socket.data = user;
+      strategy.success = (user: Express.User) => {
+        socket.data = { id: user.user.id };
         next();
       };
 
