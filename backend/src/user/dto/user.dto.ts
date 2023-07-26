@@ -1,7 +1,7 @@
 import { User } from '@prisma/client';
 import { Expose, plainToInstance } from 'class-transformer';
 import { PrismaService } from 'nestjs-prisma';
-import { UserEntity } from '../entities/user.entity';
+import { UserEntity } from '../../common/entities/user.entity';
 import { keyBy } from 'lodash';
 import { Injectable } from '@nestjs/common';
 

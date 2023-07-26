@@ -24,7 +24,7 @@ import { URL } from 'url';
 import { UserQueryDTO } from './dto/query.dto';
 import { UserUpdateDTO } from './dto/update.dto';
 import { UserDTOFactory } from './dto/user.dto';
-import { UserEntity } from './entities/user.entity';
+import { UserEntity } from '../common/entities/user.entity';
 import { UserService } from './user.service';
 
 @Controller('users')

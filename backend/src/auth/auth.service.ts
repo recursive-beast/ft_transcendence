@@ -6,7 +6,7 @@ import { PrismaService } from 'nestjs-prisma';
 import { authenticator } from 'otplib';
 import { toDataURL } from 'qrcode';
 import { JWTPayload } from 'src/common/types/express';
-import { UserEntity } from 'src/user/entities/user.entity';
+import { UserEntity } from 'src/common/entities/user.entity';
 
 @Injectable()
 export class AuthService {

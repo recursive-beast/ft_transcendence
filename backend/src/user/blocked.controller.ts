@@ -11,7 +11,7 @@ import { CurrentUser } from 'src/auth/current-user.decorator';
 import { BlockedService } from './blocked.service';
 import { UserQueryDTO } from './dto/query.dto';
 import { UserDTOFactory } from './dto/user.dto';
-import { UserEntity } from './entities/user.entity';
+import { UserEntity } from '../common/entities/user.entity';
 
 @Controller('users/blocked')
 export class BlockedController {

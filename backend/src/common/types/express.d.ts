@@ -1,4 +1,4 @@
-import { UserEntity } from 'src/user/entities/user.entity';
+import { UserEntity } from 'src/common/entities/user.entity';
 
 export interface JWTPayload {
   id: UserEntity['id'];

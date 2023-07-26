@@ -5,7 +5,7 @@ import { PrismaService } from 'nestjs-prisma';
 import relevancy from 'relevancy';
 import { UserQueryDTO } from './dto/query.dto';
 import { UserUpdateDTO } from './dto/update.dto';
-import { UserEntity } from './entities/user.entity';
+import { UserEntity } from '../common/entities/user.entity';
 
 @Injectable()
 export class UserService {
