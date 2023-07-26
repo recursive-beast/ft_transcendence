@@ -88,31 +88,4 @@ export class UserService {
 
     return UserEntity.fromUser(updated);
   }
-
-  async setOTPSecret(id: number, secret: string) {
-    const updated = await this.prismaService.user.update({
-      where: { id },
-      data: { otpSecret: secret },
-    });
-
-    return UserEntity.fromUser(updated);
-  }
-
-  async enableOTP(id: number) {
-    const updated = await this.prismaService.user.update({
-      where: { id },
-      data: { otpIsEnabled: true },
-    });
-
-    return UserEntity.fromUser(updated);
-  }
-
-  async disableOTP(id: number) {
-    const updated = await this.prismaService.user.update({
-      where: { id },
-      data: { otpIsEnabled: false, otpSecret: null },
-    });
-
-    return UserEntity.fromUser(updated);
-  }
 }

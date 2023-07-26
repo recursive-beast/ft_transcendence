@@ -5,11 +5,10 @@ import {
   Get,
   Patch,
   UnprocessableEntityException,
-  UseGuards
+  UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UserEntity } from 'src/user/entities/user.entity';
-import { UserService } from 'src/user/user.service';
 import { AuthService } from './auth.service';
 import { CurrentUser } from './current-user.decorator';
 import { OTPDTO } from './dto/otp.dto';
@@ -18,10 +17,7 @@ import { skipOTP } from './skip-otp.decorator';
 
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private userService: UserService,
-    private authService: AuthService,
-  ) {}
+  constructor(private authService: AuthService) {}
 
   @Public()
   @UseGuards(AuthGuard('42'))
@@ -47,7 +43,7 @@ export class AuthController {
     const { otpSecret, qr_code } = await this.authService.generateOTP(user);
 
     if (!user.otpSecret)
-      await this.userService.setOTPSecret(user.id, otpSecret);
+      await this.authService.setOTPSecret(user.id, otpSecret);
 
     return { qr_code };
   }
@@ -60,12 +56,12 @@ export class AuthController {
     const success = this.authService.verifyOTP(user, body.otp);
 
     if (!success) throw new UnprocessableEntityException();
-    await this.userService.enableOTP(user.id);
+    await this.authService.enableOTP(user.id);
   }
 
   @Patch('otp/disable')
   async otpDisable(@CurrentUser() user: UserEntity) {
-    await this.userService.disableOTP(user.id);
+    await this.authService.disableOTP(user.id);
 
     const token = await this.authService.generateJWT(user, false);
 
