@@ -11,6 +11,7 @@ import { AuthModule } from './auth/auth.module';
 import { JWTGuard } from './auth/jwt.guard';
 import { OTPGuard } from './auth/otp.guard';
 import { TokenErrorFilter } from './auth/token-error.filter';
+import { NotificationModule } from './notification/notification.module';
 import { UserModule } from './user/user.module';
 
 @Module({
@@ -38,6 +39,7 @@ import { UserModule } from './user/user.module';
       }),
     }),
     UserModule,
+    NotificationModule,
   ],
   providers: [
     providePrismaClientExceptionFilter(),

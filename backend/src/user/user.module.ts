@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { PrismaModule } from 'nestjs-prisma';
 import { BlockedController } from './blocked.controller';
 import { BlockedService } from './blocked.service';
@@ -10,7 +11,7 @@ import { UserGateway } from './user.gateway';
 import { UserService } from './user.service';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, EventEmitterModule.forRoot()],
   providers: [
     UserService,
     FriendService,

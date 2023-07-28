@@ -12,6 +12,20 @@ export class FriendService {
     private userService: UserService,
   ) {}
 
+  async findById(userId: User['id'], targetId: User['id']) {
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        id: targetId,
+        friendOf: {
+          some: { id: userId },
+        },
+      },
+    });
+
+    if (user) return UserEntity.fromUser(user);
+    return null;
+  }
+
   async add(userId: User['id'], targetId: User['id']) {
     if (userId === targetId) throw new ConflictException();
 

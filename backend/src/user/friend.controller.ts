@@ -12,12 +12,14 @@ import { UserQueryDTO } from './dto/query.dto';
 import { UserDTOFactory } from './dto/user.dto';
 import { UserEntity } from '../common/entities/user.entity';
 import { FriendService } from './friend.service';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Controller('users/friends')
 export class FriendController {
   constructor(
     private friendService: FriendService,
     private userDTOFactory: UserDTOFactory,
+    private eventEmitter: EventEmitter2,
   ) {}
 
   @Get()
@@ -53,7 +55,12 @@ export class FriendController {
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser() user: UserEntity,
   ) {
-    const entity = await this.friendService.add(user.id, id);
+    let entity = await this.friendService.findById(user.id, id);
+
+    if (!entity) {
+      entity = await this.friendService.add(user.id, id);
+      this.eventEmitter.emit('user.friend.add', user, entity);
+    }
 
     return { data: await this.userDTOFactory.fromUser(entity, user.id) };
   }

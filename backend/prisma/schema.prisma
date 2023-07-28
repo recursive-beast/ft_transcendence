@@ -8,18 +8,34 @@ datasource db {
 }
 
 model User {
-  id           Int      @id @default(autoincrement())
+  id           Int            @id @default(autoincrement())
   fortyTwoId   String?
   googleId     String?
-  username     String   @unique
+  username     String         @unique
   fullname     String
   image        String?
   otpSecret    String?
-  otpIsEnabled Boolean  @default(false)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  friends      User[]   @relation("friends")
-  friendOf     User[]   @relation("friends")
-  blocked      User[]   @relation("blocked")
-  blockedBy    User[]   @relation("blocked")
+  otpIsEnabled Boolean        @default(false)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  friends      User[]         @relation("friends")
+  friendOf     User[]         @relation("friends")
+  blocked      User[]         @relation("blocked")
+  blockedBy    User[]         @relation("blocked")
+  Notification Notification[]
+}
+
+model Notification {
+  id          Int              @id @default(autoincrement())
+  type        NotificationType
+  seen        Boolean          @default(false)
+  recipient   User             @relation(fields: [recepientId], references: [id])
+  recepientId Int
+  data        Json
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}
+
+enum NotificationType {
+  FRIEND_ADD
 }
