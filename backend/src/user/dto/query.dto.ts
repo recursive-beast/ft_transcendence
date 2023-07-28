@@ -67,7 +67,7 @@ export class UserQueryDTO {
   @IsInt()
   @Min(0)
   @Type(() => Number)
-  skip: number;
+  skip: number = 0;
 
   @IsOptional()
   @IsNotEmptyObject()
