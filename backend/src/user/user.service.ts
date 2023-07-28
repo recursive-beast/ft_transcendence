@@ -3,9 +3,9 @@ import { Prisma, User } from '@prisma/client';
 import { merge } from 'lodash';
 import { PrismaService } from 'nestjs-prisma';
 import relevancy from 'relevancy';
+import { UserEntity } from '../common/entities/user.entity';
 import { UserQueryDTO } from './dto/query.dto';
 import { UserUpdateDTO } from './dto/update.dto';
-import { UserEntity } from '../common/entities/user.entity';
 
 @Injectable()
 export class UserService {
@@ -56,13 +56,9 @@ export class UserService {
     const total = await this.prismaService.user.count({ distinct, where });
     const last = result[result.length - 1];
 
-    if (query.search) {
-      result.sort(
-        (a, b) =>
-          (relevancy.weight(search, b.username) || 0) -
-          (relevancy.weight(search, a.username) || 0),
-      );
-    }
+    if (query.search)
+      // @ts-expect-error no type definitions
+      relevancy.sort(result, search, (obj, calc) => calc(obj.username));
 
     return {
       meta: {
