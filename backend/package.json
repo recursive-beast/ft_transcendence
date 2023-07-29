@@ -34,6 +34,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
     "cookie-parser": "^1.4.6",
+    "fuse.js": "^6.6.2",
     "joi": "^17.9.2",
     "lodash": "^4.17.21",
     "ms": "^2.1.3",
@@ -46,7 +47,6 @@
     "passport-oauth2": "^1.7.0",
     "qrcode": "^1.5.3",
     "reflect-metadata": "^0.1.13",
-    "relevancy": "^0.2.0",
     "rxjs": "^7.8.1",
     "sharp": "^0.32.3",
     "socket.io": "^4.7.1"

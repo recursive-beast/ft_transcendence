@@ -29,12 +29,9 @@ async function main() {
   ];
 
   for (let i = 0; i < count; i++) {
-    const firstName = faker.person.firstName();
-    const lastName = faker.person.lastName();
-
     users.push({
-      fullname: faker.person.fullName({ firstName, lastName }),
-      username: faker.internet.displayName({ firstName, lastName }),
+      fullname: faker.person.fullName(),
+      username: faker.internet.displayName(),
       image: faker.internet.avatar(),
     });
   }

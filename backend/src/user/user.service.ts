@@ -6,6 +6,7 @@ import relevancy from 'relevancy';
 import { UserEntity } from '../common/entities/user.entity';
 import { UserQueryDTO } from './dto/query.dto';
 import { UserUpdateDTO } from './dto/update.dto';
+import Fuse from 'fuse.js';
 
 @Injectable()
 export class UserService {
@@ -45,20 +46,32 @@ export class UserService {
     const { search, ...rest } = query;
     const args = merge(rest, additionalArgs, {
       where: {
-        username: {
-          contains: search,
-          mode: 'insensitive',
-        },
+        OR: [
+          {
+            username: {
+              contains: search,
+              mode: 'insensitive',
+            },
+          },
+          {
+            fullname: {
+              contains: search,
+              mode: 'insensitive',
+            },
+          },
+        ],
       },
-    });
+    } as Prisma.UserFindManyArgs);
     const { distinct, where } = args;
-    const result = await this.prismaService.user.findMany(args);
+    let result = await this.prismaService.user.findMany(args);
     const total = await this.prismaService.user.count({ distinct, where });
     const last = result[result.length - 1];
 
-    if (query.search)
-      // @ts-expect-error no type definitions
-      relevancy.sort(result, search, (obj, calc) => calc(obj.username));
+    if (query.search) {
+      const fuse = new Fuse(result, { keys: ['username', 'fullname'] });
+
+      result = fuse.search(query.search).map((elem) => elem.item);
+    }
 
     return {
       meta: {
