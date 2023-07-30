@@ -6,6 +6,8 @@ import { PrismaService } from 'nestjs-prisma';
 import { UserEntity } from '../common/entities/user.entity';
 import { UserQueryDTO } from './dto/query.dto';
 import { UserUpdateDTO } from './dto/update.dto';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import * as uuid from 'uuid';
 
 @Injectable()
 export class UserService {
@@ -13,12 +15,30 @@ export class UserService {
 
   async findOrCreate(data: Prisma.UserCreateInput) {
     const { authProviderId } = data;
+    let user: User | null = null;
+    let suffix = '';
 
-    let user = await this.prismaService.user.findFirst({
-      where: { authProviderId },
-    });
+    while (!user) {
+      try {
+        user = await this.prismaService.user.upsert({
+          create: {
+            ...data,
+            username: `${data.username}${suffix}`,
+          },
+          update: {},
+          where: { authProviderId },
+        });
+      } catch (error) {
+        if (
+          !(error instanceof PrismaClientKnownRequestError) ||
+          error.code !== 'P2002'
+        )
+          throw error;
 
-    if (!user) user = await this.prismaService.user.create({ data });
+        // non unique username, generate random suffix
+        suffix = `-${uuid.v4().substring(0, 5)}`;
+      }
+    }
 
     return UserEntity.fromUser(user);
   }
