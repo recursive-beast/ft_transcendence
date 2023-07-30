@@ -21,7 +21,7 @@ model User {
   friendOf       User[]         @relation("friends")
   blocked        User[]         @relation("blocked")
   blockedBy      User[]         @relation("blocked")
-  Notification   Notification[]
+  notifications  Notification[]
 }
 
 model Notification {
