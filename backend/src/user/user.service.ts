@@ -57,29 +57,31 @@ export class UserService {
     return user;
   }
 
-  async findMany(
-    query: UserQueryDTO,
-    additionalArgs: Prisma.UserFindManyArgs = {},
-  ) {
+  async findMany(query: UserQueryDTO, args: Prisma.UserFindManyArgs = {}) {
     const { search, ...rest } = query;
-    const args = merge(rest, additionalArgs, {
-      where: {
-        OR: [
-          {
-            username: {
-              contains: search,
-              mode: 'insensitive',
+
+    args = merge(rest, args);
+
+    if (search)
+      args = merge(args, {
+        where: {
+          OR: [
+            {
+              username: {
+                contains: search,
+                mode: 'insensitive',
+              },
             },
-          },
-          {
-            fullname: {
-              contains: search,
-              mode: 'insensitive',
+            {
+              fullname: {
+                contains: search,
+                mode: 'insensitive',
+              },
             },
-          },
-        ],
-      },
-    } as Prisma.UserFindManyArgs);
+          ],
+        },
+      } as Prisma.UserFindManyArgs);
+
     const { distinct, where } = args;
     let result = await this.prismaService.user.findMany(args);
     const total = await this.prismaService.user.count({ distinct, where });
