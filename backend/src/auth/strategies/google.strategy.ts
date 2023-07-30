@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Profile, Strategy } from 'passport-google-oauth20';
+import { UserEntity } from 'src/common/entities/user.entity';
 import { UserService } from 'src/user/user.service';
 
 @Injectable()
@@ -20,12 +21,12 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
 
   async validate(accessToken: string, refreshToken: string, profile: Profile) {
     const user = await this.userService.findOrCreate({
-      googleId: profile.id,
+      authProviderId: `google:${profile.id}`,
       username: profile.displayName,
       fullname: profile._json.name || profile.displayName,
       image: profile._json.picture,
     });
 
-    if (user) return { user };
+    return { user: UserEntity.fromUser(user) };
   }
 }

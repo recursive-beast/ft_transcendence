@@ -8,10 +8,7 @@ export class UserEntity implements User {
   id: number;
 
   @Exclude()
-  fortyTwoId: string | null;
-
-  @Exclude()
-  googleId: string | null;
+  authProviderId: string;
 
   @Expose()
   username: string;

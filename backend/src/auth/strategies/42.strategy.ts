@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-42';
+import { UserEntity } from 'src/common/entities/user.entity';
 import { UserService } from 'src/user/user.service';
 
 @Injectable()
@@ -21,12 +22,12 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
     const json = profile._json;
 
     const user = await this.userService.findOrCreate({
-      fortyTwoId: String(json.id),
+      authProviderId: `42:${json.id}`,
       username: json.login,
       fullname: json.displayname,
       image: json.image.link,
     });
 
-    if (user) return { user };
+    return { user: UserEntity.fromUser(user) };
   }
 }

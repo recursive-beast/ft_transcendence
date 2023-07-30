@@ -1,27 +1,25 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
+import Fuse from 'fuse.js';
 import { merge } from 'lodash';
 import { PrismaService } from 'nestjs-prisma';
-import relevancy from 'relevancy';
 import { UserEntity } from '../common/entities/user.entity';
 import { UserQueryDTO } from './dto/query.dto';
 import { UserUpdateDTO } from './dto/update.dto';
-import Fuse from 'fuse.js';
 
 @Injectable()
 export class UserService {
   constructor(private prismaService: PrismaService) {}
 
   async findOrCreate(data: Prisma.UserCreateInput) {
-    const { fortyTwoId, googleId } = data;
-    let user: User | null = null;
-    let where: Prisma.UserWhereInput | null = null;
+    const { authProviderId } = data;
 
-    if (fortyTwoId) where = { fortyTwoId };
-    else if (googleId) where = { googleId };
+    let user = await this.prismaService.user.findFirst({
+      where: { authProviderId },
+    });
 
-    if (where) user = await this.prismaService.user.findFirst({ where });
     if (!user) user = await this.prismaService.user.create({ data });
+
     return UserEntity.fromUser(user);
   }
 
