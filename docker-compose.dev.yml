@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./backend:/app
+  prisma-studio:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    command: npx prisma studio
+    env_file:
+      - .env
+    restart: always
+    volumes:
+      - ./backend:/app
+    ports:
+      - 5555:5555

@@ -1,17 +1,26 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Prisma, User } from '@prisma/client';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import Fuse from 'fuse.js';
 import { merge } from 'lodash';
 import { PrismaService } from 'nestjs-prisma';
+import sharp from 'sharp';
+import * as uuid from 'uuid';
 import { UserEntity } from '../common/entities/user.entity';
 import { UserQueryDTO } from './dto/query.dto';
 import { UserUpdateDTO } from './dto/update.dto';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import * as uuid from 'uuid';
 
 @Injectable()
 export class UserService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(
+    private prismaService: PrismaService,
+    private configService: ConfigService,
+  ) {}
 
   async findOrCreate(data: Prisma.UserCreateInput) {
     const { authProviderId } = data;
@@ -43,14 +52,14 @@ export class UserService {
     return UserEntity.fromUser(user);
   }
 
-  async findById(id: number) {
+  async findById(id: User['id']) {
     const user = await this.prismaService.user.findUnique({ where: { id } });
 
     if (user) return UserEntity.fromUser(user);
     return null;
   }
 
-  async findByIdOrThrow(id: number) {
+  async findByIdOrThrow(id: User['id']) {
     const user = await this.findById(id);
 
     if (!user) throw new NotFoundException();
@@ -113,6 +122,25 @@ export class UserService {
     const updated = await this.prismaService.user.update({
       where: { id },
       data,
+    });
+
+    return UserEntity.fromUser(updated);
+  }
+
+  async setAvatar(id: User['id'], path: string) {
+    const filename = `${id}.png`;
+    const app_url = this.configService.get('APP_URL');
+    const avatar = new URL(`/avatars/${filename}`, app_url).href;
+
+    try {
+      await sharp(path).resize(300, 300).toFile(`/var/www/avatars/${filename}`);
+    } catch (error) {
+      throw new BadRequestException('Invalid image');
+    }
+
+    const updated = await this.prismaService.user.update({
+      where: { id },
+      data: { avatar },
     });
 
     return UserEntity.fromUser(updated);

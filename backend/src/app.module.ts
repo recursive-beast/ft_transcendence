@@ -16,7 +16,6 @@ import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
-    AuthModule,
     ConfigModule.forRoot({
       isGlobal: true,
       expandVariables: true,
@@ -38,6 +37,7 @@ import { UserModule } from './user/user.module';
           .default('development'),
       }),
     }),
+    AuthModule,
     UserModule,
     NotificationModule,
   ],

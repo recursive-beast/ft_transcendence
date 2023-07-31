@@ -17,7 +17,7 @@ export class UserEntity implements User {
   fullname: string;
 
   @Expose()
-  image: string | null;
+  avatar: string | null;
 
   @Exclude()
   otpSecret: string | null;

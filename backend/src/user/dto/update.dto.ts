@@ -1,4 +1,3 @@
-import { Exclude } from 'class-transformer';
 import {
   IsNotEmpty,
   IsOptional,
@@ -33,7 +32,4 @@ export class UserUpdateDTO {
   @NotContains('admin')
   @NotContains('root')
   fullname?: string;
-
-  @Exclude()
-  image?: string;
 }

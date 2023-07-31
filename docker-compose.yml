@@ -1,15 +1,33 @@
 version: "3.8"
 
 services:
-  db:
+  postgresql:
     image: postgres:15.3-alpine3.18
     restart: always
     env_file:
-      - ./backend/.env
-    ports:
-      - 5432:5432
+      - .env
     volumes:
-      - db:/var/lib/postgresql/data
+      - postgresql:/var/lib/postgresql/data
+  nginx:
+    image: nginx:1-alpine3.17
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - avatars:/var/www/avatars
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    ports:
+      - 80:80
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - avatars:/var/www/avatars
 
 volumes:
-  db:
+  postgresql:
+  avatars:

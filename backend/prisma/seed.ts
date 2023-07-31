@@ -11,7 +11,7 @@ async function main() {
       authProviderId: '42:90253',
       username: 'syakoubi',
       fullname: 'Soufiane Yakoubi',
-      image:
+      avatar:
         'https://cdn.intra.42.fr/users/d5a309b3c9b4fc2ba304f767a14ed12a/syakoubi.jpg',
       otpSecret: null,
       otpIsEnabled: false,
@@ -20,7 +20,7 @@ async function main() {
       authProviderId: '42:90657',
       username: 'aait-oma',
       fullname: 'Abdeljalil Ait Omar',
-      image:
+      avatar:
         'https://cdn.intra.42.fr/users/3dde45e554db2a6da0d0b4b2ca08db97/aait-oma.jpg',
       otpSecret: null,
       otpIsEnabled: false,
@@ -32,7 +32,7 @@ async function main() {
       authProviderId: faker.string.uuid(),
       fullname: faker.person.fullName(),
       username: faker.internet.displayName(),
-      image: faker.internet.avatar(),
+      avatar: faker.internet.avatar(),
     });
   }
 

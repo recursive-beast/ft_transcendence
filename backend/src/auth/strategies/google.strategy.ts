@@ -24,7 +24,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       authProviderId: `google:${profile.id}`,
       username: profile.displayName,
       fullname: profile._json.name || profile.displayName,
-      image: profile._json.picture,
+      avatar: profile._json.picture,
     });
 
     return { user: UserEntity.fromUser(user) };

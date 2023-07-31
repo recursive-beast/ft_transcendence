@@ -12,7 +12,7 @@ model User {
   authProviderId String         @unique
   username       String         @unique
   fullname       String
-  image          String?
+  avatar         String?
   otpSecret      String?
   otpIsEnabled   Boolean        @default(false)
   createdAt      DateTime       @default(now())

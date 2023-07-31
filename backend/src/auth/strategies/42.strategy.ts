@@ -25,7 +25,7 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
       authProviderId: `42:${json.id}`,
       username: json.login,
       fullname: json.displayname,
-      image: json.image.link,
+      avatar: json.image.link,
     });
 
     return { user: UserEntity.fromUser(user) };

@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { MulterModule } from '@nestjs/platform-express';
 import { PrismaModule } from 'nestjs-prisma';
+import os from 'os';
 import { BlockedController } from './blocked.controller';
 import { BlockedService } from './blocked.service';
 import { UserDTOFactory } from './dto/user.dto';
@@ -11,7 +13,11 @@ import { UserGateway } from './user.gateway';
 import { UserService } from './user.service';
 
 @Module({
-  imports: [PrismaModule, EventEmitterModule.forRoot()],
+  imports: [
+    MulterModule.register({ dest: os.tmpdir() }),
+    EventEmitterModule.forRoot(),
+    PrismaModule,
+  ],
   providers: [
     UserService,
     FriendService,

@@ -2,35 +2,28 @@ import {
   Body,
   Controller,
   Get,
-  MaxFileSizeValidator,
   Param,
   ParseFilePipe,
   ParseIntPipe,
   Patch,
+  Put,
   Query,
   SerializeOptions,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { FileInterceptor } from '@nestjs/platform-express';
-import fs from 'fs/promises';
-import path from 'path';
-import sharp from 'sharp';
 import { CurrentUser } from 'src/auth/current-user.decorator';
 import { ClassTransformerGroups } from 'src/common/enum';
-import { ImageFileValidator } from 'src/common/image.validator';
-import { URL } from 'url';
+import { UserEntity } from '../common/entities/user.entity';
 import { UserQueryDTO } from './dto/query.dto';
 import { UserUpdateDTO } from './dto/update.dto';
 import { UserDTOFactory } from './dto/user.dto';
-import { UserEntity } from '../common/entities/user.entity';
 import { UserService } from './user.service';
 
 @Controller('users')
 export class UserController {
   constructor(
-    private configService: ConfigService,
     private userService: UserService,
     private userDTOFactory: UserDTOFactory,
   ) {}
@@ -51,35 +44,18 @@ export class UserController {
     return { data: user };
   }
 
-  @UseInterceptors(FileInterceptor('image'))
-  @Patch('me')
-  async updateMe(
+  @UseInterceptors(FileInterceptor('avatar'))
+  @Put('me/avatar')
+  async avatar(
     @CurrentUser() user: UserEntity,
-    @Body() body: UserUpdateDTO,
-    @UploadedFile(
-      new ParseFilePipe({
-        validators: [
-          new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 5 }), // 5 MB
-          new ImageFileValidator({ formats: ['png', 'jpeg', 'jpg'] }),
-        ],
-        fileIsRequired: false,
-      }),
-    )
-    file?: Express.Multer.File,
+    @UploadedFile(ParseFilePipe)
+    file: Express.Multer.File,
   ) {
-    if (file) {
-      const filename = Date.now() + '.png';
-      const output_path = path.join('public/images', filename);
+    return { data: await this.userService.setAvatar(user.id, file.path) };
+  }
 
-      await fs.mkdir('public/images', { recursive: true });
-      await sharp(file.buffer).resize(300, 300).toFile(output_path);
-
-      body.image = new URL(
-        `/static/images/${filename}`,
-        this.configService.get('APP_URL'),
-      ).href;
-    }
-
+  @Patch('me')
+  async updateMe(@CurrentUser() user: UserEntity, @Body() body: UserUpdateDTO) {
     return { data: await this.userService.update(user.id, body) };
   }
 
