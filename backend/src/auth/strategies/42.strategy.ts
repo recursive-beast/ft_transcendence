@@ -23,8 +23,8 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
 
     const user = await this.userService.findOrCreate({
       authProviderId: `42:${json.id}`,
-      username: json.login,
-      fullname: json.displayname,
+      displayName: json.login,
+      fullName: json.displayname,
       avatar: json.image.link,
     });
 

@@ -11,10 +11,10 @@ export class UserEntity implements User {
   authProviderId: string;
 
   @Expose()
-  username: string;
+  displayName: string;
 
   @Expose()
-  fullname: string;
+  fullName: string;
 
   @Expose()
   avatar: string | null;

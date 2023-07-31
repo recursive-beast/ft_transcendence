@@ -9,8 +9,8 @@ async function main() {
   const users: Prisma.UserCreateManyInput[] = [
     {
       authProviderId: '42:90253',
-      username: 'syakoubi',
-      fullname: 'Soufiane Yakoubi',
+      displayName: 'syakoubi',
+      fullName: 'Soufiane Yakoubi',
       avatar:
         'https://cdn.intra.42.fr/users/d5a309b3c9b4fc2ba304f767a14ed12a/syakoubi.jpg',
       otpSecret: null,
@@ -18,8 +18,8 @@ async function main() {
     },
     {
       authProviderId: '42:90657',
-      username: 'aait-oma',
-      fullname: 'Abdeljalil Ait Omar',
+      displayName: 'aait-oma',
+      fullName: 'Abdeljalil Ait Omar',
       avatar:
         'https://cdn.intra.42.fr/users/3dde45e554db2a6da0d0b4b2ca08db97/aait-oma.jpg',
       otpSecret: null,
@@ -30,8 +30,8 @@ async function main() {
   for (let i = 0; i < count; i++) {
     users.push({
       authProviderId: faker.string.uuid(),
-      fullname: faker.person.fullName(),
-      username: faker.internet.displayName(),
+      fullName: faker.person.fullName(),
+      displayName: faker.internet.displayName(),
       avatar: faker.internet.avatar(),
     });
   }

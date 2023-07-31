@@ -10,8 +10,8 @@ datasource db {
 model User {
   id             Int            @id @default(autoincrement())
   authProviderId String         @unique
-  username       String         @unique
-  fullname       String
+  displayName    String         @unique
+  fullName       String
   avatar         String?
   otpSecret      String?
   otpIsEnabled   Boolean        @default(false)

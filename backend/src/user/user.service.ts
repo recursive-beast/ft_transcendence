@@ -32,7 +32,7 @@ export class UserService {
         user = await this.prismaService.user.upsert({
           create: {
             ...data,
-            username: `${data.username}${suffix}`,
+            displayName: `${data.displayName}${suffix}`,
           },
           update: {},
           where: { authProviderId },
@@ -44,7 +44,7 @@ export class UserService {
         )
           throw error;
 
-        // non unique username, generate random suffix
+        // non unique displayName, generate random suffix
         suffix = `-${uuid.v4().substring(0, 5)}`;
       }
     }
@@ -76,13 +76,13 @@ export class UserService {
         where: {
           OR: [
             {
-              username: {
+              displayName: {
                 contains: search,
                 mode: 'insensitive',
               },
             },
             {
-              fullname: {
+              fullName: {
                 contains: search,
                 mode: 'insensitive',
               },
@@ -97,7 +97,7 @@ export class UserService {
     const last = result[result.length - 1];
 
     if (query.search) {
-      const fuse = new Fuse(result, { keys: ['username', 'fullname'] });
+      const fuse = new Fuse(result, { keys: ['displayName', 'fullName'] });
 
       result = fuse.search(query.search).map((elem) => elem.item);
     }
@@ -111,7 +111,7 @@ export class UserService {
           : query.skip + query.take < total,
         nextCursor: {
           id: last?.id,
-          username: last?.username,
+          displayName: last?.displayName,
         },
       },
       data: UserEntity.fromUser(result),

@@ -22,19 +22,19 @@ export class UserQueryCursorDTO {
   @IsOptional()
   @IsNotEmpty()
   @IsString()
-  username?: string;
+  displayName?: string;
 }
 
 export class UserQueryOrderByDTO {
   @IsOptional()
   @IsNotEmpty()
   @IsEnum(QuerySortOrder)
-  username?: QuerySortOrder;
+  displayName?: QuerySortOrder;
 
   @IsOptional()
   @IsNotEmpty()
   @IsEnum(QuerySortOrder)
-  fullname?: QuerySortOrder;
+  fullName?: QuerySortOrder;
 
   @IsOptional()
   @IsNotEmpty()
