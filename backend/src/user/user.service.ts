@@ -9,6 +9,7 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import Fuse from 'fuse.js';
 import { merge } from 'lodash';
 import { PrismaService } from 'nestjs-prisma';
+import { rimraf } from 'rimraf';
 import sharp from 'sharp';
 import * as uuid from 'uuid';
 import { UserEntity } from '../common/entities/user.entity';
@@ -128,12 +129,14 @@ export class UserService {
   }
 
   async setAvatar(id: User['id'], path: string) {
-    const filename = `${id}.png`;
+    const filename = `${id}-${Date.now()}.png`;
+    const directory = '/var/www/avatars';
+    const output = `${directory}/${filename}`;
     const app_url = this.configService.get('APP_URL');
     const avatar = new URL(`/avatars/${filename}`, app_url).href;
 
     try {
-      await sharp(path).resize(300, 300).toFile(`/var/www/avatars/${filename}`);
+      await sharp(path).resize(300, 300).toFile(output);
     } catch (error) {
       throw new BadRequestException('Invalid image');
     }
@@ -142,6 +145,12 @@ export class UserService {
       where: { id },
       data: { avatar },
     });
+
+    try {
+      await rimraf(`${directory}/${id}-*`, { glob: { ignore: output } });
+    } catch (error) {
+      console.error(error); // print and ignore error
+    }
 
     return UserEntity.fromUser(updated);
   }
