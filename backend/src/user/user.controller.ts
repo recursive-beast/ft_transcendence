@@ -19,24 +19,15 @@ import { FileCleanupInterceptor } from 'src/common/file-cleanup.interceptor';
 import { UserEntity } from '../common/entities/user.entity';
 import { UserQueryDTO } from './dto/query.dto';
 import { UserUpdateDTO } from './dto/update.dto';
-import { UserDTOFactory } from './dto/user.dto';
 import { UserService } from './user.service';
 
 @Controller('users')
 export class UserController {
-  constructor(
-    private userService: UserService,
-    private userDTOFactory: UserDTOFactory,
-  ) {}
+  constructor(private userService: UserService) {}
 
   @Get()
-  async index(@Query() query: UserQueryDTO, @CurrentUser() user: UserEntity) {
-    const { data, meta } = await this.userService.findMany(query);
-
-    return {
-      meta,
-      data: await this.userDTOFactory.fromUser(data, user.id),
-    };
+  async index(@Query() query: UserQueryDTO) {
+    return this.userService.findMany(query);
   }
 
   @SerializeOptions({ groups: [ClassTransformerGroups.GROUP_ME] })
@@ -60,12 +51,7 @@ export class UserController {
   }
 
   @Get(':id')
-  async getById(
-    @Param('id', ParseIntPipe) id: number,
-    @CurrentUser() user: UserEntity,
-  ) {
-    const entity = await this.userService.findByIdOrThrow(id);
-
-    return { data: await this.userDTOFactory.fromUser(entity, user.id) };
+  async getById(@Param('id', ParseIntPipe) id: number) {
+    return { data: await this.userService.findByIdOrThrow(id) };
   }
 }

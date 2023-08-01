@@ -7,29 +7,22 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import { CurrentUser } from 'src/auth/current-user.decorator';
-import { UserQueryDTO } from './dto/query.dto';
-import { UserDTOFactory } from './dto/user.dto';
-import { UserEntity } from '../common/entities/user.entity';
-import { FriendService } from './friend.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { CurrentUser } from 'src/auth/current-user.decorator';
+import { UserEntity } from '../common/entities/user.entity';
+import { UserQueryDTO } from './dto/query.dto';
+import { FriendService } from './friend.service';
 
 @Controller('users/friends')
 export class FriendController {
   constructor(
     private friendService: FriendService,
-    private userDTOFactory: UserDTOFactory,
     private eventEmitter: EventEmitter2,
   ) {}
 
   @Get()
   async index(@Query() query: UserQueryDTO, @CurrentUser() user: UserEntity) {
-    const { data, meta } = await this.friendService.findMany(user.id, query);
-
-    return {
-      meta,
-      data: await this.userDTOFactory.fromUser(data, user.id),
-    };
+    return this.friendService.findMany(user.id, query);
   }
 
   @Get('mutual/:id')
@@ -38,16 +31,7 @@ export class FriendController {
     @CurrentUser() user: UserEntity,
     @Query() query: UserQueryDTO,
   ) {
-    const { data, meta } = await this.friendService.findManyMutual(
-      user.id,
-      id,
-      query,
-    );
-
-    return {
-      meta,
-      data: await this.userDTOFactory.fromUser(data, user.id),
-    };
+    return this.friendService.findManyMutual(user.id, id, query);
   }
 
   @Put(':id')
@@ -62,7 +46,7 @@ export class FriendController {
       this.eventEmitter.emit('user.friend.add', user, entity);
     }
 
-    return { data: await this.userDTOFactory.fromUser(entity, user.id) };
+    return { data: entity };
   }
 
   @Delete(':id')
@@ -70,8 +54,6 @@ export class FriendController {
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser() user: UserEntity,
   ) {
-    const entity = await this.friendService.delete(user.id, id);
-
-    return { data: await this.userDTOFactory.fromUser(entity, user.id) };
+    return { data: await this.friendService.delete(user.id, id) };
   }
 }

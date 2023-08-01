@@ -1,15 +1,16 @@
 import { Module } from '@nestjs/common';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { MulterModule } from '@nestjs/platform-express';
 import { PrismaModule } from 'nestjs-prisma';
 import os from 'os';
 import { BlockedController } from './blocked.controller';
 import { BlockedService } from './blocked.service';
-import { UserDTOFactory } from './dto/user.dto';
 import { FriendController } from './friend.controller';
 import { FriendService } from './friend.service';
 import { UserController } from './user.controller';
 import { UserGateway } from './user.gateway';
+import { UserInterceptor } from './user.interceptor';
 import { UserService } from './user.service';
 
 @Module({
@@ -22,8 +23,11 @@ import { UserService } from './user.service';
     UserService,
     FriendService,
     BlockedService,
-    UserDTOFactory,
     UserGateway,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: UserInterceptor,
+    },
   ],
   controllers: [FriendController, BlockedController, UserController],
   exports: [UserService, FriendService, BlockedService],
