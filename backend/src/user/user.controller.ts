@@ -36,7 +36,7 @@ export class UserController {
     return { data: user };
   }
 
-  @UseInterceptors(FileInterceptor('avatar'), FileCleanupInterceptor)
+  @UseInterceptors(FileInterceptor('avatar'))
   @Put('me/avatar')
   async avatar(
     @CurrentUser() user: UserEntity,

@@ -11,6 +11,7 @@ import { AuthModule } from './auth/auth.module';
 import { JWTGuard } from './auth/jwt.guard';
 import { OTPGuard } from './auth/otp.guard';
 import { TokenErrorFilter } from './auth/token-error.filter';
+import { FileCleanupInterceptor } from './common/file-cleanup.interceptor';
 import { NotificationModule } from './notification/notification.module';
 import { UserModule } from './user/user.module';
 
@@ -58,6 +59,10 @@ import { UserModule } from './user/user.module';
     {
       provide: APP_INTERCEPTOR,
       useClass: ClassSerializerInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: FileCleanupInterceptor,
     },
     {
       provide: APP_PIPE,
