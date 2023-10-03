@@ -15,14 +15,14 @@ module.exports = {
     },
     colors: {
       // Primary colors
-      pr01: "EB5A3A",
-      pr02: "EE7458",
-      pr03: "F2937D",
+      pr01: "#EB5A3A",
+      pr02: "#EE7458",
+      pr03: "#F2937D",
 
       // Background colors
-      bg01: "0D0D0D",
-      bg02: "1E1E1E",
-      bg03: "262522",
+      bg01: "#0D0D0D",
+      bg02: "#1E1E1E",
+      bg03: "#262522",
 
       // Text colors
       tx01: "#B7AB98",
