@@ -6,13 +6,30 @@ import { Icon } from "@iconify/react";
 import { useState } from "react";
 import heroImg from "@/images/pics/hero-bg.jpg";
 
+// backend logos
+import dckCmp from "@/images/technologies/backend/docker-compose.png";
+import dck from "@/images/technologies/backend/docker.png";
+import nestJs from "@/images/technologies/backend/nestjs.png";
+import postSql from "@/images/technologies/backend/postgresql.png";
+import prisma from "@/images/technologies/backend/prisma.png";
+import socket from "@/images/technologies/backend/socket-io.png";
+import nodeJs from "@/images/technologies/backend/nodejs.png";
+import typeScript from "@/images/technologies/backend/typescript.png";
+// fronend logos
+import css from "@/images/technologies/frontend/css.png";
+import html from "@/images/technologies/frontend/html.png";
+import javascript from "@/images/technologies/frontend/javascript.png";
+import nextjs from "@/images/technologies/frontend/nextjs.png";
+import react from "@/images/technologies/frontend/react.png";
+import tailwindcss from "@/images/technologies/frontend/tailwindcss.png";
+
 export default function Home() {
   const [on, setOn] = useState(true);
 
   return (
     <main className="bg-bg01 ">
-      {/* Herro section */}
-      <header className="w-screen h-screen flex items-stretch mb-36">
+      {/* Hero section */}
+      <header className="h-screen flex items-stretch mb-36">
         {/* background image */}
         <Image
           alt="Mountains"
@@ -81,41 +98,104 @@ export default function Home() {
           </div>
 
           <p className="text-tx02 text-3xl font-medium tracking-[3px] uppercase">
-            Experience the timeless joy of <span className="text-tx06">ping pong</span> Enjoy a
-            straightforward gameplay that captures the essence of the classic
-            game while providing hours of entertainment
+            Experience the timeless joy of{" "}
+            <span className="text-tx06">ping pong</span> Enjoy a straightforward
+            gameplay that captures the essence of the classic game while
+            providing hours of entertainment
           </p>
         </div>
       </section>
-      
+
       {/* Features section */}
-      <section>
+      <section className="mb-36">
         <div className="w-3/4 mx-auto">
           <div className="text-tx01 text-lg font-light tracking-[4.80px] uppercase pb-8 border-b border-tx02">
-          Paddle Smash
+            Paddle Smash
           </div>
 
           <div className="text-tx02 text-3xl font-semibold tracking-[3px] uppercase py-6 border-b">
-          Accelerating <br />gameplay
+            Accelerating <br />
+            gameplay
           </div>
 
           <div className="text-tx02 text-3xl font-semibold tracking-[3px] uppercase py-6 border-b">
-          Classic <br />graphics
+            Classic <br />
+            graphics
           </div>
 
           <div className="text-tx02 text-3xl font-semibold tracking-[3px] uppercase py-6 border-b">
-          Simple <br />controls
+            Simple <br />
+            controls
           </div>
 
           <div className="text-tx02 text-3xl font-semibold tracking-[3px] uppercase py-6 border-b">
-          Multiplayer
+            Multiplayer
           </div>
 
           <div className="text-tx02 text-3xl font-semibold tracking-[3px] uppercase py-6 border-b">
-          Realistic <br />physics
+            Realistic <br />
+            physics
           </div>
         </div>
       </section>
+
+      {/* technology section */}
+      <section className="mb-36">
+        <div className="w-3/4 mx-auto flex items-center space-x-16 mb-10">
+          <div className="text-tx01 text-lg font-light tracking-[4.80px] uppercase mr-16 min-w-[180px]">
+            frontend
+          </div>
+
+          {[
+            nextjs,
+            javascript,
+            react,
+            socket,
+            tailwindcss,
+            typeScript,
+            html,
+            css,
+          ].map((v) => {
+            return (
+              <Image
+                className="aspect-square object-contain"
+                src={v}
+                alt="Logo"
+                width={50}
+              />
+            );
+          })}
+        </div>
+
+        <div className="w-3/4 mx-auto flex items-center space-x-16">
+          <div className="text-tx01 text-lg font-light tracking-[4.80px] uppercase mr-16 min-w-[180px]">
+            backend
+          </div>
+
+          {[
+            dckCmp,
+            dck,
+            nodeJs,
+            postSql,
+            prisma,
+            socket,
+            nestJs,
+            typeScript,
+          ].map((v) => {
+            return (
+              <Image
+                className="aspect-square object-contain"
+                src={v}
+                alt="Logo"
+                width={50}
+              />
+            );
+          })}
+        </div>
+      </section>
+
+      {/* team section */}
+      <section className="mb-36"></section>
     </main>
   );
 }
