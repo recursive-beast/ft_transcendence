@@ -30,30 +30,47 @@ import nextjs from "@/images/technologies/frontend/nextjs.png";
 import react from "@/images/technologies/frontend/react.png";
 import tailwindcss from "@/images/technologies/frontend/tailwindcss.png";
 // team picturs
-import aaitoma from "@/images/profile_images/aait-oma.jpeg";
-import melhous from "@/images/profile_images/mel-hous.jpeg";
-import mmessaou from "@/images/profile_images/mmessaou.jpeg";
-import syakoubi from "@/images/profile_images/syakoubi.jpeg";
+import aaitoma from "@/images/profile_images/aait-oma.png";
+import melhous from "@/images/profile_images/mel-hous.png";
+import mmessaou from "@/images/profile_images/mmessaou.png";
+import syakoubi from "@/images/profile_images/syakoubi.png";
+// scroll
+import {
+  useScroll,
+  motion,
+  useTransform,
+  useMotionTemplate,
+  useInView,
+} from "framer-motion";
 
 export default function Home() {
   const [on, setOn] = useState(true);
+
+  let { scrollYProgress } = useScroll();
+  let heroScroll = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
+
+  // let { scrollYProgress } = useScroll();
+  let footerScroll = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
 
   return (
     <main className="bg-bg01 pb-36">
       {/* Hero section */}
       <header className="h-screen flex items-stretch mb-36">
         {/* background image */}
-        <Image
-          alt="Mountains"
-          src={heroImg}
-          placeholder="blur"
-          quality={100}
-          fill
-          sizes="100vw"
-          style={{
-            objectFit: "cover",
-          }}
-        />
+        <motion.div style={{ heroScroll }} className="absolute inset-0">
+          <Image
+            className="opacity-60"
+            alt="Mountains"
+            src={heroImg}
+            placeholder="blur"
+            quality={100}
+            fill
+            sizes="100vw"
+            style={{
+              objectFit: "cover",
+            }}
+          />
+        </motion.div>
 
         {/*"the text" */}
         <div className="space-y-14 my-auto text-center mx-auto z-10">
@@ -363,10 +380,10 @@ export default function Home() {
             {/* profile pics */}
             <div className="w-fit h-full absolute right-10">
               <div className="w-fit py-10 sticky top-1/3 bottom-0">
-                <ul className="space-y-5 flex flex-col items-center">
+                <ul className="space-y-3 flex flex-col items-center">
                   <li>
                     <Image
-                      className="rounded-full opacity-100"
+                      className="rounded-full opacity-90"
                       src={mmessaou}
                       alt="Logo of the game"
                       width={100}
@@ -375,28 +392,28 @@ export default function Home() {
                   </li>
                   <li>
                     <Image
-                      className="rounded-full opacity-70"
+                      className="rounded-full opacity-60 grayscale"
                       src={syakoubi}
                       alt="Logo of the game"
-                      width={70}
+                      width={80}
                       quality={100}
                     />
                   </li>
                   <li>
                     <Image
-                      className="rounded-full opacity-70"
+                      className="rounded-full opacity-60 grayscale"
                       src={melhous}
                       alt="Logo of the game"
-                      width={70}
+                      width={80}
                       quality={100}
                     />
                   </li>
                   <li>
                     <Image
-                      className="rounded-full opacity-70"
+                      className="rounded-full opacity-60 grayscale"
                       src={aaitoma}
                       alt="Logo of the game"
-                      width={70}
+                      width={80}
                       quality={100}
                     />
                   </li>
@@ -408,21 +425,29 @@ export default function Home() {
       </section>
 
       {/* footer section */}
-      <section className="h-screen mb-36 relative">
-        <Image
-          alt="Mountains"
-          src={footerImg}
-          placeholder="blur"
-          quality={100}
-          fill
-          sizes="100vw"
-          style={{
-            objectFit: "cover",
-          }}
-        />
+      <section className="flex h-screen mb-36 relative">
+        <motion.div style={{ footerScroll }} className="absolute top-0 left-0 w-full h-full">
+          <Image
+            className="opacity-25"
+            alt="Mountains"
+            src={footerImg}
+            placeholder="blur"
+            quality={100}
+            fill
+            sizes="100vw"
+            style={{
+              objectFit: "cover",
+            }}
+          />
+        </motion.div>
 
-        <div className=" text-tx01 font-bold tracking-tighter text-9xl uppercase -space-y-2 w-3/4 mx-auto text-center">
-          chi l3ibatika b7al haka fiha chi klmat
+        <div className="z-10 space-y-14 my-auto text-center mx-auto">
+          <div className=" text-tx01 text-2xl font-light tracking-[4.80px] uppercase">
+            Paddle Smash
+          </div>
+          <div className=" text-tx01 font-extrabold tracking-tighter text-9xl uppercase -space-y-2 w-3/4 mx-auto text-center">
+            chi l3ibatika b7al haka fiha chi klmat
+          </div>
         </div>
       </section>
     </main>
