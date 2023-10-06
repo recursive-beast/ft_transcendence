@@ -11,7 +11,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={exa.className}>{children}</body>
+      <body className={exa.className + " no-scrollbar select-none"}>{children}</body>
     </html>
   )
 }
