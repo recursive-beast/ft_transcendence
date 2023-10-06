@@ -41,7 +41,33 @@ import {
   useTransform,
   useMotionTemplate,
   useInView,
+  useSpring,
 } from "framer-motion";
+// import clsx from "clsx";
+import { SplitText } from "@cyriacbr/react-split-text";
+import { useRef } from "react";
+
+function AnimatedLine(props) {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: props.offset,
+  });
+
+  const transformed = useTransform(scrollYProgress, [0, 1], [100, 0]);
+  const percent = useSpring(transformed, {
+    stiffness: 50,
+    damping: 30,
+    restDelta: 0.001,
+  });
+  const clipPath = useMotionTemplate`inset(-20% ${percent}% -20% 0)`;
+
+  return (
+    <motion.div style={{ clipPath }} ref={ref} className={props.className}>
+      {props.children}
+    </motion.div>
+  );
+}
 
 export default function Home() {
   const [on, setOn] = useState(true);
@@ -50,14 +76,14 @@ export default function Home() {
   let heroScroll = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
 
   // let { scrollYProgress } = useScroll();
-  let footerScroll = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
+  let footerScroll = useTransform(scrollYProgress, [0, 1], ["-70%", "0%"]);
 
   return (
-    <main className="bg-bg01 pb-36">
+    <main className="bg-bg01 pb-20">
       {/* Hero section */}
       <header className="h-screen flex items-stretch mb-36">
         {/* background image */}
-        <motion.div style={{ heroScroll }} className="absolute inset-0">
+        <motion.div className="absolute inset-0">
           <Image
             className="opacity-60"
             alt="Mountains"
@@ -131,12 +157,32 @@ export default function Home() {
             Paddle Smash
           </div>
 
-          <p className="text-tx02 text-3xl font-medium tracking-[3px] uppercase">
-            Experience the timeless joy of{" "}
-            <span className="text-tx06">ping pong</span> Enjoy a straightforward
-            gameplay that captures the essence of the classic game while
-            providing hours of entertainment
-          </p>
+          <div className="relative text-6xl font-bold ">
+            <div className="text-tx02">
+              <SplitText className=" space-y-3 -tracking-widest">
+                Experience the timeless joy of ping pong Enjoy a straightforward
+                gameplay that captures the essence of the classic game while
+                providing hours of entertainment.
+              </SplitText>
+            </div>
+
+            <div className="text-tx01">
+              <div className="absolute top-0 left-0 w-full h-full">
+                <SplitText
+                  LineWrapper={({ children }) => (
+                    <AnimatedLine offset={["start 80%", "end 70%"]}>
+                      {children}
+                    </AnimatedLine>
+                  )}
+                  className=" space-y-3 -tracking-widest"
+                >
+                  Experience the timeless joy of ping pong Enjoy a
+                  straightforward gameplay that captures the essence of the
+                  classic game while providing hours of entertainment.
+                </SplitText>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -147,28 +193,127 @@ export default function Home() {
             Paddle Smash
           </div>
 
-          <div className="text-tx02 text-3xl font-semibold tracking-[3px] uppercase py-6 border-b">
-            Accelerating <br />
-            gameplay
+          <div className="text-tx02 pt-4 pb-6 border-b">
+            <div className="relative text-6xl font-bold ">
+              <div className="text-tx02">
+                <div className=" space-y-3 -tracking-widest">Accelerating</div>
+                <div className=" space-y-3 -tracking-widest">gameplay</div>
+              </div>
+
+              <div className="text-tx01">
+                <div className="absolute top-0 left-0 w-full h-full">
+                  <AnimatedLine
+                    offset={["start 90%", "end 0%"]}
+                    className=" -tracking-widest"
+                  >
+                    Accelerating
+                  </AnimatedLine>
+                  <AnimatedLine
+                    offset={["start 90%", "end 0%"]}
+                    className=" -tracking-widest"
+                  >
+                    gameplay
+                  </AnimatedLine>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div className="text-tx02 text-3xl font-semibold tracking-[3px] uppercase py-6 border-b">
-            Classic <br />
-            graphics
+          <div className="text-tx02 pt-4 pb-6 border-b">
+            <div className="relative text-6xl font-bold ">
+              <div className="text-tx02">
+                <div className=" space-y-3 -tracking-widest">Clsasic</div>
+                <div className=" space-y-3 -tracking-widest">graphics</div>
+              </div>
+
+              <div className="text-tx01">
+                <div className="absolute top-0 left-0 w-full h-full">
+                  <AnimatedLine
+                    offset={["start 90%", "end 0%"]}
+                    className=" -tracking-widest"
+                  >
+                    Clsasic
+                  </AnimatedLine>
+                  <AnimatedLine
+                    offset={["start 90%", "end 0%"]}
+                    className=" -tracking-widest"
+                  >
+                    graphics
+                  </AnimatedLine>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div className="text-tx02 text-3xl font-semibold tracking-[3px] uppercase py-6 border-b">
-            Simple <br />
-            controls
+          <div className="text-tx02 pt-4 pb-6 border-b">
+            <div className="relative text-6xl font-bold ">
+              <div className="text-tx02">
+                <div className=" space-y-3 -tracking-widest">Simple</div>
+                <div className=" space-y-3 -tracking-widest">Controls</div>
+              </div>
+
+              <div className="text-tx01">
+                <div className="absolute top-0 left-0 w-full h-full">
+                  <AnimatedLine
+                    offset={["start 90%", "end 0%"]}
+                    className=" -tracking-widest"
+                  >
+                    Simple
+                  </AnimatedLine>
+                  <AnimatedLine
+                    offset={["start 90%", "end 0%"]}
+                    className=" -tracking-widest"
+                  >
+                    Controls
+                  </AnimatedLine>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div className="text-tx02 text-3xl font-semibold tracking-[3px] uppercase py-6 border-b">
-            Multiplayer
+          <div className="text-tx02 pt-4 pb-6 border-b">
+            <div className="relative text-6xl font-bold ">
+              <div className="text-tx02">
+                <div className=" space-y-3 -tracking-widest">Multiplayer</div>
+              </div>
+
+              <div className="text-tx01">
+                <div className="absolute top-0 left-0 w-full h-full">
+                  <AnimatedLine
+                    offset={["start 90%", "end 0%"]}
+                    className=" -tracking-widest"
+                  >
+                    Multiplayer
+                  </AnimatedLine>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div className="text-tx02 text-3xl font-semibold tracking-[3px] uppercase py-6 border-b">
-            Realistic <br />
-            physics
+          <div className="text-tx02 pt-4 pb-6 border-b">
+            <div className="relative text-6xl font-bold ">
+              <div className="text-tx02">
+                <div className=" space-y-3 -tracking-widest">Realistic</div>
+                <div className=" space-y-3 -tracking-widest">physics</div>
+              </div>
+
+              <div className="text-tx01">
+                <div className="absolute top-0 left-0 w-full h-full">
+                  <AnimatedLine
+                    offset={["start 90%", "end 0%"]}
+                    className=" -tracking-widest"
+                  >
+                    Realistic
+                  </AnimatedLine>
+                  <AnimatedLine
+                    offset={["start 90%", "end 0%"]}
+                    className=" -tracking-widest"
+                  >
+                    physics
+                  </AnimatedLine>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -229,7 +374,7 @@ export default function Home() {
       </section>
 
       {/* team section */}
-      <section className="mb-36">
+      <section className="mb-36 bg-bg01">
         <div className="w-3/4 mx-auto flex flex-col mb-36">
           <div className="text-tx01 text-lg font-light tracking-[4.80px] uppercase pb-8 border-b border-tx02">
             team
@@ -238,9 +383,28 @@ export default function Home() {
           {/* team info */}
           <div className="flex flex-col relative">
             <div className="pb-24 border-b border-tx02">
-              <div className="text-tx02 text-5xl font-medium tracking-[3px] uppercase mt-16 mb-8 leading-normal">
-                mohammed <br />
-                <span className="ml-40">messaoudi</span>
+              <div className="relative text-5xl font-medium uppercase mt-16 mb-8 leading-normal -tracking-widest">
+                <div className="text-tx02">
+                  <div className=" space-y-3">mohammed</div>
+                  <div className=" space-y-3 ml-40">messaoudi</div>
+                </div>
+
+                <div className="text-tx01">
+                  <div className="absolute top-0 left-0 w-full h-full ">
+                    <AnimatedLine
+                      offset={["start 90%", "end 0%"]}
+                      className=" -tracking-widest "
+                    >
+                      mohammed
+                    </AnimatedLine>
+                    <AnimatedLine
+                      offset={["start 90%", "end 0%"]}
+                      className=" -tracking-widest ml-40"
+                    >
+                      messaoudi
+                    </AnimatedLine>
+                  </div>
+                </div>
               </div>
 
               <div className="text-tx01 text-lg font-light tracking-[4.80px] uppercase mb-8">
@@ -273,9 +437,28 @@ export default function Home() {
             </div>
 
             <div className="pb-24 border-b border-tx02">
-              <div className="text-tx02 text-5xl font-medium tracking-[3px] uppercase mt-16 mb-8 leading-normal">
-                soufian <br />
-                <span className="ml-40">yakoubi</span>
+              <div className="relative text-5xl font-medium uppercase mt-16 mb-8 leading-normal -tracking-widest">
+                <div className="text-tx02">
+                  <div className=" space-y-3">soufian</div>
+                  <div className=" space-y-3 ml-40">yakoubi</div>
+                </div>
+
+                <div className="text-tx01">
+                  <div className="absolute top-0 left-0 w-full h-full ">
+                    <AnimatedLine
+                      offset={["start 90%", "end 0%"]}
+                      className=" -tracking-widest "
+                    >
+                      soufian
+                    </AnimatedLine>
+                    <AnimatedLine
+                      offset={["start 90%", "end 0%"]}
+                      className=" -tracking-widest ml-40"
+                    >
+                      yakoubi
+                    </AnimatedLine>
+                  </div>
+                </div>
               </div>
 
               <div className="text-tx01 text-lg font-light tracking-[4.80px] uppercase mb-8">
@@ -308,9 +491,28 @@ export default function Home() {
             </div>
 
             <div className="pb-24 border-b border-tx02">
-              <div className="text-tx02 text-5xl font-medium tracking-[3px] uppercase mt-16 mb-8 leading-normal">
-                Mohammed Badr <br />
-                <span className="ml-40">Eddine El Housni</span>
+              <div className="relative text-5xl font-medium uppercase mt-16 mb-8 leading-normal -tracking-widest">
+                <div className="text-tx02">
+                  <div className=" space-y-3">Mohammed Badr</div>
+                  <div className=" space-y-3 ml-40">Eddine El Housni</div>
+                </div>
+
+                <div className="text-tx01">
+                  <div className="absolute top-0 left-0 w-full h-full ">
+                    <AnimatedLine
+                      offset={["start 90%", "end 0%"]}
+                      className=" -tracking-widest "
+                    >
+                      Mohammed Badr
+                    </AnimatedLine>
+                    <AnimatedLine
+                      offset={["start 90%", "end 0%"]}
+                      className=" -tracking-widest ml-40"
+                    >
+                      Eddine El Housni
+                    </AnimatedLine>
+                  </div>
+                </div>
               </div>
 
               <div className="text-tx01 text-lg font-light tracking-[4.80px] uppercase mb-8">
@@ -342,10 +544,29 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="pb-24 border-b border-tx02">
-              <div className="text-tx02 text-5xl font-medium tracking-[3px] uppercase mt-16 mb-8 leading-normal">
-                Abdeljalil <br />
-                <span className="ml-40">Ait Omar</span>
+            <div className="pb-24 border-b border-tx02">             
+              <div className="relative text-5xl font-medium uppercase mt-16 mb-8 leading-normal -tracking-widest">
+                <div className="text-tx02">
+                  <div className=" space-y-3">Abdeljalil</div>
+                  <div className=" space-y-3 ml-40">Ait Omar</div>
+                </div>
+
+                <div className="text-tx01">
+                  <div className="absolute top-0 left-0 w-full h-full ">
+                    <AnimatedLine
+                      offset={["start 90%", "end 0%"]}
+                      className=" -tracking-widest "
+                    >
+                      Abdeljalil
+                    </AnimatedLine>
+                    <AnimatedLine
+                      offset={["start 90%", "end 0%"]}
+                      className=" -tracking-widest ml-40"
+                    >
+                      Ait Omar
+                    </AnimatedLine>
+                  </div>
+                </div>
               </div>
 
               <div className="text-tx01 text-lg font-light tracking-[4.80px] uppercase mb-8">
@@ -425,10 +646,10 @@ export default function Home() {
       </section>
 
       {/* footer section */}
-      <section className="flex h-screen mb-36 relative">
-        <motion.div style={{ footerScroll }} className="absolute top-0 left-0 w-full h-full">
+      <section className="flex flex-col h-screen mb-20 relative">
+        <motion.div className="absolute top-0 left-0 w-full h-full">
           <Image
-            className="opacity-25"
+            className="opacity-40"
             alt="Mountains"
             src={footerImg}
             placeholder="blur"
@@ -441,12 +662,32 @@ export default function Home() {
           />
         </motion.div>
 
-        <div className="z-10 space-y-14 my-auto text-center mx-auto">
-          <div className=" text-tx01 text-2xl font-light tracking-[4.80px] uppercase">
+        <div className="z-10 my-auto text-center mx-auto">
+          <div className=" text-tx01 text-2xl font-light tracking-[4.80px] uppercase mb-20">
             Paddle Smash
           </div>
-          <div className=" text-tx01 font-extrabold tracking-tighter text-9xl uppercase -space-y-2 w-3/4 mx-auto text-center">
+          <div className=" text-tx01 font-extrabold tracking-tighter text-9xl uppercase -space-y-2 w-3/4 mx-auto text-center mb-32">
             chi l3ibatika b7al haka fiha chi klmat
+          </div>
+
+          <button
+            className="text-center text-tx01 text-xl font-extralight tracking-[4.80px] uppercase border border-tx01 rounded-full px-10 py-1
+                     hover:text-tx03 hover:bg-tx01 ease-linear transition-colors duration-[400ms] "
+          >
+            Start
+          </button>
+        </div>
+      </section>
+
+      {/* footer section */}
+      <section className="flex">
+        <div className="w-3/6 mx-auto space-y-5 my-5">
+          <div className="text-tx01 font-light text-5xl tracking-[5px]">
+            1337
+          </div>
+
+          <div className="text-tx02 font-light text-5xl tracking-[3px] uppercase">
+            Future Is Loading...
           </div>
         </div>
       </section>
