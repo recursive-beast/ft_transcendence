@@ -54,12 +54,12 @@ function AnimatedLine(props) {
     offset: props.offset,
   });
 
-  const transformed = useTransform(scrollYProgress, [0, 1], [100, 0]);
-  const percent = useSpring(transformed, {
-    stiffness: 50,
-    damping: 30,
-    restDelta: 0.001,
-  });
+  const percent = useTransform(scrollYProgress, [0, 1], [100, 0]);
+  // const percent = useSpring(transformed, {
+  //   stiffness: 50,
+  //   damping: 30,
+  //   restDelta: 0.001,
+  // });
   const clipPath = useMotionTemplate`inset(-20% ${percent}% -20% 0)`;
 
   return (
@@ -69,18 +69,101 @@ function AnimatedLine(props) {
   );
 }
 
-export default function Home() {
-  const [on, setOn] = useState(true);
-
-  let { scrollYProgress } = useScroll();
-  let heroScroll = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
-
-  // let { scrollYProgress } = useScroll();
-  let footerScroll = useTransform(scrollYProgress, [0, 1], ["-70%", "0%"]);
-
+function Feature(props) {
   return (
-    <main className="bg-bg01 pb-20">
-      {/* Hero section */}
+    <div className="text-tx02 pt-4 pb-6 border-b">
+      <div className="relative text-4xl font-semibold sm:text-5xl md:text-6xl 2xl:text-7xl">
+        <div className="text-tx02">
+          {props.txt1 && <div className=" space-y-3">{props.txt1}</div>}
+          {props.txt2 && <div className=" space-y-3">{props.txt2}</div>}
+        </div>
+
+        <div className="text-tx01">
+          <div className="absolute top-0 left-0 w-full h-full">
+            {props.txt1 && (
+              <AnimatedLine offset={["start 90%", "end 0%"]}>
+                {props.txt1}
+              </AnimatedLine>
+            )}
+            {props.txt2 && (
+              <AnimatedLine offset={["start 90%", "end 0%"]}>
+                {props.txt2}
+              </AnimatedLine>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TeamMember(props) {
+  return (
+    <div className="pb-14 mt-5 border-b border-tx02">
+      <div className="relative text-xl font-medium uppercase mt-8 mb-8 leading-8 sm:text-2xl md:text-3xl xl:text-4xl 2xl:text-5xl xl:leading-tight">
+        <div className="text-tx02">
+          <div className=" space-y-3">{props.first}</div>
+          <div className=" space-y-3 ml-10 xl:ml-20">{props.last}</div>
+        </div>
+
+        <div className="text-tx01">
+          <div className="absolute top-0 left-0 w-full h-full ">
+            <AnimatedLine offset={["start 90%", "end 0%"]} className="">
+              {props.first}
+            </AnimatedLine>
+            <AnimatedLine
+              offset={["start 90%", "end 0%"]}
+              className=" ml-10 xl:ml-20"
+            >
+              {props.last}
+            </AnimatedLine>
+          </div>
+        </div>
+      </div>
+
+      <div className="text-tx01 font-light tracking-widest uppercase text-sm sm:text-base mb-6">
+        {props.role}
+      </div>
+
+      <div className="space-x-5 lg:space-x-7 2xl:space-x-9">
+        <button>
+          <Image
+            className="h-7 w-7 lg:h-8 lg:w-8 2xl:h-10 2xl:w-10"
+            src={intrat}
+            alt="intrat logo"
+            width={40}
+            height={40}
+          />
+        </button>
+
+        <button>
+          <Image
+            className="h-7 w-7 lg:h-8 lg:w-8 2xl:h-10 2xl:w-10"
+            src={git}
+            alt="git hub logo"
+            width={40}
+            height={40}
+          />
+        </button>
+
+        <button>
+          <Image
+            className="h-7 w-7 lg:h-8 lg:w-8 2xl:h-10 2xl:w-10"
+            src={linkedin}
+            alt="Linkedin logo"
+            width={40}
+            height={40}
+          />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function HeroSection() {
+  const [on, setOn] = useState(true);
+  return (
+    <>
       <header className="h-screen flex items-stretch mb-36">
         {/* background image */}
         <motion.div className="absolute inset-0">
@@ -99,11 +182,11 @@ export default function Home() {
         </motion.div>
 
         {/*"the text" */}
-        <div className="space-y-14 my-auto text-center mx-auto z-10">
-          <div className=" text-tx01 text-xl font-extralight tracking-[4.80px] uppercase">
+        <div className="space-y-4 my-auto text-center mx-auto z-10">
+          <div className="text-tx01 font-normal uppercase text-sm tracking-[6px] md:text-lg xl:text-xl 2xl:text-2xl">
             Paddle Smash
           </div>
-          <div className=" text-tx01 font-bold tracking-tighter text-9xl uppercase -space-y-2">
+          <div className=" text-tx01 font-semibold uppercase -tracking-wider text-7xl -space-y-2 sm:text-8xl lg:text-9xl 2xl:text-[120px]">
             <div>come</div>
             <div>and</div>
             <div className="text-tx06">smash</div>
@@ -117,8 +200,9 @@ export default function Home() {
       <section className="h-screen fixed flex items-stretch justify-between mb-36 z-10">
         {/* left side logo and start button */}
         <div className="flex justify-between fixed h-full top-0 left-0">
-          <div className="flex flex-col justify-between my-20 ml-16">
+          <div className="flex flex-col justify-between my-6 ml-3 lg:my-8 xl:my-12 2xl:my-20 md:ml-6 xl:ml-8 2xl:ml-14">
             <Image
+              className="w-14 lg:w-16 xl:w-20 2xl:w-24"
               src={logoPic}
               alt="Logo of the game"
               width={100}
@@ -126,205 +210,98 @@ export default function Home() {
             />
             <button className="group flex items-center ml-6">
               <Icon
-                className="text-tx01 group-hover:text-tx02 transition duration-500 mr-2"
+                className="text-tx01 mr-2 w-6 lg:w-7 xl:w-8 2xl:w-10 lg:transition lg:duration-500 lg:group-hover:text-tx02"
                 icon="solar:gamepad-broken"
                 width="36"
               />
-              <div className=" text-tx01 font-extralight tracking-[4.80px] uppercase opacity-0 group-hover:opacity-100 transition duration-700">
+              <div className=" text-tx01 font-light tracking-normal uppercase text-xs md:text-sm 2xl:text-lg lg:opacity-0 lg:group-hover:opacity-100 lg:transition lg:duration-700">
                 start
               </div>
             </button>
           </div>
         </div>
+
         {/* right side sound button */}
-        <div className="flex -rotate-90 mb-32 mt-auto space-x-2 mr-6 fixed right-0 bottom-0">
+        <div className="flex -rotate-90 mb-20 mt-auto space-x-2 -mr-6 fixed right-0 bottom-0 xl:mr-1 2xl:mb-28">
           <button
             onClick={() => setOn(!on)}
-            className=" text-tx02 text-sm font-light tracking-[3px] uppercase"
+            className=" text-tx02 text-xs font-medium tracking-normal uppercase lg:text-sm 2xl:text-base"
           >
             sound
           </button>
-          <div className=" text-tx01 text-sm font-light tracking-[3px] uppercase w-10">
+          <div className=" text-tx01 text-xs font-medium tracking-normal uppercase w-10 lg:text-sm 2xl:text-base">
             {on ? "on" : "off"}
           </div>
         </div>
       </section>
+    </>
+  );
+}
 
-      {/* description section */}
-      <section className="mb-36">
-        <div className="w-3/4 mx-auto">
-          <div className="text-tx01 text-lg font-light tracking-[4.80px] uppercase mb-8">
-            Paddle Smash
+function DescriptionSection() {
+  return (
+    <section className="mb-36">
+      <div className="w-11/12 mx-auto sm:w-10/12 lg:w-3/4 xl:w-8/12">
+        <div className="text-tx01 text-sm font-medium tracking-[6px] uppercase mb-5">
+          Paddle Smash
+        </div>
+
+        <div className="relative text-4xl font-semibold sm:text-5xl md:text-6xl 2xl:text-7xl">
+          <div className="text-tx02">
+            <SplitText className=" md:space-y-1">
+              Experience timeless ping pong joy with classic gameplay for hours
+              of entertainment.
+            </SplitText>
           </div>
 
-          <div className="relative text-6xl font-bold ">
-            <div className="text-tx02">
-              <SplitText className=" space-y-3 -tracking-widest">
-                Experience the timeless joy of ping pong Enjoy a straightforward
-                gameplay that captures the essence of the classic game while
-                providing hours of entertainment.
+          <div className="text-tx01">
+            <div className="absolute top-0 left-0 w-full h-full">
+              <SplitText
+                LineWrapper={({ children }) => (
+                  <AnimatedLine offset={["start 85%", "end 85%"]}>
+                    {children}
+                  </AnimatedLine>
+                )}
+                className=" md:space-y-1"
+              >
+                Experience timeless ping pong joy with classic gameplay for
+                hours of entertainment.
               </SplitText>
             </div>
-
-            <div className="text-tx01">
-              <div className="absolute top-0 left-0 w-full h-full">
-                <SplitText
-                  LineWrapper={({ children }) => (
-                    <AnimatedLine offset={["start 80%", "end 70%"]}>
-                      {children}
-                    </AnimatedLine>
-                  )}
-                  className=" space-y-3 -tracking-widest"
-                >
-                  Experience the timeless joy of ping pong Enjoy a
-                  straightforward gameplay that captures the essence of the
-                  classic game while providing hours of entertainment.
-                </SplitText>
-              </div>
-            </div>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
+  );
+}
 
-      {/* Features section */}
-      <section className="mb-36">
-        <div className="w-3/4 mx-auto">
-          <div className="text-tx01 text-lg font-light tracking-[4.80px] uppercase pb-8 border-b border-tx02">
-            Paddle Smash
-          </div>
-
-          <div className="text-tx02 pt-4 pb-6 border-b">
-            <div className="relative text-6xl font-bold ">
-              <div className="text-tx02">
-                <div className=" space-y-3 -tracking-widest">Accelerating</div>
-                <div className=" space-y-3 -tracking-widest">gameplay</div>
-              </div>
-
-              <div className="text-tx01">
-                <div className="absolute top-0 left-0 w-full h-full">
-                  <AnimatedLine
-                    offset={["start 90%", "end 0%"]}
-                    className=" -tracking-widest"
-                  >
-                    Accelerating
-                  </AnimatedLine>
-                  <AnimatedLine
-                    offset={["start 90%", "end 0%"]}
-                    className=" -tracking-widest"
-                  >
-                    gameplay
-                  </AnimatedLine>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="text-tx02 pt-4 pb-6 border-b">
-            <div className="relative text-6xl font-bold ">
-              <div className="text-tx02">
-                <div className=" space-y-3 -tracking-widest">Clsasic</div>
-                <div className=" space-y-3 -tracking-widest">graphics</div>
-              </div>
-
-              <div className="text-tx01">
-                <div className="absolute top-0 left-0 w-full h-full">
-                  <AnimatedLine
-                    offset={["start 90%", "end 0%"]}
-                    className=" -tracking-widest"
-                  >
-                    Clsasic
-                  </AnimatedLine>
-                  <AnimatedLine
-                    offset={["start 90%", "end 0%"]}
-                    className=" -tracking-widest"
-                  >
-                    graphics
-                  </AnimatedLine>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="text-tx02 pt-4 pb-6 border-b">
-            <div className="relative text-6xl font-bold ">
-              <div className="text-tx02">
-                <div className=" space-y-3 -tracking-widest">Simple</div>
-                <div className=" space-y-3 -tracking-widest">Controls</div>
-              </div>
-
-              <div className="text-tx01">
-                <div className="absolute top-0 left-0 w-full h-full">
-                  <AnimatedLine
-                    offset={["start 90%", "end 0%"]}
-                    className=" -tracking-widest"
-                  >
-                    Simple
-                  </AnimatedLine>
-                  <AnimatedLine
-                    offset={["start 90%", "end 0%"]}
-                    className=" -tracking-widest"
-                  >
-                    Controls
-                  </AnimatedLine>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="text-tx02 pt-4 pb-6 border-b">
-            <div className="relative text-6xl font-bold ">
-              <div className="text-tx02">
-                <div className=" space-y-3 -tracking-widest">Multiplayer</div>
-              </div>
-
-              <div className="text-tx01">
-                <div className="absolute top-0 left-0 w-full h-full">
-                  <AnimatedLine
-                    offset={["start 90%", "end 0%"]}
-                    className=" -tracking-widest"
-                  >
-                    Multiplayer
-                  </AnimatedLine>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="text-tx02 pt-4 pb-6 border-b">
-            <div className="relative text-6xl font-bold ">
-              <div className="text-tx02">
-                <div className=" space-y-3 -tracking-widest">Realistic</div>
-                <div className=" space-y-3 -tracking-widest">physics</div>
-              </div>
-
-              <div className="text-tx01">
-                <div className="absolute top-0 left-0 w-full h-full">
-                  <AnimatedLine
-                    offset={["start 90%", "end 0%"]}
-                    className=" -tracking-widest"
-                  >
-                    Realistic
-                  </AnimatedLine>
-                  <AnimatedLine
-                    offset={["start 90%", "end 0%"]}
-                    className=" -tracking-widest"
-                  >
-                    physics
-                  </AnimatedLine>
-                </div>
-              </div>
-            </div>
-          </div>
+function FeaturesSection() {
+  return (
+    <section className="mb-36">
+      <div className="w-11/12 mx-auto sm:w-10/12 lg:w-3/4 xl:w-8/12">
+        <div className="text-tx01 text-sm font-medium tracking-[6px] uppercase mb-5 pb-6 border-b border-tx02">
+          Features
         </div>
-      </section>
 
-      {/* technology section */}
-      <section className="mb-36">
-        <div className="w-3/4 mx-auto flex items-center space-x-16 mb-10">
-          <div className="text-tx01 text-lg font-light tracking-[4.80px] uppercase mr-16 min-w-[180px]">
-            frontend
-          </div>
+        <Feature txt1="Accelerating" txt2="gameplay" />
+        <Feature txt1="classic" txt2="graphics" />
+        <Feature txt1="Simple" txt2="Controls" />
+        <Feature txt1="Realistic" txt2="physics" />
+        <Feature txt1="Multiplayer" />
+      </div>
+    </section>
+  );
+}
 
+function TechnologySection() {
+  return (
+    <section className="mb-36">
+      <div className="flex flex-col mb-10 w-11/12 mx-auto sm:w-10/12 lg:w-3/4 xl:w-8/12">
+        <div className="text-tx01 text-sm font-medium tracking-[6px] uppercase mb-5 ">
+          frontend
+        </div>
+
+        <div className="flex flex-wrap gap-4 sm:gap-6 lg:gap-8 xl:gap-10 2xl:gap-14">
           {[
             nextjs,
             javascript,
@@ -337,7 +314,7 @@ export default function Home() {
           ].map((v) => {
             return (
               <Image
-                className="aspect-square object-contain"
+                className="aspect-square object-contain w-10 sm:w-14 xl:w-16"
                 src={v}
                 alt="Logo"
                 width={60}
@@ -345,12 +322,14 @@ export default function Home() {
             );
           })}
         </div>
+      </div>
 
-        <div className="w-3/4 mx-auto flex items-center space-x-16">
-          <div className="text-tx01 text-lg font-light tracking-[4.80px] uppercase mr-16 min-w-[180px]">
-            backend
-          </div>
+      <div className="flex flex-col mb-10 w-11/12 mx-auto sm:w-10/12 lg:w-3/4 xl:w-8/12">
+        <div className="text-tx01 text-sm font-medium tracking-[6px] uppercase mb-5 ">
+          backend
+        </div>
 
+        <div className="flex flex-wrap gap-4 sm:gap-6 lg:gap-8 xl:gap-10 2xl:gap-14">
           {[
             dckCmp,
             dck,
@@ -363,7 +342,7 @@ export default function Home() {
           ].map((v) => {
             return (
               <Image
-                className="aspect-square object-contain"
+                className="aspect-square object-contain w-10 sm:w-14 xl:w-16"
                 src={v}
                 alt="Logo"
                 width={60}
@@ -371,326 +350,91 @@ export default function Home() {
             );
           })}
         </div>
-      </section>
+      </div>
+    </section>
+  );
+}
 
-      {/* team section */}
-      <section className="mb-36 bg-bg01">
-        <div className="w-3/4 mx-auto flex flex-col mb-36">
-          <div className="text-tx01 text-lg font-light tracking-[4.80px] uppercase pb-8 border-b border-tx02">
-            team
-          </div>
+function TeamSection() {
+  return (
+    <section className="mb-36 bg-bg01">
+      <div className="w-11/12 mx-auto sm:w-10/12 lg:w-3/4 xl:w-8/12">
+        <div className="text-tx01 text-sm font-medium tracking-[6px] uppercase pb-8 border-b border-tx02 ">
+          team
+        </div>
+      </div>
 
-          {/* team info */}
-          <div className="flex flex-col relative">
-            <div className="pb-24 border-b border-tx02">
-              <div className="relative text-5xl font-medium uppercase mt-16 mb-8 leading-normal -tracking-widest">
-                <div className="text-tx02">
-                  <div className=" space-y-3">mohammed</div>
-                  <div className=" space-y-3 ml-40">messaoudi</div>
-                </div>
+      <div className="relative flex flex-col w-11/12 mx-auto sm:w-10/12 lg:w-3/4 xl:w-8/12">
+        <TeamMember first="mohammed" last="messaoudi" role="ui/ux & Frontend" />
+        <TeamMember
+          first="soufian"
+          last="yakoubi"
+          role="backend & team manager"
+        />
+        <TeamMember
+          first="Mohammed Badr"
+          last="Eddine El Housni"
+          role="full stack"
+        />
+        <TeamMember first="Abdeljalil" last="Ait Omar" role="full stack" />
 
-                <div className="text-tx01">
-                  <div className="absolute top-0 left-0 w-full h-full ">
-                    <AnimatedLine
-                      offset={["start 90%", "end 0%"]}
-                      className=" -tracking-widest "
-                    >
-                      mohammed
-                    </AnimatedLine>
-                    <AnimatedLine
-                      offset={["start 90%", "end 0%"]}
-                      className=" -tracking-widest ml-40"
-                    >
-                      messaoudi
-                    </AnimatedLine>
-                  </div>
-                </div>
-              </div>
-
-              <div className="text-tx01 text-lg font-light tracking-[4.80px] uppercase mb-8">
-                ui/ux & Frontend
-              </div>
-
-              <div className="space-x-10">
-                <button>
-                  <Image
-                    src={intrat}
-                    alt="intrat logo"
-                    width={40}
-                    height={40}
-                  />
-                </button>
-
-                <button>
-                  <Image src={git} alt="git hub logo" width={40} height={40} />
-                </button>
-
-                <button>
-                  <Image
-                    src={linkedin}
-                    alt="Linkedin logo"
-                    width={40}
-                    height={40}
-                  />
-                </button>
-              </div>
-            </div>
-
-            <div className="pb-24 border-b border-tx02">
-              <div className="relative text-5xl font-medium uppercase mt-16 mb-8 leading-normal -tracking-widest">
-                <div className="text-tx02">
-                  <div className=" space-y-3">soufian</div>
-                  <div className=" space-y-3 ml-40">yakoubi</div>
-                </div>
-
-                <div className="text-tx01">
-                  <div className="absolute top-0 left-0 w-full h-full ">
-                    <AnimatedLine
-                      offset={["start 90%", "end 0%"]}
-                      className=" -tracking-widest "
-                    >
-                      soufian
-                    </AnimatedLine>
-                    <AnimatedLine
-                      offset={["start 90%", "end 0%"]}
-                      className=" -tracking-widest ml-40"
-                    >
-                      yakoubi
-                    </AnimatedLine>
-                  </div>
-                </div>
-              </div>
-
-              <div className="text-tx01 text-lg font-light tracking-[4.80px] uppercase mb-8">
-                backend & team manager
-              </div>
-
-              <div className="space-x-10">
-                <button>
-                  <Image
-                    src={intrat}
-                    alt="intrat logo"
-                    width={40}
-                    height={40}
-                  />
-                </button>
-
-                <button>
-                  <Image src={git} alt="git hub logo" width={40} height={40} />
-                </button>
-
-                <button>
-                  <Image
-                    src={linkedin}
-                    alt="Linkedin logo"
-                    width={40}
-                    height={40}
-                  />
-                </button>
-              </div>
-            </div>
-
-            <div className="pb-24 border-b border-tx02">
-              <div className="relative text-5xl font-medium uppercase mt-16 mb-8 leading-normal -tracking-widest">
-                <div className="text-tx02">
-                  <div className=" space-y-3">Mohammed Badr</div>
-                  <div className=" space-y-3 ml-40">Eddine El Housni</div>
-                </div>
-
-                <div className="text-tx01">
-                  <div className="absolute top-0 left-0 w-full h-full ">
-                    <AnimatedLine
-                      offset={["start 90%", "end 0%"]}
-                      className=" -tracking-widest "
-                    >
-                      Mohammed Badr
-                    </AnimatedLine>
-                    <AnimatedLine
-                      offset={["start 90%", "end 0%"]}
-                      className=" -tracking-widest ml-40"
-                    >
-                      Eddine El Housni
-                    </AnimatedLine>
-                  </div>
-                </div>
-              </div>
-
-              <div className="text-tx01 text-lg font-light tracking-[4.80px] uppercase mb-8">
-                full stack
-              </div>
-
-              <div className="space-x-10">
-                <button>
-                  <Image
-                    src={intrat}
-                    alt="intrat logo"
-                    width={40}
-                    height={40}
-                  />
-                </button>
-
-                <button>
-                  <Image src={git} alt="git hub logo" width={40} height={40} />
-                </button>
-
-                <button>
-                  <Image
-                    src={linkedin}
-                    alt="Linkedin logo"
-                    width={40}
-                    height={40}
-                  />
-                </button>
-              </div>
-            </div>
-
-            <div className="pb-24 border-b border-tx02">             
-              <div className="relative text-5xl font-medium uppercase mt-16 mb-8 leading-normal -tracking-widest">
-                <div className="text-tx02">
-                  <div className=" space-y-3">Abdeljalil</div>
-                  <div className=" space-y-3 ml-40">Ait Omar</div>
-                </div>
-
-                <div className="text-tx01">
-                  <div className="absolute top-0 left-0 w-full h-full ">
-                    <AnimatedLine
-                      offset={["start 90%", "end 0%"]}
-                      className=" -tracking-widest "
-                    >
-                      Abdeljalil
-                    </AnimatedLine>
-                    <AnimatedLine
-                      offset={["start 90%", "end 0%"]}
-                      className=" -tracking-widest ml-40"
-                    >
-                      Ait Omar
-                    </AnimatedLine>
-                  </div>
-                </div>
-              </div>
-
-              <div className="text-tx01 text-lg font-light tracking-[4.80px] uppercase mb-8">
-                full stack
-              </div>
-
-              <div className="space-x-10">
-                <button>
-                  <Image
-                    src={intrat}
-                    alt="intrat logo"
-                    width={40}
-                    height={40}
-                  />
-                </button>
-
-                <button>
-                  <Image src={git} alt="git hub logo" width={40} height={40} />
-                </button>
-
-                <button>
-                  <Image
-                    src={linkedin}
-                    alt="Linkedin logo"
-                    width={40}
-                    height={40}
-                  />
-                </button>
-              </div>
-            </div>
-
-            {/* profile pics */}
-            <div className="w-fit h-full absolute right-10">
-              <div className="w-fit py-10 sticky top-1/3 bottom-0">
-                <ul className="space-y-3 flex flex-col items-center">
-                  <li>
-                    <Image
-                      className="rounded-full opacity-90"
-                      src={mmessaou}
-                      alt="Logo of the game"
-                      width={100}
-                      quality={100}
-                    />
-                  </li>
-                  <li>
-                    <Image
-                      className="rounded-full opacity-60 grayscale"
-                      src={syakoubi}
-                      alt="Logo of the game"
-                      width={80}
-                      quality={100}
-                    />
-                  </li>
-                  <li>
-                    <Image
-                      className="rounded-full opacity-60 grayscale"
-                      src={melhous}
-                      alt="Logo of the game"
-                      width={80}
-                      quality={100}
-                    />
-                  </li>
-                  <li>
-                    <Image
-                      className="rounded-full opacity-60 grayscale"
-                      src={aaitoma}
-                      alt="Logo of the game"
-                      width={80}
-                      quality={100}
-                    />
-                  </li>
-                </ul>
-              </div>
-            </div>
+        <div className="w-fit h-full absolute right-3">
+          <div className="w-fit py-5 sticky top-1/3 bottom-0">
+            <ul className="space-y-2 flex flex-col items-center">
+              <li>
+                <Image
+                  className="rounded-full opacity-90 w-16 xl:w-20"
+                  src={mmessaou}
+                  alt="Logo of the game"
+                  width={100}
+                  quality={100}
+                />
+              </li>
+              <li>
+                <Image
+                  className="rounded-full opacity-60 w-12 xl:w-16 grayscale"
+                  src={syakoubi}
+                  alt="Logo of the game"
+                  width={80}
+                  quality={100}
+                />
+              </li>
+              <li>
+                <Image
+                  className="rounded-full opacity-60 w-12 xl:w-16 grayscale"
+                  src={melhous}
+                  alt="Logo of the game"
+                  width={80}
+                  quality={100}
+                />
+              </li>
+              <li>
+                <Image
+                  className="rounded-full opacity-60 w-12 xl:w-16 grayscale"
+                  src={aaitoma}
+                  alt="Logo of the game"
+                  width={80}
+                  quality={100}
+                />
+              </li>
+            </ul>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
+  );
+}
 
-      {/* footer section */}
-      <section className="flex flex-col h-screen mb-20 relative">
-        <motion.div className="absolute top-0 left-0 w-full h-full">
-          <Image
-            className="opacity-40"
-            alt="Mountains"
-            src={footerImg}
-            placeholder="blur"
-            quality={100}
-            fill
-            sizes="100vw"
-            style={{
-              objectFit: "cover",
-            }}
-          />
-        </motion.div>
+export default function Home() {
+  const [on, setOn] = useState(true);
 
-        <div className="z-10 my-auto text-center mx-auto">
-          <div className=" text-tx01 text-2xl font-light tracking-[4.80px] uppercase mb-20">
-            Paddle Smash
-          </div>
-          <div className=" text-tx01 font-extrabold tracking-tighter text-9xl uppercase -space-y-2 w-3/4 mx-auto text-center mb-32">
-            chi l3ibatika b7al haka fiha chi klmat
-          </div>
-
-          <button
-            className="text-center text-tx01 text-xl font-extralight tracking-[4.80px] uppercase border border-tx01 rounded-full px-10 py-1
-                     hover:text-tx03 hover:bg-tx01 ease-linear transition-colors duration-[400ms] "
-          >
-            Start
-          </button>
-        </div>
-      </section>
-
-      {/* footer section */}
-      <section className="flex">
-        <div className="w-3/6 mx-auto space-y-5 my-5">
-          <div className="text-tx01 font-light text-5xl tracking-[5px]">
-            1337
-          </div>
-
-          <div className="text-tx02 font-light text-5xl tracking-[3px] uppercase">
-            Future Is Loading...
-          </div>
-        </div>
-      </section>
+  return (
+    <main className="bg-bg01 pb-20">
+      <HeroSection />
+      <DescriptionSection />
+      <FeaturesSection />
+      <TechnologySection />
+      <TeamSection />
     </main>
   );
 }
