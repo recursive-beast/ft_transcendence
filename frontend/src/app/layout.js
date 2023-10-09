@@ -1,7 +1,7 @@
 import './globals.css'
-import { Lexend_Exa } from 'next/font/google'
+import { Poppins } from 'next/font/google'
 
-const exa = Lexend_Exa({ subsets: ['latin'] })
+const exa = Poppins({ subsets: ['latin'], weight:['100', '200', '300', '400', '500', '600', '700', '800', '900'] })
 
 export const metadata = {
   title: 'Create Next App',
