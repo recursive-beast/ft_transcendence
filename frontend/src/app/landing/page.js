@@ -199,7 +199,7 @@ function HeroSection() {
           <div className="text-tx01 font-normal uppercase text-sm tracking-[6px] md:text-lg xl:text-xl 2xl:text-2xl">
             Paddle Smash
           </div>
-          <div className=" text-tx01 font-semibold uppercase -tracking-wider text-7xl -space-y-2 sm:text-8xl lg:text-9xl 2xl:text-[120px]">
+          <div className=" text-tx01 font-semibold uppercase -tracking-wider text-6xl -space-y-2 sm:text-7xl xl:text-8xl 2xl:text-[120px]">
             <div>come</div>
             <div>and</div>
             <div className="text-tx06">smash</div>
