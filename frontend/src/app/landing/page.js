@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { Icon } from "@iconify/react";
-import { useState } from "react";
+import { forwardRef, useState } from "react";
 
 import heroImg from "@/images/pics/hero-bg.jpg";
 import footerImg from "@/images/pics/footer.jpg";
@@ -42,8 +42,9 @@ import {
   useMotionTemplate,
   useInView,
   useSpring,
+  useMotionValueEvent,
 } from "framer-motion";
-// import clsx from "clsx";
+import clsx from "clsx";
 import { SplitText } from "@cyriacbr/react-split-text";
 import { useRef } from "react";
 
@@ -98,8 +99,20 @@ function Feature(props) {
 }
 
 function TeamMember(props) {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start center", "end center"],
+  });
+
+  useMotionValueEvent(
+    scrollYProgress,
+    "change",
+    (value) => value > 0 && props?.onActive()
+  );
+
   return (
-    <div className="pb-14 mt-5 border-b border-tx02">
+    <div ref={ref} className="pb-14 mt-5 border-b border-tx02">
       <div className="relative text-xl font-medium uppercase mt-8 mb-8 leading-8 sm:text-2xl md:text-3xl xl:text-4xl 2xl:text-5xl xl:leading-tight">
         <div className="text-tx02">
           <div className=" space-y-3">{props.first}</div>
@@ -314,7 +327,7 @@ function TechnologySection() {
           ].map((v) => {
             return (
               <Image
-                key={v}
+                key={v.src}
                 className="aspect-square object-contain w-10 sm:w-14 xl:w-16"
                 src={v}
                 alt="Logo"
@@ -343,7 +356,7 @@ function TechnologySection() {
           ].map((v) => {
             return (
               <Image
-                key={v}
+                key={v.src}
                 className="aspect-square object-contain w-10 sm:w-14 xl:w-16"
                 src={v}
                 alt="Logo"
@@ -357,7 +370,36 @@ function TechnologySection() {
   );
 }
 
+const members = [
+  {
+    first: "mohammed",
+    last: "messaoudi",
+    role: "ui/ux & Frontend",
+    img: mmessaou,
+  },
+  {
+    first: "soufian",
+    last: "yakoubi",
+    role: "backend & team manager",
+    img: syakoubi,
+  },
+  {
+    first: "Mohammed Badr",
+    last: "Eddine El Housni",
+    role: "full stack",
+    img: melhous,
+  },
+  {
+    first: "Abdeljalil",
+    last: "Ait Omar",
+    role: "full stack",
+    img: aaitoma,
+  },
+];
+
 function TeamSection() {
+  const [activeIndex, setActiveIndex] = useState(0);
+
   return (
     <section className="mb-36 bg-bg01">
       <div className="w-11/12 mx-auto sm:w-10/12 lg:w-3/4 xl:w-8/12">
@@ -367,58 +409,31 @@ function TeamSection() {
       </div>
 
       <div className="relative flex flex-col w-11/12 mx-auto sm:w-10/12 lg:w-3/4 xl:w-8/12">
-        <TeamMember first="mohammed" last="messaoudi" role="ui/ux & Frontend" />
-        <TeamMember
-          first="soufian"
-          last="yakoubi"
-          role="backend & team manager"
-        />
-        <TeamMember
-          first="Mohammed Badr"
-          last="Eddine El Housni"
-          role="full stack"
-        />
-        <TeamMember first="Abdeljalil" last="Ait Omar" role="full stack" />
+        {members.map((member, i) => (
+          <TeamMember
+            key={member.first + member.last}
+            onActive={() => setActiveIndex(i)}
+            {...member}
+          />
+        ))}
 
         <div className="w-fit h-full absolute right-3">
           <div className="w-fit py-5 sticky top-1/3 bottom-0">
             <ul className="space-y-2 flex flex-col items-center">
-              <li>
-                <Image
-                  className="rounded-full opacity-90 w-16 xl:w-20"
-                  src={mmessaou}
-                  alt="Logo of the game"
-                  width={100}
-                  quality={100}
-                />
-              </li>
-              <li>
-                <Image
-                  className="rounded-full opacity-60 w-12 xl:w-16 grayscale"
-                  src={syakoubi}
-                  alt="Logo of the game"
-                  width={80}
-                  quality={100}
-                />
-              </li>
-              <li>
-                <Image
-                  className="rounded-full opacity-60 w-12 xl:w-16 grayscale"
-                  src={melhous}
-                  alt="Logo of the game"
-                  width={80}
-                  quality={100}
-                />
-              </li>
-              <li>
-                <Image
-                  className="rounded-full opacity-60 w-12 xl:w-16 grayscale"
-                  src={aaitoma}
-                  alt="Logo of the game"
-                  width={80}
-                  quality={100}
-                />
-              </li>
+              {members.map((member, i) => (
+                <li key={member.first + member.last}>
+                  <Image
+                    className={clsx(
+                      "rounded-full opacity-90 w-16 xl:w-20",
+                      activeIndex !== i && "grayscale"
+                    )}
+                    src={member.img}
+                    alt="Logo of the game"
+                    width={100}
+                    quality={100}
+                  />
+                </li>
+              ))}
             </ul>
           </div>
         </div>
