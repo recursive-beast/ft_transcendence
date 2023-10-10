@@ -8,20 +8,23 @@ datasource db {
 }
 
 model User {
-  id             Int            @id @default(autoincrement())
-  authProviderId String         @unique
-  displayName    String         @unique
-  fullName       String
-  avatar         String?
-  otpSecret      String?
-  otpIsEnabled   Boolean        @default(false)
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
-  friends        User[]         @relation("friends")
-  friendOf       User[]         @relation("friends")
-  blocked        User[]         @relation("blocked")
-  blockedBy      User[]         @relation("blocked")
-  notifications  Notification[]
+  id                 Int            @id @default(autoincrement())
+  authProviderId     String         @unique
+  displayName        String         @unique
+  fullName           String
+  avatar             String?
+  otpSecret          String?
+  otpIsEnabled       Boolean        @default(false)
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+  friends            User[]         @relation("friends")
+  friendOf           User[]         @relation("friends")
+  blocked            User[]         @relation("blocked")
+  blockedBy          User[]         @relation("blocked")
+  notifications      Notification[]
+  conversations      Conversation[] @relation("member")
+  bannedFrom         Conversation[] @relation("banned")
+  adminConversations Conversation[] @relation("admin")
 }
 
 model Notification {
@@ -37,4 +40,25 @@ model Notification {
 
 enum NotificationType {
   FRIEND_ADD
+}
+
+model Message {
+  id             Int          @id @default(autoincrement())
+  text           String
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  conversationId Int
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+model Conversation {
+  id        Int       @id @default(autoincrement())
+  isGroup   Boolean   @default(false)
+  admin     User      @relation("admin", fields: [adminId], references: [id])
+  adminId   Int
+  members   User[] @relation("member")
+  banned    User[] @relation("banned")
+  messages  Message[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
