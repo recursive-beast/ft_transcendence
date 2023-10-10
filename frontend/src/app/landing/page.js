@@ -314,6 +314,7 @@ function TechnologySection() {
           ].map((v) => {
             return (
               <Image
+                key={v}
                 className="aspect-square object-contain w-10 sm:w-14 xl:w-16"
                 src={v}
                 alt="Logo"
@@ -342,6 +343,7 @@ function TechnologySection() {
           ].map((v) => {
             return (
               <Image
+                key={v}
                 className="aspect-square object-contain w-10 sm:w-14 xl:w-16"
                 src={v}
                 alt="Logo"
