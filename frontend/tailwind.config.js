@@ -12,6 +12,9 @@ module.exports = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      transitionProperty: {
+        team: "width opacity"
+      }
     },
     colors: {
       // Primary colors
@@ -33,5 +36,6 @@ module.exports = {
       tx06: "#EB5A3A",
     },
   },
-  plugins: [],
+  // prettier.config.js
+  plugins: ['prettier-plugin-tailwindcss'],
 };
