@@ -14,6 +14,8 @@ import { TokenErrorFilter } from './auth/token-error.filter';
 import { FileCleanupInterceptor } from './common/file-cleanup.interceptor';
 import { NotificationModule } from './notification/notification.module';
 import { UserModule } from './user/user.module';
+import { ConversationModule } from './conversation/conversation.module';
+import { MessageModule } from './message/message.module';
 
 @Module({
   imports: [
@@ -41,6 +43,8 @@ import { UserModule } from './user/user.module';
     AuthModule,
     UserModule,
     NotificationModule,
+    ConversationModule,
+    MessageModule,
   ],
   providers: [
     providePrismaClientExceptionFilter(),
