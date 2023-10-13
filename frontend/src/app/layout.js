@@ -1,4 +1,10 @@
 import './globals.css'
+// import localFont from 'next/font/local'
+ 
+// Font files can be colocated inside of `pages`
+// const exa = localFont({ src: '../fonts/AVGARDD_2.woff' })
+
+
 import { Poppins } from 'next/font/google'
 
 const exa = Poppins({ subsets: ['latin'], weight:['100', '200', '300', '400', '500', '600', '700', '800', '900'] })

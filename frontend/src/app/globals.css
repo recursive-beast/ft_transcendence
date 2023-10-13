@@ -17,7 +17,8 @@
 
 #masked {
 	mask-image: url(/mask.svg);
-  mask-origin: content-box;
+	mask-origin: content-box;
 	mask-repeat: no-repeat;
-  color: black;
+	color: black;
+	/* pointer-events: none; */
 }

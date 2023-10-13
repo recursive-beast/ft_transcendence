@@ -230,7 +230,7 @@ function DescriptionSection() {
           <div className="text-tx02">
             <SplitText className=" md:space-y-2">
               Experience timeless ping pong joy with classic gameplay for hours
-              of entertainment.
+              of entertainment .
             </SplitText>
           </div>
 
@@ -245,7 +245,7 @@ function DescriptionSection() {
                 className=" md:space-y-2"
               >
                 Experience timeless ping pong joy with classic gameplay for
-                hours of entertainment.
+                hours of entertainment .
               </SplitText>
             </div>
           </div>
@@ -271,7 +271,7 @@ function DescriptionSectionHover(props) {
           <div>
             <SplitText className=" md:space-y-2">
               Experience timeless ping pong joy with classic gameplay for hours
-              of entertainment.
+              of entertainment .
             </SplitText>
           </div>
         </div>
@@ -280,11 +280,39 @@ function DescriptionSectionHover(props) {
   );
 }
 
+function Feature(props) {
+  return (
+    <div className="text-tx02 pt-4 pb-6 border-b  hover:bg-pr01">
+      <div className="relative text-4xl font-semibold sm:text-5xl md:text-6xl 2xl:text-7xl">
+        <div className="text-tx02">
+          {props.txt1 && <div className=" space-y-3">{props.txt1}</div>}
+          {props.txt2 && <div className=" space-y-3">{props.txt2}</div>}
+        </div>
+
+        <div className="text-tx01">
+          <div className="absolute top-0 left-0 w-full h-full">
+            {props.txt1 && (
+              <AnimatedLine offset={["start 90%", "end 0%"]}>
+                {props.txt1}
+              </AnimatedLine>
+            )}
+            {props.txt2 && (
+              <AnimatedLine offset={["start 90%", "end 0%"]}>
+                {props.txt2}
+              </AnimatedLine>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function FeaturesSection() {
   return (
     <section className="mb-36">
       <div className="w-11/12 mx-auto sm:w-10/12 lg:w-3/4 xl:w-8/12">
-        <div className="text-tx01 text-sm font-medium tracking-[6px] uppercase mb-5 pb-6 border-b border-tx02 lg:text-lg">
+        <div className="text-tx01 text-sm font-medium tracking-[6px] uppercase pb-6 border-b border-tx02 lg:text-lg">
           Features
         </div>
 
@@ -362,34 +390,6 @@ function TechnologySection() {
   );
 }
 
-function Feature(props) {
-  return (
-    <div className="text-tx02 pt-4 pb-6 border-b">
-      <div className="relative text-4xl font-semibold sm:text-5xl md:text-6xl 2xl:text-7xl">
-        <div className="text-tx02">
-          {props.txt1 && <div className=" space-y-3">{props.txt1}</div>}
-          {props.txt2 && <div className=" space-y-3">{props.txt2}</div>}
-        </div>
-
-        <div className="text-tx01">
-          <div className="absolute top-0 left-0 w-full h-full">
-            {props.txt1 && (
-              <AnimatedLine offset={["start 90%", "end 0%"]}>
-                {props.txt1}
-              </AnimatedLine>
-            )}
-            {props.txt2 && (
-              <AnimatedLine offset={["start 90%", "end 0%"]}>
-                {props.txt2}
-              </AnimatedLine>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function TeamMember(props) {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
@@ -405,20 +405,20 @@ function TeamMember(props) {
 
   return (
     <div ref={ref} className="pb-14 mt-5 border-b border-tx02">
-      <div className="relative text-xl font-medium uppercase mt-8 mb-8 leading-8 sm:text-2xl md:text-3xl xl:text-4xl 2xl:text-5xl xl:leading-tight">
-        <div className="text-tx02">
-          <div className=" space-y-3">{props.first}</div>
-          <div className=" space-y-3 ml-10 xl:ml-20">{props.last}</div>
+      <div className="relative text-2xl font-medium my-8 sm:my-14 xl:my-20 xl:font-semibold leading-8 sm:text-4xl md:text-6xl xl:text-7xl 2xl:text-8xl xl:leading-tight">
+        <div className="text-tx02 space-y-1 sm:space-y-4">
+          <div className="">{props.first}</div>
+          <div className="ml-10 sm:ml-20 xl:ml-20">{props.last}</div>
         </div>
 
-        <div className="text-tx01">
-          <div className="absolute top-0 left-0 w-full h-full ">
+        <div className="text-tx01 ">
+          <div className="absolute top-0 left-0 w-full h-full  space-y-1 sm:space-y-4">
             <AnimatedLine offset={["start 90%", "end 0%"]} className="">
               {props.first}
             </AnimatedLine>
             <AnimatedLine
               offset={["start 90%", "end 0%"]}
-              className=" ml-10 xl:ml-20"
+              className=" ml-10 sm:ml-20 xl:ml-20"
             >
               {props.last}
             </AnimatedLine>
@@ -467,20 +467,20 @@ function TeamMember(props) {
 
 const members = [
   {
-    first: "mohammed",
-    last: "messaoudi",
+    first: "Mohammed",
+    last: "Messaoudi",
     role: "ui/ux & Frontend",
     img: mmessaou,
   },
   {
-    first: "soufiane",
-    last: "yakoubi",
+    first: "Soufiane",
+    last: "Yakoubi",
     role: "backend & team manager",
     img: syakoubi,
   },
   {
-    first: "Mohammed Badr",
-    last: "Eddine El Housni",
+    first: "Badr eddine",
+    last: "El Housni",
     role: "full stack",
     img: melhous,
   },
@@ -512,21 +512,20 @@ function TeamSection() {
           />
         ))}
 
-        <div className="w-fit h-full absolute right-3">
-          <div className="w-16 xl:w-20 2xl:w-24 py-5 sticky top-1/3 bottom-0">
-            <ul className="space-y-1 flex flex-col items-center">
+        <div className="w-fit h-full absolute right-0">
+          <div className=" py-3 sticky top-1/3 bottom-0">
+            <ul className="space-y-1 sm:space-y-2 flex flex-col items-center w-20 sm:w-28 xl:w-36">
               {members.map((member, i) => (
                 <li key={member.first + member.last}>
                   <Image
                     className={clsx(
                       "rounded-full transition-team duration-500",
                       activeIndex === i
-                        ? "opacity-90 w-16 xl:w-20 2xl:w-24"
-                        : "grayscale opacity-70 w-10 xl:w-14 2xl:w-16",
+                        ? "opacity-90 w-20 sm:w-28 xl:w-36"
+                        : "grayscale opacity-70 w-14 sm:w-20 xl:w-24",
                     )}
                     src={member.img}
                     alt="Logo of the game"
-                    width={100}
                     quality={100}
                   />
                 </li>
@@ -541,66 +540,70 @@ function TeamSection() {
 
 function FooterSection() {
   return (
-    // <footer className="relative h-screen flex items-stretch mb-10">
-    //   {/* background image */}
-    //   <motion.div className="absolute inset-0">
-    //     <Image
-    //       className="opacity-60"
-    //       alt="Mountains"
-    //       src={heroImg}
-    //       placeholder="blur"
-    //       quality={100}
-    //       fill
-    //       sizes="100vw"
-    //       style={{
-    //         objectFit: "cover",
-    //       }}
-    //     />
-    //   </motion.div>
+    <footer className=" relative flex h-[75vh] mb-10">
+      {/* background image */}
+      <motion.div className="absolute inset-0 -z-10">
+        <Image
+          className="opacity-20"
+          alt="Mountains"
+          src={footerImg}
+          placeholder="blur"
+          quality={100}
+          fill
+          sizes="100vw"
+          style={{
+            objectFit: "cover",
+          }}
+        />
+      </motion.div>
 
-    //   <div className="w-11/12 mx-auto my-auto sm:w-10/12 lg:w-3/4 xl:w-8/12 z-10">
-    //     <div className="space-y-36 my-auto text-center mx-auto">
-    //       <div className="text-tx01 font-normal uppercase text-xs tracking-[6px] md:text-lg xl:text-xl 2xl:text-2xl">
-    //         Paddle Smash
-    //       </div>
-
-    //       <div className=" text-tx01 font-semibold uppercase -tracking-wider text-7xl -space-y-2 sm:text-8xl lg:text-9xl 2xl:text-[160px]">
-    //         <div>chil3ibatika f7al ma haka fiha chi klimat</div>
-    //       </div>
-
-    //       <button
-    //         className="text-center text-tx01 text-xl font-extralight tracking-[4.80px] uppercase border border-tx01 rounded-full px-10 py-1
-    //                  hover:text-tx03 hover:bg-tx01 ease-linear transition-colors duration-[400ms]"
-    //       >
-    //         Start
-    //       </button>
-    //     </div>
-    //   </div>
-    // </footer>
-
-    <footer className="flex items-stretch my-56">
-      <div className="w-11/12 mx-auto my-auto sm:w-10/12 lg:w-3/4 xl:w-8/12 z-10">
-        <div className="space-y-36 my-auto text-center mx-auto">
-          <div className="text-tx01 font-extralight uppercase tracking-widest text-7xl -space-y-2 sm:text-8xl lg:text-9xl 2xl:text-[160px]">
+      <div className="w-11/12 mx-auto my-auto sm:w-10/12 lg:w-3/4 xl:w-3/5">
+        <div className="space-y-28 my-auto text-center mx-auto">
+          <div className="text-tx01 font-normal uppercase text-xs tracking-[6px] md:text-lg xl:text-xl 2xl:text-2xl">
             Paddle Smash
           </div>
 
-          <div className="flex justify-center items-center flex-col bg-bg01 ">
-            <div className="relative">
-              <Image
-                src={logoPic}
-                alt="Logo of the game"
-                width={200}
-                height={200}
-              />
-              <button
-                className="text-center text-tx01 text-xl font-extralight tracking-[4.80px] uppercase border border-tx01 rounded-full px-10 py-1
-                     hover:text-tx03 hover:bg-tx01 ease-linear transition-colors duration-[400ms] absolute top-full translate-y-8 left-1/2 -translate-x-1/2 "
-              >
-                Start
-              </button>
-            </div>
+          <div className=" text-tx01 font-semibold text-5xl -space-y-2 sm:text-8xl lg:text-9xl 2xl:text-[160px]">
+            <div>Let's start</div>
+            <div>the fun</div>
           </div>
+
+          <button
+            className="text-center text-tx01 text-xl font-extralight tracking-[4.80px] uppercase border border-tx01 rounded-full px-10 py-1
+                     hover:text-tx03 hover:bg-tx01 ease-linear transition-colors duration-[400ms]"
+          >
+            Start
+          </button>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+function FooterSectionHover(props) {
+  return (
+    <footer className="relative flex h-[75vh] mb-10">
+      <div className="w-11/12 mx-auto my-auto sm:w-10/12 lg:w-3/4 xl:w-3/5">
+        <div
+          className="space-y-28 my-auto text-center mx-auto pb-10"
+          onMouseEnter={props.onMouseEnter}
+          onMouseLeave={props.onMouseLeave}
+        >
+          <div className="font-normal uppercase text-xs tracking-[6px] md:text-lg xl:text-xl 2xl:text-2xl">
+            Paddle Smash
+          </div>
+
+          <div className="font-semibold text-5xl -space-y-2 sm:text-8xl lg:text-9xl 2xl:text-[140px]">
+            <div>Run away before</div>
+            <div>you get depressed</div>
+          </div>
+
+          <button
+            className="text-center  text-xl font-extralight tracking-[4.80px] uppercase border  rounded-full px-10 py-1
+                      hover:bg-bg01/20 ease-linear transition-colors duration-[400ms]"
+          >
+            risk it
+          </button>
         </div>
       </div>
     </footer>
@@ -611,10 +614,19 @@ export default function Home() {
   // const [on, setOn] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
   const [mouse] = useMouse();
-  const size = isHovered ? 550 : 60;
+  const size = isHovered ? 500 : 60;
 
   return (
     <main className="relative flex flex-col">
+      <div className="bg-bg01 pb-20 -z-50">
+        <HeroSection />
+        <DescriptionSection />
+        <FeaturesSection />
+        <TechnologySection />
+        <TeamSection />
+        <FooterSection />
+      </div>
+
       <motion.div
         id="masked"
         className="bg-pr01 pb-20 absolute"
@@ -635,17 +647,11 @@ export default function Home() {
         <FeaturesSection />
         <TechnologySection />
         <TeamSection />
-        <FooterSection />
+        <FooterSectionHover
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        />
       </motion.div>
-
-      <div className="bg-bg01 pb-20 -z-50">
-        <HeroSection />
-        <DescriptionSection />
-        <FeaturesSection />
-        <TechnologySection />
-        <TeamSection />
-        <FooterSection />
-      </div>
     </main>
   );
 }
