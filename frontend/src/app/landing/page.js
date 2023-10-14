@@ -51,7 +51,7 @@ import { useRef } from "react";
 
 // mouse traking
 import { useMouse } from "./useMouse";
-import { useWindowScroll } from "@uidotdev/usehooks";
+import { useWindowScroll, useWindowSize } from "@uidotdev/usehooks";
 
 function AnimatedLine(props) {
   const ref = useRef(null);
@@ -611,9 +611,10 @@ function FooterSectionHover(props) {
   );
 }
 
-function PressButton(props) {
+const PressButton = forwardRef(function PressButton(props, ref) {
   return (
     <button
+      ref={ref}
       className="flex flex-col items-center justify-center rounded-full fixed bottom-8 left-2/4 -translate-x-1/2 z-10 touch"
       {...props}
     >
@@ -625,7 +626,7 @@ function PressButton(props) {
       />
     </button>
   );
-}
+});
 
 function Blur() {
   return (
@@ -638,12 +639,13 @@ function Blur() {
 
 export default function Home() {
   // const [on, setOn] = useState(true);
+  const ref = useRef(null);
+  const rect = ref.current?.getBoundingClientRect() || { x: 0, y: 0, width: 0, height: 0 };
   const [isHovered, setIsHovered] = useState(false);
+  const [isPressed, setIsPressed] = useState(false);
   const mouse = useMouse();
   const [scroll] = useWindowScroll();
   const size = isHovered ? 500 : 60;
-  const x = mouse.x - size / 2;
-  const y = scroll.y + mouse.y - size / 2;
 
   return (
     <main className="relative flex flex-col">
@@ -660,10 +662,13 @@ export default function Home() {
 
       <motion.div
         id="masked"
-        className="bg-pr01 pb-20 absolute"
+        className={clsx("bg-pr01 pb-20 absolute", isPressed && "is-pressed")}
         animate={{
-          WebkitMaskPosition: `${x}px ${y}px`,
-          WebkitMaskSize: `${size}px`,
+          "--x": `${mouse.x}px`,
+          "--y": `${scroll.y + mouse.y}px`,
+          "--size": `${size}px`,
+          "--x-touch": `${rect.x + rect.width / 2}px`,
+          "--y-touch": `${scroll.y}px`,
         }}
         transition={{ type: "tween", ease: "backOut", duration: 0.5 }}
       >
@@ -682,7 +687,13 @@ export default function Home() {
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         />
-        <PressButton />
+        <PressButton
+          ref={ref}
+          onMouseDown={() => setIsPressed(true)}
+          onMouseUp={() => setIsPressed(false)}
+          onTouchStart={() => setIsPressed(true)}
+          onTouchEnd={() => setIsPressed(false)}
+        />
       </motion.div>
     </main>
   );
