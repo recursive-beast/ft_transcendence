@@ -16,7 +16,9 @@
     "framer-motion": "^10.16.4",
     "next": "latest",
     "react": "latest",
-    "react-dom": "latest"
+    "react-dom": "latest",
+    "react-responsive": "^9.0.2",
+    "react-use": "^17.4.0"
   },
   "devDependencies": {
     "autoprefixer": "latest",

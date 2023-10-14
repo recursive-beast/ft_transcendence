@@ -22,3 +22,13 @@
 	color: black;
 	/* pointer-events: none; */
 }
+
+@media not all and (hover: none) and (pointer: coarse) {
+	.touch {
+		@apply hidden;
+	}
+
+	#masked {
+		mask-size: 0px;
+	}
+}

@@ -6,6 +6,7 @@ import { forwardRef, useState } from "react";
 
 import heroImg from "@/images/pics/hero-bg.jpg";
 import footerImg from "@/images/pics/footer.jpg";
+import pressImg from "@/images/pics/press.svg";
 
 // logos
 import logoPic from "@/images/logos/logo.png";
@@ -49,8 +50,8 @@ import { SplitText } from "@cyriacbr/react-split-text";
 import { useRef } from "react";
 
 // mouse traking
-import useMousePosition from "./useMousePosition";
-import { useMouse, useWindowScroll } from "@uidotdev/usehooks";
+import { useMouse } from "./useMouse";
+import { useWindowScroll } from "@uidotdev/usehooks";
 
 function AnimatedLine(props) {
   const ref = useRef(null);
@@ -122,7 +123,7 @@ function HeroSection() {
               width={100}
               height={100}
             />
-            <button className="group flex items-center ml-6">
+            <button className="group lg:flex items-center ml-6 hidden">
               <Icon
                 className="text-tx01 mr-2 w-6 lg:w-7 xl:w-8 2xl:w-10 lg:transition lg:duration-500 lg:group-hover:text-tx02"
                 icon="solar:gamepad-broken"
@@ -610,11 +611,39 @@ function FooterSectionHover(props) {
   );
 }
 
+function PressButton(props) {
+  return (
+    <button
+      className="flex flex-col items-center justify-center rounded-full fixed bottom-8 left-2/4 -translate-x-1/2 z-10 touch"
+      {...props}
+    >
+      <Image className="w-full" src={pressImg} alt="Logo" />
+      <Icon
+        className="text-tx06 absolute"
+        icon="mingcute:finger-press-line"
+        width={26}
+      />
+    </button>
+  );
+}
+
+function Blur() {
+  return (
+    <>
+      <div className="w-full h-1/5 bottom-0 fixed bg-gradient-to-t from-bg01 from-30% via-bg01/80 touch"></div>
+      <div className="w-full h-1/6 top-0 fixed bg-gradient-to-b from-bg01 from-10% via-bg01/60 touch"></div>
+    </>
+  );
+}
+
 export default function Home() {
   // const [on, setOn] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
-  const [mouse] = useMouse();
+  const mouse = useMouse();
+  const [scroll] = useWindowScroll();
   const size = isHovered ? 500 : 60;
+  const x = mouse.x - size / 2;
+  const y = scroll.y + mouse.y - size / 2;
 
   return (
     <main className="relative flex flex-col">
@@ -625,13 +654,15 @@ export default function Home() {
         <TechnologySection />
         <TeamSection />
         <FooterSection />
+        <PressButton />
+        <Blur />
       </div>
 
       <motion.div
         id="masked"
         className="bg-pr01 pb-20 absolute"
         animate={{
-          WebkitMaskPosition: `${mouse.x - size / 2}px ${mouse.y - size / 2}px`,
+          WebkitMaskPosition: `${x}px ${y}px`,
           WebkitMaskSize: `${size}px`,
         }}
         transition={{ type: "tween", ease: "backOut", duration: 0.5 }}
@@ -651,6 +682,7 @@ export default function Home() {
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         />
+        <PressButton />
       </motion.div>
     </main>
   );
