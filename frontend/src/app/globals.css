@@ -36,11 +36,11 @@
 
 @media (hover: none) and (pointer: coarse) {
 	#masked {
-		--size-touch: 100px;
-		mask-position: 50% calc(var(--y-touch) - var(--size-touch)/2);
+		--size-touch: 0px;
+		mask-position: calc(var(--x-touch) - var(--size-touch)/2) calc(var(--y-touch) - var(--size-touch)/2);
 		mask-size: var(--size-touch);
-		transition-property: mask-size;
-		transition-duration: 900ms;
+		transition-property: mask-size, mask-position;
+		transition-duration: 0.5s;
 
 	}
 

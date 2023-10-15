@@ -640,7 +640,7 @@ function Blur() {
 export default function Home() {
   // const [on, setOn] = useState(true);
   const ref = useRef(null);
-  const rect = ref.current?.getBoundingClientRect() || { x: 0, y: 0, width: 0, height: 0 };
+  const rect = ref.current?.getBoundingClientRect() || {};
   const [isHovered, setIsHovered] = useState(false);
   const [isPressed, setIsPressed] = useState(false);
   const mouse = useMouse();
@@ -667,8 +667,10 @@ export default function Home() {
           "--x": `${mouse.x}px`,
           "--y": `${scroll.y + mouse.y}px`,
           "--size": `${size}px`,
+        }}
+        style={{
           "--x-touch": `${rect.x + rect.width / 2}px`,
-          "--y-touch": `${scroll.y}px`,
+          "--y-touch": `${rect.top + rect.height / 2 + scroll.y}px`,
         }}
         transition={{ type: "tween", ease: "backOut", duration: 0.5 }}
       >
