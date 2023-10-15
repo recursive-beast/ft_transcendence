@@ -612,13 +612,21 @@ function FooterSectionHover(props) {
 }
 
 const PressButton = forwardRef(function PressButton(props, ref) {
+  function preventContextMenu(e) {
+    e.preventDefault();
+    e.stopPropagation(); // not necessary in my case, could leave in case stopImmediateProp isn't available?
+    // e.stopImmediatePropagation();
+    return false;
+  }
   return (
     <button
+    id="press-button"
       ref={ref}
       className="flex flex-col items-center justify-center rounded-full fixed bottom-8 left-2/4 -translate-x-1/2 z-10 touch"
+      onContextMenu={preventContextMenu}
       {...props}
     >
-      <Image className="w-full" src={pressImg} alt="Logo" />
+      <Image className="w-full select-none" src={pressImg} alt="Logo" />
       <Icon
         className="text-tx06 absolute"
         icon="mingcute:finger-press-line"
