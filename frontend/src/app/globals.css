@@ -51,6 +51,6 @@
 	}
 
 	#masked.is-pressed {
-		--size-touch: 4000px;
+		--size-touch: 3000px;
 	}
 }

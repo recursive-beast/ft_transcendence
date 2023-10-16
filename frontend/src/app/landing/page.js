@@ -412,7 +412,7 @@ function TeamMember(props) {
           <div className="ml-10 sm:ml-20 xl:ml-20">{props.last}</div>
         </div>
 
-        <div className="text-tx01 ">
+        <div className="">
           <div className="absolute top-0 left-0 w-full h-full  space-y-1 sm:space-y-4">
             <AnimatedLine offset={["start 90%", "end 0%"]} className="">
               {props.first}
@@ -427,7 +427,7 @@ function TeamMember(props) {
         </div>
       </div>
 
-      <div className="text-tx01 font-light tracking-widest uppercase text-sm sm:text-base mb-6">
+      <div className="font-light tracking-widest uppercase text-sm sm:text-base mb-6">
         {props.role}
       </div>
 
@@ -493,13 +493,13 @@ const members = [
   },
 ];
 
-function TeamSection() {
+function TeamSection(props) {
   const [activeIndex, setActiveIndex] = useState(0);
 
   return (
     <section className="mb-36">
       <div className="w-11/12 mx-auto sm:w-10/12 lg:w-3/4 xl:w-8/12">
-        <div className="text-tx01 text-sm font-medium tracking-[6px] uppercase pb-8 border-b border-tx02 lg:text-lg">
+        <div className="text-sm font-medium tracking-[6px] uppercase pb-8 border-b border-tx02 lg:text-lg">
           team
         </div>
       </div>
@@ -657,7 +657,7 @@ export default function Home() {
 
   return (
     <main className="relative flex flex-col">
-      <div className="bg-bg01 pb-20 -z-50">
+      <div className="bg-bg01 pb-20 -z-50 text-tx01">
         <HeroSection />
         <DescriptionSection />
         <FeaturesSection />
