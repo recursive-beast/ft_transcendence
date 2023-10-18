@@ -36,44 +36,15 @@ import melhous from "@/images/profile_images/mel-hous.png";
 import mmessaou from "@/images/profile_images/mmessaou.png";
 import syakoubi from "@/images/profile_images/syakoubi.png";
 // scroll
-import {
-  useScroll,
-  motion,
-  useTransform,
-  useMotionTemplate,
-  useInView,
-  useSpring,
-  useMotionValueEvent,
-} from "framer-motion";
+import { useScroll, motion, useMotionValueEvent } from "framer-motion";
 import clsx from "clsx";
-import { SplitText } from "@cyriacbr/react-split-text";
 import { useRef } from "react";
 
 // mouse traking
 import { useMouse } from "./useMouse";
-import { useWindowScroll, useWindowSize } from "@uidotdev/usehooks";
-
-function AnimatedLine(props) {
-  const ref = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: props.offset,
-  });
-
-  const percent = useTransform(scrollYProgress, [0, 1], [100, 0]);
-  // const percent = useSpring(transformed, {
-  //   stiffness: 50,
-  //   damping: 30,
-  //   restDelta: 0.001,
-  // });
-  const clipPath = useMotionTemplate`inset(-20% ${percent}% -20% 0)`;
-
-  return (
-    <motion.div style={{ clipPath }} ref={ref} className={props.className}>
-      {props.children}
-    </motion.div>
-  );
-}
+import { useWindowScroll } from "@uidotdev/usehooks";
+import { MaskedLines } from "@/components/MaskedLines";
+import { SplitText } from "@/components/SplitText";
 
 function HeroSection() {
   const [on, setOn] = useState(true);
@@ -227,30 +198,13 @@ function DescriptionSection() {
           Paddle Smash
         </div>
 
-        <div className="relative text-4xl font-semibold sm:text-5xl md:text-6xl 2xl:text-7xl">
-          <div className="text-tx02">
-            <SplitText className=" md:space-y-2">
-              Experience timeless ping pong joy with classic gameplay for hours
-              of entertainment .
-            </SplitText>
-          </div>
-
-          <div className="text-tx01">
-            <div className="absolute top-0 left-0 w-full h-full">
-              <SplitText
-                LineWrapper={({ children }) => (
-                  <AnimatedLine offset={["start 85%", "end 85%"]}>
-                    {children}
-                  </AnimatedLine>
-                )}
-                className=" md:space-y-2"
-              >
-                Experience timeless ping pong joy with classic gameplay for
-                hours of entertainment .
-              </SplitText>
-            </div>
-          </div>
-        </div>
+        <MaskedLines className="text-4xl font-semibold sm:text-5xl md:text-6xl 2xl:text-7xl md:space-y-2 first:text-tx02 last:text-tx01 group">
+          Experience{" "}
+          <span className="group-first:text-tx06/20 group-last:text-tx06">
+            timeless ping pong
+          </span>{" "}
+          joy with classic gameplay for hours of entertainment .
+        </MaskedLines>
       </div>
     </section>
   );
@@ -283,28 +237,12 @@ function DescriptionSectionHover(props) {
 
 function Feature(props) {
   return (
-    <div className="text-tx02 pt-4 pb-6 border-b  hover:bg-pr01">
-      <div className="relative text-4xl font-semibold sm:text-5xl md:text-6xl 2xl:text-7xl">
-        <div className="text-tx02">
-          {props.txt1 && <div className=" space-y-3">{props.txt1}</div>}
-          {props.txt2 && <div className=" space-y-3">{props.txt2}</div>}
-        </div>
-
-        <div className="text-tx01">
-          <div className="absolute top-0 left-0 w-full h-full">
-            {props.txt1 && (
-              <AnimatedLine offset={["start 90%", "end 0%"]}>
-                {props.txt1}
-              </AnimatedLine>
-            )}
-            {props.txt2 && (
-              <AnimatedLine offset={["start 90%", "end 0%"]}>
-                {props.txt2}
-              </AnimatedLine>
-            )}
-          </div>
-        </div>
-      </div>
+    <div className="pt-4 pb-6 border-b border-tx02 hover:bg-pr01">
+      <MaskedLines className="text-4xl font-semibold sm:text-5xl md:text-6xl 2xl:text-7xl first:text-tx02 last:text-tx01">
+        {props.txt1}
+        <br />
+        {props.txt2}
+      </MaskedLines>
     </div>
   );
 }
@@ -406,25 +344,12 @@ function TeamMember(props) {
 
   return (
     <div ref={ref} className="pb-14 mt-5 border-b border-tx02">
-      <div className="relative text-2xl font-medium my-8 sm:my-14 xl:my-20 xl:font-semibold leading-8 sm:text-4xl md:text-6xl xl:text-7xl 2xl:text-8xl xl:leading-tight">
-        <div className="text-tx02 space-y-1 sm:space-y-4">
-          <div className="">{props.first}</div>
-          <div className="ml-10 sm:ml-20 xl:ml-20">{props.last}</div>
-        </div>
-
-        <div className="">
-          <div className="absolute top-0 left-0 w-full h-full  space-y-1 sm:space-y-4">
-            <AnimatedLine offset={["start 90%", "end 0%"]} className="">
-              {props.first}
-            </AnimatedLine>
-            <AnimatedLine
-              offset={["start 90%", "end 0%"]}
-              className=" ml-10 sm:ml-20 xl:ml-20"
-            >
-              {props.last}
-            </AnimatedLine>
-          </div>
-        </div>
+      <div className="my-8 sm:my-14 xl:my-20">
+        <MaskedLines className="text-2xl font-medium sm:text-4xl md:text-6xl xl:text-7xl 2xl:text-8xl xl:font-semibold space-y-1 sm:space-y-4 first:text-tx02 last:text-tx01">
+          {props.first}
+          <br />
+          <span className="ml-10 sm:ml-20 xl:ml-20">{props.last}</span>
+        </MaskedLines>
       </div>
 
       <div className="font-light tracking-widest uppercase text-sm sm:text-base mb-6">
@@ -620,7 +545,7 @@ const PressButton = forwardRef(function PressButton(props, ref) {
   }
   return (
     <button
-    id="press-button"
+      id="press-button"
       ref={ref}
       className="flex flex-col items-center justify-center rounded-full fixed bottom-8 left-2/4 -translate-x-1/2 z-10 touch"
       onContextMenu={preventContextMenu}

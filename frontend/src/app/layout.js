@@ -1,6 +1,6 @@
-import './globals.css'
+import './globals.scss'
 // import localFont from 'next/font/local'
- 
+
 // Font files can be colocated inside of `pages`
 // const exa = localFont({ src: '../fonts/AVGARDD_2.woff' })
 

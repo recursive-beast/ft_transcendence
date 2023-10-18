@@ -9,17 +9,17 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@cyriacbr/react-split-text": "^1.0.0",
     "@iconify/react": "^4.1.1",
     "@uidotdev/usehooks": "^2.4.0",
     "clsx": "^2.0.0",
     "framer-motion": "^10.16.4",
+    "lodash": "^4.17.21",
     "next": "latest",
     "react": "latest",
     "react-dom": "latest",
-    "react-responsive": "^9.0.2",
-    "react-use": "^17.4.0",
-    "sharp": "^0.32.6"
+    "sass": "^1.69.3",
+    "sharp": "^0.32.6",
+    "split-type": "^0.3.3"
   },
   "devDependencies": {
     "autoprefixer": "latest",
