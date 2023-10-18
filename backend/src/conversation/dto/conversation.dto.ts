@@ -8,6 +8,7 @@ import {
   IsOptional,
   MinLength,
   ArrayMinSize,
+  IsString,
 } from 'class-validator';
 import { ConversationEntity } from '../../common/entities/conversation.entity';
 import { UserEntity } from 'src/common/entities/user.entity';

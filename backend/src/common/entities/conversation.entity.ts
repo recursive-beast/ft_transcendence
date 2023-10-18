@@ -14,6 +14,9 @@ export class ConversationEntity implements Conversation {
     adminId: number;
 
     @Expose()
+    title: string;
+
+    @Expose()
     @Type(() => UserEntity)
     members?: UserEntity[];
     

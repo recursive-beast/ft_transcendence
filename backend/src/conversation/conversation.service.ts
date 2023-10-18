@@ -58,4 +58,18 @@ export class ConversationService {
             }
         })
     }
+
+    async updateTitle(userId: number, title: string, id: number) {
+        const convToChange = await this.findOne(id);
+        if (!convToChange.isGroup || convToChange.adminId != userId || title.length == 0)
+            throw new BadRequestException("unvalid");
+        return this.prismaService.conversation.update({
+            where: {
+                id: id,
+            },
+            data: {
+                title: title,
+            },
+        });
+    }
 }

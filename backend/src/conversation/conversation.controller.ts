@@ -3,6 +3,7 @@ import {
     Controller,
     Get,
     Param,
+    Patch,
     Post,
 } from '@nestjs/common';
 import { ConversationService } from './conversation.service';
@@ -39,5 +40,10 @@ export class ConversationController {
     @Post(':id/messages')
     sendMessages(@CurrentUser() user: UserEntity, @Body() newMsg: MessageDTO, @Param('id') id: number){
         return this.conversationService.sendMes(user, newMsg, id);
+    }
+
+    @Patch(':id')
+    async updateGroupTitle(@CurrentUser() user: UserEntity, @Body('title') body: string, @Param('id') id: number) {
+        return {data: await this.conversationService.updateTitle(user.id, body, id) };
     }
 }

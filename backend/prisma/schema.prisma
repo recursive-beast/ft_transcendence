@@ -57,6 +57,7 @@ model Message {
 model Conversation {
   id        Int       @id @default(autoincrement())
   isGroup   Boolean   @default(false)
+  title     String?
   admin     User      @relation("admin", fields: [adminId], references: [id])
   adminId   Int
   members   User[]    @relation("member")
