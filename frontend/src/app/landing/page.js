@@ -60,20 +60,18 @@ function HeroSection() {
     <>
       <header className="relative h-screen flex items-stretch mb-36">
         {/* background image */}
-        <motion.div className="absolute inset-0">
-          <Image
-            className="opacity-60"
-            alt="Mountains"
-            src={heroImg}
-            placeholder="blur"
-            quality={100}
-            fill
-            sizes="100vw"
-            style={{
-              objectFit: "cover",
-            }}
-          />
-        </motion.div>
+        <Image
+          className="opacity-60"
+          alt="Mountains"
+          src={heroImg}
+          placeholder="blur"
+          quality={100}
+          fill
+          sizes="100vw"
+          style={{
+            objectFit: "cover",
+          }}
+        />
 
         {/*"the text" */}
         <div className="space-y-6 my-auto text-center mx-auto z-10">
@@ -91,7 +89,7 @@ function HeroSection() {
       </header>
 
       {/* sticky elements */}
-      <section className="h-screen fixed flex items-stretch justify-between mb-36 z-10">
+      <section className="h-screen fixed flex items-stretch justify-between mb-36">
         {/* left side logo and start button */}
         <div className="flex justify-between fixed h-full top-0 left-0">
           <div className="flex flex-col justify-between my-6 ml-3 lg:my-8 xl:my-12 2xl:my-20 md:ml-6 xl:ml-8 2xl:ml-14">
@@ -139,7 +137,7 @@ function HeroSectionHover(props) {
       <header className="relative h-screen w-screen flex items-stretch mb-36">
         {/*"the text" */}
         <div
-          className="space-y-6 my-auto text-center mx-auto z-10"
+          className="space-y-6 my-auto text-center mx-auto"
           onMouseEnter={props.onMouseEnter}
           onMouseLeave={props.onMouseLeave}
         >
@@ -157,7 +155,7 @@ function HeroSectionHover(props) {
       </header>
 
       {/* sticky elements */}
-      <section className="h-screen fixed flex items-stretch justify-between mb-36 z-10">
+      <section className="h-screen fixed flex items-stretch justify-between mb-36">
         {/* left side logo and start button */}
         <div className="flex justify-between fixed h-full top-0 left-0">
           <div className="flex flex-col justify-between my-6 ml-3 lg:my-8 xl:my-12 2xl:my-20 md:ml-6 xl:ml-8 2xl:ml-14">
@@ -474,22 +472,20 @@ function TeamSection(props) {
 
 function FooterSection() {
   return (
-    <footer className=" relative flex h-[75vh] ">
+    <footer className="relative flex h-[75vh]">
       {/* background image */}
-      <motion.div className="absolute inset-0">
-        <Image
-          className="opacity-50"
-          alt="Mountains"
-          src={footerImg}
-          placeholder="blur"
-          quality={100}
-          fill
-          sizes="100vw"
-          style={{
-            objectFit: "cover",
-          }}
-        />
-      </motion.div>
+      <Image
+        className="opacity-50"
+        alt="Mountains"
+        src={footerImg}
+        placeholder="blur"
+        quality={100}
+        fill
+        sizes="100vw"
+        style={{
+          objectFit: "cover",
+        }}
+      />
 
       <div className="w-11/12 mx-auto my-auto sm:w-10/12 lg:w-3/4 xl:w-3/5 z-10">
         <div className="space-y-28 my-auto text-center mx-auto">
@@ -510,7 +506,7 @@ function FooterSection() {
           </button> */}
         </div>
       </div>
-      <div className="w-full h-1/3 bottom-0  bg-gradient-to-t from-bg01 from-10% via-bg01/60  absolute  z-20"></div>
+      <div className="w-full h-1/3 bottom-0  bg-gradient-to-t from-bg01 from-10% via-bg01/60  absolute"></div>
     </footer>
   );
 }
@@ -546,14 +542,15 @@ function FooterSectionHover(props) {
   );
 }
 
-function StartButton() {
+function StartButton(props) {
   return (
-    <div className="w-screen flex justify-center items-center flex-col pb-64 bg-bg01 z-50">
+    <div className="w-screen flex justify-center items-center flex-col pb-64 bg-bg01">
       <div className="relative">
         {/* <Image src={logoPic} alt="Logo of the game" width={150} height={150} /> */}
         <button
+          {...props}
           className="text-center text-tx01 text-2xl font-extralight tracking-[4.80px] uppercase border border-tx01 rounded-full px-14 py-2
-                 hover:text-tx03 hover:bg-tx01 ease-linear transition-colors duration-[400ms] absolute top-full translate-y-8 left-1/2 -translate-x-1/2 "
+                 hover:text-tx03 hover:bg-tx01 ease-linear transition-colors duration-[400ms] absolute top-full translate-y-8 left-1/2 -translate-x-1/2 z-50"
         >
           Start
         </button>
@@ -573,7 +570,7 @@ const PressButton = forwardRef(function PressButton(props, ref) {
     <button
       id="press-button"
       ref={ref}
-      className="flex flex-col items-center justify-center rounded-full fixed bottom-8 left-2/4 -translate-x-1/2 z-10 touch"
+      className="flex flex-col items-center justify-center rounded-full fixed bottom-8 left-2/4 -translate-x-1/2 touch"
       onContextMenu={preventContextMenu}
       {...props}
     >
@@ -617,25 +614,27 @@ export default function Home() {
   const [visible, setVisible] = useState(false);
   const ref = useRef(null);
   const rect = ref.current?.getBoundingClientRect() || {};
-  const [isHovered, setIsHovered] = useState(false);
+  const [size, setSize] = useState(50);
   const [isPressed, setIsPressed] = useState(false);
   const mouse = useMouse();
   const [scroll] = useWindowScroll();
-  const size = isHovered ? 500 : 50;
 
   return (
     <main className="relative flex flex-col">
       {!visible && <StartSection onClick={() => setVisible(true)} />}
       {visible && (
         <>
-          <div className="bg-bg01  -z-10 text-tx01">
+          <div className="bg-bg01 text-tx01">
             <HeroSection />
             <DescriptionSection />
             <FeaturesSection />
             <TechnologySection />
             <TeamSection />
             <FooterSection />
-            <StartButton />
+            <StartButton
+              onMouseEnter={() => setSize(0)}
+              onMouseLeave={() => setSize(50)}
+            />
             <PressButton />
             <Blur />
           </div>
@@ -643,7 +642,7 @@ export default function Home() {
           <motion.div
             id="masked"
             className={clsx(
-              "bg-pr01 absolute pb-64",
+              "bg-pr01 absolute pb-64 z-40",
               isPressed && "is-pressed",
             )}
             animate={{
@@ -655,22 +654,22 @@ export default function Home() {
               "--x-touch": `${rect.x + rect.width / 2}px`,
               "--y-touch": `${rect.top + rect.height / 2 + scroll.y}px`,
             }}
-            transition={{ type: "tween", ease: "backOut", duration: 0.5 }}
+            transition={{ type: "tween", ease: "circOut", duration: 0.5 }}
           >
             <HeroSectionHover
-              onMouseEnter={() => setIsHovered(true)}
-              onMouseLeave={() => setIsHovered(false)}
+              onMouseEnter={() => setSize(500)}
+              onMouseLeave={() => setSize(50)}
             />
             <DescriptionSectionHover
-              onMouseEnter={() => setIsHovered(true)}
-              onMouseLeave={() => setIsHovered(false)}
+              onMouseEnter={() => setSize(500)}
+              onMouseLeave={() => setSize(50)}
             />
             <FeaturesSection hover />
             <TechnologySection />
             <TeamSection />
             <FooterSectionHover
-              onMouseEnter={() => setIsHovered(true)}
-              onMouseLeave={() => setIsHovered(false)}
+              onMouseEnter={() => setSize(500)}
+              onMouseLeave={() => setSize(50)}
             />
             <PressButton
               ref={ref}
@@ -680,8 +679,6 @@ export default function Home() {
               onTouchEnd={() => setIsPressed(false)}
             />
           </motion.div>
-
-          
         </>
       )}
     </main>
