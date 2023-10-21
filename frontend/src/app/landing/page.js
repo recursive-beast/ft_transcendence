@@ -46,6 +46,14 @@ import { useWindowScroll } from "@uidotdev/usehooks";
 import { MaskedLines } from "@/components/MaskedLines";
 import { SplitText } from "@/components/SplitText";
 
+function Title(props) {
+  return (
+    <div className="text-sm font-medium tracking-[6px] uppercase mb-5 lg:text-lg">
+      {props.text}
+    </div>
+  );
+}
+
 function HeroSection() {
   const [on, setOn] = useState(true);
   return (
@@ -194,16 +202,14 @@ function DescriptionSection() {
   return (
     <section className="mb-36">
       <div className="w-11/12 mx-auto sm:w-10/12 lg:w-3/4 xl:w-8/12">
-        <div className="text-tx01 text-sm font-medium tracking-[6px] uppercase mb-5 lg:text-lg">
-          Paddle Smash
-        </div>
+        <Title text="Paddle Smash" />
 
         <MaskedLines className="text-4xl font-semibold sm:text-5xl md:text-6xl 2xl:text-7xl md:space-y-2 first:text-tx02 last:text-tx01 group">
-          Experience{" "}
+          Experience timeless{" "}
           <span className="group-first:text-tx06/20 group-last:text-tx06">
-            timeless ping pong
+            ping pong
           </span>{" "}
-          joy with classic gameplay for hours of entertainment .
+          joy with classic gameplay for hours of entertainment
         </MaskedLines>
       </div>
     </section>
@@ -218,15 +224,13 @@ function DescriptionSectionHover(props) {
         onMouseEnter={props.onMouseEnter}
         onMouseLeave={props.onMouseLeave}
       >
-        <div className="text-sm font-medium tracking-[6px] uppercase mb-5 lg:text-lg">
-          Paddle Smash
-        </div>
+        <Title text="Paddle Smash" />
 
         <div className="relative text-4xl font-semibold sm:text-5xl md:text-6xl 2xl:text-7xl">
           <div>
             <SplitText className=" md:space-y-2">
-              Experience timeless ping pong joy with classic gameplay for hours
-              of entertainment .
+              Endure the ceaseless monotony of ping pong with its tired,
+              overused gameplay.
             </SplitText>
           </div>
         </div>
@@ -237,29 +241,39 @@ function DescriptionSectionHover(props) {
 
 function Feature(props) {
   return (
-    <div className="pt-4 pb-6 border-b border-tx02 hover:bg-pr01">
-      <MaskedLines className="text-4xl font-semibold sm:text-5xl md:text-6xl 2xl:text-7xl first:text-tx02 last:text-tx01">
-        {props.txt1}
-        <br />
-        {props.txt2}
-      </MaskedLines>
+    <div className="pt-4 pb-6 border-b border-tx02 hover:bg-pr01 text-4xl font-semibold sm:text-5xl md:text-6xl 2xl:text-7xl">
+      {props.hover ? (
+        <div>
+          {props.txt1}
+          <br />
+          {props.txt2}
+        </div>
+      ) : (
+        <MaskedLines
+          className={clsx(" first:text-tx02 last:text-tx01", props.hover && "")}
+        >
+          {props.txt1}
+          <br />
+          {props.txt2}
+        </MaskedLines>
+      )}
     </div>
   );
 }
 
-function FeaturesSection() {
+function FeaturesSection(props) {
   return (
     <section className="mb-36">
       <div className="w-11/12 mx-auto sm:w-10/12 lg:w-3/4 xl:w-8/12">
-        <div className="text-tx01 text-sm font-medium tracking-[6px] uppercase pb-6 border-b border-tx02 lg:text-lg">
-          Features
+        <div className="pb-2 border-b border-tx02">
+          <Title text="Features" />
         </div>
 
-        <Feature txt1="Accelerating" txt2="gameplay" />
-        <Feature txt1="classic" txt2="graphics" />
-        <Feature txt1="Simple" txt2="Controls" />
-        <Feature txt1="Realistic" txt2="physics" />
-        <Feature txt1="Multiplayer" />
+        <Feature txt1="Accelerating" txt2="gameplay" hover={props.hover} />
+        <Feature txt1="classic" txt2="graphics" hover={props.hover} />
+        <Feature txt1="Simple" txt2="Controls" hover={props.hover} />
+        <Feature txt1="Realistic" txt2="physics" hover={props.hover} />
+        <Feature txt1="Multiplayer" hover={props.hover} />
       </div>
     </section>
   );
@@ -269,9 +283,7 @@ function TechnologySection() {
   return (
     <section className="mb-36">
       <div className="flex flex-col mb-10 w-11/12 mx-auto sm:w-10/12 lg:w-3/4 xl:w-8/12">
-        <div className="text-tx01 text-sm font-medium tracking-[6px] uppercase mb-5 lg:text-lg">
-          frontend
-        </div>
+        <Title text="frontend" />
 
         <div className="flex flex-wrap gap-4 sm:gap-6 lg:gap-10 xl:gap-14 2xl:gap-20">
           {[
@@ -298,9 +310,7 @@ function TechnologySection() {
       </div>
 
       <div className="flex flex-col mb-10 w-11/12 mx-auto sm:w-10/12 lg:w-3/4 xl:w-8/12">
-        <div className="text-tx01 text-sm font-medium tracking-[6px] uppercase mb-5 lg:text-lg">
-          backend
-        </div>
+        <Title text="backend" />
 
         <div className="flex flex-wrap gap-4 sm:gap-6 lg:gap-10 xl:gap-14 2xl:gap-20">
           {[
@@ -423,10 +433,8 @@ function TeamSection(props) {
 
   return (
     <section className="mb-36">
-      <div className="w-11/12 mx-auto sm:w-10/12 lg:w-3/4 xl:w-8/12">
-        <div className="text-sm font-medium tracking-[6px] uppercase pb-8 border-b border-tx02 lg:text-lg">
-          team
-        </div>
+      <div className="w-11/12 mx-auto sm:w-10/12 lg:w-3/4 xl:w-8/12  pb-2 border-b border-tx02">
+        <Title text="team" />
       </div>
 
       <div className="relative flex flex-col w-11/12 mx-auto sm:w-10/12 lg:w-3/4 xl:w-8/12">
@@ -466,11 +474,11 @@ function TeamSection(props) {
 
 function FooterSection() {
   return (
-    <footer className=" relative flex h-[75vh] mb-10">
+    <footer className=" relative flex h-[75vh] ">
       {/* background image */}
-      <motion.div className="absolute inset-0 -z-10">
+      <motion.div className="absolute inset-0">
         <Image
-          className="opacity-20"
+          className="opacity-50"
           alt="Mountains"
           src={footerImg}
           placeholder="blur"
@@ -483,32 +491,33 @@ function FooterSection() {
         />
       </motion.div>
 
-      <div className="w-11/12 mx-auto my-auto sm:w-10/12 lg:w-3/4 xl:w-3/5">
+      <div className="w-11/12 mx-auto my-auto sm:w-10/12 lg:w-3/4 xl:w-3/5 z-10">
         <div className="space-y-28 my-auto text-center mx-auto">
           <div className="text-tx01 font-normal uppercase text-xs tracking-[6px] md:text-lg xl:text-xl 2xl:text-2xl">
             Paddle Smash
           </div>
 
           <div className=" text-tx01 font-semibold text-5xl -space-y-2 sm:text-8xl lg:text-9xl 2xl:text-[160px]">
-            <div>Let's start</div>
+            <div>Let&apos;s start</div>
             <div>the fun</div>
           </div>
 
-          <button
+          {/* <button
             className="text-center text-tx01 text-xl font-extralight tracking-[4.80px] uppercase border border-tx01 rounded-full px-10 py-1
                      hover:text-tx03 hover:bg-tx01 ease-linear transition-colors duration-[400ms]"
           >
             Start
-          </button>
+          </button> */}
         </div>
       </div>
+      <div className="w-full h-1/3 bottom-0  bg-gradient-to-t from-bg01 from-10% via-bg01/60  absolute  z-20"></div>
     </footer>
   );
 }
 
 function FooterSectionHover(props) {
   return (
-    <footer className="relative flex h-[75vh] mb-10">
+    <footer className="relative flex h-[75vh]">
       <div className="w-11/12 mx-auto my-auto sm:w-10/12 lg:w-3/4 xl:w-3/5">
         <div
           className="space-y-28 my-auto text-center mx-auto pb-10"
@@ -524,15 +533,32 @@ function FooterSectionHover(props) {
             <div>you get depressed</div>
           </div>
 
-          <button
+          {/* <button
             className="text-center  text-xl font-extralight tracking-[4.80px] uppercase border  rounded-full px-10 py-1
                       hover:bg-bg01/20 ease-linear transition-colors duration-[400ms]"
           >
             risk it
-          </button>
+          </button> */}
+          {/* <div /> */}
         </div>
       </div>
     </footer>
+  );
+}
+
+function StartButton() {
+  return (
+    <div className="w-screen flex justify-center items-center flex-col pb-64 bg-bg01 z-50">
+      <div className="relative">
+        {/* <Image src={logoPic} alt="Logo of the game" width={150} height={150} /> */}
+        <button
+          className="text-center text-tx01 text-2xl font-extralight tracking-[4.80px] uppercase border border-tx01 rounded-full px-14 py-2
+                 hover:text-tx03 hover:bg-tx01 ease-linear transition-colors duration-[400ms] absolute top-full translate-y-8 left-1/2 -translate-x-1/2 "
+        >
+          Start
+        </button>
+      </div>
+    </div>
   );
 }
 
@@ -570,66 +596,94 @@ function Blur() {
   );
 }
 
+function StartSection(props) {
+  return (
+    <div className="w-screen h-screen flex justify-center items-center flex-col bg-bg01 fixed z-50">
+      <div className="relative">
+        <Image src={logoPic} alt="Logo of the game" width={200} height={200} />
+        <button
+          onClick={props.onClick}
+          className="text-center text-tx01 text-2xl font-extralight tracking-[4.80px] uppercase border border-tx01 rounded-full px-14 py-2
+                 hover:text-tx03 hover:bg-tx01 ease-linear transition-colors duration-[400ms] absolute top-full translate-y-8 left-1/2 -translate-x-1/2 "
+        >
+          Start
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
-  // const [on, setOn] = useState(true);
+  const [visible, setVisible] = useState(false);
   const ref = useRef(null);
   const rect = ref.current?.getBoundingClientRect() || {};
   const [isHovered, setIsHovered] = useState(false);
   const [isPressed, setIsPressed] = useState(false);
   const mouse = useMouse();
   const [scroll] = useWindowScroll();
-  const size = isHovered ? 500 : 60;
+  const size = isHovered ? 500 : 50;
 
   return (
     <main className="relative flex flex-col">
-      <div className="bg-bg01 pb-20 -z-50 text-tx01">
-        <HeroSection />
-        <DescriptionSection />
-        <FeaturesSection />
-        <TechnologySection />
-        <TeamSection />
-        <FooterSection />
-        <PressButton />
-        <Blur />
-      </div>
+      {!visible && <StartSection onClick={() => setVisible(true)} />}
+      {visible && (
+        <>
+          <div className="bg-bg01  -z-10 text-tx01">
+            <HeroSection />
+            <DescriptionSection />
+            <FeaturesSection />
+            <TechnologySection />
+            <TeamSection />
+            <FooterSection />
+            <StartButton />
+            <PressButton />
+            <Blur />
+          </div>
 
-      <motion.div
-        id="masked"
-        className={clsx("bg-pr01 pb-20 absolute", isPressed && "is-pressed")}
-        animate={{
-          "--x": `${mouse.x}px`,
-          "--y": `${scroll.y + mouse.y}px`,
-          "--size": `${size}px`,
-        }}
-        style={{
-          "--x-touch": `${rect.x + rect.width / 2}px`,
-          "--y-touch": `${rect.top + rect.height / 2 + scroll.y}px`,
-        }}
-        transition={{ type: "tween", ease: "backOut", duration: 0.5 }}
-      >
-        <HeroSectionHover
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-        />
-        <DescriptionSectionHover
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-        />
-        <FeaturesSection />
-        <TechnologySection />
-        <TeamSection />
-        <FooterSectionHover
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-        />
-        <PressButton
-          ref={ref}
-          onMouseDown={() => setIsPressed(true)}
-          onMouseUp={() => setIsPressed(false)}
-          onTouchStart={() => setIsPressed(true)}
-          onTouchEnd={() => setIsPressed(false)}
-        />
-      </motion.div>
+          <motion.div
+            id="masked"
+            className={clsx(
+              "bg-pr01 absolute pb-64",
+              isPressed && "is-pressed",
+            )}
+            animate={{
+              "--x": `${mouse.x}px`,
+              "--y": `${scroll.y + mouse.y}px`,
+              "--size": `${size}px`,
+            }}
+            style={{
+              "--x-touch": `${rect.x + rect.width / 2}px`,
+              "--y-touch": `${rect.top + rect.height / 2 + scroll.y}px`,
+            }}
+            transition={{ type: "tween", ease: "backOut", duration: 0.5 }}
+          >
+            <HeroSectionHover
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+            />
+            <DescriptionSectionHover
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+            />
+            <FeaturesSection hover />
+            <TechnologySection />
+            <TeamSection />
+            <FooterSectionHover
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+            />
+            <PressButton
+              ref={ref}
+              onMouseDown={() => setIsPressed(true)}
+              onMouseUp={() => setIsPressed(false)}
+              onTouchStart={() => setIsPressed(true)}
+              onTouchEnd={() => setIsPressed(false)}
+            />
+          </motion.div>
+
+          
+        </>
+      )}
     </main>
   );
 }
