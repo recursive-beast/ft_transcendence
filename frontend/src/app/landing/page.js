@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { Icon } from "@iconify/react";
 import { forwardRef, useState } from "react";
+import Link from "next/link";
 
 import heroImg from "@/images/pics/hero-bg.jpg";
 import footerImg from "@/images/pics/footer.jpg";
@@ -13,6 +14,7 @@ import logoPic from "@/images/logos/logo.png";
 import intrat from "@/images/logos/42_logo.png";
 import git from "@/images/logos/github.png";
 import linkedin from "@/images/logos/linkedin.png";
+import google from "@/images/logos/google.png";
 
 // backend logos
 import dckCmp from "@/images/technologies/backend/docker-compose.png";
@@ -54,7 +56,7 @@ function Title(props) {
   );
 }
 
-function HeroSection() {
+function HeroSection(props) {
   const [on, setOn] = useState(true);
   return (
     <>
@@ -89,7 +91,7 @@ function HeroSection() {
       </header>
 
       {/* sticky elements */}
-      <section className="h-screen fixed flex items-stretch justify-between mb-36">
+      <section className="h-screen fixed flex items-stretch justify-between mb-36 z-30">
         {/* left side logo and start button */}
         <div className="flex justify-between fixed h-full top-0 left-0">
           <div className="flex flex-col justify-between my-6 ml-3 lg:my-8 xl:my-12 2xl:my-20 md:ml-6 xl:ml-8 2xl:ml-14">
@@ -99,8 +101,12 @@ function HeroSection() {
               alt="Logo of the game"
               width={100}
               height={100}
+              {...props}
             />
-            <button className="group lg:flex items-center ml-6 hidden">
+            <button
+              className="group lg:flex items-center ml-6 hidden"
+              {...props}
+            >
               <Icon
                 className="text-tx01 mr-2 w-6 lg:w-7 xl:w-8 2xl:w-10 lg:transition lg:duration-500 lg:group-hover:text-tx02"
                 icon="solar:gamepad-broken"
@@ -114,7 +120,10 @@ function HeroSection() {
         </div>
 
         {/* right side sound button */}
-        <div className="flex -rotate-90 mb-20 mt-auto space-x-2 -mr-6 fixed right-0 bottom-0 xl:mr-1 2xl:mb-28">
+        <div
+          className="flex -rotate-90 mb-20 mt-auto space-x-2 -mr-6 fixed right-0 bottom-0 xl:mr-1 2xl:mb-28"
+          {...props}
+        >
           <button
             onClick={() => setOn(!on)}
             className=" text-tx02 text-xs font-medium tracking-normal uppercase lg:text-sm 2xl:text-base"
@@ -133,66 +142,25 @@ function HeroSection() {
 function HeroSectionHover(props) {
   const [on, setOn] = useState(true);
   return (
-    <>
-      <header className="relative h-screen w-screen flex items-stretch mb-36">
-        {/*"the text" */}
-        <div
-          className="space-y-6 my-auto text-center mx-auto"
-          onMouseEnter={props.onMouseEnter}
-          onMouseLeave={props.onMouseLeave}
-        >
-          <div className="font-normal uppercase text-xs tracking-[6px] md:text-lg xl:text-xl 2xl:text-2xl">
-            Paddle Smash
-          </div>
-          <div className="font-semibold uppercase -tracking-wider text-7xl -space-y-2 sm:text-8xl lg:text-9xl 2xl:text-[160px]">
-            <div>the</div>
-            <div>ping</div>
-            <div>pong</div>
-            <div>balls</div>
-            <div>👀</div>
-          </div>
+    <header className="relative h-screen w-screen flex items-stretch mb-36">
+      {/*"the text" */}
+      <div
+        className="space-y-6 my-auto text-center mx-auto"
+        onMouseEnter={props.onMouseEnter}
+        onMouseLeave={props.onMouseLeave}
+      >
+        <div className="font-normal uppercase text-xs tracking-[6px] md:text-lg xl:text-xl 2xl:text-2xl">
+          Paddle Smash
         </div>
-      </header>
-
-      {/* sticky elements */}
-      <section className="h-screen fixed flex items-stretch justify-between mb-36">
-        {/* left side logo and start button */}
-        <div className="flex justify-between fixed h-full top-0 left-0">
-          <div className="flex flex-col justify-between my-6 ml-3 lg:my-8 xl:my-12 2xl:my-20 md:ml-6 xl:ml-8 2xl:ml-14">
-            <Image
-              className="w-14 lg:w-16 xl:w-20 2xl:w-24"
-              src={logoPic}
-              alt="Logo of the game"
-              width={100}
-              height={100}
-            />
-            <button className="group flex items-center ml-6">
-              <Icon
-                className="text-tx01 mr-2 w-6 lg:w-7 xl:w-8 2xl:w-10 lg:transition lg:duration-500 lg:group-hover:text-tx02"
-                icon="solar:gamepad-broken"
-                width="36"
-              />
-              <div className=" text-tx01 font-light tracking-normal uppercase text-xs md:text-sm 2xl:text-lg lg:opacity-0 lg:group-hover:opacity-100 lg:transition lg:duration-700">
-                start
-              </div>
-            </button>
-          </div>
+        <div className="font-semibold uppercase -tracking-wider text-7xl -space-y-2 sm:text-8xl lg:text-9xl 2xl:text-[160px]">
+          <div>the</div>
+          <div>ping</div>
+          <div>pong</div>
+          <div>balls</div>
+          <div>👀</div>
         </div>
-
-        {/* right side sound button */}
-        <div className="flex -rotate-90 mb-20 mt-auto space-x-2 -mr-6 fixed right-0 bottom-0 xl:mr-1 2xl:mb-28">
-          <button
-            onClick={() => setOn(!on)}
-            className=" text-tx02 text-xs font-medium tracking-normal uppercase lg:text-sm 2xl:text-base"
-          >
-            sound
-          </button>
-          <div className=" text-tx01 text-xs font-medium tracking-normal uppercase w-10 lg:text-sm 2xl:text-base">
-            {on ? "on" : "off"}
-          </div>
-        </div>
-      </section>
-    </>
+      </div>
+    </header>
   );
 }
 
@@ -207,7 +175,7 @@ function DescriptionSection() {
           <span className="group-first:text-tx06/20 group-last:text-tx06">
             ping pong
           </span>{" "}
-          joy with classic gameplay for hours of entertainment
+          joy with the classic game for extended amusement.
         </MaskedLines>
       </div>
     </section>
@@ -240,50 +208,46 @@ function DescriptionSectionHover(props) {
 function Feature(props) {
   return (
     <div className="pt-4 pb-6 border-b border-tx02 hover:bg-pr01 text-4xl font-semibold sm:text-5xl md:text-6xl 2xl:text-7xl">
-      {props.hover ? (
-        <div>
-          {props.txt1}
-          <br />
-          {props.txt2}
-        </div>
-      ) : (
-        <MaskedLines
-          className={clsx(" first:text-tx02 last:text-tx01", props.hover && "")}
-        >
-          {props.txt1}
-          <br />
-          {props.txt2}
-        </MaskedLines>
-      )}
+      <MaskedLines className="first:text-tx02 last:text-tx01 hover:first:text-tx04 hover:last:text-tx04 transition-colors">
+        {props.txt1}
+        <br />
+        {props.txt2}
+      </MaskedLines>
     </div>
   );
 }
 
 function FeaturesSection(props) {
   return (
-    <section className="mb-36">
+    <section
+      className={clsx("mb-36", !props.hover && "z-30 relative")}
+      {...props}
+    >
       <div className="w-11/12 mx-auto sm:w-10/12 lg:w-3/4 xl:w-8/12">
         <div className="pb-2 border-b border-tx02">
           <Title text="Features" />
         </div>
 
-        <Feature txt1="Accelerating" txt2="gameplay" hover={props.hover} />
-        <Feature txt1="classic" txt2="graphics" hover={props.hover} />
-        <Feature txt1="Simple" txt2="Controls" hover={props.hover} />
-        <Feature txt1="Realistic" txt2="physics" hover={props.hover} />
-        <Feature txt1="Multiplayer" hover={props.hover} />
+        <Feature txt1="Accelerating" txt2="gameplay" />
+        <Feature txt1="classic" txt2="graphics" />
+        <Feature txt1="Simple" txt2="Controls" />
+        <Feature txt1="Realistic" txt2="physics" />
+        <Feature txt1="Multiplayer" />
       </div>
     </section>
   );
 }
 
-function TechnologySection() {
+function TechnologySection(props) {
   return (
     <section className="mb-36">
       <div className="flex flex-col mb-10 w-11/12 mx-auto sm:w-10/12 lg:w-3/4 xl:w-8/12">
         <Title text="frontend" />
 
-        <div className="flex flex-wrap gap-4 sm:gap-6 lg:gap-10 xl:gap-14 2xl:gap-20">
+        <div
+          className="flex flex-wrap gap-4 sm:gap-6 lg:gap-10 xl:gap-14 2xl:gap-20 z-30"
+          {...props}
+        >
           {[
             nextjs,
             javascript,
@@ -310,7 +274,10 @@ function TechnologySection() {
       <div className="flex flex-col mb-10 w-11/12 mx-auto sm:w-10/12 lg:w-3/4 xl:w-8/12">
         <Title text="backend" />
 
-        <div className="flex flex-wrap gap-4 sm:gap-6 lg:gap-10 xl:gap-14 2xl:gap-20">
+        <div
+          className="flex flex-wrap gap-4 sm:gap-6 lg:gap-10 xl:gap-14 2xl:gap-20 z-30"
+          {...props}
+        >
           {[
             dckCmp,
             dck,
@@ -546,11 +513,10 @@ function StartButton(props) {
   return (
     <div className="w-screen flex justify-center items-center flex-col pb-64 bg-bg01">
       <div className="relative">
-        {/* <Image src={logoPic} alt="Logo of the game" width={150} height={150} /> */}
         <button
           {...props}
           className="text-center text-tx01 text-2xl font-extralight tracking-[4.80px] uppercase border border-tx01 rounded-full px-14 py-2
-                 hover:text-tx03 hover:bg-tx01 ease-linear transition-colors duration-[400ms] absolute top-full translate-y-8 left-1/2 -translate-x-1/2 z-50"
+                 hover:text-tx03 hover:bg-tx01 ease-linear transition-colors duration-[400ms] absolute top-full translate-y-8 left-1/2 -translate-x-1/2 z-30"
         >
           Start
         </button>
@@ -570,7 +536,7 @@ const PressButton = forwardRef(function PressButton(props, ref) {
     <button
       id="press-button"
       ref={ref}
-      className="flex flex-col items-center justify-center rounded-full fixed bottom-8 left-2/4 -translate-x-1/2 touch"
+      className="flex flex-col items-center justify-center rounded-full fixed bottom-8 left-2/4 -translate-x-1/2 touch z-30"
       onContextMenu={preventContextMenu}
       {...props}
     >
@@ -595,7 +561,7 @@ function Blur() {
 
 function StartSection(props) {
   return (
-    <div className="w-screen h-screen flex justify-center items-center flex-col bg-bg01 fixed z-50">
+    <div className="w-screen h-screen flex justify-center items-center flex-col bg-bg01 fixed z-40">
       <div className="relative">
         <Image src={logoPic} alt="Logo of the game" width={200} height={200} />
         <button
@@ -610,6 +576,67 @@ function StartSection(props) {
   );
 }
 
+function LoginSection({onClick,...props}) {
+  return (
+    <div
+      className="bg-bg01/90 fixed inset-0 z-40 flex items-center justify-center"
+      {...props}
+    >
+      <div className="bg-bg01 border-[1.5px] border-tx05 rounded-2xl flex flex-col items-center justify-between w-11/12 h-3/5 sm:w-[30rem] sm:h-2/3 relative">
+        <button onClick={onClick}>
+          <Icon
+            className="text-tx05 w-8 h-8 absolute top-6 right-6"
+            icon="icon-park-outline:close"
+            width="36"
+          />
+        </button>
+
+        {/* <div></div> */}
+        <div className="font-light tracking-[8px] uppercase text-base sm:text-xl sm:tracking-[10px] lg:text-2xl">
+          paddel smash
+        </div>
+
+        <Image
+          src={logoPic}
+          alt="Logo of the game"
+          className="h-52 w-52 sm:h-64 sm:w-64"
+        />
+
+        <div>
+          <div className="text-lg font-medium tracking-[5px] uppercase mt-6 mb-6 sm:text-xl lg:text:2xl">
+            login with
+          </div>
+
+          <div>
+            <Link className="group flex items-center mb-3" href={"#"}>
+              <Image
+                className="lg:h-8 lg:w-8 2xl:h-10 2xl:w-10 mr-3 w-8 h-8"
+                src={intrat}
+                alt="intrat logo"
+              />
+              <div className="text-base font-light tracking-widest uppercase sm:text-xl lg:text-2xl">
+                intra
+              </div>
+            </Link>
+
+            <Link className="group flex items-center mb-2" href={"#"}>
+              <Image
+                className="lg:h-8 lg:w-8 2xl:h-10 2xl:w-10 mr-3 w-8 h-8"
+                src={google}
+                alt="google logo"
+              />
+              <div className="text-base font-light tracking-widest uppercase sm:text-xl lg:text-2xl">
+                google
+              </div>
+            </Link>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
   const [visible, setVisible] = useState(false);
   const ref = useRef(null);
@@ -618,6 +645,7 @@ export default function Home() {
   const [isPressed, setIsPressed] = useState(false);
   const mouse = useMouse();
   const [scroll] = useWindowScroll();
+  const [login, setLogin] = useState(false);
 
   return (
     <main className="relative flex flex-col">
@@ -625,24 +653,46 @@ export default function Home() {
       {visible && (
         <>
           <div className="bg-bg01 text-tx01">
-            <HeroSection />
-            <DescriptionSection />
-            <FeaturesSection />
-            <TechnologySection />
-            <TeamSection />
-            <FooterSection />
-            <StartButton
+            <HeroSection
               onMouseEnter={() => setSize(0)}
               onMouseLeave={() => setSize(50)}
             />
-            <PressButton />
+            <DescriptionSection />
+            <FeaturesSection
+              onMouseEnter={() => setSize(0)}
+              onMouseLeave={() => setSize(50)}
+            />
+            <TechnologySection
+              onMouseEnter={() => setSize(0)}
+              onMouseLeave={() => setSize(50)}
+            />
+            <TeamSection />
+            <FooterSection />
+            <StartButton
+              onClick={()=>setLogin(true)}
+              onMouseEnter={() => setSize(0)}
+              onMouseLeave={() => setSize(50)}
+            />
+            {login && (
+              <LoginSection
+              onClick={() => setLogin(false)}
+                onMouseEnter={() => setSize(0)}
+                onMouseLeave={() => setSize(50)}
+              />
+            )}
             <Blur />
           </div>
-
+          <PressButton
+            ref={ref}
+            onMouseDown={() => setIsPressed(true)}
+            onMouseUp={() => setIsPressed(false)}
+            onTouchStart={() => setIsPressed(true)}
+            onTouchEnd={() => setIsPressed(false)}
+          />
           <motion.div
             id="masked"
             className={clsx(
-              "bg-pr01 absolute pb-64 z-40",
+              "bg-pr01 absolute pb-64 z-20",
               isPressed && "is-pressed",
             )}
             animate={{
@@ -665,18 +715,11 @@ export default function Home() {
               onMouseLeave={() => setSize(50)}
             />
             <FeaturesSection hover />
-            <TechnologySection />
+            <TechnologySection hover />
             <TeamSection />
             <FooterSectionHover
               onMouseEnter={() => setSize(500)}
               onMouseLeave={() => setSize(50)}
-            />
-            <PressButton
-              ref={ref}
-              onMouseDown={() => setIsPressed(true)}
-              onMouseUp={() => setIsPressed(false)}
-              onTouchStart={() => setIsPressed(true)}
-              onTouchEnd={() => setIsPressed(false)}
             />
           </motion.div>
         </>
