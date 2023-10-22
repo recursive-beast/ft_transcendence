@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { Icon } from "@iconify/react";
-import { forwardRef, useState } from "react";
+import { forwardRef, useEffect, useState } from "react";
 
 import heroImg from "@/images/pics/hero-bg.jpg";
 import footerImg from "@/images/pics/footer.jpg";
@@ -36,7 +36,12 @@ import melhous from "@/images/profile_images/mel-hous.png";
 import mmessaou from "@/images/profile_images/mmessaou.png";
 import syakoubi from "@/images/profile_images/syakoubi.png";
 // scroll
-import { useScroll, motion, useMotionValueEvent } from "framer-motion";
+import {
+  useScroll,
+  motion,
+  useMotionValueEvent,
+  AnimatePresence,
+} from "framer-motion";
 import clsx from "clsx";
 import { useRef } from "react";
 
@@ -54,7 +59,7 @@ function Title(props) {
   );
 }
 
-function HeroSection() {
+function HeroSection(props) {
   const [on, setOn] = useState(true);
   return (
     <>
@@ -79,11 +84,56 @@ function HeroSection() {
             Paddle Smash
           </div>
           <div className=" text-tx01 font-semibold uppercase -tracking-wider text-7xl -space-y-2 sm:text-8xl lg:text-9xl 2xl:text-[160px]">
-            <div>come</div>
-            <div>and</div>
-            <div className="text-tx06">smash</div>
-            <div>some</div>
-            <div className="text-tx06">balls</div>
+            <div className="overflow-hidden">
+              <div
+                className={clsx(
+                  "transition-transform duration-1000 delay-500",
+                  props.animate ? "translate-y-0" : "translate-y-full",
+                )}
+              >
+                come
+              </div>
+            </div>
+            <div className="overflow-hidden">
+              <div
+                className={clsx(
+                  "transition-transform duration-1000 delay-500",
+                  props.animate ? "translate-y-0" : "translate-y-full",
+                )}
+              >
+                and
+              </div>
+            </div>
+            <div className="text-tx06 overflow-hidden">
+              <div
+                className={clsx(
+                  "transition-transform duration-1000 delay-500",
+                  props.animate ? "translate-y-0" : "translate-y-full",
+                )}
+              >
+                smash
+              </div>
+            </div>
+            <div className="overflow-hidden">
+              <div
+                className={clsx(
+                  "transition-transform duration-1000 delay-500",
+                  props.animate ? "translate-y-0" : "translate-y-full",
+                )}
+              >
+                some
+              </div>
+            </div>
+            <div className="text-tx06 overflow-hidden">
+              <div
+                className={clsx(
+                  "transition-transform duration-1000 delay-500",
+                  props.animate ? "translate-y-0" : "translate-y-full",
+                )}
+              >
+                balls
+              </div>
+            </div>
           </div>
         </div>
       </header>
@@ -145,11 +195,56 @@ function HeroSectionHover(props) {
             Paddle Smash
           </div>
           <div className="font-semibold uppercase -tracking-wider text-7xl -space-y-2 sm:text-8xl lg:text-9xl 2xl:text-[160px]">
-            <div>the</div>
-            <div>ping</div>
-            <div>pong</div>
-            <div>balls</div>
-            <div>👀</div>
+            <div className="overflow-hidden">
+              <div
+                className={clsx(
+                  "transition-transform duration-1000 delay-500",
+                  props.animate ? "translate-y-0" : "translate-y-full",
+                )}
+              >
+                the
+              </div>
+            </div>
+            <div className="overflow-hidden">
+              <div
+                className={clsx(
+                  "transition-transform duration-1000 delay-500",
+                  props.animate ? "translate-y-0" : "translate-y-full",
+                )}
+              >
+                ping
+              </div>
+            </div>
+            <div className="overflow-hidden">
+              <div
+                className={clsx(
+                  "transition-transform duration-1000 delay-500",
+                  props.animate ? "translate-y-0" : "translate-y-full",
+                )}
+              >
+                pong
+              </div>
+            </div>
+            <div className="overflow-hidden">
+              <div
+                className={clsx(
+                  "transition-transform duration-1000 delay-500",
+                  props.animate ? "translate-y-0" : "translate-y-full",
+                )}
+              >
+                balls
+              </div>
+            </div>
+            <div className="overflow-hidden">
+              <div
+                className={clsx(
+                  "transition-transform duration-1000 delay-500",
+                  props.animate ? "translate-y-0" : "translate-y-full",
+                )}
+              >
+                👀
+              </div>
+            </div>
           </div>
         </div>
       </header>
@@ -595,8 +690,17 @@ function Blur() {
 
 function StartSection(props) {
   return (
-    <div className="w-screen h-screen flex justify-center items-center flex-col bg-bg01 fixed z-50">
-      <div className="relative">
+    <motion.div
+      initial={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 1.3 }}
+      className="w-screen h-screen flex justify-center items-center flex-col bg-bg01 fixed z-50"
+    >
+      <motion.div
+        initial={{ scale: 1 }}
+        exit={{ scale: 0 }}
+        className="relative"
+      >
         <Image src={logoPic} alt="Logo of the game" width={200} height={200} />
         <button
           onClick={props.onClick}
@@ -605,82 +709,95 @@ function StartSection(props) {
         >
           Start
         </button>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
 
 export default function Home() {
-  const [visible, setVisible] = useState(false);
+  const [overlay, setOverlay] = useState(true);
   const ref = useRef(null);
   const rect = ref.current?.getBoundingClientRect() || {};
-  const [size, setSize] = useState(50);
+  const [size, setSize] = useState(0);
   const [isPressed, setIsPressed] = useState(false);
   const mouse = useMouse();
   const [scroll] = useWindowScroll();
 
   return (
-    <main className="relative flex flex-col">
-      {!visible && <StartSection onClick={() => setVisible(true)} />}
-      {visible && (
-        <>
-          <div className="bg-bg01 text-tx01">
-            <HeroSection />
-            <DescriptionSection />
-            <FeaturesSection />
-            <TechnologySection />
-            <TeamSection />
-            <FooterSection />
-            <StartButton
-              onMouseEnter={() => setSize(0)}
-              onMouseLeave={() => setSize(50)}
-            />
-            <PressButton />
-            <Blur />
-          </div>
-
-          <motion.div
-            id="masked"
-            className={clsx(
-              "bg-pr01 absolute pb-64 z-40",
-              isPressed && "is-pressed",
-            )}
-            animate={{
-              "--x": `${mouse.x}px`,
-              "--y": `${scroll.y + mouse.y}px`,
-              "--size": `${size}px`,
-            }}
-            style={{
-              "--x-touch": `${rect.x + rect.width / 2}px`,
-              "--y-touch": `${rect.top + rect.height / 2 + scroll.y}px`,
-            }}
-            transition={{ type: "tween", ease: "circOut", duration: 0.5 }}
-          >
-            <HeroSectionHover
-              onMouseEnter={() => setSize(500)}
-              onMouseLeave={() => setSize(50)}
-            />
-            <DescriptionSectionHover
-              onMouseEnter={() => setSize(500)}
-              onMouseLeave={() => setSize(50)}
-            />
-            <FeaturesSection hover />
-            <TechnologySection />
-            <TeamSection />
-            <FooterSectionHover
-              onMouseEnter={() => setSize(500)}
-              onMouseLeave={() => setSize(50)}
-            />
-            <PressButton
-              ref={ref}
-              onMouseDown={() => setIsPressed(true)}
-              onMouseUp={() => setIsPressed(false)}
-              onTouchStart={() => setIsPressed(true)}
-              onTouchEnd={() => setIsPressed(false)}
-            />
-          </motion.div>
-        </>
+    <main
+      className={clsx(
+        "relative flex flex-col",
+        overlay && "h-screen overflow-hidden",
       )}
+    >
+      <AnimatePresence>
+        {overlay && (
+          <StartSection
+            onClick={() => {
+              setOverlay(false);
+              setTimeout(() => {
+                setSize(500);
+              }, 200);
+            }}
+          />
+        )}
+      </AnimatePresence>
+      <div className="bg-bg01 text-tx01">
+        <HeroSection animate={!overlay} />
+        <DescriptionSection />
+        <FeaturesSection />
+        <TechnologySection />
+        <TeamSection />
+        <FooterSection />
+        <StartButton
+          onMouseEnter={() => setSize(0)}
+          onMouseLeave={() => setSize(50)}
+        />
+        <PressButton />
+        <Blur />
+      </div>
+
+      <motion.div
+        id="masked"
+        className={clsx(
+          "bg-pr01 absolute pb-64 z-40",
+          isPressed && "is-pressed",
+        )}
+        animate={{
+          "--x": `${mouse.x}px`,
+          "--y": `${scroll.y + mouse.y}px`,
+          "--size": `${size}px`,
+        }}
+        style={{
+          "--x-touch": `${rect.x + rect.width / 2}px`,
+          "--y-touch": `${rect.top + rect.height / 2 + scroll.y}px`,
+        }}
+        transition={{ type: "tween", ease: "circOut", duration: 0.5 }}
+      >
+        <HeroSectionHover
+          animate={!overlay}
+          onMouseEnter={() => setSize(500)}
+          onMouseLeave={() => setSize(50)}
+        />
+        <DescriptionSectionHover
+          onMouseEnter={() => setSize(500)}
+          onMouseLeave={() => setSize(50)}
+        />
+        <FeaturesSection hover />
+        <TechnologySection />
+        <TeamSection />
+        <FooterSectionHover
+          onMouseEnter={() => setSize(500)}
+          onMouseLeave={() => setSize(50)}
+        />
+        <PressButton
+          ref={ref}
+          onMouseDown={() => setIsPressed(true)}
+          onMouseUp={() => setIsPressed(false)}
+          onTouchStart={() => setIsPressed(true)}
+          onTouchEnd={() => setIsPressed(false)}
+        />
+      </motion.div>
     </main>
   );
 }
