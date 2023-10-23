@@ -23,7 +23,9 @@
 
 @for $i from 1 through 10 {
 	.line:nth-child(#{$i}) {
-		clip-path: inset(-20% calc(var(--left) - (var(--line-count) - $i) * 100%) -20% 0);
+		clip-path: inset(
+			-20% calc(var(--left) - (var(--line-count) - $i) * 100%) -20% 0
+		);
 	}
 }
 
@@ -37,9 +39,10 @@
 
 @media not all and (hover: none) and (pointer: coarse) {
 	#masked {
-		mask-position: calc(var(--x) - var(--size) / 2)
-			calc(var(--y) - var(--size) / 2);
-		mask-size: var(--size);
+		--size: 500px;
+		mask-position: calc(var(--x) - calc(var(--size) * var(--scale)) / 2)
+			calc(var(--y) - calc(var(--size) * var(--scale)) / 2);
+		mask-size: calc(var(--size) * var(--scale));
 	}
 
 	.touch {
@@ -49,15 +52,15 @@
 
 @media (hover: none) and (pointer: coarse) {
 	#masked {
-		--size-touch: 0px;
-		mask-position: calc(var(--x-touch) - var(--size-touch) / 2)
-			calc(var(--y-touch) - var(--size-touch) / 2);
-		mask-size: var(--size-touch);
-		transition-property: mask-size, mask-position;
-		transition-duration: 0.5s;
-	}
-
-	#masked.is-pressed {
 		--size-touch: 3000px;
+		mask-position: calc(
+				var(--x-touch) - calc(var(--size-touch) * var(--scale-touch)) /
+					2
+			)
+			calc(
+				var(--y-touch) - calc(var(--size-touch) * var(--scale-touch)) /
+					2
+			);
+		mask-size: calc(var(--size-touch) * var(--scale-touch));
 	}
 }

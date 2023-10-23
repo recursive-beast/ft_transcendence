@@ -668,7 +668,7 @@ function StartSection(props) {
     <motion.div
       initial={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 1.3 }}
+      transition={{ duration: 0.5 }}
       className="w-screen h-screen flex justify-center items-center flex-col bg-bg01 fixed z-[60]"
     >
       <motion.div
@@ -756,10 +756,12 @@ function LoginSection({ onClick, ...props }) {
 
 export default function Home() {
   const [overlay, setOverlay] = useState(true);
+  const [slideUp, setSlideUp] = useState(false);
   const ref = useRef(null);
   const rect = ref.current?.getBoundingClientRect() || {};
-  const [size, setSize] = useState(0);
   const [isPressed, setIsPressed] = useState(false);
+  const [isHover, setIsHover] = useState(false);
+  const [isHidden, setIsHidden] = useState(true);
   const mouse = useMouse();
   const [scroll] = useWindowScroll();
   const [login, setLogin] = useState(false);
@@ -767,33 +769,29 @@ export default function Home() {
 
   return (
     <main ref={ref} className="relative flex flex-col">
-      <AnimatePresence>
-        {overlay && (
-          <StartSection
-            onClick={() => {
-              setOverlay(false);
-              setScroll(true);
-              setTimeout(() => {
-                setSize(500);
-              }, 200);
-            }}
-          />
-        )}
+      <AnimatePresence
+        onExitComplete={() => {
+          setIsHidden(false);
+          setScroll(true);
+          setSlideUp(true);
+        }}
+      >
+        {overlay && <StartSection onClick={() => setOverlay(false)} />}
       </AnimatePresence>
       <div className="bg-bg01 text-tx01">
         <HeroSection
-          animate={!overlay}
-          onMouseEnter={() => setSize(0)}
-          onMouseLeave={() => setSize(50)}
+          animate={slideUp}
+          onMouseEnter={() => setIsHidden(true)}
+          onMouseLeave={() => setIsHidden(false)}
         />
         <DescriptionSection />
         <FeaturesSection
-          onMouseEnter={() => setSize(0)}
-          onMouseLeave={() => setSize(50)}
+          onMouseEnter={() => setIsHidden(true)}
+          onMouseLeave={() => setIsHidden(false)}
         />
         <TechnologySection
-          onMouseEnter={() => setSize(0)}
-          onMouseLeave={() => setSize(50)}
+          onMouseEnter={() => setIsHidden(true)}
+          onMouseLeave={() => setIsHidden(false)}
         />
         <TeamSection />
         <FooterSection
@@ -805,8 +803,8 @@ export default function Home() {
             setLogin(true);
             setScroll(false);
           }}
-          onMouseEnter={() => setSize(0)}
-          onMouseLeave={() => setSize(50)}
+          onMouseEnter={() => setIsHidden(true)}
+          onMouseLeave={() => setIsHidden(false)}
         />
         {login && (
           <LoginSection
@@ -814,8 +812,8 @@ export default function Home() {
               setLogin(false);
               setScroll(true);
             }}
-            onMouseEnter={() => setSize(0)}
-            onMouseLeave={() => setSize(50)}
+            onMouseEnter={() => setIsHidden(true)}
+            onMouseLeave={() => setIsHidden(false)}
           />
         )}
         <Blur />
@@ -829,11 +827,12 @@ export default function Home() {
       />
       <motion.div
         id="masked"
-        className={clsx("bg-pr01 absolute z-20", isPressed && "is-pressed")}
+        className="bg-pr01 absolute pb-64 z-20"
         animate={{
           "--x": `${mouse.x}px`,
           "--y": `${scroll.y + mouse.y}px`,
-          "--size": `${size}px`,
+          "--scale": isHidden ? 0 : isHover ? 1 : 0.1,
+          "--scale-touch": isPressed ? 1 : 0,
         }}
         style={{
           "--x-touch": `${rect.x + rect.width / 2}px`,
@@ -842,20 +841,20 @@ export default function Home() {
         transition={{ type: "tween", ease: "circOut", duration: 0.5 }}
       >
         <HeroSectionHover
-          animate={!overlay}
-          onMouseEnter={() => setSize(500)}
-          onMouseLeave={() => setSize(50)}
+          animate={slideUp}
+          onMouseEnter={() => setIsHover(true)}
+          onMouseLeave={() => setIsHover(false)}
         />
         <DescriptionSectionHover
-          onMouseEnter={() => setSize(500)}
-          onMouseLeave={() => setSize(50)}
+          onMouseEnter={() => setIsHover(true)}
+          onMouseLeave={() => setIsHover(false)}
         />
         <FeaturesSection hover />
         <TechnologySection hover />
         <TeamSection />
         <FooterSectionHover
-          onMouseEnter={() => setSize(500)}
-          onMouseLeave={() => setSize(50)}
+          onMouseEnter={() => setIsHover(true)}
+          onMouseLeave={() => setIsHover(false)}
         />
       </motion.div>
     </main>
