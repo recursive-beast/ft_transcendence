@@ -328,7 +328,7 @@ function Feature(props) {
 
 function FeaturesSection({ hover, ...props }) {
   return (
-    <section className={clsx("mb-36", !hover && "z-30 relative")} {...props}>
+    <section className={clsx("mb-36", !hover && "z-30 relative", "touch:z-10")} {...props}>
       <div className="w-11/12 mx-auto sm:w-10/12 lg:w-3/4 xl:w-8/12">
         <div className="pb-2 border-b border-tx02">
           <Title text="Features" />
@@ -346,7 +346,7 @@ function FeaturesSection({ hover, ...props }) {
 
 function TechnologySection({ hover, ...props }) {
   return (
-    <section className={clsx("mb-36", !hover && "z-30 relative")} {...props}>
+    <section className={clsx("mb-36", !hover && "z-30 relative", "touch:z-0")} {...props}>
       <div className="flex flex-col mb-10 w-11/12 mx-auto sm:w-10/12 lg:w-3/4 xl:w-8/12">
         <Title text="frontend" />
 
@@ -540,7 +540,7 @@ function TeamSection(props) {
   );
 }
 
-function FooterSection(props) {
+function FooterSection({hover,...props}) {
   return (
     <footer className="relative flex h-[75vh]">
       {/* background image */}
@@ -567,17 +567,10 @@ function FooterSection(props) {
             <div>Let&apos;s start</div>
             <div>the fun</div>
           </div>
-
-          {/* <button
-            className="text-center text-tx01 text-xl font-extralight tracking-[4.80px] uppercase border border-tx01 rounded-full px-10 py-1
-                     hover:text-tx03 hover:bg-tx01 ease-linear transition-colors duration-[400ms]"
-          >
-            Start
-          </button> */}
         </div>
       </div>
       <div
-        className="w-full h-1/3 bottom-0  bg-gradient-to-t from-bg01 via-bg01/60  absolute z-30"
+        className={clsx("w-full h-1/3 bottom-0  bg-gradient-to-t from-bg01 via-bg01/60  absolute", hover && "z-30")}
         {...props}
       ></div>
     </footer>
@@ -617,9 +610,8 @@ function FooterSectionHover(props) {
 
 function StartButton(props) {
   return (
-    <div className="w-screen flex justify-center items-center flex-col pb-40 lg:pb-64  bg-bg01">
+    <div className="w-screen flex justify-center items-center flex-col pb-40 lg:pb-64  bg-bg01" {...props}>
       <button
-        {...props}
         className="text-center text-tx01 text-xl lg:text-2xl font-extralight tracking-[4.80px] uppercase border border-tx01 rounded-full px-10 py-1 lg:px-14 lg:py-2 2xl:px-16
           hover:text-tx03 hover:bg-tx01 ease-linear transition-colors duration-[400ms]  z-30 mt-10 lg:mt-48"
       >
@@ -708,7 +700,6 @@ function LoginSection({ onClick, ...props }) {
           />
         </button>
 
-        {/* <div></div> */}
         <div className="font-light tracking-[8px] uppercase text-base sm:text-xl sm:tracking-[10px] lg:text-2xl">
           paddel smash
         </div>
