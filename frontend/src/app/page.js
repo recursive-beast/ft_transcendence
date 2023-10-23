@@ -640,7 +640,7 @@ const PressButton = forwardRef(function PressButton(props, ref) {
     <button
       id="press-button"
       ref={ref}
-      className="flex flex-col items-center justify-center rounded-full fixed bottom-8 left-2/4 -translate-x-1/2 touch z-40"
+      className="hidden flex-col items-center justify-center rounded-full fixed bottom-8 left-2/4 -translate-x-1/2 touch:flex z-40"
       onContextMenu={preventContextMenu}
       {...props}
     >
@@ -657,8 +657,8 @@ const PressButton = forwardRef(function PressButton(props, ref) {
 function Blur() {
   return (
     <>
-      <div className="w-full h-1/5 bottom-0 fixed bg-gradient-to-t from-bg01 from-30% via-bg01/80 touch z-40"></div>
-      <div className="w-full h-1/6 top-0 fixed bg-gradient-to-b from-bg01 from-10% via-bg01/60 touch z-40"></div>
+      <div className="w-full h-1/5 bottom-0 fixed bg-gradient-to-t from-bg01 from-30% via-bg01/80 hidden touch:block z-40"></div>
+      <div className="w-full h-1/6 top-0 fixed bg-gradient-to-b from-bg01 from-10% via-bg01/60 hidden touch:block z-40"></div>
     </>
   );
 }

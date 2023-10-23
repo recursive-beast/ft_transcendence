@@ -15,6 +15,11 @@ module.exports = {
       transitionProperty: {
         team: "width opacity",
       },
+      screens: {
+        touch: {
+          raw: "(hover: none) and (pointer: coarse)",
+        },
+      },
     },
     colors: {
       // Primary colors
