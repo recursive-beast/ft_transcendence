@@ -795,8 +795,8 @@ export default function Home() {
         />
         <TeamSection />
         <FooterSection
-          onMouseEnter={() => setSize(0)}
-          onMouseLeave={() => setSize(50)}
+          onMouseEnter={() => setIsHidden(true)}
+          onMouseLeave={() => setIsHidden(false)}
         />
         <StartButton
           onClick={() => {
