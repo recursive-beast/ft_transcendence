@@ -768,7 +768,11 @@ export default function Home() {
   const [, setScroll] = useContext(ScrollContext);
 
   return (
-    <main className="relative flex flex-col">
+    <main
+      className="relative flex flex-col"
+      onMouseUp={() => setIsPressed(false)}
+      onTouchEnd={() => setIsPressed(false)}
+    >
       <AnimatePresence>
         {overlay && (
           <StartSection
