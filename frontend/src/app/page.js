@@ -148,7 +148,7 @@ function HeroSection({ animate, ...props }) {
       </header>
 
       {/* sticky elements */}
-      <section className="h-screen fixed flex items-stretch justify-between mb-36 z-30">
+      <section className="h-screen fixed flex items-stretch justify-between mb-36 z-50">
         {/* left side logo and start button */}
         <div className="flex justify-between fixed h-full top-0 left-0">
           <div className="flex flex-col justify-between my-6 ml-3 lg:my-8 xl:my-12 2xl:my-20 md:ml-6 xl:ml-8 2xl:ml-14">
@@ -161,6 +161,13 @@ function HeroSection({ animate, ...props }) {
               {...props}
             />
             <button
+              onClick={() =>
+                window.scrollTo({
+                  top: document.body.scrollHeight,
+                  left: 0,
+                  behavior: "smooth",
+                })
+              }
               className="group lg:flex items-center ml-6 hidden"
               {...props}
             >
@@ -339,14 +346,11 @@ function FeaturesSection({ hover, ...props }) {
 
 function TechnologySection({ hover, ...props }) {
   return (
-    <section className="mb-36">
+    <section className={clsx("mb-36", !hover && "z-30 relative")} {...props}>
       <div className="flex flex-col mb-10 w-11/12 mx-auto sm:w-10/12 lg:w-3/4 xl:w-8/12">
         <Title text="frontend" />
 
-        <div
-          className="flex flex-wrap gap-4 sm:gap-6 lg:gap-10 xl:gap-14 2xl:gap-20 z-30"
-          {...props}
-        >
+        <div className="flex flex-wrap gap-4 sm:gap-6 lg:gap-10 xl:gap-14 2xl:gap-20">
           {[
             nextjs,
             javascript,
@@ -374,8 +378,8 @@ function TechnologySection({ hover, ...props }) {
         <Title text="backend" />
 
         <div
-          className="flex flex-wrap gap-4 sm:gap-6 lg:gap-10 xl:gap-14 2xl:gap-20 z-30"
-          {...props}
+          className="flex flex-wrap gap-4 sm:gap-6 lg:gap-10 xl:gap-14 2xl:gap-20"
+          // {...props}
         >
           {[
             dckCmp,
@@ -536,7 +540,7 @@ function TeamSection(props) {
   );
 }
 
-function FooterSection() {
+function FooterSection(props) {
   return (
     <footer className="relative flex h-[75vh]">
       {/* background image */}
@@ -572,7 +576,10 @@ function FooterSection() {
           </button> */}
         </div>
       </div>
-      <div className="w-full h-1/3 bottom-0  bg-gradient-to-t from-bg01 from-10% via-bg01/60  absolute"></div>
+      <div
+        className="w-full h-1/3 bottom-0  bg-gradient-to-t from-bg01 via-bg01/60  absolute z-30"
+        {...props}
+      ></div>
     </footer>
   );
 }
@@ -610,16 +617,14 @@ function FooterSectionHover(props) {
 
 function StartButton(props) {
   return (
-    <div className="w-screen flex justify-center items-center flex-col pb-64 bg-bg01">
-      <div className="relative">
-        <button
-          {...props}
-          className="text-center text-tx01 text-2xl font-extralight tracking-[4.80px] uppercase border border-tx01 rounded-full px-14 py-2
-                 hover:text-tx03 hover:bg-tx01 ease-linear transition-colors duration-[400ms] absolute top-full translate-y-8 left-1/2 -translate-x-1/2 z-30"
-        >
-          Start
-        </button>
-      </div>
+    <div className="w-screen flex justify-center items-center flex-col pb-40 lg:pb-64  bg-bg01">
+      <button
+        {...props}
+        className="text-center text-tx01 text-xl lg:text-2xl font-extralight tracking-[4.80px] uppercase border border-tx01 rounded-full px-10 py-1 lg:px-14 lg:py-2 2xl:px-16
+          hover:text-tx03 hover:bg-tx01 ease-linear transition-colors duration-[400ms]  z-30 mt-10 lg:mt-48"
+      >
+        Start
+      </button>
     </div>
   );
 }
@@ -635,7 +640,7 @@ const PressButton = forwardRef(function PressButton(props, ref) {
     <button
       id="press-button"
       ref={ref}
-      className="flex flex-col items-center justify-center rounded-full fixed bottom-8 left-2/4 -translate-x-1/2 touch z-30"
+      className="flex flex-col items-center justify-center rounded-full fixed bottom-8 left-2/4 -translate-x-1/2 touch z-40"
       onContextMenu={preventContextMenu}
       {...props}
     >
@@ -652,8 +657,8 @@ const PressButton = forwardRef(function PressButton(props, ref) {
 function Blur() {
   return (
     <>
-      <div className="w-full h-1/5 bottom-0 fixed bg-gradient-to-t from-bg01 from-30% via-bg01/80 touch"></div>
-      <div className="w-full h-1/6 top-0 fixed bg-gradient-to-b from-bg01 from-10% via-bg01/60 touch"></div>
+      <div className="w-full h-1/5 bottom-0 fixed bg-gradient-to-t from-bg01 from-30% via-bg01/80 touch z-40"></div>
+      <div className="w-full h-1/6 top-0 fixed bg-gradient-to-b from-bg01 from-10% via-bg01/60 touch z-40"></div>
     </>
   );
 }
@@ -664,18 +669,22 @@ function StartSection(props) {
       initial={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 1.3 }}
-      className="w-screen h-screen flex justify-center items-center flex-col bg-bg01 fixed z-50"
+      className="w-screen h-screen flex justify-center items-center flex-col bg-bg01 fixed z-[60]"
     >
       <motion.div
         initial={{ scale: 1 }}
         exit={{ scale: 0 }}
         className="relative"
       >
-        <Image src={logoPic} alt="Logo of the game" width={200} height={200} />
+        <Image
+          src={logoPic}
+          alt="Logo of the game"
+          className="w-52 h-52 lg:w-72 lg:h-72"
+        />
         <button
           onClick={props.onClick}
-          className="text-center text-tx01 text-2xl font-extralight tracking-[4.80px] uppercase border border-tx01 rounded-full px-14 py-2
-                 hover:text-tx03 hover:bg-tx01 ease-linear transition-colors duration-[400ms] absolute top-full translate-y-8 left-1/2 -translate-x-1/2 "
+          className="text-center text-tx01 text-xl lg:text-2xl font-extralight tracking-[4.80px] uppercase border border-tx01 rounded-full px-10 py-1 lg:px-14 lg:py-2 2xl:px-16
+          hover:text-tx03 hover:bg-tx01 ease-linear transition-colors duration-[400ms] absolute top-full translate-y-8 left-1/2 -translate-x-1/2 "
         >
           Start
         </button>
@@ -716,7 +725,7 @@ function LoginSection({ onClick, ...props }) {
           </div>
 
           <div>
-            <Link className="group flex items-center mb-3" href={"#"}>
+            <Link className="group flex items-center mb-3" href={"/auth"}>
               <Image
                 className="lg:h-8 lg:w-8 2xl:h-10 2xl:w-10 mr-3 w-8 h-8"
                 src={intrat}
@@ -727,7 +736,7 @@ function LoginSection({ onClick, ...props }) {
               </div>
             </Link>
 
-            <Link className="group flex items-center mb-2" href={"#"}>
+            <Link className="group flex items-center mb-2" href={"/auth"}>
               <Image
                 className="lg:h-8 lg:w-8 2xl:h-10 2xl:w-10 mr-3 w-8 h-8"
                 src={google}
@@ -757,7 +766,7 @@ export default function Home() {
   const [, setScroll] = useContext(ScrollContext);
 
   return (
-    <main className="relative flex flex-col">
+    <main ref={ref} className="relative flex flex-col">
       <AnimatePresence>
         {overlay && (
           <StartSection
@@ -787,7 +796,10 @@ export default function Home() {
           onMouseLeave={() => setSize(50)}
         />
         <TeamSection />
-        <FooterSection />
+        <FooterSection
+          onMouseEnter={() => setSize(0)}
+          onMouseLeave={() => setSize(50)}
+        />
         <StartButton
           onClick={() => {
             setLogin(true);
@@ -817,10 +829,7 @@ export default function Home() {
       />
       <motion.div
         id="masked"
-        className={clsx(
-          "bg-pr01 absolute pb-64 z-20",
-          isPressed && "is-pressed",
-        )}
+        className={clsx("bg-pr01 absolute z-20", isPressed && "is-pressed")}
         animate={{
           "--x": `${mouse.x}px`,
           "--y": `${scroll.y + mouse.y}px`,
