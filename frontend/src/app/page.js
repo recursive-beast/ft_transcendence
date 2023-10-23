@@ -657,8 +657,8 @@ const PressButton = forwardRef(function PressButton(props, ref) {
 function Blur() {
   return (
     <>
-      <div className="w-full h-1/5 bottom-0 fixed bg-gradient-to-t from-bg01 from-30% via-bg01/80 hidden touch:block z-40"></div>
-      <div className="w-full h-1/6 top-0 fixed bg-gradient-to-b from-bg01 from-10% via-bg01/60 hidden touch:block z-40"></div>
+      <div className="w-full h-1/5 bottom-0 fixed bg-gradient-to-t from-bg01 from-30% via-bg01/80 hidden touch:block z-[19]"></div>
+      <div className="w-full h-1/6 top-0 fixed bg-gradient-to-b from-bg01 from-10% via-bg01/60 hidden touch:block z-[19]"></div>
     </>
   );
 }
