@@ -96,7 +96,7 @@ function HeroSection({ animate, ...props }) {
             <div className="overflow-hidden">
               <div
                 className={clsx(
-                  "transition-transform duration-1000 delay-500",
+                  "transition-transform duration-1000 delay-500 touch:delay-0",
                   animate ? "translate-y-0" : "translate-y-full",
                 )}
               >
@@ -106,7 +106,7 @@ function HeroSection({ animate, ...props }) {
             <div className="overflow-hidden">
               <div
                 className={clsx(
-                  "transition-transform duration-1000 delay-500",
+                  "transition-transform duration-1000 delay-500 touch:delay-0",
                   animate ? "translate-y-0" : "translate-y-full",
                 )}
               >
@@ -116,7 +116,7 @@ function HeroSection({ animate, ...props }) {
             <div className="text-tx06 overflow-hidden">
               <div
                 className={clsx(
-                  "transition-transform duration-1000 delay-500",
+                  "transition-transform duration-1000 delay-500 touch:delay-0",
                   animate ? "translate-y-0" : "translate-y-full",
                 )}
               >
@@ -126,7 +126,7 @@ function HeroSection({ animate, ...props }) {
             <div className="overflow-hidden">
               <div
                 className={clsx(
-                  "transition-transform duration-1000 delay-500",
+                  "transition-transform duration-1000 delay-500 touch:delay-0",
                   animate ? "translate-y-0" : "translate-y-full",
                 )}
               >
@@ -136,7 +136,7 @@ function HeroSection({ animate, ...props }) {
             <div className="text-tx06 overflow-hidden">
               <div
                 className={clsx(
-                  "transition-transform duration-1000 delay-500",
+                  "transition-transform duration-1000 delay-500 touch:delay-0",
                   animate ? "translate-y-0" : "translate-y-full",
                 )}
               >
@@ -220,7 +220,7 @@ function HeroSectionHover({ animate, ...props }) {
           <div className="overflow-hidden">
             <div
               className={clsx(
-                "transition-transform duration-1000 delay-500",
+                "transition-transform duration-1000 delay-500 touch:delay-0",
                 animate ? "translate-y-0" : "translate-y-full",
               )}
             >
@@ -230,7 +230,7 @@ function HeroSectionHover({ animate, ...props }) {
           <div className="overflow-hidden">
             <div
               className={clsx(
-                "transition-transform duration-1000 delay-500",
+                "transition-transform duration-1000 delay-500 touch:delay-0",
                 animate ? "translate-y-0" : "translate-y-full",
               )}
             >
@@ -240,7 +240,7 @@ function HeroSectionHover({ animate, ...props }) {
           <div className="overflow-hidden">
             <div
               className={clsx(
-                "transition-transform duration-1000 delay-500",
+                "transition-transform duration-1000 delay-500 touch:delay-0",
                 animate ? "translate-y-0" : "translate-y-full",
               )}
             >
@@ -250,7 +250,7 @@ function HeroSectionHover({ animate, ...props }) {
           <div className="overflow-hidden">
             <div
               className={clsx(
-                "transition-transform duration-1000 delay-500",
+                "transition-transform duration-1000 delay-500 touch:delay-0",
                 animate ? "translate-y-0" : "translate-y-full",
               )}
             >
@@ -260,7 +260,7 @@ function HeroSectionHover({ animate, ...props }) {
           <div className="overflow-hidden">
             <div
               className={clsx(
-                "transition-transform duration-1000 delay-500",
+                "transition-transform duration-1000 delay-500 touch:delay-0",
                 animate ? "translate-y-0" : "translate-y-full",
               )}
             >
@@ -768,16 +768,19 @@ export default function Home() {
   const [, setScroll] = useContext(ScrollContext);
 
   return (
-    <main ref={ref} className="relative flex flex-col">
-      <AnimatePresence
-        onExitComplete={() => {
-          setIsHidden(false);
-          setIsHover(true);
-          setScroll(true);
-          setSlideUp(true);
-        }}
-      >
-        {overlay && <StartSection onClick={() => setOverlay(false)} />}
+    <main className="relative flex flex-col">
+      <AnimatePresence>
+        {overlay && (
+          <StartSection
+            onClick={() => {
+              setIsHidden(false);
+              setIsHover(true);
+              setScroll(true);
+              setSlideUp(true);
+              setOverlay(false);
+            }}
+          />
+        )}
       </AnimatePresence>
       <div className="bg-bg01 text-tx01">
         <HeroSection
