@@ -8,7 +8,7 @@ import "./globals.scss";
 // const exa = localFont({ src: '../fonts/AVGARDD_2.woff' })
 
 import { Poppins } from "next/font/google";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import clsx from "clsx";
 
 const exa = Poppins({
@@ -29,6 +29,12 @@ function Content({ children }) {
 }
 
 export default function RootLayout(props) {
+  useEffect(() => {
+    if ("scrollRestoration" in window.history) {
+      window.history.scrollRestoration = "manual";
+    }
+  });
+
   return (
     <ScrollProvider defaultValue={false}>
       <Content {...props} />

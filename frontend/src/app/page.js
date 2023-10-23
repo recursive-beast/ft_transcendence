@@ -772,6 +772,7 @@ export default function Home() {
       <AnimatePresence
         onExitComplete={() => {
           setIsHidden(false);
+          setIsHover(true);
           setScroll(true);
           setSlideUp(true);
         }}

@@ -12,9 +12,11 @@ export const useMouse = () => {
 
   useEffect(() => {
     document.addEventListener("mousemove", updateMousePosition);
+    document.addEventListener("click", updateMousePosition);
 
     return () => {
       document.removeEventListener("mousemove", updateMousePosition);
+      document.removeEventListener("click", updateMousePosition);
     };
   }, []);
 
