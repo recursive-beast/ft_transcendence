@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+const defaultTheme = require('tailwindcss/defaultTheme')
 module.exports = {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -20,6 +21,10 @@ module.exports = {
           raw: "(hover: none) and (pointer: coarse)",
         },
       },
+    },
+    screens: {
+      'xs': '380px',
+      ...defaultTheme.screens,
     },
     colors: {
       // Primary colors
