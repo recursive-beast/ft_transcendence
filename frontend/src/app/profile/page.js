@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Icon } from "@iconify/react";
 import Link from "next/link";
 import React from "react";
+//Profils
 import Pic01 from "@/images/profils/01.jpg";
 import Pic02 from "@/images/profils/02.jpg";
 import Pic03 from "@/images/profils/03.png";
@@ -12,11 +13,20 @@ import Pic11 from "@/images/profils/11.jpg";
 import Pic05 from "@/images/profils/05.jpg";
 import Pic06 from "@/images/profils/06.jpg";
 import Pic15 from "@/images/profils/15.jpg";
+//achievements
+import AvCmBack from "@/images/achievements/comeback.png";
+import AvDemon from "@/images/achievements/demon.png";
+import AvIron from "@/images/achievements/iron.png";
+import AvMaster from "@/images/achievements/master.png";
+import AvProdigy from "@/images/achievements/prodigy.png";
+import AvShar from "@/images/achievements/shar.png";
+import AvUnsto from "@/images/achievements/unsto.png";
+import AvShoot from "@/images/achievements/shoot.png";
 
 function MbHeader() {
   return (
     <header className="flex flex-col">
-      <div className="flex items-center justify-between mb-4 sm:mb-6">
+      <div className="flex items-center justify-between mb-[12px] sm:mb-6">
         <div className="text-sm font-extralight tracking-[4px] capitalize left-0 xs:text-base sm:text-lg">
           paddle smash
         </div>
@@ -167,7 +177,7 @@ function Rank({ index, ...props }) {
   return (
     <div
       className={clsx(
-        "w-full flex items-center my-[6px] sm:my-3",
+        "w-full flex items-center my-[4px] sm:my-3",
         index && "text-tx05",
       )}
     >
@@ -176,7 +186,7 @@ function Rank({ index, ...props }) {
       </div>
       <div
         className={clsx(
-          " w-full flex items-center justify-between border rounded-xl border-tx02 p-1 pr-4",
+          " w-full flex items-center justify-between border rounded-xl border-tx02 p-[2px] pr-4",
           index && "border-tx06",
         )}
       >
@@ -251,20 +261,48 @@ function Ranking(props) {
   );
 }
 
-function Achievement() {
-  return <section>
+function Achiv(props) {
+  return (
+    <div className=" mt-12 pb-2 flex flex-col items-center justify-between w-28 h-36 border-[0.5px] border-t-0 rounded-2xl">
+      <div className="drop-shadow-[0px_2px_25px_rgba(202,241,90,1)] "><Image
+        className="scale-[2.5] -translate-y-5 w-8 h-8  xs:w-10 xs:h-10 md:w-16 md:h-16 bg-origin-border"
+        src={props.pic}
+        quality={100}
+      /></div>
 
-  </section>;
+      <div className="text-base text-tx05">title</div>
+
+      <div className="text-[9px] text-tx05/70 text-center font-normal ">
+        Win a game of Pong without letting the ball get past your paddle
+      </div>
+      <div className="text-sm text-tx02 flex items-center">
+        <Icon
+          className="text-tx06 mr-2 w-[18px] h-[18px] mx-1 sm:mx-10 xs:w-7 xs:h-7 sm:w-9 sm:h-9"
+          icon="solar:lock-broken"
+        />
+        <div>Locked</div>
+      </div>
+    </div>
+  );
+}
+
+function Achievement() {
+  return (
+    <section className="text-tx05 mb-2">
+      <Achiv pic={AvMaster} />
+    </section>
+  );
 }
 
 export default function Home() {
   return (
     <main className="relative bg-bg01 text-tx01">
-      <div className="fixed inset-0 bg-bg01  px-3 py-3 sm:px-7 sm:py-5">
+      <div className="fixed justify-stretch inset-0 bg-bg01  px-3 py-3 sm:px-7 sm:py-5">
         <MbHeader />
         <MbProfileInfo />
         <PlayRate />
         <Ranking />
+        <Achievement />
       </div>
     </main>
   );

@@ -55,3 +55,7 @@
 		mask-size: calc(var(--size-touch) * var(--scale-touch));
 	}
 }
+
+.myshadow {
+	filter:drop-shadow(0px 4px 35px rgba(202, 241, 90, 0.50)) ;
+}
