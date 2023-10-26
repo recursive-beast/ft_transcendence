@@ -22,6 +22,7 @@ import AvProdigy from "@/images/achievements/prodigy.png";
 import AvShar from "@/images/achievements/shar.png";
 import AvUnsto from "@/images/achievements/unsto.png";
 import AvShoot from "@/images/achievements/shoot.png";
+import { useHorizontalScroll } from "@/hooks/useHorizontalScroll";
 
 function MbHeader() {
   return (
@@ -305,8 +306,10 @@ function Achiv({ locked, className, ...props }) {
 }
 
 function Achievement() {
+  const ref = useHorizontalScroll();
+
   return (
-    <section className="text-tx05 mb-2 grid grid-flow-col gap-2 space-x-3 overflow-x-auto">
+    <section ref={ref} className="text-tx05 mb-2 grid grid-flow-col gap-2 space-x-3 overflow-x-auto">
       <Achiv
         pic={AvMaster}
         title="Pong master"
