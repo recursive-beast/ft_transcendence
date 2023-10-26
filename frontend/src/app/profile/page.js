@@ -261,23 +261,40 @@ function Ranking(props) {
   );
 }
 
-function Achiv(props) {
+function Achiv({ locked, ...props }) {
   return (
-    <div className=" mt-12 pb-2 flex flex-col items-center justify-between w-28 h-36 border-[0.5px] border-t-0 rounded-2xl">
-      <div className="drop-shadow-[0px_2px_25px_rgba(202,241,90,1)] "><Image
-        className="scale-[2.5] -translate-y-5 w-8 h-8  xs:w-10 xs:h-10 md:w-16 md:h-16 bg-origin-border"
-        src={props.pic}
-        quality={100}
-      /></div>
-
-      <div className="text-base text-tx05">title</div>
-
-      <div className="text-[9px] text-tx05/70 text-center font-normal ">
-        Win a game of Pong without letting the ball get past your paddle
+    <div className=" px-1 mt-12 pb-1 grid grid-rows-4 justify-items-center w-28 h-36 border-[0.5px] border-t-0 rounded-2xl">
+      <div
+        className={clsx(
+          "rounded-full",
+          !locked && "drop-shadow-[0px_2px_25px_rgba(159,151,135,0.70)]",
+        )}
+      >
+        <Image
+          className={clsx(
+            "w-11 h-11 xs:w-10 xs:h-10 md:w-16 md:h-16 rounded-full",
+            !locked && " scale-[1.8] -translate-y-5",
+            locked &&
+              "-translate-y-3 scale-[1.5] shadow-inner p-2 shadow-tx05 opacity-70",
+          )}
+          src={props.pic}
+          quality={100}
+        />
       </div>
-      <div className="text-sm text-tx02 flex items-center">
+
+      <div className="capitalize text-sm text-tx05 mt-5">{props.title}</div>
+
+      <div className="text-[9px] text-tx05/70 text-center font-normal mt-2">
+        {props.description}
+      </div>
+      <div
+        className={clsx(
+          "text-xs text-tx02 flex items-center mt-4",
+          !locked && "opacity-0",
+        )}
+      >
         <Icon
-          className="text-tx06 mr-2 w-[18px] h-[18px] mx-1 sm:mx-10 xs:w-7 xs:h-7 sm:w-9 sm:h-9"
+          className="text-tx06 mr-1 w-4 h-4 mx-1 sm:mx-10 xs:w-7 xs:h-7 sm:w-9 sm:h-9"
           icon="solar:lock-broken"
         />
         <div>Locked</div>
@@ -288,8 +305,45 @@ function Achiv(props) {
 
 function Achievement() {
   return (
-    <section className="text-tx05 mb-2">
-      <Achiv pic={AvMaster} />
+    <section className="text-tx05 mb-2 grid grid-flow-col gap-2 space-x-3 overflow-x-auto overflow-y-hidden">
+      <Achiv
+        pic={AvMaster}
+        title="Pong master"
+        description="Win 100 games of Pong"
+      />
+      <Achiv
+        pic={AvShar}
+        title="Sharpshooter"
+        description="Score 50 points in a single game of Pong"
+        locked
+      />
+      <Achiv
+        pic={AvShoot}
+        title="Unstoppable"
+        description="Win 10 games of Pong in a row"
+      />
+      <Achiv
+        pic={AvCmBack}
+        title="Comeback Kid"
+        description="Win a game of Pong after being down by 5 points or more"
+        locked
+      />
+      <Achiv
+        pic={AvDemon}
+        title="Speed Demon"
+        description="Win a game of Pong with a speed setting of 10"
+      />
+      <Achiv
+        pic={AvProdigy}
+        title="Pong Prodigy"
+        description="Win a game of Pong with a score of 10-0"
+        locked
+      />
+      <Achiv
+        pic={AvIron}
+        title="Iron Defense"
+        description="Win a game of Pong without letting the ball get past your paddle"
+      />
     </section>
   );
 }
@@ -297,7 +351,7 @@ function Achievement() {
 export default function Home() {
   return (
     <main className="relative bg-bg01 text-tx01">
-      <div className="fixed justify-stretch inset-0 bg-bg01  px-3 py-3 sm:px-7 sm:py-5">
+      <div className="fixed overflow-auto inset-0 bg-bg01  px-3 py-3 sm:px-7 sm:py-5">
         <MbHeader />
         <MbProfileInfo />
         <PlayRate />
