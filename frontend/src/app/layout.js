@@ -21,7 +21,7 @@ function Content({ children }) {
 
   return (
     <html lang="en" className={clsx(!scroll && "overflow-hidden")}>
-      <body className={exa.className + " no-scrollbar select-none"}>
+      <body className={exa.className + " no-scrollbar select-none bg-bg01"}>
         {children}
       </body>
     </html>

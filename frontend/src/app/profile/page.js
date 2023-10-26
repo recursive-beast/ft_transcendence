@@ -5,6 +5,8 @@ import Image from "next/image";
 import { Icon } from "@iconify/react";
 import Link from "next/link";
 import React from "react";
+
+import logoPic from "@/images/logos/logo.png";
 //Profils
 import Pic01 from "@/images/profils/01.jpg";
 import Pic02 from "@/images/profils/02.jpg";
@@ -26,7 +28,7 @@ import { useHorizontalScroll } from "@/hooks/useHorizontalScroll";
 
 function MbHeader() {
   return (
-    <header className="flex flex-col">
+    <header className="flex flex-col lg:hidden">
       <div className="flex items-center justify-between mb-[12px] sm:mb-6">
         <div className="text-sm font-extralight tracking-[4px] capitalize left-0 xs:text-base sm:text-lg">
           paddle smash
@@ -45,6 +47,36 @@ function MbHeader() {
       </div>
 
       <div className="flex items-center justify-between pb-3 border-b border-tx02 xs:pb-4">
+        {[
+          "solar:home-2-broken",
+          "solar:gamepad-broken",
+          "solar:ranking-broken",
+          "fluent:chat-28-regular",
+        ].map((v) => {
+          return (
+            <Icon
+              className="text-tx02 w-7 h-7 first:text-tx01 xs:w-8 xs:h-8 sm:w-10 sm:h-10"
+              icon={v}
+            />
+          );
+        })}
+      </div>
+    </header>
+  );
+}
+
+function WebHeader() {
+  return (
+    <header className="hidden  h-screen lg:flex flex-col items-center w-56 border-r border-tx02">
+      <div className=" h-72">
+        <Image
+          className="w-28 m-10 lg:w-16 xl:w-20 2xl:w-24"
+          src={logoPic}
+          alt="Logo of the game"
+        />
+      </div>
+
+      <div className="flex flex-col items-center justify-between h-96 pb-3  xs:pb-4">
         {[
           "solar:home-2-broken",
           "solar:gamepad-broken",
@@ -264,8 +296,10 @@ function Ranking(props) {
 
 function Achiv({ locked, className, ...props }) {
   return (
-    <div className=" px-1 mt-12 pb-1 grid grid-rows-4 justify-items-center w-28 h-36 border-[0.5px] border-t-0 rounded-2xl
-      xs:w-32 xs:h-40">
+    <div
+      className=" px-1 mt-12 pb-1 grid grid-rows-4 justify-items-center w-28 h-36 border-[0.5px] border-t-0 rounded-2xl
+      xs:w-32 xs:h-40 sm:w-36 sm:h-48"
+    >
       <div
         className={clsx(
           "rounded-full",
@@ -274,29 +308,31 @@ function Achiv({ locked, className, ...props }) {
       >
         <Image
           className={clsx(
-            "w-11 h-11 xs:w-10 xs:h-10 md:w-16 md:h-16 rounded-full",
+            "w-11 h-11 xs:w-12 xs:h-12 sm:w-14 sm:h-14 rounded-full",
             !locked && " scale-[1.8] -translate-y-5",
             locked &&
-              "-translate-y-3 scale-[1.5] shadow-inner p-2 shadow-tx05 opacity-70",
+              "-translate-y-3 scale-[1.5]  shadow-inner p-2 shadow-tx05 opacity-70",
           )}
           src={props.pic}
           quality={100}
         />
       </div>
 
-      <div className="capitalize text-sm text-tx05 mt-5">{props.title}</div>
+      <div className="capitalize text-sm sm:text-base text-tx05 mt-5 xs:mt-7 sm:mt-8">
+        {props.title}
+      </div>
 
-      <div className="text-[9px] text-tx05/70 text-center font-normal mt-2">
+      <div className="text-[9px] sm:text-[10px] text-tx05/70 text-center font-normal mt-2 xs:mt-4">
         {props.description}
       </div>
       <div
         className={clsx(
-          "text-xs text-tx02 flex items-center mt-4",
+          "text-xs sm:text-sm text-tx02 flex items-center mt-4 xs:mt-5",
           !locked && "opacity-0",
         )}
       >
         <Icon
-          className="text-tx06 mr-1 w-4 h-4 mx-1 sm:mx-10 xs:w-7 xs:h-7 sm:w-9 sm:h-9"
+          className="text-tx06 mr-1 w-4 h-4 sm:w-5 sm:h-5"
           icon="solar:lock-broken"
         />
         <div>Locked</div>
@@ -309,7 +345,10 @@ function Achievement() {
   const ref = useHorizontalScroll();
 
   return (
-    <section ref={ref} className="text-tx05 mb-2 grid grid-flow-col gap-2 space-x-3 overflow-x-auto">
+    <section
+      ref={ref}
+      className="text-tx05 mb-2 grid grid-flow-col gap-2 sm:gap-6 space-x-3 overflow-x-auto overflow-y-hidden no-scrollbar"
+    >
       <Achiv
         pic={AvMaster}
         title="Pong master"
@@ -356,12 +395,18 @@ function Achievement() {
 export default function Home() {
   return (
     <main className=" bg-bg01 text-tx01">
-      <section className=" bg-bg01  px-3 pt-3 pb-1 sm:px-7 sm:py-5">
-        <MbHeader />
-        <MbProfileInfo />
-        <PlayRate />
-        <Ranking />
-        <Achievement />
+      <section className="min-h-screen bg-bg01 flex   justify-between  px-3 pt-3 pb-1  sm:px-7 sm:py-5">
+        <div className="flex flex-col">
+          <WebHeader />
+        </div>
+        <div className="w-full lg:w-2/3 max-w-[1300px] mx-auto">
+          <MbHeader />
+          <MbProfileInfo />
+          <PlayRate />
+          <Ranking />
+          <Achievement />
+          <div></div>
+        </div>
       </section>
     </main>
   );
