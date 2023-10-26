@@ -36,7 +36,7 @@ export default function RootLayout(props) {
   });
 
   return (
-    <ScrollProvider defaultValue={false}>
+    <ScrollProvider defaultValue={true}>
       <Content {...props} />
     </ScrollProvider>
   );
