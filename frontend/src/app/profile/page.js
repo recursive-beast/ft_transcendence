@@ -64,7 +64,7 @@ function MbHeader() {
 
 function MbProfileInfo() {
   return (
-    <section className="flex items-center justify-between py-4">
+    <section className="flex items-center justify-between py-2 xs:py-5 ">
       <div className="flex items-center">
         <Image
           className="object-cover w-14 h-14 xs:w-20 xs:h-20 sm:w-28 sm:h-28 rounded-full mr-4 xs:mr-6 sm:mr-10 xs:ml-2 sm:ml-4"
@@ -177,7 +177,7 @@ function Rank({ index, ...props }) {
   return (
     <div
       className={clsx(
-        "w-full flex items-center my-[4px] sm:my-3",
+        "w-full flex items-center my-1 sm:my-3",
         index && "text-tx05",
       )}
     >
@@ -206,7 +206,7 @@ function Rank({ index, ...props }) {
 
 function Ranking(props) {
   return (
-    <section className="text-tx01 text-[10px] xs:text-xs sm:text-base font-light capitalize my-4 w-full">
+    <section className="text-tx01 text-[10px] xs:text-xs sm:text-base font-light capitalize my-4 xs:mt-8 w-full">
       <div className="text-tx02 flex m-1 items-center justify-between uppercase pr-4">
         <div className="mr-7 xs:mr-12 sm:mx-16"></div>
         <div className="w-32 text-center">player</div>
@@ -261,13 +261,14 @@ function Ranking(props) {
   );
 }
 
-function Achiv({ locked, ...props }) {
+function Achiv({ locked, className, ...props }) {
   return (
-    <div className=" px-1 mt-12 pb-1 grid grid-rows-4 justify-items-center w-28 h-36 border-[0.5px] border-t-0 rounded-2xl">
+    <div className=" px-1 mt-12 pb-1 grid grid-rows-4 justify-items-center w-28 h-36 border-[0.5px] border-t-0 rounded-2xl
+      xs:w-32 xs:h-40">
       <div
         className={clsx(
           "rounded-full",
-          !locked && "drop-shadow-[0px_2px_25px_rgba(159,151,135,0.70)]",
+          !locked && "drop-shadow-[0px_6px_10px_#C0C0C0]",
         )}
       >
         <Image
@@ -305,7 +306,7 @@ function Achiv({ locked, ...props }) {
 
 function Achievement() {
   return (
-    <section className="text-tx05 mb-2 grid grid-flow-col gap-2 space-x-3 overflow-x-auto overflow-y-hidden">
+    <section className="text-tx05 mb-2 grid grid-flow-col gap-2 space-x-3 overflow-x-auto">
       <Achiv
         pic={AvMaster}
         title="Pong master"
@@ -343,6 +344,7 @@ function Achievement() {
         pic={AvIron}
         title="Iron Defense"
         description="Win a game of Pong without letting the ball get past your paddle"
+        locked
       />
     </section>
   );
@@ -350,14 +352,14 @@ function Achievement() {
 
 export default function Home() {
   return (
-    <main className="relative bg-bg01 text-tx01">
-      <div className="fixed overflow-auto inset-0 bg-bg01  px-3 py-3 sm:px-7 sm:py-5">
+    <main className=" bg-bg01 text-tx01">
+      <section className=" bg-bg01  px-3 pt-3 pb-1 sm:px-7 sm:py-5">
         <MbHeader />
         <MbProfileInfo />
         <PlayRate />
         <Ranking />
         <Achievement />
-      </div>
+      </section>
     </main>
   );
 }
