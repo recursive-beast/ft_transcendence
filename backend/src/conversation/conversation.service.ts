@@ -7,6 +7,7 @@ import { PrismaService } from 'nestjs-prisma';
 import { ConversationDTO } from './dto/conversation.dto';
 import { UserEntity } from 'src/common/entities/user.entity';
 import { MessageDTO } from './dto/message.dto';
+import { ConversationEntity } from 'src/common/entities/conversation.entity';
 
 @Injectable()
 export class ConversationService {
@@ -36,7 +37,7 @@ export class ConversationService {
             throw new BadRequestException("Private conversation can only contain two members");
         }
 
-        return this.prismaService.conversation.create({
+        const conversation = await this.prismaService.conversation.create({
             data: {
                 adminId: user.id,
                 isGroup: newCon.isGroup,
@@ -45,6 +46,8 @@ export class ConversationService {
                 }
             }
         });
+        // 
+        return ConversationEntity.fromConversation(conversation);
     }
 
     async sendMes(user: UserEntity, newMsg: MessageDTO, id: number) {
