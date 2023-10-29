@@ -28,8 +28,8 @@ import { useHorizontalScroll } from "@/hooks/useHorizontalScroll";
 
 function MbHeader() {
   return (
-    <header className="flex flex-col lg:hidden">
-      <div className="flex items-center justify-between mb-[12px] sm:mb-6">
+    <header className="flex flex-col xl:hidden lg:pt-10">
+      <div className="flex items-center justify-between mb-[12px] sm:mb-6 lg:hidden">
         <div className="text-sm font-extralight tracking-[4px] capitalize left-0 xs:text-base sm:text-lg">
           paddle smash
         </div>
@@ -55,6 +55,7 @@ function MbHeader() {
         ].map((v) => {
           return (
             <Icon
+              key={v}
               className="text-tx02 w-7 h-7 first:text-tx01 xs:w-8 xs:h-8 sm:w-10 sm:h-10"
               icon={v}
             />
@@ -67,37 +68,45 @@ function MbHeader() {
 
 function WebHeader() {
   return (
-    <header className="hidden  h-screen lg:flex flex-col items-center w-56 border-r border-tx02">
-      <div className=" h-72">
-        <Image
-          className="w-28 m-10 lg:w-16 xl:w-20 2xl:w-24"
-          src={logoPic}
-          alt="Logo of the game"
-        />
-      </div>
+    <header className="hidden  h-screen xl:flex flex-col items-center w-36 2xl:w-56 border-r border-tx02">
+      <div className="my-20 xl:my-24 2xl:my-28">
+        <div className=" h-72">
+          <Image
+            className="w-28 xl:w-32 2xl:w-36"
+            src={logoPic}
+            alt="Logo of the game"
+          />
+        </div>
 
-      <div className="flex flex-col items-center justify-between h-96 pb-3  xs:pb-4">
-        {[
-          "solar:home-2-broken",
-          "solar:gamepad-broken",
-          "solar:ranking-broken",
-          "fluent:chat-28-regular",
-        ].map((v) => {
-          return (
-            <Icon
-              className="text-tx02 w-7 h-7 first:text-tx01 xs:w-8 xs:h-8 sm:w-10 sm:h-10"
-              icon={v}
-            />
-          );
-        })}
+        <div className="flex flex-col items-center justify-between h-96 pb-3  xs:pb-4">
+          {[
+            { text: "home", icon: "solar:home-2-broken" },
+            { text: "game", icon: "solar:gamepad-broken" },
+            { text: "chat", icon: "fluent:chat-28-regular" },
+            { text: "leaderboard", icon: "solar:ranking-broken" },
+          ].map((v) => {
+            return (
+              <button key={v.text} className="group flex flex-col items-center">
+                <Icon
+                  className="text-tx01 w-6 lg:w-7 xl:w-8 2xl:w-10 lg:transition lg:duration-500 lg:group-hover:text-tx02 group-hover:-translate-y-1"
+                  icon={v.icon}
+                  width="36"
+                />
+                <div className=" text-tx01 font-light tracking-[3px] uppercase text-sm  lg:opacity-0 lg:group-hover:opacity-100 lg:transition lg:duration-700">
+                  {v.text}
+                </div>
+              </button>
+            );
+          })}
+        </div>
       </div>
     </header>
   );
 }
 
-function MbProfileInfo() {
+function ProfileInfo() {
   return (
-    <section className="flex items-center justify-between py-2 xs:py-5 ">
+    <section className="flex items-center justify-between my-2 xs:my-5 ">
       <div className="flex items-center">
         <Image
           className="object-cover w-14 h-14 xs:w-20 xs:h-20 sm:w-28 sm:h-28 rounded-full mr-4 xs:mr-6 sm:mr-10 xs:ml-2 sm:ml-4"
@@ -121,7 +130,7 @@ function MbProfileInfo() {
       </div>
 
       <Icon
-        className="text-tx02 w-6 h-6 mx-1 sm:mx-10 xs:w-7 xs:h-7 sm:w-9 sm:h-9"
+        className="text-tx02 w-6 h-6 mx-1 sm:mx-10 xs:w-7 xs:h-7 sm:w-9 sm:h-9 lg:hidden"
         icon="icon-park-outline:down-c"
       />
     </section>
@@ -131,56 +140,60 @@ function MbProfileInfo() {
 function Rate(props) {
   return (
     <>
-      <div className="border border-tx05 text-[9px] xs:text-[11px] sm:text-sm w-full sm:w-2/5 lg:w-2/6  rounded-lg sm:rounded-3xl py-1 px-1 xs:py-2 xs:px-3 sm:px-5 md:px-8">
-        <div className=" text-tx01 uppercase tracking-wider">
-          wins:<span className="text-tx02 capitalize"> last week: </span>{" "}
-          <span className="text-tx05">{props.wins}</span>
-        </div>
+      <div className="flex flex-col items-center border border-tx05 text-[9px] xs:text-[11px] sm:text-sm rounded-lg w-full xs:w-52 sm:w-72 md:w-80 lg:w-72 xl:w-80 lg:px-5 xl:px-8 sm:rounded-3xl py-1 px-1 xs:py-2 xs:px-3 sm:px-5 md:px-8 mr-[2px] md:ml-5 xl:ml-14 2xl:ml-36">
+        <div>
+          <div className="text-tx01 uppercase tracking-wider">
+            wins:<span className="text-tx02 capitalize"> last week: </span>{" "}
+            <span className="text-tx05">{props.wins}</span>
+          </div>
 
-        <div className="flex items-end">
-          <div className="flex mr-2 sm:mr-4">
-            <div className="text-tx05 text-lg xs:text-xl sm:text-3xl">
-              {props.nbrWin}
+          <div className="flex items-end">
+            <div className="flex mr-2 sm:mr-4">
+              <div className="text-tx05 text-lg xs:text-xl sm:text-3xl">
+                {props.nbrWin}
+              </div>
+
+              <Icon
+                className="text-[#24E5A5] w-[10px] h-[10px] "
+                icon="fluent-mdl2:up"
+              />
             </div>
 
-            <Icon
-              className="text-[#24E5A5] w-[10px] h-[10px] "
-              icon="fluent-mdl2:up"
-            />
-          </div>
-
-          <div className="text-tx02 mb-1 mr-1 sm:mr-3">
-            Wins Rate: <span className="text-[#24E5A5]">{props.wn}</span>{" "}
-          </div>
-          <div className="text-tx02 mb-1">
-            Up: <span className="text-[#24E5A5]">{props.up}</span>{" "}
+            <div className="text-tx02 mb-1 mr-1 sm:mr-3">
+              Wins Rate: <span className="text-[#24E5A5]">{props.wn}</span>{" "}
+            </div>
+            <div className="text-tx02 mb-1">
+              Up: <span className="text-[#24E5A5]">{props.up}</span>{" "}
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="border border-tx05 text-[9px] xs:text-[11px] sm:text-sm rounded-lg w-full sm:w-2/5 lg:w-2/6 sm:rounded-3xl py-1 px-1 xs:py-2 xs:px-3 sm:px-5 md:px-8">
-        <div className=" text-tx01 uppercase tracking-wider">
-          losses:<span className="text-tx02 capitalize"> last week: </span>{" "}
-          <span className="text-tx05">{props.losses}</span>
-        </div>
+      <div className="flex flex-col items-center border border-tx05 text-[9px] xs:text-[11px] sm:text-sm rounded-lg w-full xs:w-52 sm:w-72 md:w-80 lg:w-72 xl:w-80 lg:px-5 xl:px-8 sm:rounded-3xl py-1 px-1 xs:py-2 xs:px-3 sm:px-5 md:px-8 ml-[2px] md:mr-5 xl:mr-14 2xl:mr-36">
+        <div>
+          <div className="text-tx01 uppercase tracking-wider">
+            losses:<span className="text-tx02 capitalize"> last week: </span>{" "}
+            <span className="text-tx05">{props.losses}</span>
+          </div>
 
-        <div className="flex items-end">
-          <div className="flex mr-2 sm:mr-4">
-            <div className="text-tx05 text-lg xs:text-xl sm:text-3xl">
-              {props.nbrLos}
+          <div className="flex items-end">
+            <div className="flex mr-2 sm:mr-4">
+              <div className="text-tx05 text-lg xs:text-xl sm:text-3xl">
+                {props.nbrLos}
+              </div>
+
+              <Icon
+                className="text-[#E55F61] w-[10px] h-[10px] "
+                icon="fluent-mdl2:down"
+              />
             </div>
 
-            <Icon
-              className="text-[#E55F61] w-[10px] h-[10px] "
-              icon="fluent-mdl2:down"
-            />
-          </div>
-
-          <div className="text-tx02 mb-1 mr-1 sm:mr-3">
-            lost Rate: <span className="text-[#E55F61]">{props.los}</span>{" "}
-          </div>
-          <div className="text-tx02 mb-1">
-            Up: <span className="text-[#E55F61]">{props.down}</span>{" "}
+            <div className="text-tx02 mb-1 mr-1 sm:mr-3">
+              lost Rate: <span className="text-[#E55F61]">{props.los}</span>{" "}
+            </div>
+            <div className="text-tx02 mb-1">
+              Up: <span className="text-[#E55F61]">{props.down}</span>{" "}
+            </div>
           </div>
         </div>
       </div>
@@ -190,7 +203,7 @@ function Rate(props) {
 
 function PlayRate() {
   return (
-    <section className="flex justify-between space-x-1 xs:my-3 sm:my-10 sm:mx-8 lg:mx-16 xl:mx-36">
+    <section className="flex justify-between xs:my-3 sm:my-10">
       <Rate
         wins="+6"
         nbrWin="58"
@@ -347,7 +360,7 @@ function Achievement() {
   return (
     <section
       ref={ref}
-      className="text-tx05 mb-2 grid grid-flow-col gap-2 sm:gap-6 space-x-3 overflow-x-auto overflow-y-hidden no-scrollbar"
+      className="text-tx05 mb-2 grid grid-flow-col gap-2 sm:gap-6 space-x-3 overflow-x-auto overflow-y-hidden no-scrollbar lg:pt-7 2xl:pt-9"
     >
       <Achiv
         pic={AvMaster}
@@ -392,21 +405,130 @@ function Achievement() {
   );
 }
 
+const icons = {
+  ONLINE: {
+    name: "octicon:dot-fill-16",
+    color: "text-[#24E5A5]",
+  },
+  OFFLINE: {
+    name: "octicon:dot-fill-16",
+    color: "text-tx03",
+  },
+  INGAME: {
+    name: "arcticons:gameturbo",
+    color: "text-[#EB5A3A]",
+  },
+};
+
+function Friend(props) {
+  return (
+    <div className="flex items-center justify-between m-3">
+      <div className="flex items-center">
+        <Image
+          className="object-cover w-8 h-8 rounded-full mr-4"
+          src={props.pic}
+          quality={100}
+        />
+        <div className="tracking-widest font-extralight">{props.name}</div>
+      </div>
+      <Icon
+        className={clsx("w-5 h-5", icons[props.status].color)}
+        icon={icons[props.status].name}
+      />
+    </div>
+  );
+}
+
+function LeftBar() {
+  return (
+    <section className="hidden h-screen lg:flex flex-col items-center px-8 w-80  border-l border-tx03">
+      {/* top elements */}
+      <div className="w-full lg:mt-12 xl:mt-16 2xl:mt-22 mb-10">
+        {/* notif and Search */}
+        <div className="flex items-center justify-between mb-10">
+          <div className="flex items-center">
+            <Icon className="text-tx01 w-7 h-7" icon="guidance:search" />
+            <input
+              className="bg-bg01 h-8 w-40 font-extralight text-xl ml-3"
+              defaultValue="Search"
+            />
+          </div>
+          <Icon
+            className="text-tx01 w-7 h-7"
+            icon="solar:notification-unread-broken"
+          />
+        </div>
+
+        {/* setting and logout */}
+
+        <div className="flex flex-col items-start font-normal text-tx02 text-xl tracking-[5px] capitalize space-y-3 mb-5 ml-2">
+          <Link className="flex space-x-3" href={"#"}>
+            <Icon className="w-7 h-7" icon="solar:settings-broken" />
+            <div>setting</div>
+          </Link>
+
+          <Link className="flex space-x-3" href={"#"}>
+            <Icon className="w-7 h-7" icon="fluent-mdl2:navigate-back" />
+            <div>log out</div>
+          </Link>
+        </div>
+      </div>
+
+      {/* mbttom elements */}
+      <div className="h-3/5 w-64 border-y border-tx03 overflow-auto no-scrollbar">
+        <div className="py-5 px-2 flex items-center justify-between sticky top-0 bg-bg01 text-tx02 text-base tracking-[3px] capitalize pb-2">
+          <div>friends</div>
+          <Icon className="w-6 h-6" icon="ph:caret-up-down-bold" />
+        </div>
+        <div>
+          <Friend pic={Pic01} name="syakoubinato" status="ONLINE" />
+          <Friend pic={Pic02} name="badrbansh" status="OFFLINE" />
+          <Friend pic={Pic15} name="megashoot" status="INGAME" />
+          <Friend pic={Pic11} name="aitlandlia" status="ONLINE" />
+          <Friend pic={Pic06} name="moonshot" status="INGAME" />
+
+          <Friend pic={Pic01} name="syakoubinato" status="ONLINE" />
+          <Friend pic={Pic02} name="badrbansh" status="OFFLINE" />
+          <Friend pic={Pic15} name="megashoot" status="INGAME" />
+          <Friend pic={Pic11} name="aitlandlia" status="ONLINE" />
+          <Friend pic={Pic06} name="moonshot" status="INGAME" />
+
+          <Friend pic={Pic01} name="syakoubinato" status="ONLINE" />
+          <Friend pic={Pic02} name="badrbansh" status="OFFLINE" />
+          <Friend pic={Pic15} name="megashoot" status="INGAME" />
+          <Friend pic={Pic11} name="aitlandlia" status="ONLINE" />
+          <Friend pic={Pic06} name="moonshot" status="INGAME" />
+
+          <Friend pic={Pic01} name="syakoubinato" status="ONLINE" />
+          <Friend pic={Pic02} name="badrbansh" status="OFFLINE" />
+          <Friend pic={Pic15} name="megashoot" status="INGAME" />
+          <Friend pic={Pic11} name="aitlandlia" status="ONLINE" />
+          <Friend pic={Pic06} name="moonshot" status="INGAME" />
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function Home() {
   return (
     <main className=" bg-bg01 text-tx01">
-      <section className="min-h-screen bg-bg01 flex   justify-between  px-3 pt-3 pb-1  sm:px-7 sm:py-5">
+      <section className="min-h-screen lg:h-screen bg-bg01 flex justify-between px-3 pt-3 pb-1 xl:p-0 sm:px-7 sm:py-5">
         <div className="flex flex-col">
           <WebHeader />
         </div>
+
         <div className="w-full lg:w-2/3 max-w-[1300px] mx-auto">
           <MbHeader />
-          <MbProfileInfo />
-          <PlayRate />
-          <Ranking />
-          <Achievement />
-          <div></div>
+          <div className="lg:my-12 xl:my-16 2xl:my-22 lg:px-4">
+            <ProfileInfo />
+            <PlayRate />
+            <Ranking />
+            <Achievement />
+          </div>
         </div>
+
+        <LeftBar />
       </section>
     </main>
   );
