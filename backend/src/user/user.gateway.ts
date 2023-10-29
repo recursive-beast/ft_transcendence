@@ -5,7 +5,7 @@ import {
   OnGatewayDisconnect,
   SubscribeMessage,
   WebSocketGateway,
-  WebSocketServer
+  WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { UserStatus } from 'src/common/enum';
@@ -21,10 +21,10 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async onUserStatus(@MessageBody(ParseIntPipe) id: number) {
     const sockets = await this.server.in(`user-${id}`).fetchSockets();
 
-    if (sockets.length > 0) {
-      return { id, status: UserStatus.ONLINE };
-    }
-    return { id, status: UserStatus.OFFLINE };
+    return {
+      id,
+      status: sockets.length > 0 ? UserStatus.ONLINE : UserStatus.OFFLINE,
+    };
   }
 
   async handleConnection(client: Socket) {
