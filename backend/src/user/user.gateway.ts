@@ -38,6 +38,6 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async handleDisconnect(client: Socket) {
     const id = client.data.id;
 
-    this.server.emit('user.status', { id, status: UserStatus.ONLINE });
+    this.server.emit('user.status', { id, status: UserStatus.OFFLINE });
   }
 }
