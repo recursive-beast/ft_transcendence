@@ -41,3 +41,6 @@ clean: down
 
 	@echo "Removing all Docker networks..."
 	-@$(DOCKER) network rm $$($(DOCKER) network ls -q) 2>/dev/null || true
+
+	@echo "Removing generated folders"
+	rm -rf {frontend,backend}/{node_modules} frontend/.next backend/dist
