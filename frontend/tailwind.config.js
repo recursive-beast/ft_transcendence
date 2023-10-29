@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+const defaultTheme = require('tailwindcss/defaultTheme')
 module.exports = {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -13,8 +14,18 @@ module.exports = {
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
       transitionProperty: {
-        team: "width opacity"
-      }
+        team: "width opacity",
+      },
+      screens: {
+        touch: {
+          raw: "(hover: none) and (pointer: coarse)",
+        },
+      },
+    },
+    screens: {
+      'xs': '380px',
+      ...defaultTheme.screens,
+      'md': '769px',
     },
     colors: {
       // Primary colors
@@ -37,5 +48,5 @@ module.exports = {
     },
   },
   // prettier.config.js
-  plugins: ['prettier-plugin-tailwindcss'],
+  plugins: ["prettier-plugin-tailwindcss"],
 };

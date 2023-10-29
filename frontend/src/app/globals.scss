@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+	html {
+		-webkit-tap-highlight-color: transparent;
+	}
+}
+
+@layer utilities {
+	/* Hide scrollbar for Chrome, Safari and Opera */
+	.no-scrollbar::-webkit-scrollbar {
+		display: none;
+	}
+
+	/* Hide scrollbar for IE, Edge and Firefox */
+	.no-scrollbar {
+		-ms-overflow-style: none; /* IE and Edge */
+		scrollbar-width: none; /* Firefox */
+	}
+}
+
+@for $i from 1 through 10 {
+	.line:nth-child(#{$i}) {
+		clip-path: inset(
+			-20% calc(var(--left) - (var(--line-count) - $i) * 100%) -20% 0
+		);
+	}
+}
+
+#masked {
+	mask-image: url(/mask.svg);
+	mask-origin: content-box;
+	mask-repeat: no-repeat;
+	color: black;
+	/* pointer-events: none; */
+	--size: 500px;
+	mask-position: calc(var(--x) - calc(var(--size) * var(--scale)) / 2)
+		calc(var(--y) - calc(var(--size) * var(--scale)) / 2);
+	mask-size: calc(var(--size) * var(--scale));
+}
+
+@screen touch {
+	#masked {
+		--size-touch: 3000px;
+		mask-position: calc(
+				var(--x-touch) - calc(var(--size-touch) * var(--scale-touch)) /
+					2
+			)
+			calc(
+				var(--y-touch) - calc(var(--size-touch) * var(--scale-touch)) /
+					2
+			);
+		mask-size: calc(var(--size-touch) * var(--scale-touch));
+	}
+}
+
+.myshadow {
+	filter:drop-shadow(0px 4px 35px rgba(202, 241, 90, 0.50)) ;
+}
