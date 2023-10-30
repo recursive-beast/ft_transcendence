@@ -3,18 +3,15 @@ import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { NotificationType } from '@prisma/client';
 import { instanceToPlain } from 'class-transformer';
 import { Server } from 'socket.io';
-import { BaseGateway } from 'src/common/base.gateway';
 import { UserEntity } from 'src/common/entities/user.entity';
 import { NotificationService } from './notification.service';
 
 @WebSocketGateway()
-export class NotificationGateway extends BaseGateway {
+export class NotificationGateway {
   @WebSocketServer()
   server: Server;
 
-  constructor(private notificationService: NotificationService) {
-    super();
-  }
+  constructor(private notificationService: NotificationService) {}
 
   @OnEvent('user.friend.add')
   async onFriendAdd(user: UserEntity, target: UserEntity) {
@@ -24,9 +21,8 @@ export class NotificationGateway extends BaseGateway {
       { user: { id: user.id } },
     );
 
-    if (this.isOnline(target.id))
-      this.server
-        .to(this.socketIds(target.id))
-        .emit('notification', instanceToPlain(notification));
+    this.server
+      .to(`user-${target.id}`)
+      .emit('notification', instanceToPlain(notification));
   }
 }

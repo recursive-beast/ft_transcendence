@@ -15,7 +15,6 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CurrentUser } from 'src/auth/current-user.decorator';
 import { ClassTransformerGroups } from 'src/common/enum';
-import { FileCleanupInterceptor } from 'src/common/file-cleanup.interceptor';
 import { UserEntity } from '../common/entities/user.entity';
 import { UserQueryDTO } from './dto/query.dto';
 import { UserUpdateDTO } from './dto/update.dto';
