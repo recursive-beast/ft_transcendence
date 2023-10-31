@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Icon } from "@iconify/react";
 import Link from "next/link";
 import React from "react";
+import { useState } from "react";
 
 import logoPic from "@/images/logos/logo.png";
 //Profils
@@ -439,7 +440,7 @@ function Friend(props) {
   );
 }
 
-function LeftBar() {
+function RightBar(props) {
   return (
     <section className="hidden h-screen lg:flex flex-col items-center px-8 w-80  border-l border-tx03">
       {/* top elements */}
@@ -459,17 +460,21 @@ function LeftBar() {
           />
         </div>
 
-        {/* setting and logout */}
+        {/* setting and log-out */}
 
-        <div className="flex flex-col items-start font-normal text-tx02 text-xl tracking-[5px] capitalize space-y-3 mb-5 ml-2">
-          <Link className="flex space-x-3" href={"#"}>
+        <div className="flex flex-col items-start space-y-3 mb-5 ml-2 text-tx02">
+          <button className="flex space-x-3" onClick={props.onSettingClick}>
             <Icon className="w-7 h-7" icon="solar:settings-broken" />
-            <div>setting</div>
-          </Link>
+            <div className="font-normal text-xl tracking-[5px] capitalize">
+              setting
+            </div>
+          </button>
 
           <Link className="flex space-x-3" href={"#"}>
             <Icon className="w-7 h-7" icon="fluent-mdl2:navigate-back" />
-            <div>log out</div>
+            <div className="font-normal text-xl tracking-[5px] capitalize">
+              log out
+            </div>
           </Link>
         </div>
       </div>
@@ -510,7 +515,92 @@ function LeftBar() {
   );
 }
 
+function SettingSection({ onClick, ...props }) {
+  return (
+    <section className="bg-bg01/90 fixed inset-0  flex items-center justify-center">
+      <div className="flex flex-col bg-bg01 border-[1.5px] border-tx05 rounded-2xl w-11/12 h-3/4 sm:w-[30rem] sm:h-2/3 lg:w-[40rem] px-2 xs:px-4 sm:px-8">
+        {/* fix */}
+        <dev className="pb-4 xs:pb-6 sm:pb-10 text-sm xs:text-base sm:text-lg border-b border-tx03">
+          {/* top */}
+          <div className="flex items-center justify-between w-full my-4 xs:my-7 sm:my-10 text-tx05 font-normal capitalize tracking-widest sm:tracking-[3px]">
+            <div>account settings</div>
+            <div className="flex justify-center space-x-2 xs:space-x-4 lg:space-x-6">
+              <button className="w-12 xs:w-16 sm:w-20 sm:p-0 border border-tx01 rounded-lg">
+                <div className="font-light">Save</div>
+              </button>
+              <button onClick={onClick}>
+                <Icon
+                  className="text-tx05 w-6 h-6 xs:w-7 xs:h-7"
+                  icon="icon-park-outline:close"
+                />
+              </button>
+            </div>
+          </div>
+
+          {/* bottom */}
+          <div className="text-tx05 font-light flex items-center justify-between sm:px-4 my-2 lg:mx-8">
+            <button className="py-1 w-28 xs:w-36 lg:w-48 border border-tx01 rounded-lg">
+              <div className=" tracking-widest">Profile</div>
+            </button>
+            <button className="py-1 w-28 xs:w-36 lg:w-48 border border-tx01 rounded-lg">
+              <div className=" tracking-widest">Two-Factor</div>
+            </button>
+          </div>
+        </dev>
+
+        {/* setting */}
+        <div className="my-10 ">
+          {/* profile */}
+          <div className="text-sm xs:text-base sm:text-lg tracking-widest ">
+            {/* avatar */}
+            <div className="mb-8">
+              <div className="mb-3">Your Avatar</div>
+              <div className="flex items-end">
+                <Image
+                  className="object-cover w-16 h-16 xs:w-20 xs:h-20 sm:w-28 sm:h-28 rounded-full mr-4 xs:mr-6 sm:mr-10 xs:ml-2 sm:ml-4"
+                  src={Pic15}
+                  quality={100}
+                />
+                <div>
+                  <button className="text-tx05 text-xs py-1 w-28 xs:w-36 lg:w-48 border border-tx01 rounded-lg">
+                    <div className=" tracking-widest">Upload New</div>
+                  </button>
+                  <div className="text-[0.51rem] tracking-normal font-light">
+                    Avatar help your friends recognize you
+                  </div>
+                </div>
+                <div></div>
+              </div>
+            </div>
+
+            {/* information */}
+            <div>
+              <div className="mb-3">Your Informatin</div>
+              <div className="flex items-center justify-between mb-5">
+                <div className="space-y-1">
+                  <div className="text-xs tracking-normal">First Name</div>
+                  <input className="bg-tx02 h-6 w-24 rounded-sm"></input>
+                </div>
+                <div className="space-y-1">
+                  <div className="text-xs tracking-normal">Last Name</div>
+                  <input className="bg-tx02 h-6 w-24 rounded-sm"></input>
+                </div>
+              </div>
+              <div className="space-y-1">
+                <div className="text-xs tracking-normal">User Name</div>
+                <input className="bg-tx02 h-6 w-36 rounded-sm"></input>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function Home() {
+  const [setting, setSetting] = useState(false);
+
   return (
     <main className=" bg-bg01 text-tx01">
       <section className="min-h-screen lg:h-screen bg-bg01 flex justify-between px-3 pt-3 pb-1 xl:p-0 sm:px-7 sm:py-5">
@@ -528,7 +618,13 @@ export default function Home() {
           </div>
         </div>
 
-        <LeftBar />
+        <RightBar
+          onSettingClick={() => {
+            setLogin(false);
+          }}
+        />
+
+        <SettingSection />
       </section>
     </main>
   );
