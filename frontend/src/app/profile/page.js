@@ -515,6 +515,25 @@ function RightBar(props) {
   );
 }
 
+function SettingButton(props) {
+  return (
+    <button className="text-tx05 py-1 w-28 xs:w-36 lg:w-48 border border-tx01 rounded-lg">
+      <div className=" tracking-widest">{props.label}</div>
+    </button>
+  );
+}
+
+function SettingInput({ long, ...props }) {
+  return (
+    <div className="space-y-1 xs:space-y-2">
+      <div className="text-xs xs:text-sm tracking-normal ">{props.label}</div>
+      <input
+        className={clsx("bg-tx02 h-6 w-24 xs:h-8 xs:w-36 sm:w-44 lg:w-60 rounded-sm", long && "w-40 xs:w-56 sm:w-80 lg:w-80")}
+      ></input>
+    </div>
+  );
+}
+
 function SettingSection({ onClick, ...props }) {
   return (
     <section className="bg-bg01/90 fixed inset-0  flex items-center justify-center">
@@ -539,12 +558,8 @@ function SettingSection({ onClick, ...props }) {
 
           {/* bottom */}
           <div className="text-tx05 font-light flex items-center justify-between sm:px-4 my-2 lg:mx-8">
-            <button className="py-1 w-28 xs:w-36 lg:w-48 border border-tx01 rounded-lg">
-              <div className=" tracking-widest">Profile</div>
-            </button>
-            <button className="py-1 w-28 xs:w-36 lg:w-48 border border-tx01 rounded-lg">
-              <div className=" tracking-widest">Two-Factor</div>
-            </button>
+            <SettingButton label="Profile" />
+            <SettingButton label="Two-Factor" />
           </div>
         </dev>
 
@@ -553,7 +568,7 @@ function SettingSection({ onClick, ...props }) {
           {/* profile */}
           <div className="text-sm xs:text-base sm:text-lg tracking-widest ">
             {/* avatar */}
-            <div className="mb-8">
+            <div className="mb-8 xs:mb-12">
               <div className="mb-3">Your Avatar</div>
               <div className="flex items-end">
                 <Image
@@ -562,9 +577,7 @@ function SettingSection({ onClick, ...props }) {
                   quality={100}
                 />
                 <div>
-                  <button className="text-tx05 text-xs py-1 w-28 xs:w-36 lg:w-48 border border-tx01 rounded-lg">
-                    <div className=" tracking-widest">Upload New</div>
-                  </button>
+                  <SettingButton label="Upload New" />
                   <div className="text-[0.51rem] tracking-normal font-light">
                     Avatar help your friends recognize you
                   </div>
@@ -575,21 +588,12 @@ function SettingSection({ onClick, ...props }) {
 
             {/* information */}
             <div>
-              <div className="mb-3">Your Informatin</div>
-              <div className="flex items-center justify-between mb-5">
-                <div className="space-y-1">
-                  <div className="text-xs tracking-normal">First Name</div>
-                  <input className="bg-tx02 h-6 w-24 rounded-sm"></input>
-                </div>
-                <div className="space-y-1">
-                  <div className="text-xs tracking-normal">Last Name</div>
-                  <input className="bg-tx02 h-6 w-24 rounded-sm"></input>
-                </div>
+              <div className="mb-3 xs:mb-6">Your Informatin</div>
+              <div className="flex justify-between mb-4 xs:mb-7">
+                <SettingInput label="First Name" />
+                <SettingInput label="Last Name" />
               </div>
-              <div className="space-y-1">
-                <div className="text-xs tracking-normal">User Name</div>
-                <input className="bg-tx02 h-6 w-36 rounded-sm"></input>
-              </div>
+              <SettingInput label="User Name" long />
             </div>
           </div>
         </div>
