@@ -8,6 +8,7 @@ import React from "react";
 import { useState } from "react";
 
 import logoPic from "@/images/logos/logo.png";
+import qrCode from "@/images/pics/qrcode.jpeg";
 //Profils
 import Pic01 from "@/images/profils/01.jpg";
 import Pic02 from "@/images/profils/02.jpg";
@@ -470,7 +471,7 @@ function RightBar(props) {
             </div>
           </button>
 
-          <Link className="flex space-x-3" href={"#"}>
+          <Link className="flex space-x-3" href={"/.."}>
             <Icon className="w-7 h-7" icon="fluent-mdl2:navigate-back" />
             <div className="font-normal text-xl tracking-[5px] capitalize">
               log out
@@ -515,10 +516,10 @@ function RightBar(props) {
   );
 }
 
-function SettingButton(props) {
+function SettingButton({label, className, ...props}) {
   return (
-    <button className="text-tx05 py-1 w-28 xs:w-36 lg:w-48 border border-tx01 rounded-lg">
-      <div className=" tracking-widest">{props.label}</div>
+    <button {...props} className={clsx("text-tx05 py-1 w-28 xs:w-36 lg:w-48 border hover:bg-tx01 hover:text-tx03 ease-linear transition-colors duration-[400ms] border-tx01 rounded-lg", className)}>
+      <div className=" tracking-widest">{label}</div>
     </button>
   );
 }
@@ -528,25 +529,32 @@ function SettingInput({ long, ...props }) {
     <div className="space-y-1 xs:space-y-2">
       <div className="text-xs xs:text-sm tracking-normal ">{props.label}</div>
       <input
-        className={clsx("bg-tx02 h-6 w-24 xs:h-8 xs:w-36 sm:w-44 lg:w-60 rounded-sm", long && "w-40 xs:w-56 sm:w-80 lg:w-80")}
+        className={clsx(
+          "bg-tx02 h-6 w-24 xs:h-8 sm:h-10 sm:rounded-md xs:w-36 sm:w-44 lg:w-60 rounded-sm",
+          long && "w-40 xs:w-56 sm:w-80 lg:w-80",
+        )}
       ></input>
     </div>
   );
 }
 
 function SettingSection({ onClick, ...props }) {
+const [active,setActive] = useState("profile");
+
   return (
-    <section className="bg-bg01/90 fixed inset-0  flex items-center justify-center">
-      <div className="flex flex-col bg-bg01 border-[1.5px] border-tx05 rounded-2xl w-11/12 h-3/4 sm:w-[30rem] sm:h-2/3 lg:w-[40rem] px-2 xs:px-4 sm:px-8">
+    <section className="bg-bg01/90 fixed inset-0 flex items-center justify-center duration-700">
+      <div className="flex flex-col bg-bg01 border-[1.5px] border-tx05 rounded-2xl w-11/12 h-4/5 xs:h-3/4 lg:h-2/3 sm:w-[30rem]  lg:w-[40rem] px-2 xs:px-4 sm:px-8">
         {/* fix */}
         <dev className="pb-4 xs:pb-6 sm:pb-10 text-sm xs:text-base sm:text-lg border-b border-tx03">
           {/* top */}
           <div className="flex items-center justify-between w-full my-4 xs:my-7 sm:my-10 text-tx05 font-normal capitalize tracking-widest sm:tracking-[3px]">
             <div>account settings</div>
             <div className="flex justify-center space-x-2 xs:space-x-4 lg:space-x-6">
+
               <button className="w-12 xs:w-16 sm:w-20 sm:p-0 border border-tx01 rounded-lg">
                 <div className="font-light">Save</div>
               </button>
+
               <button onClick={onClick}>
                 <Icon
                   className="text-tx05 w-6 h-6 xs:w-7 xs:h-7"
@@ -558,18 +566,18 @@ function SettingSection({ onClick, ...props }) {
 
           {/* bottom */}
           <div className="text-tx05 font-light flex items-center justify-between sm:px-4 my-2 lg:mx-8">
-            <SettingButton label="Profile" />
-            <SettingButton label="Two-Factor" />
+            <SettingButton label="Profile" className={active==="profile" && "bg-tx02"} onClick={() => setActive("profile")} />
+            <SettingButton label="Two-Factor" className={active==="two-factor" && "bg-tx02"} onClick={() => setActive("two-factor")} />
           </div>
         </dev>
 
         {/* setting */}
-        <div className="my-10 ">
+        <div className="flex-1 pt-10 sm:mx-5 lg:mx-11 overflow-auto no-scrollbar">
           {/* profile */}
-          <div className="text-sm xs:text-base sm:text-lg tracking-widest ">
+          {active === "profile" && <div className="flex flex-col justify-between text-sm xs:text-base sm:text-lg tracking-widest">
             {/* avatar */}
-            <div className="mb-8 xs:mb-12">
-              <div className="mb-3">Your Avatar</div>
+            <div className="mb-8 xs:mb-12 lg:mb-16">
+              <div className="mb-3 lg:mb-5">Your Avatar</div>
               <div className="flex items-end">
                 <Image
                   className="object-cover w-16 h-16 xs:w-20 xs:h-20 sm:w-28 sm:h-28 rounded-full mr-4 xs:mr-6 sm:mr-10 xs:ml-2 sm:ml-4"
@@ -578,7 +586,7 @@ function SettingSection({ onClick, ...props }) {
                 />
                 <div>
                   <SettingButton label="Upload New" />
-                  <div className="text-[0.51rem] tracking-normal font-light">
+                  <div className="text-[0.51rem] xs:text-[0.67rem] lg:text-xs lg:mt-2 tracking-normal font-light">
                     Avatar help your friends recognize you
                   </div>
                 </div>
@@ -589,13 +597,60 @@ function SettingSection({ onClick, ...props }) {
             {/* information */}
             <div>
               <div className="mb-3 xs:mb-6">Your Informatin</div>
-              <div className="flex justify-between mb-4 xs:mb-7">
+              <div className="flex justify-between mb-4 lg:mb-10 xs:mb-7">
                 <SettingInput label="First Name" />
                 <SettingInput label="Last Name" />
               </div>
               <SettingInput label="User Name" long />
             </div>
-          </div>
+          </div>}
+
+          {/* two-factor */}
+          {active === "two-factor" && <div className="flex flex-col justify-between">
+            {/* text */}
+            <div className="mb-4 xs:mb-12 lg:mb-16">
+              <div className="mb-3 lg:mb-5 text-xs xs:text-sm sm:text-lg lg:text-xl xs:tracking-widest capitalize">
+                set up two-factor authentication
+              </div>
+
+              <div className="text-tx02 text-justify text-[0.5rem] xs:text-[0.65rem] sm:text-xs lg:text-sm capitalize">
+                to be able to authorize transactions you need to scane this QR
+                code with your authentication app and enter the verification
+                code below
+              </div>
+
+              <div className="flex flex-col items-center justify-center">
+                <Image
+                  className="rounded-xl w-32 h-32 xs:w-40 xs:h-40 sm:w-44 sm:h-44 lg:w-52 lg:h-52 my-5 sm:my-6 lg:my-9"
+                  src={qrCode}
+                  quality={100}
+                />
+
+                <div className="mb-3 lg:mb-5 text-xs xs:text-sm sm:text-lg lg:text-xl xs:tracking-widest capitalize">
+                  verification code
+                </div>
+
+                <div className="flex flex-col items-center">
+                  <div className="flex space-x-1 mb-5 xs:mb-12">
+                    <input className="bg-tx01 w-7 h-10 rounded-lg xs:w-10 xs:h-14 xs:rounded-2xl" />
+                    <input className="bg-tx01 w-7 h-10 rounded-lg xs:w-10 xs:h-14 xs:rounded-2xl" />
+                    <input className="bg-tx01 w-7 h-10 rounded-lg xs:w-10 xs:h-14 xs:rounded-2xl" />
+                    <input className="bg-tx01 w-7 h-10 rounded-lg xs:w-10 xs:h-14 xs:rounded-2xl" />
+                    <input className="bg-tx01 w-7 h-10 rounded-lg xs:w-10 xs:h-14 xs:rounded-2xl" />
+                    <input className="bg-tx01 w-7 h-10 rounded-lg xs:w-10 xs:h-14 xs:rounded-2xl" />
+                  </div>
+
+                  <div>
+                    <Link className="mb-3" href={"../profile"}>
+                      <div className="text-xl font-extralight tracking-[6px] xs:text-3xl">
+                        virify
+                      </div>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>}
         </div>
       </div>
     </section>
@@ -612,9 +667,9 @@ export default function Home() {
           <WebHeader />
         </div>
 
-        <div className="w-full lg:w-2/3 max-w-[1300px] mx-auto">
+        <div className=" w-full lg:w-2/3 max-w-[1300px] mx-auto">
           <MbHeader />
-          <div className="lg:my-12 xl:my-16 2xl:my-22 lg:px-4">
+          <div className="flex flex-col justify-between lg:my-12 xl:my-16 2xl:my-22 lg:px-4">
             <ProfileInfo />
             <PlayRate />
             <Ranking />
@@ -624,11 +679,16 @@ export default function Home() {
 
         <RightBar
           onSettingClick={() => {
-            setLogin(false);
+            setSetting(true);
           }}
         />
-
-        <SettingSection />
+        {setting && (
+          <SettingSection
+            onClick={() => {
+              setSetting(false);
+            }}
+          />
+        )}
       </section>
     </main>
   );
