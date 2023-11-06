@@ -28,7 +28,30 @@ import AvUnsto from "@/images/achievements/unsto.png";
 import AvShoot from "@/images/achievements/shoot.png";
 import { useHorizontalScroll } from "@/hooks/useHorizontalScroll";
 
-function Notif() {
+function Notif(props) {
+  return (
+    <div className="flex items-center justify-between m-3">
+      <div className="flex items-center">
+        {/* image */}
+        <Image
+          className="object-cover w-12 h-12 rounded-full mr-4 border border-tx05"
+          src={props.pic}
+          quality={100}
+        />
+
+        {/* title & descriiption */}
+        <div className="text-tx01">
+          <div className="capitalize tracking-widest truncate w-36 xs:w-52 sm:w-40 lg:w-36">{props.title}</div>
+          <div className="font-extralight text-xs truncate w-36 xs:w-52 sm:w-40 lg:w-36">{props.desc}</div>
+        </div>
+      </div>
+      {/* time */}
+      <div className="text-xs text-tx02 w-8 text-center">{props.time}</div>
+    </div>
+  );
+}
+
+function Notification() {
   const [notif, setNotif] = useState(false);
   return (
     <div className="">
@@ -93,28 +116,26 @@ function Notif() {
       {/* NOTIF */}
       {notif && (
         <div className="flex flex-col items-center sm:items-end lg:items-center lg:-translate-y-5 lg:sticky z-10">
-          <div className="bg-bg01 w-full h-3/5 sm:w-80 xs:h-[33rem] lg:w-72 border-y sm:border border-tx02 absolute rounded-b-[2rem] sm:rounded-3xl overflow-auto no-scrollbar shadow-2xl shadow-tx03">
-            <div className="py-3  px-5 sticky top-0 bg-bg01 text-tx01 text-base tracking-widest capitalize">
+          <div className="bg-bg01 w-full h-3/5 sm:w-80 xs:h-[33rem] border-y sm:border border-t-tx02 border-tx05 sm:border-t-tx05 absolute rounded-b-[2rem] sm:rounded-3xl overflow-auto no-scrollbar shadow-2xl shadow-tx05/40">
+            <div className="py-3  px-5 sticky top-0 bg-bg01 text-tx05 text-base tracking-widest capitalize">
               Recent Notification
             </div>
             <div className="px-2">
-              <Friend pic={Pic01} name="syakoubinato" status="ONLINE" />
-              <Friend pic={Pic02} name="badrbansh" status="OFFLINE" />
-              <Friend pic={Pic15} name="megashoot" status="INGAME" />
-              <Friend pic={Pic11} name="aitlandlia" status="ONLINE" />
-              <Friend pic={Pic06} name="moonshot" status="INGAME" />
-
-              <Friend pic={Pic01} name="syakoubinato" status="ONLINE" />
-              <Friend pic={Pic02} name="badrbansh" status="OFFLINE" />
-              <Friend pic={Pic15} name="megashoot" status="INGAME" />
-              <Friend pic={Pic11} name="aitlandlia" status="ONLINE" />
-              <Friend pic={Pic06} name="moonshot" status="INGAME" />
-
-              <Friend pic={Pic01} name="syakoubinato" status="ONLINE" />
-              <Friend pic={Pic02} name="badrbansh" status="OFFLINE" />
-              <Friend pic={Pic15} name="megashoot" status="INGAME" />
-              <Friend pic={Pic11} name="aitlandlia" status="ONLINE" />
-              <Friend pic={Pic06} name="moonshot" status="INGAME" />
+              <Notif pic={Pic02} title="syakoubi" desc="invited you to a game" time="5min" />
+              <Notif pic={Pic02} title="syakoubi" desc="added you as Friend" time="15min" />
+              <Notif pic={Pic05} title="mmessaou" desc="added you to the group 'zwaml'" time="5min" />
+              <Notif pic={Pic01} title="mel-hous" desc="added you as Friend" time="30min" />
+              <Notif pic={Pic03} title="aait-oma" desc="invited you to a game" time="1h" />
+              <Notif pic={AvCmBack} title="comeback kid" desc="achievement unlocked" time="15min" />
+              <Notif pic={Pic03} title="aait-oma" desc="added you as Friend" time="1h" />
+              
+              <Notif pic={Pic02} title="syakoubi" desc="invited you to a game" time="5min" />
+              <Notif pic={Pic02} title="syakoubi" desc="added you as Friend" time="15min" />
+              <Notif pic={Pic05} title="mmessaou" desc="added you to the group 'zwaml'" time="5min" />
+              <Notif pic={Pic01} title="mel-hous" desc="added you as Friend" time="30min" />
+              <Notif pic={Pic03} title="aait-oma" desc="invited you to a game" time="1h" />
+              <Notif pic={AvCmBack} title="comeback kid" desc="achievement unlocked" time="15min" />
+              <Notif pic={Pic03} title="aait-oma" desc="added you as Friend" time="1h" />
             </div>
           </div>
         </div>
@@ -127,7 +148,7 @@ function MbHeader() {
   return (
     <header className="flex flex-col xl:hidden lg:pt-10">
       <div className="lg:hidden">
-        <Notif />
+        <Notification />
       </div>
 
       <div className="flex items-center justify-between pb-3 border-b border-tx02 xs:pb-4">
@@ -525,11 +546,11 @@ function Friend(props) {
 
 function RightBar(props) {
   return (
-    <section className="hidden h-screen lg:flex flex-col items-center px-8 w-80  border-l border-tx03">
+    <section className="hidden h-screen lg:flex flex-col items-center px-8 w-96  border-l border-tx03">
       {/* top elements */}
       <div className="w-full lg:mt-12 xl:mt-16 2xl:mt-22 mb-10">
         {/* notif and Search */}
-        <Notif />
+        <Notification />
 
         {/* setting and log-out */}
         <div className="flex flex-col items-start space-y-3 mb-5 ml-2 text-tx02">
