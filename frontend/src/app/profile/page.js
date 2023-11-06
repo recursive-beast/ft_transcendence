@@ -28,24 +28,106 @@ import AvUnsto from "@/images/achievements/unsto.png";
 import AvShoot from "@/images/achievements/shoot.png";
 import { useHorizontalScroll } from "@/hooks/useHorizontalScroll";
 
-function MbHeader() {
+function Notif() {
+  const [notif, setNotif] = useState(false);
   return (
-    <header className="flex flex-col xl:hidden lg:pt-10">
+    <div className="">
+      {/* Mobile button's */}
       <div className="flex items-center justify-between mb-[12px] sm:mb-6 lg:hidden">
         <div className="text-sm font-extralight tracking-[4px] capitalize left-0 xs:text-base sm:text-lg">
           paddle smash
         </div>
-
         <div className="flex space-x-4 xs:space-x-5 sm:space-x-7">
           <Icon
             className="text-tx01 w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8"
             icon="guidance:search"
           />
-          <Icon
-            className="text-tx01 w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8"
-            icon="solar:notification-unread-broken"
+          <button
+            onClick={() => {
+              setNotif(!notif);
+            }}
+          >
+            <Icon
+              className={clsx(
+                "text-tx01 w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8",
+                notif && "text-tx02",
+              )}
+              icon={
+                notif
+                  ? "icon-park-outline:close"
+                  : "solar:notification-unread-broken"
+              }
+            />
+          </button>
+        </div>
+      </div>
+
+      {/* Web button's */}
+      <div className="hidden lg:flex items-center justify-between mb-10">
+        <div className="flex items-center">
+          <Icon className="text-tx01 w-7 h-7" icon="guidance:search" />
+          <input
+            className="bg-bg01 h-8 w-40 font-extralight text-xl ml-3"
+            defaultValue="Search"
           />
         </div>
+        <button
+          onClick={() => {
+            setNotif(!notif);
+          }}
+        >
+          <Icon
+            className={clsx(
+              "text-tx01 w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8",
+              notif && "text-tx02",
+            )}
+            icon={
+              notif
+                ? "icon-park-outline:close"
+                : "solar:notification-unread-broken"
+            }
+          />
+        </button>
+      </div>
+
+      {/* NOTIF */}
+      {notif && (
+        <div className="flex flex-col items-center sm:items-end lg:items-center lg:-translate-y-5 lg:sticky z-10">
+          <div className="bg-bg01 w-full h-3/5 sm:w-80 xs:h-[33rem] lg:w-72 border-y sm:border border-tx02 absolute rounded-b-[2rem] sm:rounded-3xl overflow-auto no-scrollbar shadow-2xl shadow-tx03">
+            <div className="py-3  px-5 sticky top-0 bg-bg01 text-tx01 text-base tracking-widest capitalize">
+              Recent Notification
+            </div>
+            <div className="px-2">
+              <Friend pic={Pic01} name="syakoubinato" status="ONLINE" />
+              <Friend pic={Pic02} name="badrbansh" status="OFFLINE" />
+              <Friend pic={Pic15} name="megashoot" status="INGAME" />
+              <Friend pic={Pic11} name="aitlandlia" status="ONLINE" />
+              <Friend pic={Pic06} name="moonshot" status="INGAME" />
+
+              <Friend pic={Pic01} name="syakoubinato" status="ONLINE" />
+              <Friend pic={Pic02} name="badrbansh" status="OFFLINE" />
+              <Friend pic={Pic15} name="megashoot" status="INGAME" />
+              <Friend pic={Pic11} name="aitlandlia" status="ONLINE" />
+              <Friend pic={Pic06} name="moonshot" status="INGAME" />
+
+              <Friend pic={Pic01} name="syakoubinato" status="ONLINE" />
+              <Friend pic={Pic02} name="badrbansh" status="OFFLINE" />
+              <Friend pic={Pic15} name="megashoot" status="INGAME" />
+              <Friend pic={Pic11} name="aitlandlia" status="ONLINE" />
+              <Friend pic={Pic06} name="moonshot" status="INGAME" />
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function MbHeader() {
+  return (
+    <header className="flex flex-col xl:hidden lg:pt-10">
+      <div className="lg:hidden">
+        <Notif />
       </div>
 
       <div className="flex items-center justify-between pb-3 border-b border-tx02 xs:pb-4">
@@ -447,22 +529,9 @@ function RightBar(props) {
       {/* top elements */}
       <div className="w-full lg:mt-12 xl:mt-16 2xl:mt-22 mb-10">
         {/* notif and Search */}
-        <div className="flex items-center justify-between mb-10">
-          <div className="flex items-center">
-            <Icon className="text-tx01 w-7 h-7" icon="guidance:search" />
-            <input
-              className="bg-bg01 h-8 w-40 font-extralight text-xl ml-3"
-              defaultValue="Search"
-            />
-          </div>
-          <Icon
-            className="text-tx01 w-7 h-7"
-            icon="solar:notification-unread-broken"
-          />
-        </div>
+        <Notif />
 
         {/* setting and log-out */}
-
         <div className="flex flex-col items-start space-y-3 mb-5 ml-2 text-tx02">
           <button className="flex space-x-3" onClick={props.onSettingClick}>
             <Icon className="w-7 h-7" icon="solar:settings-broken" />
@@ -516,9 +585,15 @@ function RightBar(props) {
   );
 }
 
-function SettingButton({label, className, ...props}) {
+function SettingButton({ label, className, ...props }) {
   return (
-    <button {...props} className={clsx("text-tx05 py-1 w-28 xs:w-36 lg:w-48 border hover:bg-tx01 hover:text-tx03 ease-linear transition-colors duration-[400ms] border-tx01 rounded-lg", className)}>
+    <button
+      {...props}
+      className={clsx(
+        "text-tx05 py-1 w-28 xs:w-36 lg:w-48 border hover:bg-tx01 hover:text-tx03 ease-linear transition-colors duration-[400ms] border-tx01 rounded-lg",
+        className,
+      )}
+    >
       <div className=" tracking-widest">{label}</div>
     </button>
   );
@@ -539,7 +614,7 @@ function SettingInput({ long, ...props }) {
 }
 
 function SettingSection({ onClick, ...props }) {
-const [active,setActive] = useState("profile");
+  const [active, setActive] = useState("profile");
 
   return (
     <section className="bg-bg01/90 fixed inset-0 flex items-center justify-center duration-700">
@@ -550,7 +625,6 @@ const [active,setActive] = useState("profile");
           <div className="flex items-center justify-between w-full my-4 xs:my-7 sm:my-10 text-tx05 font-normal capitalize tracking-widest sm:tracking-[3px]">
             <div>account settings</div>
             <div className="flex justify-center space-x-2 xs:space-x-4 lg:space-x-6">
-
               <button className="w-12 xs:w-16 sm:w-20 sm:p-0 border border-tx01 rounded-lg">
                 <div className="font-light">Save</div>
               </button>
@@ -566,91 +640,103 @@ const [active,setActive] = useState("profile");
 
           {/* bottom */}
           <div className="text-tx05 font-light flex items-center justify-between sm:px-4 my-2 lg:mx-8">
-            <SettingButton label="Profile" className={active==="profile" && "bg-tx02"} onClick={() => setActive("profile")} />
-            <SettingButton label="Two-Factor" className={active==="two-factor" && "bg-tx02"} onClick={() => setActive("two-factor")} />
+            <SettingButton
+              label="Profile"
+              className={active === "profile" && "bg-tx02"}
+              onClick={() => setActive("profile")}
+            />
+            <SettingButton
+              label="Two-Factor"
+              className={active === "two-factor" && "bg-tx02"}
+              onClick={() => setActive("two-factor")}
+            />
           </div>
         </dev>
 
         {/* setting */}
         <div className="flex-1 pt-10 sm:mx-5 lg:mx-11 overflow-auto no-scrollbar">
           {/* profile */}
-          {active === "profile" && <div className="flex flex-col justify-between text-sm xs:text-base sm:text-lg tracking-widest">
-            {/* avatar */}
-            <div className="mb-8 xs:mb-12 lg:mb-16">
-              <div className="mb-3 lg:mb-5">Your Avatar</div>
-              <div className="flex items-end">
-                <Image
-                  className="object-cover w-16 h-16 xs:w-20 xs:h-20 sm:w-28 sm:h-28 rounded-full mr-4 xs:mr-6 sm:mr-10 xs:ml-2 sm:ml-4"
-                  src={Pic15}
-                  quality={100}
-                />
-                <div>
-                  <SettingButton label="Upload New" />
-                  <div className="text-[0.51rem] xs:text-[0.67rem] lg:text-xs lg:mt-2 tracking-normal font-light">
-                    Avatar help your friends recognize you
+          {active === "profile" && (
+            <div className="flex flex-col justify-between text-sm xs:text-base sm:text-lg tracking-widest">
+              {/* avatar */}
+              <div className="mb-8 xs:mb-12 lg:mb-16">
+                <div className="mb-3 lg:mb-5">Your Avatar</div>
+                <div className="flex items-end">
+                  <Image
+                    className="object-cover w-16 h-16 xs:w-20 xs:h-20 sm:w-28 sm:h-28 rounded-full mr-4 xs:mr-6 sm:mr-10 xs:ml-2 sm:ml-4"
+                    src={Pic15}
+                    quality={100}
+                  />
+                  <div>
+                    <SettingButton label="Upload New" />
+                    <div className="text-[0.51rem] xs:text-[0.67rem] lg:text-xs lg:mt-2 tracking-normal font-light">
+                      Avatar help your friends recognize you
+                    </div>
                   </div>
+                  <div></div>
                 </div>
-                <div></div>
               </div>
-            </div>
 
-            {/* information */}
-            <div>
-              <div className="mb-3 xs:mb-6">Your Informatin</div>
-              <div className="flex justify-between mb-4 lg:mb-10 xs:mb-7">
-                <SettingInput label="First Name" />
-                <SettingInput label="Last Name" />
+              {/* information */}
+              <div>
+                <div className="mb-3 xs:mb-6">Your Informatin</div>
+                <div className="flex justify-between mb-4 lg:mb-10 xs:mb-7">
+                  <SettingInput label="First Name" />
+                  <SettingInput label="Last Name" />
+                </div>
+                <SettingInput label="User Name" long />
               </div>
-              <SettingInput label="User Name" long />
             </div>
-          </div>}
+          )}
 
           {/* two-factor */}
-          {active === "two-factor" && <div className="flex flex-col justify-between">
-            {/* text */}
-            <div className="mb-4 xs:mb-12 lg:mb-16">
-              <div className="mb-3 lg:mb-5 text-xs xs:text-sm sm:text-lg lg:text-xl xs:tracking-widest capitalize">
-                set up two-factor authentication
-              </div>
-
-              <div className="text-tx02 text-justify text-[0.5rem] xs:text-[0.65rem] sm:text-xs lg:text-sm capitalize">
-                to be able to authorize transactions you need to scane this QR
-                code with your authentication app and enter the verification
-                code below
-              </div>
-
-              <div className="flex flex-col items-center justify-center">
-                <Image
-                  className="rounded-xl w-32 h-32 xs:w-40 xs:h-40 sm:w-44 sm:h-44 lg:w-52 lg:h-52 my-5 sm:my-6 lg:my-9"
-                  src={qrCode}
-                  quality={100}
-                />
-
+          {active === "two-factor" && (
+            <div className="flex flex-col justify-between">
+              {/* text */}
+              <div className="mb-4 xs:mb-12 lg:mb-16">
                 <div className="mb-3 lg:mb-5 text-xs xs:text-sm sm:text-lg lg:text-xl xs:tracking-widest capitalize">
-                  verification code
+                  set up two-factor authentication
                 </div>
 
-                <div className="flex flex-col items-center">
-                  <div className="flex space-x-1 mb-5 xs:mb-12">
-                    <input className="bg-tx01 w-7 h-10 rounded-lg xs:w-10 xs:h-14 xs:rounded-2xl" />
-                    <input className="bg-tx01 w-7 h-10 rounded-lg xs:w-10 xs:h-14 xs:rounded-2xl" />
-                    <input className="bg-tx01 w-7 h-10 rounded-lg xs:w-10 xs:h-14 xs:rounded-2xl" />
-                    <input className="bg-tx01 w-7 h-10 rounded-lg xs:w-10 xs:h-14 xs:rounded-2xl" />
-                    <input className="bg-tx01 w-7 h-10 rounded-lg xs:w-10 xs:h-14 xs:rounded-2xl" />
-                    <input className="bg-tx01 w-7 h-10 rounded-lg xs:w-10 xs:h-14 xs:rounded-2xl" />
+                <div className="text-tx02 text-justify text-[0.5rem] xs:text-[0.65rem] sm:text-xs lg:text-sm capitalize">
+                  to be able to authorize transactions you need to scane this QR
+                  code with your authentication app and enter the verification
+                  code below
+                </div>
+
+                <div className="flex flex-col items-center justify-center">
+                  <Image
+                    className="rounded-xl w-32 h-32 xs:w-40 xs:h-40 sm:w-44 sm:h-44 lg:w-52 lg:h-52 my-5 sm:my-6 lg:my-9"
+                    src={qrCode}
+                    quality={100}
+                  />
+
+                  <div className="mb-3 lg:mb-5 text-xs xs:text-sm sm:text-lg lg:text-xl xs:tracking-widest capitalize">
+                    verification code
                   </div>
 
-                  <div>
-                    <Link className="mb-3" href={"../profile"}>
-                      <div className="text-xl font-extralight tracking-[6px] xs:text-3xl">
-                        virify
-                      </div>
-                    </Link>
+                  <div className="flex flex-col items-center">
+                    <div className="flex space-x-1 mb-5 xs:mb-12">
+                      <input className="bg-tx01 w-7 h-10 rounded-lg xs:w-10 xs:h-14 xs:rounded-2xl" />
+                      <input className="bg-tx01 w-7 h-10 rounded-lg xs:w-10 xs:h-14 xs:rounded-2xl" />
+                      <input className="bg-tx01 w-7 h-10 rounded-lg xs:w-10 xs:h-14 xs:rounded-2xl" />
+                      <input className="bg-tx01 w-7 h-10 rounded-lg xs:w-10 xs:h-14 xs:rounded-2xl" />
+                      <input className="bg-tx01 w-7 h-10 rounded-lg xs:w-10 xs:h-14 xs:rounded-2xl" />
+                      <input className="bg-tx01 w-7 h-10 rounded-lg xs:w-10 xs:h-14 xs:rounded-2xl" />
+                    </div>
+
+                    <div>
+                      <Link className="mb-3" href={"../profile"}>
+                        <div className="text-xl font-extralight tracking-[6px] xs:text-3xl">
+                          virify
+                        </div>
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>}
+          )}
         </div>
       </div>
     </section>
