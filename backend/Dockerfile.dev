@@ -3,4 +3,4 @@ WORKDIR /app
 RUN npm install -g @nestjs/cli
 EXPOSE 3000
 VOLUME [ "/var/www/avatars", "/app" ]
-CMD npm i && npx prisma migrate dev && nest start --watch
+CMD npm i && nest start --watch
