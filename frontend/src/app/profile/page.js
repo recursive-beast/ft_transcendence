@@ -55,177 +55,246 @@ function Notif(props) {
   );
 }
 
-function Notification() {
-  const [notif, setNotif] = useState(false);
+function Notificatin() {
   return (
-    <div className="">
-      {/* Mobile button's */}
-      <div className="flex items-center justify-between mb-[12px] sm:mb-6 lg:hidden">
-        <div className="text-sm font-extralight tracking-[4px] capitalize left-0 xs:text-base sm:text-lg">
-          paddle smash
+    <div className="flex flex-col items-center sm:items-end lg:items-center lg:-translate-y-5 lg:sticky z-10">
+      <div className="bg-bg01 w-full h-[30rem] sm:w-80 xs:h-[33rem] border-y sm:border border-t-tx02 border-tx05 sm:border-t-tx05 absolute rounded-b-[2rem] sm:rounded-3xl overflow-auto no-scrollbar shadow-2xl shadow-tx05/40">
+        <div className="py-3  px-5 sticky top-0 bg-bg01 text-tx05 text-base tracking-widest capitalize">
+          Recent Notification
         </div>
-        <div className="flex space-x-4 xs:space-x-5 sm:space-x-7">
-          <Icon
-            className="text-tx01 w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8"
-            icon="guidance:search"
+        <div className="px-2">
+          <Notif
+            pic={Pic02}
+            title="syakoubi"
+            desc="invited you to a game"
+            time="5min"
           />
-          <button
-            onClick={() => {
-              setNotif(!notif);
-            }}
-          >
+          <Notif
+            pic={Pic02}
+            title="syakoubi"
+            desc="added you as Friend"
+            time="15min"
+          />
+          <Notif
+            pic={Pic05}
+            title="mmessaou"
+            desc="added you to the group 'zwaml'"
+            time="5min"
+          />
+          <Notif
+            pic={Pic01}
+            title="mel-hous"
+            desc="added you as Friend"
+            time="30min"
+          />
+          <Notif
+            pic={Pic03}
+            title="aait-oma"
+            desc="invited you to a game"
+            time="1h"
+          />
+          <Notif
+            pic={AvCmBack}
+            title="comeback kid"
+            desc="achievement unlocked"
+            time="15min"
+          />
+          <Notif
+            pic={Pic03}
+            title="aait-oma"
+            desc="added you as Friend"
+            time="1h"
+          />
+
+          <Notif
+            pic={Pic02}
+            title="syakoubi"
+            desc="invited you to a game"
+            time="5min"
+          />
+          <Notif
+            pic={Pic02}
+            title="syakoubi"
+            desc="added you as Friend"
+            time="15min"
+          />
+          <Notif
+            pic={Pic05}
+            title="mmessaou"
+            desc="added you to the group 'zwaml'"
+            time="5min"
+          />
+          <Notif
+            pic={Pic01}
+            title="mel-hous"
+            desc="added you as Friend"
+            time="30min"
+          />
+          <Notif
+            pic={Pic03}
+            title="aait-oma"
+            desc="invited you to a game"
+            time="1h"
+          />
+          <Notif
+            pic={AvCmBack}
+            title="comeback kid"
+            desc="achievement unlocked"
+            time="15min"
+          />
+          <Notif
+            pic={Pic03}
+            title="aait-oma"
+            desc="added you as Friend"
+            time="1h"
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Menu(props) {
+  return (
+    <div className="relative">
+      <div className="flex flex-col items-center w-full absolute">
+        <div className="flex flex-col justify-between bg-bg01 w-full h-[80vh] py-3 px-5 border-y border-t-tx02 border-tx05 rounded-b-[2rem] overflow-auto no-scrollbar shadow-2xl shadow-tx05/40">
+          {/* search  */}
+          <div className="flex items-center mb-3">
             <Icon
-              className={clsx(
-                "text-tx01 w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8",
-                notif && "text-tx02",
-              )}
-              icon={
-                notif
-                  ? "icon-park-outline:close"
-                  : "solar:notification-unread-broken"
-              }
+              className="text-tx01 w-5 h-5 xs:w-6 xs:h-6"
+              icon="guidance:search"
             />
-          </button>
-        </div>
-      </div>
+            <input
+              className="bg-bg01 h-8 w-full sm:w-40 font-extralight text-base xs:text-xl ml-3 border-b border-tx03"
+              defaultValue="Search"
+            />
+          </div>
 
-      {/* Web button's */}
-      <div className="hidden lg:flex items-center justify-between mb-10">
-        <div className="flex items-center">
-          <Icon className="text-tx01 w-7 h-7" icon="guidance:search" />
-          <input
-            className="bg-bg01 h-8 w-40 font-extralight text-xl ml-3"
-            defaultValue="Search"
-          />
-        </div>
-        <button
-          onClick={() => {
-            setNotif(!notif);
-          }}
-        >
-          <Icon
-            className={clsx(
-              "text-tx01 w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8",
-              notif && "text-tx02",
-            )}
-            icon={
-              notif
-                ? "icon-park-outline:close"
-                : "solar:notification-unread-broken"
-            }
-          />
-        </button>
-      </div>
+          {/* setting and log-out */}
+          <div className="flex items-center justify-between mb-5 text-tx02">
+            <button
+              className="flex items-center space-x-2 border-b p-1 rounded-xl"
+              onClick={props.onSettingClick}
+            >
+              <Icon
+                className="w-5 h-5 xs:w-6 xs:h-6"
+                icon="solar:settings-broken"
+              />
+              <div className="font-normal text-base xs:text-xl xs:tracking-[5px] capitalize">
+                setting
+              </div>
+            </button>
 
-      {/* NOTIF */}
-      {notif && (
-        <div className="flex flex-col items-center sm:items-end lg:items-center lg:-translate-y-5 lg:sticky z-10">
-          <div className="bg-bg01 w-full h-3/5 sm:w-80 xs:h-[33rem] border-y sm:border border-t-tx02 border-tx05 sm:border-t-tx05 absolute rounded-b-[2rem] sm:rounded-3xl overflow-auto no-scrollbar shadow-2xl shadow-tx05/40">
-            <div className="py-3  px-5 sticky top-0 bg-bg01 text-tx05 text-base tracking-widest capitalize">
-              Recent Notification
+            <Link
+              className="flex items-center space-x-2 border-b p-1 rounded-xl"
+              href={"/.."}
+            >
+              <Icon
+                className="w-5 h-5 xs:w-6 xs:h-6"
+                icon="fluent-mdl2:navigate-back"
+              />
+              <div className="font-normal text-base xs:text-xl xs:tracking-[5px] capitalize">
+                log out
+              </div>
+            </Link>
+          </div>
+
+          {/* Friends elements */}
+          <div className="h-[80%] w-full rounded-3xl border-y border-tx02 overflow-auto no-scrollbar">
+            <div className="py-5 px-2 flex items-center justify-between sticky top-0 bg-bg01 text-tx02 text-base tracking-[3px] capitalize pb-2">
+              <div>friends</div>
+              <Icon className="w-6 h-6" icon="ph:caret-up-down-bold" />
             </div>
-            <div className="px-2">
-              <Notif
-                pic={Pic02}
-                title="syakoubi"
-                desc="invited you to a game"
-                time="5min"
-              />
-              <Notif
-                pic={Pic02}
-                title="syakoubi"
-                desc="added you as Friend"
-                time="15min"
-              />
-              <Notif
-                pic={Pic05}
-                title="mmessaou"
-                desc="added you to the group 'zwaml'"
-                time="5min"
-              />
-              <Notif
-                pic={Pic01}
-                title="mel-hous"
-                desc="added you as Friend"
-                time="30min"
-              />
-              <Notif
-                pic={Pic03}
-                title="aait-oma"
-                desc="invited you to a game"
-                time="1h"
-              />
-              <Notif
-                pic={AvCmBack}
-                title="comeback kid"
-                desc="achievement unlocked"
-                time="15min"
-              />
-              <Notif
-                pic={Pic03}
-                title="aait-oma"
-                desc="added you as Friend"
-                time="1h"
-              />
+            <div>
+              <Friend pic={Pic01} name="syakoubinato" status="ONLINE" />
+              <Friend pic={Pic02} name="badrbansh" status="OFFLINE" />
+              <Friend pic={Pic15} name="megashoot" status="INGAME" />
+              <Friend pic={Pic11} name="aitlandlia" status="ONLINE" />
+              <Friend pic={Pic06} name="moonshot" status="INGAME" />
 
-              <Notif
-                pic={Pic02}
-                title="syakoubi"
-                desc="invited you to a game"
-                time="5min"
-              />
-              <Notif
-                pic={Pic02}
-                title="syakoubi"
-                desc="added you as Friend"
-                time="15min"
-              />
-              <Notif
-                pic={Pic05}
-                title="mmessaou"
-                desc="added you to the group 'zwaml'"
-                time="5min"
-              />
-              <Notif
-                pic={Pic01}
-                title="mel-hous"
-                desc="added you as Friend"
-                time="30min"
-              />
-              <Notif
-                pic={Pic03}
-                title="aait-oma"
-                desc="invited you to a game"
-                time="1h"
-              />
-              <Notif
-                pic={AvCmBack}
-                title="comeback kid"
-                desc="achievement unlocked"
-                time="15min"
-              />
-              <Notif
-                pic={Pic03}
-                title="aait-oma"
-                desc="added you as Friend"
-                time="1h"
-              />
+              <Friend pic={Pic01} name="syakoubinato" status="ONLINE" />
+              <Friend pic={Pic02} name="badrbansh" status="OFFLINE" />
+              <Friend pic={Pic15} name="megashoot" status="INGAME" />
+              <Friend pic={Pic11} name="aitlandlia" status="ONLINE" />
+              <Friend pic={Pic06} name="moonshot" status="INGAME" />
+
+              <Friend pic={Pic01} name="syakoubinato" status="ONLINE" />
+              <Friend pic={Pic02} name="badrbansh" status="OFFLINE" />
+              <Friend pic={Pic15} name="megashoot" status="INGAME" />
+              <Friend pic={Pic11} name="aitlandlia" status="ONLINE" />
+              <Friend pic={Pic06} name="moonshot" status="INGAME" />
+
+              <Friend pic={Pic01} name="syakoubinato" status="ONLINE" />
+              <Friend pic={Pic02} name="badrbansh" status="OFFLINE" />
+              <Friend pic={Pic15} name="megashoot" status="INGAME" />
+              <Friend pic={Pic11} name="aitlandlia" status="ONLINE" />
+              <Friend pic={Pic06} name="moonshot" status="INGAME" />
             </div>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }
 
 function MbHeader() {
+  const [menu, setMenu] = useState(false);
+  const [notif, setNotif] = useState(false);
   return (
-    <header className="flex flex-col xl:hidden lg:pt-10">
+    <header className="flex flex-col xl:hidden lg:pt-10 px-4 sm:px-8 border-b border-tx03">
+      {/* top bar */}
       <div className="lg:hidden">
-        <Notification />
+        <div className="flex items-center justify-between mb-4 sm:mb-6 lg:hidden">
+          <div className="text-base font-light tracking-[5px] capitalize left-0 xs:text-base sm:text-lg">
+            paddle smash
+          </div>
+
+          {/* button's */}
+          <div className="flex space-x-4 xs:space-x-5 sm:space-x-7">
+            {/* notif */}
+            <button
+              onClick={() => {
+                setNotif(!notif);
+                setMenu(false);
+              }}
+            >
+              <Icon
+                className={clsx(
+                  "text-tx01 w-5 h-5 xs:w-6 xs:h-6 sm:w-7 sm:h-7",
+                  notif && "text-tx02",
+                )}
+                icon={
+                  notif
+                    ? "icon-park-outline:close"
+                    : "solar:notification-unread-broken"
+                }
+              />
+            </button>
+
+            {/* menu */}
+            <button
+              onClick={() => {
+                setMenu(!menu);
+                setNotif(false);
+              }}
+            >
+              <Icon
+                className={clsx(
+                  "text-tx01 w-5 h-5 xs:w-6 xs:h-6 sm:w-7 sm:h-7",
+                  menu && "text-tx02",
+                )}
+                icon={menu ? "icon-park-outline:close" : "uiw:menu"}
+              />
+            </button>
+          </div>
+        </div>
+        {menu && <Menu />}
+        {notif && <Notificatin />}
       </div>
 
-      <div className="flex items-center justify-between pb-3 border-b border-tx02 xs:pb-4">
+      {/* nav bar */}
+      <div className="flex items-center justify-between pb-3 xs:pb-4">
         {[
           "solar:home-2-broken",
           "solar:gamepad-broken",
@@ -664,7 +733,7 @@ function RightBar(props) {
       {/* top elements */}
       <div className="w-full lg:mt-12 xl:mt-16 2xl:mt-22 mb-10">
         {/* notif and Search */}
-        <Notification />
+        <Menu />
 
         {/* setting and log-out */}
         <div className="flex flex-col items-start space-y-3 mb-5 ml-2 text-tx02">
@@ -684,7 +753,7 @@ function RightBar(props) {
         </div>
       </div>
 
-      {/* bottom elements */}
+      {/* Friends elements */}
       <div className="h-3/5 w-64 border-y border-tx03 overflow-auto no-scrollbar">
         <div className="py-5 px-2 flex items-center justify-between sticky top-0 bg-bg01 text-tx02 text-base tracking-[3px] capitalize pb-2">
           <div>friends</div>
@@ -878,7 +947,7 @@ function SettingSection({ onClick, ...props }) {
   );
 }
 
-function FriendsSection({onClick}) {
+function FriendsSection({ onClick }) {
   return (
     <section className="bg-bg01/50 fixed inset-0 flex items-center justify-center lg:hidden">
       <div className="h-[80vh] xs:h-3/4 w-64 xs:w-80 overflow-auto rounded-t-3xl border border-tx05 border-b-0 no-scrollbar absolute bg-bg01 bottom-0 shadow-2xl shadow-tx05/70">
@@ -924,14 +993,16 @@ export default function Home() {
 
   return (
     <main className=" bg-bg01 text-tx01">
-      <section className="min-h-screen lg:h-screen bg-bg01 flex justify-between px-3 pt-3 pb-1 xl:p-0 sm:px-7 sm:py-5">
+      <section className="min-h-screen lg:h-screen bg-bg01 flex justify-between  pb-1 xl:p-0 sm:pb-5">
         <div className="flex flex-col">
           <WebHeader />
         </div>
 
         <div className=" w-full lg:w-2/3 max-w-[1300px] mx-auto">
-          <MbHeader />
-          <div className="flex flex-col justify-between lg:my-12 xl:my-16 2xl:my-22 lg:px-4">
+          <div className="sticky top-0 pt-3 sm:pt-5 bg-bg01 z-10">
+            <MbHeader />
+          </div>
+          <div className="flex flex-col justify-between px-3 sm:px-7 lg:my-12 xl:my-16 2xl:my-22 lg:px-4">
             <ProfileInfo
               onSettingClick={() => {
                 setSetting(true);
