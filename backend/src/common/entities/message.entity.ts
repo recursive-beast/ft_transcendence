@@ -9,9 +9,19 @@ export class MessageEntity implements Message {
   @Expose()
   @Type(() => DirectConversationEntity)
   directConversation?: DirectConversationEntity;
+  
+  @Exclude()
+  groupConversationId: number | null;
+
+  @Expose()
+  @Type(() => DirectConversationEntity)
+  groupConversation?: DirectConversationEntity;
 
   @Expose()
   id: number;
+
+  @Expose()
+  seen: boolean;
 
   @Exclude()
   senderId: number;
