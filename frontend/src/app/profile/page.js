@@ -30,36 +30,36 @@ import { useHorizontalScroll } from "@/hooks/useHorizontalScroll";
 
 function Notif(props) {
   return (
-    <div className="flex items-center justify-between m-3">
+    <div className="m-3 flex items-center justify-between">
       <div className="flex items-center">
         {/* image */}
         <Image
-          className="object-cover w-12 h-12 rounded-full mr-4 border border-tx05"
+          className="mr-4 h-12 w-12 rounded-full border border-tx05 object-cover"
           src={props.pic}
           quality={100}
         />
 
         {/* title & descriiption */}
         <div className="text-tx01">
-          <div className="capitalize tracking-widest truncate w-36 xs:w-52 sm:w-40 lg:w-36">
+          <div className="w-36 truncate capitalize tracking-widest xs:w-52 sm:w-40 lg:w-36">
             {props.title}
           </div>
-          <div className="font-extralight text-xs truncate w-36 xs:w-52 sm:w-40 lg:w-36">
+          <div className="w-36 truncate text-xs font-extralight xs:w-52 sm:w-40 lg:w-36">
             {props.desc}
           </div>
         </div>
       </div>
       {/* time */}
-      <div className="text-xs text-tx02 w-8 text-center">{props.time}</div>
+      <div className="w-8 text-center text-xs text-tx02">{props.time}</div>
     </div>
   );
 }
 
 function Notificatin() {
   return (
-    <div className="flex flex-col items-center sm:items-end lg:items-center lg:-translate-y-5 lg:sticky z-10">
-      <div className="bg-bg01 w-full h-[30rem] sm:w-80 xs:h-[33rem] border-y sm:border border-t-tx02 border-tx05 sm:border-t-tx05 absolute rounded-b-[2rem] sm:rounded-3xl overflow-auto no-scrollbar shadow-2xl shadow-tx05/40">
-        <div className="py-3  px-5 sticky top-0 bg-bg01 text-tx05 text-base tracking-widest capitalize">
+    <div className="z-10 flex flex-col items-center sm:items-end lg:sticky lg:items-center">
+      <div className="no-scrollbar absolute h-[30rem] w-full overflow-auto rounded-b-[2rem] border-y border-tx05 border-t-tx02 bg-bg01 shadow-2xl shadow-tx05/40 xs:h-[33rem] sm:w-80 sm:rounded-3xl sm:border sm:border-t-tx05">
+        <div className="sticky  top-0 bg-bg01 px-5 py-3 text-base capitalize tracking-widest text-tx05">
           Recent Notification
         </div>
         <div className="px-2">
@@ -156,81 +156,79 @@ function Notificatin() {
 
 function Menu(props) {
   return (
-    <div className="relative">
-      <div className="flex flex-col items-center w-full absolute">
-        <div className="flex flex-col justify-between bg-bg01 w-full h-[80vh] py-3 px-5 border-y border-t-tx02 border-tx05 rounded-b-[2rem] overflow-auto no-scrollbar shadow-2xl shadow-tx05/40">
-          {/* search  */}
-          <div className="flex items-center mb-3">
+    <div className="flex w-full flex-col items-center sm:absolute sm:right-0 sm:w-96 lg:hidden">
+      <div className="no-scrollbar absolute flex h-[80vh] w-full flex-col justify-between overflow-auto rounded-b-[2rem] border-y border-tx05 border-t-tx02 bg-bg01 px-5 py-3 shadow-2xl shadow-tx05/40 sm:rounded-tl-[2rem] sm:border-l sm:border-t-tx05 sm:py-8">
+        {/* search  */}
+        <div className="mb-3 flex items-center">
+          <Icon
+            className="h-5 w-5 text-tx01 xs:h-6 xs:w-6"
+            icon="guidance:search"
+          />
+          <input
+            className="ml-3 h-8 w-full border-b border-tx03 bg-bg01 text-base font-extralight xs:text-xl"
+            defaultValue="Search"
+          />
+        </div>
+
+        {/* setting and log-out */}
+        <div className="mb-5 flex items-center justify-between text-tx02">
+          <button
+            className="flex items-center space-x-2 rounded-xl border-b p-1"
+            onClick={props.onSettingClick}
+          >
             <Icon
-              className="text-tx01 w-5 h-5 xs:w-6 xs:h-6"
-              icon="guidance:search"
+              className="h-5 w-5 xs:h-6 xs:w-6"
+              icon="solar:settings-broken"
             />
-            <input
-              className="bg-bg01 h-8 w-full sm:w-40 font-extralight text-base xs:text-xl ml-3 border-b border-tx03"
-              defaultValue="Search"
+            <div className="text-base font-normal capitalize xs:text-xl xs:tracking-[5px]">
+              setting
+            </div>
+          </button>
+
+          <Link
+            className="flex items-center space-x-2 rounded-xl border-b p-1"
+            href={"/.."}
+          >
+            <Icon
+              className="h-5 w-5 xs:h-6 xs:w-6"
+              icon="fluent-mdl2:navigate-back"
             />
-          </div>
-
-          {/* setting and log-out */}
-          <div className="flex items-center justify-between mb-5 text-tx02">
-            <button
-              className="flex items-center space-x-2 border-b p-1 rounded-xl"
-              onClick={props.onSettingClick}
-            >
-              <Icon
-                className="w-5 h-5 xs:w-6 xs:h-6"
-                icon="solar:settings-broken"
-              />
-              <div className="font-normal text-base xs:text-xl xs:tracking-[5px] capitalize">
-                setting
-              </div>
-            </button>
-
-            <Link
-              className="flex items-center space-x-2 border-b p-1 rounded-xl"
-              href={"/.."}
-            >
-              <Icon
-                className="w-5 h-5 xs:w-6 xs:h-6"
-                icon="fluent-mdl2:navigate-back"
-              />
-              <div className="font-normal text-base xs:text-xl xs:tracking-[5px] capitalize">
-                log out
-              </div>
-            </Link>
-          </div>
-
-          {/* Friends elements */}
-          <div className="h-[80%] w-full rounded-3xl border-y border-tx02 overflow-auto no-scrollbar">
-            <div className="py-5 px-2 flex items-center justify-between sticky top-0 bg-bg01 text-tx02 text-base tracking-[3px] capitalize pb-2">
-              <div>friends</div>
-              <Icon className="w-6 h-6" icon="ph:caret-up-down-bold" />
+            <div className="text-base font-normal capitalize xs:text-xl xs:tracking-[5px]">
+              log out
             </div>
-            <div>
-              <Friend pic={Pic01} name="syakoubinato" status="ONLINE" />
-              <Friend pic={Pic02} name="badrbansh" status="OFFLINE" />
-              <Friend pic={Pic15} name="megashoot" status="INGAME" />
-              <Friend pic={Pic11} name="aitlandlia" status="ONLINE" />
-              <Friend pic={Pic06} name="moonshot" status="INGAME" />
+          </Link>
+        </div>
 
-              <Friend pic={Pic01} name="syakoubinato" status="ONLINE" />
-              <Friend pic={Pic02} name="badrbansh" status="OFFLINE" />
-              <Friend pic={Pic15} name="megashoot" status="INGAME" />
-              <Friend pic={Pic11} name="aitlandlia" status="ONLINE" />
-              <Friend pic={Pic06} name="moonshot" status="INGAME" />
+        {/* Friends elements */}
+        <div className="no-scrollbar h-[80%] w-full overflow-auto rounded-3xl border-y border-tx02">
+          <div className="sticky top-0 flex items-center justify-between bg-bg01 px-2 py-5 pb-2 text-base capitalize tracking-[3px] text-tx02">
+            <div>friends</div>
+            <Icon className="h-6 w-6" icon="ph:caret-up-down-bold" />
+          </div>
+          <div>
+            <Friend pic={Pic01} name="syakoubinato" status="ONLINE" />
+            <Friend pic={Pic02} name="badrbansh" status="OFFLINE" />
+            <Friend pic={Pic15} name="megashoot" status="INGAME" />
+            <Friend pic={Pic11} name="aitlandlia" status="ONLINE" />
+            <Friend pic={Pic06} name="moonshot" status="INGAME" />
 
-              <Friend pic={Pic01} name="syakoubinato" status="ONLINE" />
-              <Friend pic={Pic02} name="badrbansh" status="OFFLINE" />
-              <Friend pic={Pic15} name="megashoot" status="INGAME" />
-              <Friend pic={Pic11} name="aitlandlia" status="ONLINE" />
-              <Friend pic={Pic06} name="moonshot" status="INGAME" />
+            <Friend pic={Pic01} name="syakoubinato" status="ONLINE" />
+            <Friend pic={Pic02} name="badrbansh" status="OFFLINE" />
+            <Friend pic={Pic15} name="megashoot" status="INGAME" />
+            <Friend pic={Pic11} name="aitlandlia" status="ONLINE" />
+            <Friend pic={Pic06} name="moonshot" status="INGAME" />
 
-              <Friend pic={Pic01} name="syakoubinato" status="ONLINE" />
-              <Friend pic={Pic02} name="badrbansh" status="OFFLINE" />
-              <Friend pic={Pic15} name="megashoot" status="INGAME" />
-              <Friend pic={Pic11} name="aitlandlia" status="ONLINE" />
-              <Friend pic={Pic06} name="moonshot" status="INGAME" />
-            </div>
+            <Friend pic={Pic01} name="syakoubinato" status="ONLINE" />
+            <Friend pic={Pic02} name="badrbansh" status="OFFLINE" />
+            <Friend pic={Pic15} name="megashoot" status="INGAME" />
+            <Friend pic={Pic11} name="aitlandlia" status="ONLINE" />
+            <Friend pic={Pic06} name="moonshot" status="INGAME" />
+
+            <Friend pic={Pic01} name="syakoubinato" status="ONLINE" />
+            <Friend pic={Pic02} name="badrbansh" status="OFFLINE" />
+            <Friend pic={Pic15} name="megashoot" status="INGAME" />
+            <Friend pic={Pic11} name="aitlandlia" status="ONLINE" />
+            <Friend pic={Pic06} name="moonshot" status="INGAME" />
           </div>
         </div>
       </div>
@@ -238,20 +236,21 @@ function Menu(props) {
   );
 }
 
-function MbHeader() {
+function MbHeader(props) {
   const [menu, setMenu] = useState(false);
   const [notif, setNotif] = useState(false);
   return (
-    <header className="flex flex-col xl:hidden lg:pt-10 px-4 sm:px-8 border-b border-tx03">
+    <header className="flex flex-col border-b border-tx03 pt-3 lg:pt-0 xl:hidden">
       {/* top bar */}
-      <div className="lg:hidden">
-        <div className="flex items-center justify-between mb-4 sm:mb-6 lg:hidden">
-          <div className="text-base font-light tracking-[5px] capitalize left-0 xs:text-base sm:text-lg">
+      <div className="xl:hidden">
+        {/* visible */}
+        <div className="mb-4 flex items-center justify-between sm:mb-6">
+          <div className="left-0 text-base font-light capitalize tracking-[5px] xs:text-base sm:text-lg lg:hidden">
             paddle smash
           </div>
 
           {/* button's */}
-          <div className="flex space-x-4 xs:space-x-5 sm:space-x-7">
+          <div className="flex space-x-4 xs:space-x-5 sm:space-x-7 lg:hidden">
             {/* notif */}
             <button
               onClick={() => {
@@ -261,7 +260,7 @@ function MbHeader() {
             >
               <Icon
                 className={clsx(
-                  "text-tx01 w-5 h-5 xs:w-6 xs:h-6 sm:w-7 sm:h-7",
+                  "h-5 w-5 text-tx01 xs:h-6 xs:w-6 sm:h-7 sm:w-7",
                   notif && "text-tx02",
                 )}
                 icon={
@@ -281,7 +280,7 @@ function MbHeader() {
             >
               <Icon
                 className={clsx(
-                  "text-tx01 w-5 h-5 xs:w-6 xs:h-6 sm:w-7 sm:h-7",
+                  "h-5 w-5 text-tx01 xs:h-6 xs:w-6 sm:h-7 sm:w-7",
                   menu && "text-tx02",
                 )}
                 icon={menu ? "icon-park-outline:close" : "uiw:menu"}
@@ -289,7 +288,9 @@ function MbHeader() {
             </button>
           </div>
         </div>
-        {menu && <Menu />}
+
+        {/* hidden */}
+        {menu && <Menu onSettingClick={props.onSettingClick} />}
         {notif && <Notificatin />}
       </div>
 
@@ -304,7 +305,7 @@ function MbHeader() {
           return (
             <Icon
               key={v}
-              className="text-tx02 w-7 h-7 first:text-tx01 xs:w-8 xs:h-8 sm:w-10 sm:h-10"
+              className="h-7 w-7 text-tx02 first:text-tx01 xs:h-8 xs:w-8 sm:h-10 sm:w-10"
               icon={v}
             />
           );
@@ -316,17 +317,15 @@ function MbHeader() {
 
 function WebHeader() {
   return (
-    <header className="hidden  h-screen xl:flex flex-col items-center w-36 2xl:w-56 border-r border-tx02">
-      <div className="my-20 xl:my-24 2xl:my-28">
-        <div className=" h-72">
-          <Image
-            className="w-28 xl:w-32 2xl:w-36"
-            src={logoPic}
-            alt="Logo of the game"
-          />
-        </div>
+    <header className="hidden h-full w-36 flex-col items-center border-r border-tx02 xl:flex 2xl:w-56">
+      {/* logo */}
+      <div className="flex h-[30vh] items-center justify-center 2xl:h-[25vh]">
+        <Image className="w-32 2xl:w-36" src={logoPic} alt="Logo of the game" />
+      </div>
 
-        <div className="flex flex-col items-center justify-between h-96 pb-3 xs:pb-4">
+      {/* nav */}
+      <div className="flex flex-1 items-center justify-between">
+        <div className="mb-20 flex h-[40vh] flex-col items-center justify-between">
           {[
             { text: "home", icon: "solar:home-2-broken" },
             { text: "game", icon: "solar:gamepad-broken" },
@@ -336,11 +335,11 @@ function WebHeader() {
             return (
               <button key={v.text} className="group flex flex-col items-center">
                 <Icon
-                  className="text-tx01 w-6 lg:w-7 xl:w-8 2xl:w-10 lg:transition lg:duration-500 lg:group-hover:text-tx02 group-hover:-translate-y-1"
+                  className="w-6 text-tx01 group-hover:-translate-y-1 lg:w-7 lg:transition lg:duration-500 lg:group-hover:text-tx02 xl:w-8 2xl:w-10"
                   icon={v.icon}
                   width="36"
                 />
-                <div className=" text-tx01 font-light tracking-[3px] uppercase text-sm  lg:opacity-0 lg:group-hover:opacity-100 lg:transition lg:duration-700">
+                <div className=" text-sm font-light uppercase tracking-[3px] text-tx01  lg:opacity-0 lg:transition lg:duration-700 lg:group-hover:opacity-100">
                   {v.text}
                 </div>
               </button>
@@ -354,13 +353,13 @@ function WebHeader() {
 
 function BarButton(props) {
   return (
-    <div className="border-b last:border-0 border-tx02">
+    <div className="border-b border-tx02 last:border-0">
       <button
-        className="flex items-center justify-center space-x-3 my-4 w-40 sm:w-44"
+        className="my-4 flex w-40 items-center justify-center space-x-3 sm:w-44"
         onClick={props.onClick}
       >
-        <Icon className="w-6 h-6 sm:w-7 sm:h-7" icon={props.icon} />
-        <div className="font-light text-sm sm:text-base tracking-[5px] capitalize">
+        <Icon className="h-6 w-6 sm:h-7 sm:w-7" icon={props.icon} />
+        <div className="text-sm font-light capitalize tracking-[5px] sm:text-base">
           {props.title}
         </div>
       </button>
@@ -371,20 +370,20 @@ function BarButton(props) {
 function ProfileInfo(props) {
   const [bar, setBar] = useState(false);
   return (
-    <section className="flex items-center justify-between my-2 xs:my-5 relative">
+    <section className="relative my-2 flex items-center justify-between xs:my-4">
       <div className="flex items-center">
         <Image
-          className="object-cover w-14 h-14 xs:w-20 xs:h-20 sm:w-28 sm:h-28 rounded-full mr-4 xs:mr-6 sm:mr-10 xs:ml-2 sm:ml-4"
+          className="mr-4 h-14 w-14 rounded-full object-cover xs:ml-2 xs:mr-6 xs:h-20 xs:w-20 sm:ml-4 sm:mr-10 sm:h-28 sm:w-28"
           src={Pic15}
           quality={100}
         />
 
         <div className="flex flex-col">
-          <div className="text-tx02 text-base font-extrabold uppercase -mb-1  xs:text-lg sm:text-xl">
+          <div className="-mb-1 text-base font-extrabold uppercase text-tx02  xs:text-lg sm:text-xl">
             welkome
           </div>
 
-          <div className="text-tx05 text-base font-semibold capitalize tracking-widest sm:tracking-[3px] xs:text-lg sm:text-xl">
+          <div className="text-base font-semibold capitalize tracking-widest text-tx05 xs:text-lg sm:text-xl sm:tracking-[3px]">
             megashoot
           </div>
 
@@ -393,34 +392,6 @@ function ProfileInfo(props) {
           </div>
         </div>
       </div>
-
-      <div className="flex justify-end lg:hidden">
-        <button
-          onClick={() => {
-            setBar(!bar);
-          }}
-        >
-          <Icon
-            className="text-tx02 w-7 h-7 sm:w-9 sm:h-9"
-            icon={bar ? "iconoir:page-up" : "iconoir:page-down"}
-          />
-        </button>
-        {bar && (
-          <div className="flex flex-col items-start translate-y-8 sm:translate-y-11 sm:rounded-lg rounded-md border border-tx01 absolute bg-bg01">
-            <BarButton
-              icon="solar:users-group-two-rounded-broken"
-              title="Friends"
-              onClick={props.onFriendsClick}
-            />
-            <BarButton
-              icon="solar:settings-broken"
-              title="setting"
-              onClick={props.onSettingClick}
-            />
-            <BarButton icon="fluent-mdl2:navigate-back" title="log out" />
-          </div>
-        )}
-      </div>
     </section>
   );
 }
@@ -428,58 +399,58 @@ function ProfileInfo(props) {
 function Rate(props) {
   return (
     <>
-      <div className="flex flex-col items-center border border-tx05 text-[9px] xs:text-[11px] sm:text-sm rounded-lg w-full xs:w-52 sm:w-72 md:w-80 lg:w-72 xl:w-80 lg:px-5 xl:px-8 sm:rounded-3xl py-1 px-1 xs:py-2 xs:px-3 sm:px-5 md:px-8 mr-[2px] md:ml-5 xl:ml-14 2xl:ml-36">
+      <div className="mr-[2px] flex w-full flex-col items-center rounded-lg border border-tx05 px-1 py-1 text-[9px] xs:w-52 xs:px-3 xs:py-2 xs:text-[11px] sm:w-72 sm:rounded-3xl sm:px-5 sm:text-sm md:ml-5 md:w-80 md:px-8 lg:w-72 lg:px-5 xl:ml-14 xl:w-80 xl:px-8 2xl:ml-36">
         <div>
-          <div className="text-tx01 uppercase tracking-wider">
-            wins:<span className="text-tx02 capitalize"> last week: </span>{" "}
+          <div className="uppercase tracking-wider text-tx01">
+            wins:<span className="capitalize text-tx02"> last week: </span>{" "}
             <span className="text-tx05">{props.wins}</span>
           </div>
 
           <div className="flex items-end">
-            <div className="flex mr-2 sm:mr-4">
-              <div className="text-tx05 text-lg xs:text-xl sm:text-3xl">
+            <div className="mr-2 flex sm:mr-4">
+              <div className="text-lg text-tx05 xs:text-xl sm:text-3xl">
                 {props.nbrWin}
               </div>
 
               <Icon
-                className="text-[#24E5A5] w-[10px] h-[10px] "
+                className="h-[10px] w-[10px] text-[#24E5A5] "
                 icon="fluent-mdl2:up"
               />
             </div>
 
-            <div className="text-tx02 mb-1 mr-1 sm:mr-3">
+            <div className="mb-1 mr-1 text-tx02 sm:mr-3">
               Wins Rate: <span className="text-[#24E5A5]">{props.wn}</span>{" "}
             </div>
-            <div className="text-tx02 mb-1">
+            <div className="mb-1 text-tx02">
               Up: <span className="text-[#24E5A5]">{props.up}</span>{" "}
             </div>
           </div>
         </div>
       </div>
 
-      <div className="flex flex-col items-center border border-tx05 text-[9px] xs:text-[11px] sm:text-sm rounded-lg w-full xs:w-52 sm:w-72 md:w-80 lg:w-72 xl:w-80 lg:px-5 xl:px-8 sm:rounded-3xl py-1 px-1 xs:py-2 xs:px-3 sm:px-5 md:px-8 ml-[2px] md:mr-5 xl:mr-14 2xl:mr-36">
+      <div className="ml-[2px] flex w-full flex-col items-center rounded-lg border border-tx05 px-1 py-1 text-[9px] xs:w-52 xs:px-3 xs:py-2 xs:text-[11px] sm:w-72 sm:rounded-3xl sm:px-5 sm:text-sm md:mr-5 md:w-80 md:px-8 lg:w-72 lg:px-5 xl:mr-14 xl:w-80 xl:px-8 2xl:mr-36">
         <div>
-          <div className="text-tx01 uppercase tracking-wider">
-            losses:<span className="text-tx02 capitalize"> last week: </span>{" "}
+          <div className="uppercase tracking-wider text-tx01">
+            losses:<span className="capitalize text-tx02"> last week: </span>{" "}
             <span className="text-tx05">{props.losses}</span>
           </div>
 
           <div className="flex items-end">
-            <div className="flex mr-2 sm:mr-4">
-              <div className="text-tx05 text-lg xs:text-xl sm:text-3xl">
+            <div className="mr-2 flex sm:mr-4">
+              <div className="text-lg text-tx05 xs:text-xl sm:text-3xl">
                 {props.nbrLos}
               </div>
 
               <Icon
-                className="text-[#E55F61] w-[10px] h-[10px] "
+                className="h-[10px] w-[10px] text-[#E55F61] "
                 icon="fluent-mdl2:down"
               />
             </div>
 
-            <div className="text-tx02 mb-1 mr-1 sm:mr-3">
+            <div className="mb-1 mr-1 text-tx02 sm:mr-3">
               lost Rate: <span className="text-[#E55F61]">{props.los}</span>{" "}
             </div>
-            <div className="text-tx02 mb-1">
+            <div className="mb-1 text-tx02">
               Up: <span className="text-[#E55F61]">{props.down}</span>{" "}
             </div>
           </div>
@@ -491,7 +462,7 @@ function Rate(props) {
 
 function PlayRate() {
   return (
-    <section className="flex justify-between xs:my-3 sm:my-10">
+    <section className="flex justify-between xs:my-3 sm:my-4">
       <Rate
         wins="+6"
         nbrWin="58"
@@ -511,21 +482,21 @@ function Rank({ index, ...props }) {
   return (
     <div
       className={clsx(
-        "w-full flex items-center my-1 sm:my-3",
+        "my-1 flex w-full items-center sm:my-3",
         index && "text-tx05",
       )}
     >
-      <div className="mr-2 sm:w-3 text-xs xs:text-base sm:text-xl w-2 ">
+      <div className="mr-2 w-2 text-xs xs:text-base sm:w-3 sm:text-xl ">
         {props.pos}
       </div>
       <div
         className={clsx(
-          " w-full flex items-center justify-between border rounded-xl border-tx02 p-[2px] pr-4",
+          " flex w-full items-center justify-between rounded-xl border border-tx02 p-[2px] pr-4",
           index && "border-tx06",
         )}
       >
         <Image
-          className="object-cover w-7 h-7  xs:w-10 xs:h-10 md:w-16 md:h-16 rounded-full mr-2 sm:mr-10 xs:ml-2 sm:ml-4"
+          className="mr-2 h-7 w-7  rounded-full object-cover xs:ml-2 xs:h-10 xs:w-10 sm:ml-4 sm:mr-10 md:h-16 md:w-16"
           src={props.pic}
           quality={100}
         />
@@ -540,8 +511,8 @@ function Rank({ index, ...props }) {
 
 function Ranking(props) {
   return (
-    <section className="text-tx01 text-[10px] xs:text-xs sm:text-base font-light capitalize my-4 xs:mt-8 w-full">
-      <div className="text-tx02 flex m-1 items-center justify-between uppercase pr-4">
+    <section className="my-4 w-full text-[10px] font-light capitalize text-tx01 xs:text-xs sm:text-base">
+      <div className="m-1 flex items-center justify-between pr-4 uppercase text-tx02">
         <div className="mr-7 xs:mr-12 sm:mx-16"></div>
         <div className="w-32 text-center">player</div>
         <div className="w-9 text-center">games</div>
@@ -598,8 +569,8 @@ function Ranking(props) {
 function Achiv({ locked, className, ...props }) {
   return (
     <div
-      className=" px-1 mt-12 pb-1 grid grid-rows-4 justify-items-center w-28 h-36 border-[0.5px] border-t-0 rounded-2xl
-      xs:w-32 xs:h-40 sm:w-36 sm:h-48"
+      className=" mt-12 grid h-36 w-28 grid-rows-4 justify-items-center rounded-2xl border-[0.5px] border-t-0 px-1 pb-1
+      xs:h-40 xs:w-32 sm:h-48 sm:w-36"
     >
       <div
         className={clsx(
@@ -609,31 +580,31 @@ function Achiv({ locked, className, ...props }) {
       >
         <Image
           className={clsx(
-            "w-11 h-11 xs:w-12 xs:h-12 sm:w-14 sm:h-14 rounded-full",
-            !locked && " scale-[1.8] -translate-y-5",
+            "h-11 w-11 rounded-full xs:h-12 xs:w-12 sm:h-14 sm:w-14",
+            !locked && " -translate-y-5 scale-[1.8]",
             locked &&
-              "-translate-y-3 scale-[1.5]  shadow-inner p-2 shadow-tx05 opacity-70",
+              "-translate-y-3 scale-[1.5]  p-2 opacity-70 shadow-inner shadow-tx05",
           )}
           src={props.pic}
           quality={100}
         />
       </div>
 
-      <div className="capitalize text-sm sm:text-base text-tx05 mt-5 xs:mt-7 sm:mt-8">
+      <div className="mt-5 text-sm capitalize text-tx05 xs:mt-7 sm:mt-8 sm:text-base">
         {props.title}
       </div>
 
-      <div className="text-[9px] sm:text-[10px] text-tx05/70 text-center font-normal mt-2 xs:mt-4">
+      <div className="mt-2 text-center text-[9px] font-normal text-tx05/70 xs:mt-4 sm:text-[10px]">
         {props.description}
       </div>
       <div
         className={clsx(
-          "text-xs sm:text-sm text-tx02 flex items-center mt-4 xs:mt-5",
+          "mt-4 flex items-center text-xs text-tx02 xs:mt-5 sm:text-sm",
           !locked && "opacity-0",
         )}
       >
         <Icon
-          className="text-tx06 mr-1 w-4 h-4 sm:w-5 sm:h-5"
+          className="mr-1 h-4 w-4 text-tx06 sm:h-5 sm:w-5"
           icon="solar:lock-broken"
         />
         <div>Locked</div>
@@ -648,7 +619,7 @@ function Achievement() {
   return (
     <section
       ref={ref}
-      className="text-tx05 mb-2 grid grid-flow-col gap-2 sm:gap-6 space-x-3 overflow-x-auto overflow-y-hidden no-scrollbar lg:pt-7 2xl:pt-9"
+      className="no-scrollbar mb-4 grid grid-flow-col gap-2 space-x-3 overflow-x-auto overflow-y-hidden text-tx05 sm:gap-6 lg:pt-5"
     >
       <Achiv
         pic={AvMaster}
@@ -710,17 +681,17 @@ const icons = {
 
 function Friend(props) {
   return (
-    <div className="flex items-center justify-between m-3">
+    <div className="m-3 flex items-center justify-between">
       <div className="flex items-center">
         <Image
-          className="object-cover w-8 h-8 rounded-full mr-4"
+          className="mr-4 h-8 w-8 rounded-full object-cover"
           src={props.pic}
           quality={100}
         />
-        <div className="tracking-widest font-extralight">{props.name}</div>
+        <div className="font-extralight tracking-widest">{props.name}</div>
       </div>
       <Icon
-        className={clsx("w-5 h-5", icons[props.status].color)}
+        className={clsx("h-5 w-5", icons[props.status].color)}
         icon={icons[props.status].name}
       />
     </div>
@@ -728,36 +699,74 @@ function Friend(props) {
 }
 
 function RightBar(props) {
+  const [notif, setNotif] = useState(false);
   return (
-    <section className="hidden h-screen lg:flex flex-col items-center px-8 w-96  border-l border-tx03">
-      {/* top elements */}
-      <div className="w-full lg:mt-12 xl:mt-16 2xl:mt-22 mb-10">
-        {/* notif and Search */}
-        <Menu />
+    <section className="hidden h-screen w-[22rem] flex-col justify-between border-l border-tx03 px-4 lg:flex">
+      {/* search and notif */}
+      <div>
+        <div className="mr-3 mt-5 flex items-center justify-between 2xl:mt-10">
+          {/* search */}
+          <div className="mb-3 flex items-center">
+            <Icon className="htext-tx01 h-7 w-7" icon="guidance:search" />
+            <input
+              className="ml-3 h-8 w-full border-b border-tx03 bg-bg01 text-base font-extralight xs:text-xl"
+              defaultValue="Search"
+            />
+          </div>
 
-        {/* setting and log-out */}
-        <div className="flex flex-col items-start space-y-3 mb-5 ml-2 text-tx02">
-          <button className="flex space-x-3" onClick={props.onSettingClick}>
-            <Icon className="w-7 h-7" icon="solar:settings-broken" />
-            <div className="font-normal text-xl tracking-[5px] capitalize">
-              setting
-            </div>
+          {/* notif */}
+          <button
+            onClick={() => {
+              setNotif(!notif);
+            }}
+          >
+            <Icon
+              className={clsx("htext-tx01 h-7 w-7", notif && "text-tx02")}
+              icon={
+                notif
+                  ? "icon-park-outline:close"
+                  : "solar:notification-unread-broken"
+              }
+            />
           </button>
-
-          <Link className="flex space-x-3" href={"/.."}>
-            <Icon className="w-7 h-7" icon="fluent-mdl2:navigate-back" />
-            <div className="font-normal text-xl tracking-[5px] capitalize">
-              log out
-            </div>
-          </Link>
         </div>
+        {notif && <Notificatin />}
+      </div>
+
+      {/* setting and log-out */}
+      <div className="mb-5 flex items-center justify-between text-tx02">
+        <button
+          className="flex items-center space-x-2 rounded-xl border-b p-1"
+          onClick={props.onSettingClick}
+        >
+          <Icon
+            className="h-5 w-5 xs:h-6 xs:w-6"
+            icon="solar:settings-broken"
+          />
+          <div className="text-base font-normal capitalize xs:text-xl xs:tracking-[5px]">
+            setting
+          </div>
+        </button>
+
+        <Link
+          className="flex items-center space-x-2 rounded-xl border-b p-1"
+          href={"/.."}
+        >
+          <Icon
+            className="h-5 w-5 xs:h-6 xs:w-6"
+            icon="fluent-mdl2:navigate-back"
+          />
+          <div className="text-base font-normal capitalize xs:text-xl xs:tracking-[5px]">
+            log out
+          </div>
+        </Link>
       </div>
 
       {/* Friends elements */}
-      <div className="h-3/5 w-64 border-y border-tx03 overflow-auto no-scrollbar">
-        <div className="py-5 px-2 flex items-center justify-between sticky top-0 bg-bg01 text-tx02 text-base tracking-[3px] capitalize pb-2">
+      <div className="no-scrollbar mb-20 h-[70%] w-full overflow-auto rounded-3xl border-y border-tx02 2xl:mb-36">
+        <div className="sticky top-0 flex items-center justify-between bg-bg01 px-2 py-5 pb-2 text-base capitalize tracking-[3px] text-tx02">
           <div>friends</div>
-          <Icon className="w-6 h-6" icon="ph:caret-up-down-bold" />
+          <Icon className="h-6 w-6" icon="ph:caret-up-down-bold" />
         </div>
         <div>
           <Friend pic={Pic01} name="syakoubinato" status="ONLINE" />
@@ -794,7 +803,7 @@ function SettingButton({ label, className, ...props }) {
     <button
       {...props}
       className={clsx(
-        "text-tx05 py-1 w-28 xs:w-36 lg:w-48 border hover:bg-tx01 hover:text-tx03 ease-linear transition-colors duration-[400ms] border-tx01 rounded-lg",
+        "w-28 rounded-lg border border-tx01 py-1 text-tx05 transition-colors duration-[400ms] ease-linear hover:bg-tx01 hover:text-tx03 xs:w-36 lg:w-48",
         className,
       )}
     >
@@ -806,10 +815,10 @@ function SettingButton({ label, className, ...props }) {
 function SettingInput({ long, ...props }) {
   return (
     <div className="space-y-1 xs:space-y-2">
-      <div className="text-xs xs:text-sm tracking-normal ">{props.label}</div>
+      <div className="text-xs tracking-normal xs:text-sm ">{props.label}</div>
       <input
         className={clsx(
-          "bg-tx02 h-6 w-24 xs:h-8 sm:h-10 sm:rounded-md xs:w-36 sm:w-44 lg:w-60 rounded-sm",
+          "h-6 w-24 rounded-sm bg-tx02 xs:h-8 xs:w-36 sm:h-10 sm:w-44 sm:rounded-md lg:w-60",
           long && "w-40 xs:w-56 sm:w-80 lg:w-80",
         )}
       ></input>
@@ -821,21 +830,21 @@ function SettingSection({ onClick, ...props }) {
   const [active, setActive] = useState("profile");
 
   return (
-    <section className="bg-bg01/90 fixed inset-0 flex items-center justify-center">
-      <div className="flex flex-col bg-bg01 border-[1.5px] border-tx05 rounded-2xl w-11/12 h-4/5 xs:h-3/4 lg:h-2/3 sm:w-[30rem]  lg:w-[40rem] px-2 xs:px-4 sm:px-8">
+    <section className="fixed inset-0 flex items-center justify-center bg-bg01/90 z-20">
+      <div className="flex h-4/5 w-11/12 flex-col rounded-2xl border-[1.5px] border-tx05 bg-bg01 px-2 xs:h-3/4 xs:px-4  sm:w-[30rem] sm:px-8 lg:h-2/3 lg:w-[40rem]">
         {/* fix */}
-        <dev className="pb-4 xs:pb-6 sm:pb-10 text-sm xs:text-base sm:text-lg border-b border-tx03">
+        <dev className="border-b border-tx03 pb-4 text-sm xs:pb-6 xs:text-base sm:pb-10 sm:text-lg">
           {/* top */}
-          <div className="flex items-center justify-between w-full my-4 xs:my-7 sm:my-10 text-tx05 font-normal capitalize tracking-widest sm:tracking-[3px]">
+          <div className="my-4 flex w-full items-center justify-between font-normal capitalize tracking-widest text-tx05 xs:my-7 sm:my-10 sm:tracking-[3px]">
             <div>account settings</div>
             <div className="flex justify-center space-x-2 xs:space-x-4 lg:space-x-6">
-              <button className="w-12 xs:w-16 sm:w-20 sm:p-0 border border-tx01 rounded-lg">
+              <button className="w-12 rounded-lg border border-tx01 xs:w-16 sm:w-20 sm:p-0">
                 <div className="font-light">Save</div>
               </button>
 
               <button onClick={onClick}>
                 <Icon
-                  className="text-tx05 w-6 h-6 xs:w-7 xs:h-7"
+                  className="h-6 w-6 text-tx05 xs:h-7 xs:w-7"
                   icon="icon-park-outline:close"
                 />
               </button>
@@ -843,7 +852,7 @@ function SettingSection({ onClick, ...props }) {
           </div>
 
           {/* bottom */}
-          <div className="text-tx05 font-light flex items-center justify-between sm:px-4 my-2 lg:mx-8">
+          <div className="my-2 flex items-center justify-between font-light text-tx05 sm:px-4 lg:mx-8">
             <SettingButton
               label="Profile"
               className={active === "profile" && "bg-tx02"}
@@ -858,22 +867,22 @@ function SettingSection({ onClick, ...props }) {
         </dev>
 
         {/* setting */}
-        <div className="flex-1 pt-10 sm:mx-5 lg:mx-11 overflow-auto no-scrollbar">
+        <div className="no-scrollbar flex-1 overflow-auto pt-10 sm:mx-5 lg:mx-11">
           {/* profile */}
           {active === "profile" && (
-            <div className="flex flex-col justify-between text-sm xs:text-base sm:text-lg tracking-widest">
+            <div className="flex flex-col justify-between text-sm tracking-widest xs:text-base sm:text-lg">
               {/* avatar */}
               <div className="mb-8 xs:mb-12 lg:mb-16">
                 <div className="mb-3 lg:mb-5">Your Avatar</div>
                 <div className="flex items-end">
                   <Image
-                    className="object-cover w-16 h-16 xs:w-20 xs:h-20 sm:w-28 sm:h-28 rounded-full mr-4 xs:mr-6 sm:mr-10 xs:ml-2 sm:ml-4"
+                    className="mr-4 h-16 w-16 rounded-full object-cover xs:ml-2 xs:mr-6 xs:h-20 xs:w-20 sm:ml-4 sm:mr-10 sm:h-28 sm:w-28"
                     src={Pic15}
                     quality={100}
                   />
                   <div>
                     <SettingButton label="Upload New" />
-                    <div className="text-[0.51rem] xs:text-[0.67rem] lg:text-xs lg:mt-2 tracking-normal font-light">
+                    <div className="text-[0.51rem] font-light tracking-normal xs:text-[0.67rem] lg:mt-2 lg:text-xs">
                       Avatar help your friends recognize you
                     </div>
                   </div>
@@ -884,7 +893,7 @@ function SettingSection({ onClick, ...props }) {
               {/* information */}
               <div>
                 <div className="mb-3 xs:mb-6">Your Informatin</div>
-                <div className="flex justify-between mb-4 lg:mb-10 xs:mb-7">
+                <div className="mb-4 flex justify-between xs:mb-7 lg:mb-10">
                   <SettingInput label="First Name" />
                   <SettingInput label="Last Name" />
                 </div>
@@ -898,11 +907,11 @@ function SettingSection({ onClick, ...props }) {
             <div className="flex flex-col justify-between">
               {/* text */}
               <div className="mb-4 xs:mb-12 lg:mb-16">
-                <div className="mb-3 lg:mb-5 text-xs xs:text-sm sm:text-lg lg:text-xl xs:tracking-widest capitalize">
+                <div className="mb-3 text-xs capitalize xs:text-sm xs:tracking-widest sm:text-lg lg:mb-5 lg:text-xl">
                   set up two-factor authentication
                 </div>
 
-                <div className="text-tx02 text-justify text-[0.5rem] xs:text-[0.65rem] sm:text-xs lg:text-sm capitalize">
+                <div className="text-justify text-[0.5rem] capitalize text-tx02 xs:text-[0.65rem] sm:text-xs lg:text-sm">
                   to be able to authorize transactions you need to scane this QR
                   code with your authentication app and enter the verification
                   code below
@@ -910,23 +919,23 @@ function SettingSection({ onClick, ...props }) {
 
                 <div className="flex flex-col items-center justify-center">
                   <Image
-                    className="rounded-xl w-32 h-32 xs:w-40 xs:h-40 sm:w-44 sm:h-44 lg:w-52 lg:h-52 my-5 sm:my-6 lg:my-9"
+                    className="my-5 h-32 w-32 rounded-xl xs:h-40 xs:w-40 sm:my-6 sm:h-44 sm:w-44 lg:my-9 lg:h-52 lg:w-52"
                     src={qrCode}
                     quality={100}
                   />
 
-                  <div className="mb-3 lg:mb-5 text-xs xs:text-sm sm:text-lg lg:text-xl xs:tracking-widest capitalize">
+                  <div className="mb-3 text-xs capitalize xs:text-sm xs:tracking-widest sm:text-lg lg:mb-5 lg:text-xl">
                     verification code
                   </div>
 
                   <div className="flex flex-col items-center">
-                    <div className="flex space-x-1 mb-5 xs:mb-12">
-                      <input className="bg-tx01 w-7 h-10 rounded-lg xs:w-10 xs:h-14 xs:rounded-2xl" />
-                      <input className="bg-tx01 w-7 h-10 rounded-lg xs:w-10 xs:h-14 xs:rounded-2xl" />
-                      <input className="bg-tx01 w-7 h-10 rounded-lg xs:w-10 xs:h-14 xs:rounded-2xl" />
-                      <input className="bg-tx01 w-7 h-10 rounded-lg xs:w-10 xs:h-14 xs:rounded-2xl" />
-                      <input className="bg-tx01 w-7 h-10 rounded-lg xs:w-10 xs:h-14 xs:rounded-2xl" />
-                      <input className="bg-tx01 w-7 h-10 rounded-lg xs:w-10 xs:h-14 xs:rounded-2xl" />
+                    <div className="mb-5 flex space-x-1 xs:mb-12">
+                      <input className="h-10 w-7 rounded-lg bg-tx01 xs:h-14 xs:w-10 xs:rounded-2xl" />
+                      <input className="h-10 w-7 rounded-lg bg-tx01 xs:h-14 xs:w-10 xs:rounded-2xl" />
+                      <input className="h-10 w-7 rounded-lg bg-tx01 xs:h-14 xs:w-10 xs:rounded-2xl" />
+                      <input className="h-10 w-7 rounded-lg bg-tx01 xs:h-14 xs:w-10 xs:rounded-2xl" />
+                      <input className="h-10 w-7 rounded-lg bg-tx01 xs:h-14 xs:w-10 xs:rounded-2xl" />
+                      <input className="h-10 w-7 rounded-lg bg-tx01 xs:h-14 xs:w-10 xs:rounded-2xl" />
                     </div>
 
                     <div>
@@ -949,12 +958,12 @@ function SettingSection({ onClick, ...props }) {
 
 function FriendsSection({ onClick }) {
   return (
-    <section className="bg-bg01/50 fixed inset-0 flex items-center justify-center lg:hidden">
-      <div className="h-[80vh] xs:h-3/4 w-64 xs:w-80 overflow-auto rounded-t-3xl border border-tx05 border-b-0 no-scrollbar absolute bg-bg01 bottom-0 shadow-2xl shadow-tx05/70">
-        <div className="py-5 px-2 xs:px-5 flex items-center justify-between sticky top-0 bg-bg01 text-tx01 text-base tracking-[3px] capitalize pb-2">
+    <section className="fixed inset-0 flex items-center justify-center bg-bg01/50 lg:hidden">
+      <div className="no-scrollbar absolute bottom-0 h-[80vh] w-64 overflow-auto rounded-t-3xl border border-b-0 border-tx05 bg-bg01 shadow-2xl shadow-tx05/70 xs:h-3/4 xs:w-80">
+        <div className="sticky top-0 flex items-center justify-between bg-bg01 px-2 py-5 pb-2 text-base capitalize tracking-[3px] text-tx01 xs:px-5">
           <div>friends</div>
           <button onClick={onClick}>
-            <Icon className="w-6 h-6" icon="solar:close-circle-broken" />
+            <Icon className="h-6 w-6" icon="solar:close-circle-broken" />
           </button>
         </div>
         <div className=" xs:px-6">
@@ -992,51 +1001,55 @@ export default function Home() {
   const [friends, setFriends] = useState(false);
 
   return (
-    <main className=" bg-bg01 text-tx01">
-      <section className="min-h-screen lg:h-screen bg-bg01 flex justify-between  pb-1 xl:p-0 sm:pb-5">
-        <div className="flex flex-col">
-          <WebHeader />
-        </div>
+    <main className="flex h-screen max-h-screen flex-col bg-bg01 text-tx01">
+      {/* top of the window */}
+      <div className="hidden h-12 w-full items-center justify-center border-b border-tx01 bg-bg02 text-xl font-light uppercase tracking-[10px] xs:tracking-[14px] lg:flex xl:h-16 xl:text-2xl">
+        paddle smash
+      </div>
 
-        <div className=" w-full lg:w-2/3 max-w-[1300px] mx-auto">
-          <div className="sticky top-0 pt-3 sm:pt-5 bg-bg01 z-10">
-            <MbHeader />
-          </div>
-          <div className="flex flex-col justify-between px-3 sm:px-7 lg:my-12 xl:my-16 2xl:my-22 lg:px-4">
-            <ProfileInfo
-              onSettingClick={() => {
-                setSetting(true);
-              }}
-              onFriendsClick={() => {
-                setFriends(true);
-              }}
-            />
-            <PlayRate />
-            <Ranking />
-            <Achievement />
-          </div>
-        </div>
-        {friends && (
-          <FriendsSection
-            onClick={() => {
-              setFriends(false);
-            }}
-          />
-        )}
-
-        <RightBar
+      {/* header */}
+      <div className="z-10 mx-2 xs:mx-3 sm:mx-5 lg:mx-8 lg:hidden">
+        <MbHeader
           onSettingClick={() => {
             setSetting(true);
           }}
         />
-        {setting && (
-          <SettingSection
-            onClick={() => {
-              setSetting(false);
+      </div>
+
+      <div className="flex flex-1 overflow-hidden">
+        <div>
+          <WebHeader />
+        </div>
+
+        <div className="no-scrollbar mx-2 flex flex-1 flex-col justify-between overflow-auto xs:mx-3 sm:mx-5 lg:mx-8">
+          {/* content */}
+          <div className="sticky top-0 hidden bg-bg01 lg:block">
+            <MbHeader />
+          </div>
+          <ProfileInfo />
+          <PlayRate />
+          <Ranking />
+          <div>
+            <Achievement />
+          </div>
+        </div>
+
+        <div>
+          <RightBar
+            onSettingClick={() => {
+              setSetting(true);
             }}
           />
-        )}
-      </section>
+        </div>
+      </div>
+
+      {setting && (
+        <SettingSection
+          onClick={() => {
+            setSetting(false);
+          }}
+        />
+      )}
     </main>
   );
 }

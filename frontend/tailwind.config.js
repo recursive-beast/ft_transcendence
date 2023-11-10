@@ -47,6 +47,4 @@ module.exports = {
       tx06: "#EB5A3A",
     },
   },
-  // prettier.config.js
-  plugins: ["prettier-plugin-tailwindcss"],
 };
