@@ -1,13 +1,6 @@
 'use client';
 
-import react from 'react';
-
-interface MessageBoxProps {
-  message: string;
-  mine: boolean;
-}
-
-const MessageBox: React.FC<MessageBoxProps> = (props) => {
+const MessageBox = (props) => {
   if (!props.mine) {
     return (
       <div className="chat-message">

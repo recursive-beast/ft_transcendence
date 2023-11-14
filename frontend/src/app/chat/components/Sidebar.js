@@ -1,9 +1,8 @@
 'use client';
 
-import React from 'react';
 import { Icon } from '@iconify/react';
 
-const Sidebar: React.FC = () => {
+const Sidebar = () => {
   return (
     <div className="px-6 flex-none space-y-6 bg-gray-800 flex flex-col justify-center items-center">
       <Icon icon="solar:home-2-broken" width="36" />
