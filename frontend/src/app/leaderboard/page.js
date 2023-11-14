@@ -356,7 +356,7 @@ function Rank({ index, first, ...props }) {
     <div
       className={clsx(
         "my-1 flex w-full items-center sm:my-3",
-        index && "text-tx05", first && "sticky top-0 bg-bg01 my-0 sm:my-0"
+        index && "text-tx05", first && "sticky top-0 bg-bg01 my-0 sm:my-0 border-b border-tx03"
       )}
     >
       <div
@@ -395,7 +395,7 @@ function Rank({ index, first, ...props }) {
 
 function Ranking(props) {
   return (
-    <section className="no-scrollbar my-4 w-full overflow-auto text-[10px] font-light capitalize text-tx01 xs:text-xs sm:text-base">
+    <section className="no-scrollbar my-4 w-full overflow-auto text-[10px] font-light capitalize text-tx01 xs:text-xs sm:text-base border-y-[0.5px] border-tx05 rounded-3xl px-3">
         <Rank
           pos="x"
           pic={Pic01}
