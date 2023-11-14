@@ -32,8 +32,13 @@ export class GroupGateway {
   }
 
   @SubscribeMessage('channel.join')
-  joinGroup(client: Socket, id: number) {
-    return this.groupconversationService.joinChannel(client.data.id, id);
+  joinRoom(client: Socket, id: number) {
+    client.join(`channel-${id}`);
+  }
+  
+  @SubscribeMessage('channel.leave')
+  leaveRoom(client: Socket, id: number) {
+    client.leave(`channel-${id}`);
   }
 
 }

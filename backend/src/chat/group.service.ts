@@ -21,9 +21,7 @@ export class GroupService {
     return MessageEntity.fromMessage(message);
   }
 
-  joinChannel(clientId: number, id: number) {
-    //TODO: join channel socket room
-  }
+  
 
   async findManyChannels(userId: number) {
     const channels = await this.prismaService.groupConversation.findMany({
