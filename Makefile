@@ -1,46 +1,30 @@
-DOCKER 	:= /usr/local/bin/docker
-COMPOSE	:= $(DOCKER) compose -f docker-compose.yml -f docker-compose.dev.yml
+.PHONY: up db down logs clean
 
-.PHONY: up up-dev up-prod config config-prod down logs shell shell-backend shell-nginx clean
-
-up: up-dev
-
-up-prod:
+up:
 	docker compose up --build -d
 
-up-dev:
-	$(COMPOSE) up --build -d
+db:
+	docker compose up -d postgresql
 
 down:
-	$(COMPOSE) down --remove-orphans
-
-restart:
-	$(COMPOSE) restart $(SERVICE)
+	docker compose down --remove-orphans
 
 logs:
-	$(COMPOSE) logs -f $(SERVICE)
-
-shell:
-	$(COMPOSE) exec -it $(SERVICE) sh
-
-shell-backend:
-	$(COMPOSE) exec -it backend sh
-
-shell-nginx:
-	$(COMPOSE) exec -it nginx sh
+	docker compose logs -f $(SERVICE)
 
 clean: down
 	@echo "Removing all containers..."
-	-@$(DOCKER) rm $$($(DOCKER) ps -aq) 2>/dev/null || true
+	-@docker rm $$(docker ps -aq) 2>/dev/null || true
 
 	@echo "Removing all Docker images..."
-	-@$(DOCKER) rmi $$($(DOCKER) images -aq) 2>/dev/null || true
+	-@docker rmi $$(docker images -aq) 2>/dev/null || true
 
 	@echo "Removing all Docker volumes..."
-	-@$(DOCKER) volume rm $$($(DOCKER) volume ls -q) 2>/dev/null || true
+	-@docker volume rm $$(docker volume ls -q) 2>/dev/null || true
 
 	@echo "Removing all Docker networks..."
-	-@$(DOCKER) network rm $$($(DOCKER) network ls -q) 2>/dev/null || true
+	-@docker network rm $$(docker network ls -q) 2>/dev/null || true
 
 	@echo "Removing generated folders"
-	rm -rf {frontend,backend}/{node_modules} frontend/.next backend/dist
+	rm -rf frontend/node_modules frontend/.next
+	rm -rf backend/node_modules backend/dist backend/public backend/static

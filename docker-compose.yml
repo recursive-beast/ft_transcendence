@@ -4,30 +4,20 @@ services:
   postgresql:
     image: postgres:15.3-alpine3.18
     restart: always
-    env_file:
-      - .env
+    env_file: ./backend/.env
     volumes:
       - postgresql:/var/lib/postgresql/data
-  nginx:
-    image: nginx:1-alpine3.17
-    restart: always
-    env_file:
-      - .env
-    volumes:
-      - avatars:/var/www/avatars
-      - ./nginx/conf.d:/etc/nginx/conf.d
     ports:
-      - 80:80
+      - 5432:5432
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    build: ./backend
     restart: always
-    env_file:
-      - .env
+    env_file: ./backend/.env
     volumes:
-      - avatars:/var/www/avatars
+      - backend_static:/app/static
+    ports:
+      - 8000:8000
 
 volumes:
   postgresql:
-  avatars:
+  backend_static:

@@ -10,10 +10,10 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const cookie_secret = configService.get('COOKIE_SECRET');
 
-  app.setGlobalPrefix('/api');
+  app.useStaticAssets('static', { prefix: '/static' });
   app.use(cookieParser(cookie_secret));
   app.useWebSocketAdapter(new WSAdapter(app));
-  await app.listen(3000);
+  await app.listen(8000);
 }
 
 bootstrap();

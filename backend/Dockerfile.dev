@@ -1,6 +1,0 @@
-FROM node:18-alpine3.18
-WORKDIR /app
-RUN npm install -g @nestjs/cli
-EXPOSE 3000
-VOLUME [ "/var/www/avatars", "/app" ]
-CMD npm i && nest start --watch
