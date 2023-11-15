@@ -6,9 +6,11 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { Prisma, User } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import fs from 'fs/promises';
 import Fuse from 'fuse.js';
 import { merge } from 'lodash';
 import { PrismaService } from 'nestjs-prisma';
+import path from 'path';
 import { rimraf } from 'rimraf';
 import sharp from 'sharp';
 import * as uuid from 'uuid';
@@ -128,15 +130,17 @@ export class UserService {
     return UserEntity.fromUser(updated);
   }
 
-  async setAvatar(id: User['id'], path: string) {
+  async setAvatar(id: User['id'], filepath: string) {
     const filename = `${id}-${Date.now()}.png`;
-    const directory = '/var/www/avatars';
+    const directory = path.resolve('static/avatars');
     const output = `${directory}/${filename}`;
-    const app_url = this.configService.get('APP_URL');
-    const avatar = new URL(`/avatars/${filename}`, app_url).href;
+    const backend_url = this.configService.get('BACKEND_URL');
+    const avatar = new URL(`/static/avatars/${filename}`, backend_url).href;
+
+    await fs.mkdir(directory, { recursive: true });
 
     try {
-      await sharp(path).resize(300, 300).toFile(output);
+      await sharp(filepath).resize(300, 300).toFile(output);
     } catch (error) {
       throw new BadRequestException('Invalid image');
     }

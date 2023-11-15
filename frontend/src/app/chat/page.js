@@ -1,12 +1,11 @@
 'use client';
 
-import React from 'react';
-import Sidebar from './components/Sidebar';
-import ChatHeader from './components/ChatHeader';
+import { Icon } from '@iconify/react';
 import ChatBody from './components/ChatBody';
+import ChatHeader from './components/ChatHeader';
 import Contact from './components/Contact';
 import GroupMembers from './components/GroupMembers';
-import { Icon } from '@iconify/react';
+import Sidebar from './components/Sidebar';
 
 const chats = [
   { name: 'syakoubinato', lastMessage: 'test 123 test' },
@@ -25,7 +24,7 @@ const chats = [
   { name: 'Bader', lastMessage: 'test 123 test' },
 ];
 
-const Home: React.FC = () => {
+const Home = () => {
   return (
     <main className="flex h-screen w-screen text-white ">
       <Sidebar />

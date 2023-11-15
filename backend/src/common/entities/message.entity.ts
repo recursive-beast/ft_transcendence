@@ -4,6 +4,9 @@ import { DirectConversationEntity } from './direct-conversation.entity';
 
 export class MessageEntity implements Message {
   @Exclude()
+  groupConversationId: number | null;
+
+  @Exclude()
   directConversationId: number | null;
 
   @Expose()

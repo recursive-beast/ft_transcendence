@@ -1,16 +1,7 @@
 'use client';
 
-import React from 'react';
-import { Icon } from '@iconify/react';
-import clsx from 'clsx';
-import FriendStatus from './FriendStatus';
 
-interface ContactProps {
-  name: string;
-  lastMessage: string;
-}
-
-const ChatHeader: React.FC<ContactProps> = (props) => {
+const ChatHeader = (props) => {
   return (
     <div>
       <div className="flex items-center space-x-2">

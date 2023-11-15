@@ -1,16 +1,9 @@
 'use client';
 
-import React from 'react';
-import { Icon } from '@iconify/react';
 import clsx from 'clsx';
 import FriendStatus from './FriendStatus';
 
-interface ChatHeaderProps {
-  name: string;
-  status: number;
-}
-
-const ChatHeader: React.FC<ChatHeaderProps> = (props) => {
+const ChatHeader = (props) => {
   return (
     <div className="flex sm:items-center justify-between py-3 border-b-2 border-[#B7AB98]">
       <div className="relative flex items-center space-x-4">

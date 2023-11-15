@@ -1,10 +1,8 @@
 'use client';
 
-import React from 'react';
-import { Icon } from '@iconify/react';
 import MessageBox from './MessageBox';
 
-const ChatBody: React.FC = () => {
+const ChatBody = () => {
   return (
     <div
       id="messages"

@@ -33,7 +33,7 @@ import { UserModule } from './user/user.module';
         JWT_EXPIRES_IN: Joi.string().default('24h'),
         COOKIE_SECRET: Joi.string().required(),
         APP_NAME: Joi.string().required(),
-        APP_URL: Joi.string().uri().required(),
+        BACKEND_URL: Joi.string().uri().required(),
         NODE_ENV: Joi.string()
           .valid('production', 'development')
           .default('development'),
