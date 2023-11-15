@@ -28,270 +28,12 @@ import AvUnsto from "@/images/achievements/unsto.png";
 import AvShoot from "@/images/achievements/shoot.png";
 import { useHorizontalScroll } from "@/hooks/useHorizontalScroll";
 
-function Notif(props) {
-  return (
-    <div className="m-3 flex items-center justify-between">
-      <div className="flex items-center">
-        {/* image */}
-        <Image
-          className="mr-4 h-12 w-12 rounded-full border border-tx05 object-cover"
-          src={props.pic}
-          quality={100}
-        />
-
-        {/* title & descriiption */}
-        <div className="text-tx01">
-          <div className="w-36 truncate capitalize tracking-widest xs:w-52 sm:w-40 lg:w-36">
-            {props.title}
-          </div>
-          <div className="w-36 truncate text-xs font-extralight xs:w-52 sm:w-40 lg:w-36">
-            {props.desc}
-          </div>
-        </div>
-      </div>
-      {/* time */}
-      <div className="w-8 text-center text-xs text-tx02">{props.time}</div>
-    </div>
-  );
-}
-
-function Notificatin() {
-  return (
-    <div className="z-10 flex flex-col items-center sm:items-end lg:sticky lg:items-center">
-      <div className="no-scrollbar absolute h-[30rem] w-full overflow-auto rounded-b-[2rem] border-y border-tx05 border-t-tx02 bg-bg01 shadow-2xl shadow-tx05/40 xs:h-[33rem] sm:w-80 sm:rounded-3xl sm:border sm:border-t-tx05">
-        <div className="sticky  top-0 bg-bg01 px-5 py-3 text-base capitalize tracking-widest text-tx05">
-          Recent Notification
-        </div>
-        <div className="px-2">
-          <Notif
-            pic={Pic02}
-            title="syakoubi"
-            desc="invited you to a game"
-            time="5min"
-          />
-          <Notif
-            pic={Pic02}
-            title="syakoubi"
-            desc="added you as Friend"
-            time="15min"
-          />
-          <Notif
-            pic={Pic05}
-            title="mmessaou"
-            desc="added you to the group 'zwaml'"
-            time="5min"
-          />
-          <Notif
-            pic={Pic01}
-            title="mel-hous"
-            desc="added you as Friend"
-            time="30min"
-          />
-          <Notif
-            pic={Pic03}
-            title="aait-oma"
-            desc="invited you to a game"
-            time="1h"
-          />
-          <Notif
-            pic={AvCmBack}
-            title="comeback kid"
-            desc="achievement unlocked"
-            time="15min"
-          />
-          <Notif
-            pic={Pic03}
-            title="aait-oma"
-            desc="added you as Friend"
-            time="1h"
-          />
-
-          <Notif
-            pic={Pic02}
-            title="syakoubi"
-            desc="invited you to a game"
-            time="5min"
-          />
-          <Notif
-            pic={Pic02}
-            title="syakoubi"
-            desc="added you as Friend"
-            time="15min"
-          />
-          <Notif
-            pic={Pic05}
-            title="mmessaou"
-            desc="added you to the group 'zwaml'"
-            time="5min"
-          />
-          <Notif
-            pic={Pic01}
-            title="mel-hous"
-            desc="added you as Friend"
-            time="30min"
-          />
-          <Notif
-            pic={Pic03}
-            title="aait-oma"
-            desc="invited you to a game"
-            time="1h"
-          />
-          <Notif
-            pic={AvCmBack}
-            title="comeback kid"
-            desc="achievement unlocked"
-            time="15min"
-          />
-          <Notif
-            pic={Pic03}
-            title="aait-oma"
-            desc="added you as Friend"
-            time="1h"
-          />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function Menu(props) {
-  return (
-    <div className="flex w-full flex-col items-center sm:absolute sm:right-0 sm:w-96 lg:hidden">
-      <div className="no-scrollbar absolute flex h-[80vh] w-full flex-col justify-between overflow-auto rounded-b-[2rem] border-y border-tx05 border-t-tx02 bg-bg01 px-5 py-3 shadow-2xl shadow-tx05/40 sm:rounded-tl-[2rem] sm:border-l sm:border-t-tx05 sm:py-8">
-        {/* search  */}
-        <div className="mb-3 flex items-center">
-          <Icon
-            className="h-5 w-5 text-tx01 xs:h-6 xs:w-6"
-            icon="guidance:search"
-          />
-          <input
-            className="ml-3 h-8 w-full border-b border-tx03 bg-bg01 text-base font-extralight xs:text-xl"
-            defaultValue="Search"
-          />
-        </div>
-
-        {/* setting and log-out */}
-        <div className="mb-5 flex items-center justify-between text-tx02">
-          <button
-            className="flex items-center space-x-2 rounded-xl border-b p-1"
-            onClick={props.onSettingClick}
-          >
-            <Icon
-              className="h-5 w-5 xs:h-6 xs:w-6"
-              icon="solar:settings-broken"
-            />
-            <div className="text-base font-normal capitalize xs:text-xl xs:tracking-[5px]">
-              setting
-            </div>
-          </button>
-
-          <Link
-            className="flex items-center space-x-2 rounded-xl border-b p-1"
-            href={"/.."}
-          >
-            <Icon
-              className="h-5 w-5 xs:h-6 xs:w-6"
-              icon="fluent-mdl2:navigate-back"
-            />
-            <div className="text-base font-normal capitalize xs:text-xl xs:tracking-[5px]">
-              log out
-            </div>
-          </Link>
-        </div>
-
-        {/* Friends elements */}
-        <div className="no-scrollbar h-[80%] w-full overflow-auto rounded-3xl border-y border-tx02">
-          <div className="sticky top-0 flex items-center justify-between bg-bg01 px-2 py-5 pb-2 text-base capitalize tracking-[3px] text-tx02">
-            <div>friends</div>
-            <Icon className="h-6 w-6" icon="ph:caret-up-down-bold" />
-          </div>
-          <div>
-            <Friend pic={Pic01} name="syakoubinato" status="ONLINE" />
-            <Friend pic={Pic02} name="badrbansh" status="OFFLINE" />
-            <Friend pic={Pic15} name="megashoot" status="INGAME" />
-            <Friend pic={Pic11} name="aitlandlia" status="ONLINE" />
-            <Friend pic={Pic06} name="moonshot" status="INGAME" />
-
-            <Friend pic={Pic01} name="syakoubinato" status="ONLINE" />
-            <Friend pic={Pic02} name="badrbansh" status="OFFLINE" />
-            <Friend pic={Pic15} name="megashoot" status="INGAME" />
-            <Friend pic={Pic11} name="aitlandlia" status="ONLINE" />
-            <Friend pic={Pic06} name="moonshot" status="INGAME" />
-
-            <Friend pic={Pic01} name="syakoubinato" status="ONLINE" />
-            <Friend pic={Pic02} name="badrbansh" status="OFFLINE" />
-            <Friend pic={Pic15} name="megashoot" status="INGAME" />
-            <Friend pic={Pic11} name="aitlandlia" status="ONLINE" />
-            <Friend pic={Pic06} name="moonshot" status="INGAME" />
-
-            <Friend pic={Pic01} name="syakoubinato" status="ONLINE" />
-            <Friend pic={Pic02} name="badrbansh" status="OFFLINE" />
-            <Friend pic={Pic15} name="megashoot" status="INGAME" />
-            <Friend pic={Pic11} name="aitlandlia" status="ONLINE" />
-            <Friend pic={Pic06} name="moonshot" status="INGAME" />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function MbHeader(props) {
-  const [menu, setMenu] = useState(false);
-  const [notif, setNotif] = useState(false);
+function MbHeader() {
   return (
     <header className="flex flex-col border-b border-tx03 pt-3 lg:pt-0 xl:hidden">
       {/* top bar */}
-      <div className="xl:hidden">
-        {/* visible */}
-        <div className="mb-4 flex items-center justify-between sm:mb-6">
-          <div className="left-0 text-base font-light capitalize tracking-[5px] xs:text-base sm:text-lg lg:hidden">
-            paddle smash
-          </div>
-
-          {/* button's */}
-          <div className="flex space-x-4 xs:space-x-5 sm:space-x-7 lg:hidden">
-            {/* notif */}
-            <button
-              onClick={() => {
-                setNotif(!notif);
-                setMenu(false);
-              }}
-            >
-              <Icon
-                className={clsx(
-                  "h-5 w-5 text-tx01 xs:h-6 xs:w-6 sm:h-7 sm:w-7",
-                  notif && "text-tx02",
-                )}
-                icon={
-                  notif
-                    ? "icon-park-outline:close"
-                    : "solar:notification-unread-broken"
-                }
-              />
-            </button>
-
-            {/* menu */}
-            <button
-              onClick={() => {
-                setMenu(!menu);
-                setNotif(false);
-              }}
-            >
-              <Icon
-                className={clsx(
-                  "h-5 w-5 text-tx01 xs:h-6 xs:w-6 sm:h-7 sm:w-7",
-                  menu && "text-tx02",
-                )}
-                icon={menu ? "icon-park-outline:close" : "uiw:menu"}
-              />
-            </button>
-          </div>
-        </div>
-
-        {/* hidden */}
-        {menu && <Menu onSettingClick={props.onSettingClick} />}
-        {notif && <Notificatin />}
+      <div className="left-0 mb-4 text-base font-light capitalize tracking-[5px] xs:text-base sm:mb-6 sm:text-lg lg:hidden xl:hidden">
+        paddle smash
       </div>
 
       {/* nav bar */}
@@ -356,12 +98,13 @@ function Rank({ index, first, ...props }) {
     <div
       className={clsx(
         "my-1 flex w-full items-center sm:my-3",
-        index && "text-tx05", first && "sticky top-0 bg-bg01 my-0 sm:my-0 border-b border-tx03"
+        index && "text-tx05",
+        first && "sticky top-0 my-0 border-b border-tx03 bg-bg01 sm:my-0",
       )}
     >
       <div
         className={clsx(
-          "mr-2 xs:mr-3 sm:mr-4 w-4 text-xs xs:text-base sm:w-3 sm:text-xl text-center",
+          "mr-2 w-4 text-center text-xs xs:mr-3 xs:text-base sm:mr-4 sm:w-3 sm:text-xl",
           first && "invisible",
         )}
       >
@@ -382,12 +125,10 @@ function Rank({ index, first, ...props }) {
           src={props.pic}
           quality={100}
         />
-        <div className="w-20 sm:w-28 text-left">
-          {props.name}
-        </div>
-        <div className="w-9 xs:w-11 sm:w-16 text-center">{props.rate}</div>
-        <div className="w-9 xs:w-11 sm:w-16 text-center">{props.games}</div>
-        <div className="w-9 xs:w-11 sm:w-16 text-center">{props.level}</div>
+        <div className="w-20 text-left sm:w-28">{props.name}</div>
+        <div className="w-9 text-center xs:w-11 sm:w-16">{props.rate}</div>
+        <div className="w-9 text-center xs:w-11 sm:w-16">{props.games}</div>
+        <div className="w-9 text-center xs:w-11 sm:w-16">{props.level}</div>
       </div>
     </div>
   );
@@ -395,187 +136,167 @@ function Rank({ index, first, ...props }) {
 
 function Ranking(props) {
   return (
-    <section className="no-scrollbar my-4 w-full overflow-auto text-[10px] font-light capitalize text-tx01 xs:text-xs sm:text-base border-y-[0.5px] border-tx05 rounded-3xl px-3">
-        <Rank
-          pos="x"
-          pic={Pic01}
-          name="player"
-          games="games"
-          rate="rate"
-          level="level"
-          first
-        />
-        <Rank
-          pos="5"
-          pic={Pic15}
-          name="megashoot"
-          games="97"
-          rate="60%"
-          level="9"
-          index
-        />
-        <Rank
-          pos="6"
-          pic={Pic06}
-          name="aitlandlia"
-          games="100"
-          rate="55%"
-          level="7"
-        />
-        <Rank
-          pos="7"
-          pic={Pic05}
-          name="EmilyDavis"
-          games="123"
-          rate="40%"
-          level="6"
-        />
-        <Rank
-          pos="8"
-          pic={Pic11}
-          name="Benjnmith"
-          games="100"
-          rate="55%"
-          level="7"
-        />
-        <Rank
-          pos="9"
-          pic={Pic15}
-          name="Oliviarown"
-          games="123"
-          rate="40%"
-          level="6"
-        />
-        <Rank
-          pos="10"
-          pic={Pic06}
-          name="aitlandlia"
-          games="100"
-          rate="55%"
-          level="7"
-        />
-        <Rank
-          pos="11"
-          pic={Pic05}
-          name="EmilyDavis"
-          games="123"
-          rate="40%"
-          level="6"
-        />
-        <Rank
-          pos="12"
-          pic={Pic11}
-          name="Benjnmith"
-          games="100"
-          rate="55%"
-          level="7"
-        />
-        <Rank
-          pos="13"
-          pic={Pic15}
-          name="Oliviarown"
-          games="123"
-          rate="40%"
-          level="6"
-        />
-        <Rank
-          pos="14"
-          pic={Pic06}
-          name="aitlandlia"
-          games="100"
-          rate="55%"
-          level="7"
-        />
-        <Rank
-          pos="15"
-          pic={Pic05}
-          name="EmilyDavis"
-          games="123"
-          rate="40%"
-          level="6"
-        />
-        <Rank
-          pos="16"
-          pic={Pic11}
-          name="Benjnmith"
-          games="100"
-          rate="55%"
-          level="7"
-        />
-        <Rank
-          pos="17"
-          pic={Pic15}
-          name="Oliviarown"
-          games="123"
-          rate="40%"
-          level="6"
-        />
+    <section className="no-scrollbar my-4 w-full overflow-auto rounded-3xl border-y-[0.5px] border-tx05 px-3 text-[10px] font-light capitalize text-tx01 xs:text-xs sm:text-base">
+      <Rank
+        pos="x"
+        pic={Pic01}
+        name="player"
+        games="games"
+        rate="rate"
+        level="level"
+        first
+      />
+      <Rank
+        pos="5"
+        pic={Pic15}
+        name="megashoot"
+        games="97"
+        rate="60%"
+        level="9"
+        index
+      />
+      <Rank
+        pos="6"
+        pic={Pic06}
+        name="aitlandlia"
+        games="100"
+        rate="55%"
+        level="7"
+      />
+      <Rank
+        pos="7"
+        pic={Pic05}
+        name="EmilyDavis"
+        games="123"
+        rate="40%"
+        level="6"
+      />
+      <Rank
+        pos="8"
+        pic={Pic11}
+        name="Benjnmith"
+        games="100"
+        rate="55%"
+        level="7"
+      />
+      <Rank
+        pos="9"
+        pic={Pic15}
+        name="Oliviarown"
+        games="123"
+        rate="40%"
+        level="6"
+      />
+      <Rank
+        pos="10"
+        pic={Pic06}
+        name="aitlandlia"
+        games="100"
+        rate="55%"
+        level="7"
+      />
+      <Rank
+        pos="11"
+        pic={Pic05}
+        name="EmilyDavis"
+        games="123"
+        rate="40%"
+        level="6"
+      />
+      <Rank
+        pos="12"
+        pic={Pic11}
+        name="Benjnmith"
+        games="100"
+        rate="55%"
+        level="7"
+      />
+      <Rank
+        pos="13"
+        pic={Pic15}
+        name="Oliviarown"
+        games="123"
+        rate="40%"
+        level="6"
+      />
+      <Rank
+        pos="14"
+        pic={Pic06}
+        name="aitlandlia"
+        games="100"
+        rate="55%"
+        level="7"
+      />
+      <Rank
+        pos="15"
+        pic={Pic05}
+        name="EmilyDavis"
+        games="123"
+        rate="40%"
+        level="6"
+      />
+      <Rank
+        pos="16"
+        pic={Pic11}
+        name="Benjnmith"
+        games="100"
+        rate="55%"
+        level="7"
+      />
+      <Rank
+        pos="17"
+        pic={Pic15}
+        name="Oliviarown"
+        games="123"
+        rate="40%"
+        level="6"
+      />
     </section>
   );
 }
 
 function RightBar(props) {
-  const [notif, setNotif] = useState(false);
   return (
-    <section className="hidden h-screen w-[22rem] flex-col justify-between border-l border-tx03 px-4 lg:flex">
-      {/* search and notif */}
-      <div>
-        <div className="mr-3 mt-5 flex items-center justify-between 2xl:mt-10">
-          {/* search */}
-          <div className="mb-3 flex items-center">
-            <Icon className="htext-tx01 h-7 w-7" icon="guidance:search" />
-            <input
-              className="ml-3 h-8 w-full border-b border-tx03 bg-bg01 text-base font-extralight xs:text-xl"
-              defaultValue="Search"
-            />
-          </div>
-
-          {/* notif */}
-          <button
-            onClick={() => {
-              setNotif(!notif);
-            }}
-          >
-            <Icon
-              className={clsx("htext-tx01 h-7 w-7", notif && "text-tx02")}
-              icon={
-                notif
-                  ? "icon-park-outline:close"
-                  : "solar:notification-unread-broken"
-              }
-            />
-          </button>
+    <section className="hidden h-screen w-80 items-center justify-center border-l border-tx03 px-4 lg:flex">
+      {/* profil */}
+      <div className="grid h-2/3 w-72 grid-rows-4 items-center justify-center justify-items-center rounded-2xl border border-t-0 border-tx01 bg-gradient-to-t from-tx02/80 px-1 py-10 text-tx05 2xl:h-1/2">
+        {/* pic */}
+        <div>
+          <Image
+            className=" h-36 w-36 rounded-full border border-tx01 object-cover"
+            src={props.pic}
+            quality={100}
+          />
         </div>
-        {notif && <Notificatin />}
-      </div>
 
-      {/* setting and log-out */}
-      <div className="mb-5 flex items-center justify-between text-tx02">
-        <button
-          className="flex items-center space-x-2 rounded-xl border-b p-1"
-          onClick={props.onSettingClick}
-        >
-          <Icon
-            className="h-5 w-5 xs:h-6 xs:w-6"
-            icon="solar:settings-broken"
-          />
-          <div className="text-base font-normal capitalize xs:text-xl xs:tracking-[5px]">
-            setting
-          </div>
-        </button>
+        {/* name */}
+        <div className="text-2xl capitalize tracking-[0.2rem]">
+          {props.name}
+        </div>
 
-        <Link
-          className="flex items-center space-x-2 rounded-xl border-b p-1"
-          href={"/.."}
-        >
-          <Icon
-            className="h-5 w-5 xs:h-6 xs:w-6"
-            icon="fluent-mdl2:navigate-back"
-          />
-          <div className="text-base font-normal capitalize xs:text-xl xs:tracking-[5px]">
-            log out
+        {/* level */}
+        <div className="w-full">
+          <div className="mb-2 flex items-center justify-between text-xl font-extralight tracking-widest">
+            <div>Level</div>
+            <div className=" text-tx01">{props.level}</div>
           </div>
-        </Link>
+
+          <div className="h-1 w-full rounded-full bg-bg01 bg-gradient-to-r from-tx01"></div>
+        </div>
+
+        {/* position */}
+        <div className="w-full text-xl font-extralight tracking-widest">
+          <div className="mb-2">My Position</div>
+
+          <div className="text-tx01">{props.pos}</div>
+        </div>
+
+        {/* games */}
+        <div className="w-full text-xl font-extralight tracking-widest">
+          <div className="mb-2">Games</div>
+
+          <div className="text-tx01">{props.games}</div>
+        </div>
       </div>
     </section>
   );
@@ -651,7 +372,7 @@ function Place({ className, index, ...props }) {
 
 function FirstPlaces(props) {
   return (
-    <div className="flex items-end justify-center gap-2 xs:gap-3 mb-5 xs:mb-8 sm:mt-5 sm:gap-12 lg:gap-16 2xl:gap-20 2xl:mt-8 2xl:mb-16">
+    <div className="mb-5 flex items-end justify-center gap-2 xs:mb-8 xs:gap-3 sm:mt-5 sm:gap-12 lg:gap-16 2xl:mb-16 2xl:mt-8 2xl:gap-20">
       {/*  */}
       <Place
         className="h-24 w-20 bg-gradient-to-t from-[#C0C0C0]/50 text-[#C0C0C0] xs:h-36 xs:w-28 sm:h-48 sm:w-40 lg:h-52 lg:w-44"
@@ -694,11 +415,7 @@ export default function Home() {
 
       {/* header */}
       <div className="z-10 mx-2 xs:mx-3 sm:mx-5 lg:mx-8 lg:hidden">
-        <MbHeader
-          onSettingClick={() => {
-            setSetting(true);
-          }}
-        />
+        <MbHeader />
       </div>
 
       <div className="flex flex-1 overflow-hidden">
@@ -720,6 +437,11 @@ export default function Home() {
             onSettingClick={() => {
               setSetting(true);
             }}
+            pic={Pic15}
+            name="megashoot"
+            level="9"
+            pos="5th"
+            games="97"
           />
         </div>
       </div>
