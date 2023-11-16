@@ -2,12 +2,16 @@ import { GroupMember, roleType } from '@prisma/client';
 import { Expose, Transform, Type, plainToInstance } from 'class-transformer';
 
 export class GroupMemberEntity implements GroupMember {
-  @Expose()
-  groupConversationId: number;
 
+  @Expose()
+  seenAt: Date;
+  
   @Expose()
   id: number;
-
+  
+  @Expose()
+  groupConversationId: number;
+  
   @Expose()
   userId: number;
 

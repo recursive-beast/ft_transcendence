@@ -12,9 +12,6 @@ export class MessageEntity implements Message {
   @Expose()
   @Type(() => DirectConversationEntity)
   directConversation?: DirectConversationEntity;
-  
-  @Exclude()
-  groupConversationId: number | null;
 
   @Expose()
   @Type(() => DirectConversationEntity)

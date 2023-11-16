@@ -25,6 +25,8 @@ model User {
     messages            Message[]
     directConversations DirectConversation[]
     GroupMember         GroupMember[]
+    groupConversation   GroupConversation?   @relation(fields: [groupConversationId], references: [id])
+    groupConversationId Int?
 }
 
 model Notification {
@@ -72,12 +74,11 @@ enum roleType {
 
 model GroupMember {
     id                  Int               @id @default(autoincrement())
-    user                User              @relation(fields: [userId], references: [id])
+    user                User              @relation(fields: [userId], references: [id] , onDelete: Cascade)
     userId              Int
     role                roleType          @default(MEMBER)
-    isBanned            Boolean           @default(false)
     mutedUntil          DateTime?
-    groupConversation   GroupConversation @relation(fields: [groupConversationId], references: [id])
+    groupConversation   GroupConversation @relation(fields: [groupConversationId], references: [id], onDelete: Cascade)
     groupConversationId Int
     createdAt           DateTime          @default(now())
     updatedAt           DateTime          @updatedAt
@@ -87,6 +88,7 @@ model GroupMember {
 model GroupConversation {
     id        Int           @id @default(autoincrement())
     title     String        @unique()
+    banned    User[]
     members   GroupMember[]
     messages  Message[]
     createdAt DateTime      @default(now())
