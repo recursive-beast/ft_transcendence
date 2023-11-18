@@ -27,6 +27,7 @@ import AvShar from "@/images/achievements/shar.png";
 import AvUnsto from "@/images/achievements/unsto.png";
 import AvShoot from "@/images/achievements/shoot.png";
 import { useHorizontalScroll } from "@/hooks/useHorizontalScroll";
+import { usePathname } from "next/navigation";
 
 function Notif(props) {
   return (
@@ -223,26 +224,31 @@ export function TopBar(props) {
 }
 
 function NavBar() {
-  const [selected, setSelected] = useState("home");
+  const pathname = usePathname();
+
   return (
     <div className="flex items-center justify-between xl:h-[55vh] xl:flex-col">
       {[
-        { text: "home", icon: "solar:home-2-broken" },
-        { text: "game", icon: "solar:gamepad-broken" },
-        { text: "chat", icon: "fluent:chat-28-regular" },
-        { text: "leaderboard", icon: "solar:ranking-broken" },
+        { path: "/home", text: "home", icon: "solar:home-2-broken" },
+        { path: "/game", text: "game", icon: "solar:gamepad-broken" },
+        { path: "/chat", text: "chat", icon: "fluent:chat-28-regular" },
+        {
+          path: "/leaderboard",
+          text: "leaderboard",
+          icon: "solar:ranking-broken",
+        },
       ].map((v) => {
         return (
-          <button
+          <Link
+            href={v.path}
             key={v.text}
             className="group flex w-11 flex-col items-center xs:w-14 sm:w-20"
-            onClick={() => setSelected(v.text)}
           >
             {/* button icon */}
             <Icon
               className={clsx(
                 "h-7 w-7 xs:h-8 xs:w-8 sm:h-10 sm:w-10 lg:transition lg:duration-500 lg:group-hover:text-tx01  2xl:h-11 2xl:w-11",
-                v.text === selected
+                v.path === pathname
                   ? "text-tx01"
                   : "text-tx02 xl:group-hover:-translate-y-1",
               )}
@@ -252,19 +258,19 @@ function NavBar() {
             <div
               className={clsx(
                 "mt-2 h-[1.5px] w-full rounded-full bg-tx01 xs:mt-3",
-                v.text === selected ? "visible" : "invisible xl:hidden",
+                v.path === pathname ? "visible" : "invisible xl:hidden",
               )}
             ></div>
             {/* button title >> visible in web vertion */}
             <div
               className={clsx(
                 "hidden text-sm font-light uppercase tracking-[3px] text-tx01 lg:opacity-0  lg:transition lg:duration-700 lg:group-hover:opacity-100 xl:block",
-                v.text === selected ? "invisible" : "visible",
+                v.path === pathname ? "invisible" : "visible",
               )}
             >
               {v.text}
             </div>
-          </button>
+          </Link>
         );
       })}
     </div>
@@ -285,7 +291,7 @@ export function Header(props) {
 export function RightBar(props) {
   const [notif, setNotif] = useState(false);
   return (
-    <section className="mb-4 hidden h-screen w-[22rem] justify-between border-l border-tx03 lg:flex px-5 py-8">
+    <section className="mb-4 hidden h-screen w-[22rem] justify-between border-l border-tx03 px-5 py-8 lg:flex">
       {props.menu}
     </section>
   );
@@ -296,7 +302,7 @@ export function MenuBar(props) {
     <div className="z-10 flex justify-center sm:justify-end lg:sticky lg:items-center">
       <div
         className="absolute h-[80vh] w-full rounded-b-[2rem] border-y border-tx05 border-t-tx02 
-    bg-bg01 shadow-2xl shadow-tx05/40 sm:right-0 sm:w-96 sm:rounded-tl-[2rem] sm:border-l sm:border-t-tx05 px-2 xs:px-5 sm:py-8 py-5"
+    bg-bg01 px-2 py-5 shadow-2xl shadow-tx05/40 xs:px-5 sm:right-0 sm:w-96 sm:rounded-tl-[2rem] sm:border-l sm:border-t-tx05 sm:py-8"
       >
         {props.menu}
       </div>

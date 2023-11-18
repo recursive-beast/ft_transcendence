@@ -1,5 +1,13 @@
 "use client";
 
+import {
+  Title,
+  Header,
+  Friends,
+  RightBar,
+  Notificatin,
+  Rank,
+} from "@/components/common";
 import clsx from "clsx";
 import Image from "next/image";
 import { Icon } from "@iconify/react";
@@ -93,46 +101,46 @@ function WebHeader() {
   );
 }
 
-function Rank({ index, first, ...props }) {
-  return (
-    <div
-      className={clsx(
-        "my-1 flex w-full items-center sm:my-3",
-        index && "text-tx05",
-        first && "sticky top-0 my-0 border-b border-tx03 bg-bg01 sm:my-0",
-      )}
-    >
-      <div
-        className={clsx(
-          "mr-2 w-4 text-center text-xs xs:mr-3 xs:text-base sm:mr-4 sm:w-3 sm:text-xl",
-          first && "invisible",
-        )}
-      >
-        {props.pos}
-      </div>
-      <div
-        className={clsx(
-          "flex w-full items-center justify-between rounded-xl border border-tx02 p-[2px] pr-4",
-          index && "border-tx06",
-          first && "border-0 text-tx02",
-        )}
-      >
-        <Image
-          className={clsx(
-            "mr-2 h-7 w-7 rounded-full object-cover xs:ml-2 xs:h-10 xs:w-10 sm:ml-4 sm:mr-10 md:h-16 md:w-16",
-            first && "invisible",
-          )}
-          src={props.pic}
-          quality={100}
-        />
-        <div className="w-20 text-left sm:w-28">{props.name}</div>
-        <div className="w-9 text-center xs:w-11 sm:w-16">{props.rate}</div>
-        <div className="w-9 text-center xs:w-11 sm:w-16">{props.games}</div>
-        <div className="w-9 text-center xs:w-11 sm:w-16">{props.level}</div>
-      </div>
-    </div>
-  );
-}
+// function Rank({ index, first, ...props }) {
+//   return (
+//     <div
+//       className={clsx(
+//         "my-1 flex w-full items-center sm:my-3",
+//         index && "text-tx05",
+//         first && "sticky top-0 my-0 border-b border-tx03 bg-bg01 sm:my-0",
+//       )}
+//     >
+//       <div
+//         className={clsx(
+//           "mr-2 w-4 text-center text-xs xs:mr-3 xs:text-base sm:mr-4 sm:w-3 sm:text-xl",
+//           first && "invisible",
+//         )}
+//       >
+//         {props.pos}
+//       </div>
+//       <div
+//         className={clsx(
+//           "flex w-full items-center justify-between rounded-xl border border-tx02 p-[2px] pr-4",
+//           index && "border-tx06",
+//           first && "border-0 text-tx02",
+//         )}
+//       >
+//         <Image
+//           className={clsx(
+//             "mr-2 h-7 w-7 rounded-full object-cover xs:ml-2 xs:h-10 xs:w-10 sm:ml-4 sm:mr-10 md:h-16 md:w-16",
+//             first && "invisible",
+//           )}
+//           src={props.pic}
+//           quality={100}
+//         />
+//         <div className="w-20 text-left sm:w-28">{props.name}</div>
+//         <div className="w-9 text-center xs:w-11 sm:w-16">{props.rate}</div>
+//         <div className="w-9 text-center xs:w-11 sm:w-16">{props.games}</div>
+//         <div className="w-9 text-center xs:w-11 sm:w-16">{props.level}</div>
+//       </div>
+//     </div>
+//   );
+// }
 
 function Ranking(props) {
   return (
@@ -255,52 +263,52 @@ function Ranking(props) {
   );
 }
 
-function RightBar(props) {
-  return (
-    <section className="hidden h-screen w-80 items-center justify-center border-l border-tx03 px-4 lg:flex">
-      {/* profil */}
-      <div className="grid h-2/3 w-72 grid-rows-4 items-center justify-center justify-items-center rounded-2xl border border-t-0 border-tx01 bg-gradient-to-t from-tx02/80 px-1 py-10 text-tx05 2xl:h-1/2">
-        {/* pic */}
-        <div>
-          <Image
-            className=" h-36 w-36 rounded-full border border-tx01 object-cover"
-            src={props.pic}
-            quality={100}
-          />
-        </div>
+// function RightBar(props) {
+//   return (
+//     <section className="hidden h-screen w-80 items-center justify-center border-l border-tx03 px-4 lg:flex">
+//       {/* profil */}
+//       <div className="grid h-2/3 w-72 grid-rows-4 items-center justify-center justify-items-center rounded-2xl border border-t-0 border-tx01 bg-gradient-to-t from-tx02/80 px-1 py-10 text-tx05 2xl:h-1/2">
+//         {/* pic */}
+//         <div>
+//           <Image
+//             className=" h-36 w-36 rounded-full border border-tx01 object-cover"
+//             src={props.pic}
+//             quality={100}
+//           />
+//         </div>
 
-        {/* name */}
-        <div className="text-2xl capitalize tracking-[0.2rem]">
-          {props.name}
-        </div>
+//         {/* name */}
+//         <div className="text-2xl capitalize tracking-[0.2rem]">
+//           {props.name}
+//         </div>
 
-        {/* level */}
-        <div className="w-full">
-          <div className="mb-2 flex items-center justify-between text-xl font-extralight tracking-widest">
-            <div>Level</div>
-            <div className=" text-tx01">{props.level}</div>
-          </div>
+//         {/* level */}
+//         <div className="w-full">
+//           <div className="mb-2 flex items-center justify-between text-xl font-extralight tracking-widest">
+//             <div>Level</div>
+//             <div className=" text-tx01">{props.level}</div>
+//           </div>
 
-          <div className="h-1 w-full rounded-full bg-bg01 bg-gradient-to-r from-tx01"></div>
-        </div>
+//           <div className="h-1 w-full rounded-full bg-bg01 bg-gradient-to-r from-tx01"></div>
+//         </div>
 
-        {/* position */}
-        <div className="w-full text-xl font-extralight tracking-widest">
-          <div className="mb-2">My Position</div>
+//         {/* position */}
+//         <div className="w-full text-xl font-extralight tracking-widest">
+//           <div className="mb-2">My Position</div>
 
-          <div className="text-tx01">{props.pos}</div>
-        </div>
+//           <div className="text-tx01">{props.pos}</div>
+//         </div>
 
-        {/* games */}
-        <div className="w-full text-xl font-extralight tracking-widest">
-          <div className="mb-2">Games</div>
+//         {/* games */}
+//         <div className="w-full text-xl font-extralight tracking-widest">
+//           <div className="mb-2">Games</div>
 
-          <div className="text-tx01">{props.games}</div>
-        </div>
-      </div>
-    </section>
-  );
-}
+//           <div className="text-tx01">{props.games}</div>
+//         </div>
+//       </div>
+//     </section>
+//   );
+// }
 
 function Place({ className, index, ...props }) {
   return (
@@ -409,24 +417,28 @@ export default function Home() {
   return (
     <main className="flex h-screen max-h-screen flex-col bg-bg01 text-tx01">
       {/* top of the window */}
-      <div className="hidden h-12 w-full items-center justify-center border-b border-tx01 bg-bg02 text-xl font-light uppercase tracking-[10px] xs:tracking-[14px] lg:flex xl:h-16 xl:text-2xl">
+      {/* <div className="hidden h-12 w-full items-center justify-center border-b border-tx01 bg-bg02 text-xl font-light uppercase tracking-[10px] xs:tracking-[14px] lg:flex xl:h-16 xl:text-2xl">
         paddle smash
-      </div>
+      </div> */}
+      <Title />
 
       {/* header */}
       <div className="z-10 mx-2 xs:mx-3 sm:mx-5 lg:mx-8 lg:hidden">
-        <MbHeader />
+        {/* <MbHeader /> */}
+        <Header />
       </div>
 
       <div className="flex flex-1 overflow-hidden">
-        <div>
-          <WebHeader />
+        <div className="hidden xl:block">
+          {/* <WebHeader /> */}
+          <Header />
         </div>
 
         <div className="mx-2 flex flex-1 flex-col xs:mx-3 sm:mx-5 lg:mx-8">
           {/* content */}
           <div className=" hidden bg-bg01 lg:block">
-            <MbHeader />
+            {/* <MbHeader /> */}
+            {/* <MbHeader /> */}
           </div>
           <FirstPlaces />
           <Ranking />
