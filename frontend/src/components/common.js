@@ -28,12 +28,135 @@ import AvUnsto from "@/images/achievements/unsto.png";
 import AvShoot from "@/images/achievements/shoot.png";
 import { useHorizontalScroll } from "@/hooks/useHorizontalScroll";
 
-import { Menu } from "@/components/menu";
-import { Notificatin, HomeMenu } from "@/components/menu";
+function Notif(props) {
+  return (
+    <div className="m-3 flex items-center justify-between">
+      <div className="flex items-center">
+        {/* image */}
+        <Image
+          className="mr-4 h-12 w-12 rounded-full border border-tx05 object-cover"
+          src={props.pic}
+          quality={100}
+        />
+
+        {/* title & descriiption */}
+        <div className="text-tx01">
+          <div className="w-36 truncate capitalize tracking-widest xs:w-52 sm:w-40 lg:w-36">
+            {props.title}
+          </div>
+          <div className="w-36 truncate text-xs font-extralight xs:w-52 sm:w-40 lg:w-36">
+            {props.desc}
+          </div>
+        </div>
+      </div>
+      {/* time */}
+      <div className="w-8 text-center text-xs text-tx02">{props.time}</div>
+    </div>
+  );
+}
+
+export function Notificatin() {
+  return (
+    <div className="z-10 flex justify-center sm:justify-end lg:sticky ">
+      <div className="no-scrollbar absolute h-[30rem] w-full overflow-auto rounded-b-[2rem] border-y border-tx05 border-t-tx02 bg-bg01 shadow-2xl shadow-tx05/40 xs:h-[33rem] sm:w-80 sm:rounded-3xl sm:border sm:border-t-tx05">
+        <div className="sticky  top-0 bg-bg01 px-5 py-3 text-base capitalize tracking-widest text-tx05">
+          Recent Notification
+        </div>
+        <div className="px-2">
+          <Notif
+            pic={Pic02}
+            title="syakoubi"
+            desc="invited you to a game"
+            time="5min"
+          />
+          <Notif
+            pic={Pic02}
+            title="syakoubi"
+            desc="added you as Friend"
+            time="15min"
+          />
+          <Notif
+            pic={Pic05}
+            title="mmessaou"
+            desc="added you to the group 'zwaml'"
+            time="5min"
+          />
+          <Notif
+            pic={Pic01}
+            title="mel-hous"
+            desc="added you as Friend"
+            time="30min"
+          />
+          <Notif
+            pic={Pic03}
+            title="aait-oma"
+            desc="invited you to a game"
+            time="1h"
+          />
+          <Notif
+            pic={AvCmBack}
+            title="comeback kid"
+            desc="achievement unlocked"
+            time="15min"
+          />
+          <Notif
+            pic={Pic03}
+            title="aait-oma"
+            desc="added you as Friend"
+            time="1h"
+          />
+
+          <Notif
+            pic={Pic02}
+            title="syakoubi"
+            desc="invited you to a game"
+            time="5min"
+          />
+          <Notif
+            pic={Pic02}
+            title="syakoubi"
+            desc="added you as Friend"
+            time="15min"
+          />
+          <Notif
+            pic={Pic05}
+            title="mmessaou"
+            desc="added you to the group 'zwaml'"
+            time="5min"
+          />
+          <Notif
+            pic={Pic01}
+            title="mel-hous"
+            desc="added you as Friend"
+            time="30min"
+          />
+          <Notif
+            pic={Pic03}
+            title="aait-oma"
+            desc="invited you to a game"
+            time="1h"
+          />
+          <Notif
+            pic={AvCmBack}
+            title="comeback kid"
+            desc="achievement unlocked"
+            time="15min"
+          />
+          <Notif
+            pic={Pic03}
+            title="aait-oma"
+            desc="added you as Friend"
+            time="1h"
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export function Title() {
   return (
-    <div className="hidden h-12 w-full items-center justify-center border-b border-tx01 bg-bg02 text-xl font-light uppercase tracking-[10px] xs:tracking-[14px] lg:flex xl:h-16 xl:text-2xl">
+    <div className="hidden h-12 w-full items-center justify-center border-b border-tx01 bg-bg02 text-xl font-light uppercase tracking-[10px] xs:tracking-[14px] lg:flex ">
       paddle smash
     </div>
   );
@@ -43,7 +166,7 @@ export function TopBar(props) {
   const [menu, setMenu] = useState(false);
   const [notif, setNotif] = useState(false);
   return (
-    <div className="lg:hidden">
+    <div className="justify-center lg:hidden">
       {/* visible */}
       <div className="mb-4 flex items-center justify-between sm:mb-6">
         <div className="left-0 text-base font-light capitalize tracking-[5px] xs:text-base sm:text-lg lg:hidden">
@@ -100,8 +223,9 @@ export function TopBar(props) {
 }
 
 function NavBar() {
+  const [selected, setSelected] = useState("home");
   return (
-    <div className="flex items-center justify-between pb-3 xs:pb-4 xl:h-[55vh] xl:flex-col">
+    <div className="flex items-center justify-between xl:h-[55vh] xl:flex-col">
       {[
         { text: "home", icon: "solar:home-2-broken" },
         { text: "game", icon: "solar:gamepad-broken" },
@@ -109,12 +233,35 @@ function NavBar() {
         { text: "leaderboard", icon: "solar:ranking-broken" },
       ].map((v) => {
         return (
-          <button key={v.text} className="group flex flex-col items-center">
+          <button
+            key={v.text}
+            className="group flex w-11 flex-col items-center xs:w-14 sm:w-20"
+            onClick={() => setSelected(v.text)}
+          >
+            {/* button icon */}
             <Icon
-              className="h-7 w-7 text-tx01 xs:h-8 xs:w-8 sm:h-10 sm:w-10 lg:transition lg:duration-500 lg:group-hover:text-tx02 xl:group-hover:-translate-y-1 2xl:h-11 2xl:w-11"
+              className={clsx(
+                "h-7 w-7 xs:h-8 xs:w-8 sm:h-10 sm:w-10 lg:transition lg:duration-500 lg:group-hover:text-tx01  2xl:h-11 2xl:w-11",
+                v.text === selected
+                  ? "text-tx01"
+                  : "text-tx02 xl:group-hover:-translate-y-1",
+              )}
               icon={v.icon}
             />
-            <div className="hidden text-sm font-light uppercase tracking-[3px] text-tx01 lg:opacity-0  lg:transition lg:duration-700 lg:group-hover:opacity-100 xl:block">
+            {/* button line >> visible in mobile */}
+            <div
+              className={clsx(
+                "mt-2 h-[1.5px] w-full rounded-full bg-tx01 xs:mt-3",
+                v.text === selected ? "visible" : "invisible xl:hidden",
+              )}
+            ></div>
+            {/* button title >> visible in web vertion */}
+            <div
+              className={clsx(
+                "hidden text-sm font-light uppercase tracking-[3px] text-tx01 lg:opacity-0  lg:transition lg:duration-700 lg:group-hover:opacity-100 xl:block",
+                v.text === selected ? "invisible" : "visible",
+              )}
+            >
               {v.text}
             </div>
           </button>
@@ -126,7 +273,7 @@ function NavBar() {
 
 export function Header(props) {
   return (
-    <header className="border-b border-tx02 pt-3 xs:px-2 xl:flex xl:h-full xl:w-36 xl:items-center xl:justify-center xl:border-b-0 xl:border-r xl:p-0 2xl:w-56">
+    <header className="border-b border-tx02 px-2 pt-3 xl:flex xl:h-full xl:w-36 xl:items-center xl:justify-center xl:border-b-0 xl:border-r xl:p-0 2xl:w-56">
       {/* top bar */}
       <TopBar home={props.home} menu={props.menu} />
       {/* nav */}
@@ -135,10 +282,10 @@ export function Header(props) {
   );
 }
 
-export function RightBarr(props) {
+export function RightBar(props) {
   const [notif, setNotif] = useState(false);
   return (
-    <section className="hidden h-screen w-[22rem] justify-center border-l border-tx03 px-4 lg:block">
+    <section className="mb-4 hidden h-screen w-[22rem] justify-between border-l border-tx03 lg:flex px-5 py-8">
       {props.menu}
     </section>
   );
@@ -146,143 +293,14 @@ export function RightBarr(props) {
 
 export function MenuBar(props) {
   return (
-    <div className="flex w-full flex-col items-center justify-between sm:absolute sm:right-0 sm:w-96 lg:hidden absolute  h-[80vh]
-    rounded-b-[2rem] border-y border-tx05 border-t-tx02 bg-bg01 px-5 py-3
-      shadow-2xl shadow-tx05/40 sm:rounded-tl-[2rem] sm:border-l sm:border-t-tx05 sm:py-8">
-      {/* <div
-        className="absolute flex h-[80vh] w-full flex-col justify-between overflow-auto rounded-b-[2rem] border-y border-tx05 border-t-tx02 bg-bg01 px-5 py-3
-      shadow-2xl shadow-tx05/40 sm:rounded-tl-[2rem] sm:border-l sm:border-t-tx05 sm:py-8"
-      > */}
-        {props.menu}
-      {/* </div> */}
-    </div>
-  );
-}
-
-export function BarButton(props) {
-  return (
-    <div className="border-b border-tx02 last:border-0">
-      <button
-        className="my-4 flex w-40 items-center justify-center space-x-3 sm:w-44"
-        onClick={props.onClick}
+    <div className="z-10 flex justify-center sm:justify-end lg:sticky lg:items-center">
+      <div
+        className="absolute h-[80vh] w-full rounded-b-[2rem] border-y border-tx05 border-t-tx02 
+    bg-bg01 shadow-2xl shadow-tx05/40 sm:right-0 sm:w-96 sm:rounded-tl-[2rem] sm:border-l sm:border-t-tx05 px-2 xs:px-5 sm:py-8 py-5"
       >
-        <Icon className="h-6 w-6 sm:h-7 sm:w-7" icon={props.icon} />
-        <div className="text-sm font-light capitalize tracking-[5px] sm:text-base">
-          {props.title}
-        </div>
-      </button>
+        {props.menu}
+      </div>
     </div>
-  );
-}
-
-export function ProfileInfo(props) {
-  const [bar, setBar] = useState(false);
-  return (
-    <section className="relative my-2 flex items-center justify-between xs:my-4">
-      <div className="flex items-center">
-        <Image
-          className="mr-4 h-14 w-14 rounded-full object-cover xs:ml-2 xs:mr-6 xs:h-20 xs:w-20 sm:ml-4 sm:mr-10 sm:h-28 sm:w-28"
-          src={Pic15}
-          quality={100}
-        />
-
-        <div className="flex flex-col">
-          <div className="-mb-1 text-base font-extrabold uppercase text-tx02  xs:text-lg sm:text-xl">
-            welkome
-          </div>
-
-          <div className="text-base font-semibold capitalize tracking-widest text-tx05 xs:text-lg sm:text-xl sm:tracking-[3px]">
-            megashoot
-          </div>
-
-          <div className="text-[8px] font-light capitalize xs:text-xs sm:text-lg">
-            The Paddle smash balls is waiting you
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-export function Rate(props) {
-  return (
-    <>
-      <div className="mr-[2px] flex w-full flex-col items-center rounded-lg border border-tx05 px-1 py-1 text-[9px] xs:w-52 xs:px-3 xs:py-2 xs:text-[11px] sm:w-72 sm:rounded-3xl sm:px-5 sm:text-sm md:ml-5 md:w-80 md:px-8 lg:w-72 lg:px-5 xl:ml-14 xl:w-80 xl:px-8 2xl:ml-36">
-        <div>
-          <div className="uppercase tracking-wider text-tx01">
-            wins:<span className="capitalize text-tx02"> last week: </span>{" "}
-            <span className="text-tx05">{props.wins}</span>
-          </div>
-
-          <div className="flex items-end">
-            <div className="mr-2 flex sm:mr-4">
-              <div className="text-lg text-tx05 xs:text-xl sm:text-3xl">
-                {props.nbrWin}
-              </div>
-
-              <Icon
-                className="h-[10px] w-[10px] text-[#24E5A5] "
-                icon="fluent-mdl2:up"
-              />
-            </div>
-
-            <div className="mb-1 mr-1 text-tx02 sm:mr-3">
-              Wins Rate: <span className="text-[#24E5A5]">{props.wn}</span>{" "}
-            </div>
-            <div className="mb-1 text-tx02">
-              Up: <span className="text-[#24E5A5]">{props.up}</span>{" "}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="ml-[2px] flex w-full flex-col items-center rounded-lg border border-tx05 px-1 py-1 text-[9px] xs:w-52 xs:px-3 xs:py-2 xs:text-[11px] sm:w-72 sm:rounded-3xl sm:px-5 sm:text-sm md:mr-5 md:w-80 md:px-8 lg:w-72 lg:px-5 xl:mr-14 xl:w-80 xl:px-8 2xl:mr-36">
-        <div>
-          <div className="uppercase tracking-wider text-tx01">
-            losses:<span className="capitalize text-tx02"> last week: </span>{" "}
-            <span className="text-tx05">{props.losses}</span>
-          </div>
-
-          <div className="flex items-end">
-            <div className="mr-2 flex sm:mr-4">
-              <div className="text-lg text-tx05 xs:text-xl sm:text-3xl">
-                {props.nbrLos}
-              </div>
-
-              <Icon
-                className="h-[10px] w-[10px] text-[#E55F61] "
-                icon="fluent-mdl2:down"
-              />
-            </div>
-
-            <div className="mb-1 mr-1 text-tx02 sm:mr-3">
-              lost Rate: <span className="text-[#E55F61]">{props.los}</span>{" "}
-            </div>
-            <div className="mb-1 text-tx02">
-              Up: <span className="text-[#E55F61]">{props.down}</span>{" "}
-            </div>
-          </div>
-        </div>
-      </div>
-    </>
-  );
-}
-
-export function PlayRate() {
-  return (
-    <section className="flex justify-between xs:my-3 sm:my-4">
-      <Rate
-        wins="+6"
-        nbrWin="58"
-        wn="60%"
-        up="30%"
-        //
-        losses="+12"
-        nbrLos="12"
-        los="40%"
-        down="53%"
-      />
-    </section>
   );
 }
 
@@ -314,63 +332,6 @@ export function Rank({ index, ...props }) {
         <div className="w-9 text-center">{props.level}</div>
       </div>
     </div>
-  );
-}
-
-export function Ranking(props) {
-  return (
-    <section className="my-4 w-full text-[10px] font-light capitalize text-tx01 xs:text-xs sm:text-base">
-      <div className="m-1 flex items-center justify-between pr-4 uppercase text-tx02">
-        <div className="mr-7 xs:mr-12 sm:mx-16"></div>
-        <div className="w-32 text-center">player</div>
-        <div className="w-9 text-center">games</div>
-        <div className="w-9 text-center">rate</div>
-        <div className="w-9 text-center">level</div>
-      </div>
-      <div>
-        <Rank
-          pos="1"
-          pic={Pic01}
-          name="syakoubinato"
-          games="105"
-          rate="78%"
-          level="11"
-        />
-        <Rank
-          pos="3"
-          pic={Pic11}
-          name="badrbansh"
-          games="99"
-          rate="73%"
-          level="10"
-        />
-        <Rank
-          pos="5"
-          pic={Pic15}
-          name="megashoot"
-          games="97"
-          rate="60%"
-          level="9"
-          index
-        />
-        <Rank
-          pos="6"
-          pic={Pic06}
-          name="aitlandlia"
-          games="100"
-          rate="55%"
-          level="7"
-        />
-        <Rank
-          pos="9"
-          pic={Pic05}
-          name="moonshot"
-          games="123"
-          rate="40%"
-          level="6"
-        />
-      </div>
-    </section>
   );
 }
 
@@ -410,7 +371,7 @@ function Friend(props) {
 
 export function Friends(props) {
   return (
-    <div className="no-scrollbar h-[80%] w-full overflow-auto rounded-3xl border-y border-tx02">
+    <div className="no-scrollbar w-full overflow-auto rounded-3xl border-y border-tx02 lg:mb-14">
       <div className="sticky top-0 flex items-center justify-between bg-bg01 px-2 py-5 pb-2 text-base capitalize tracking-[3px] text-tx02">
         <div>friends</div>
         <Icon className="h-6 w-6" icon="ph:caret-up-down-bold" />

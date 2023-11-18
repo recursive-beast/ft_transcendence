@@ -1,14 +1,18 @@
 "use client";
 
-import clsx from "clsx";
+import {
+  Title,
+  Header,
+  Friends,
+  RightBar,
+  Notificatin,
+  Rank,
+} from "@/components/common";
 import Image from "next/image";
 import { Icon } from "@iconify/react";
 import Link from "next/link";
-import React, { createContext } from "react";
 import { useState } from "react";
-
-import logoPic from "@/images/logos/logo.png";
-import qrCode from "@/images/pics/qrcode.jpeg";
+import clsx from "clsx";
 //Profils
 import Pic01 from "@/images/profils/01.jpg";
 import Pic02 from "@/images/profils/02.jpg";
@@ -17,6 +21,7 @@ import Pic11 from "@/images/profils/11.jpg";
 import Pic05 from "@/images/profils/05.jpg";
 import Pic06 from "@/images/profils/06.jpg";
 import Pic15 from "@/images/profils/15.jpg";
+
 //achievements
 import AvCmBack from "@/images/achievements/comeback.png";
 import AvDemon from "@/images/achievements/demon.png";
@@ -28,6 +33,79 @@ import AvUnsto from "@/images/achievements/unsto.png";
 import AvShoot from "@/images/achievements/shoot.png";
 import { useHorizontalScroll } from "@/hooks/useHorizontalScroll";
 
+function HomeMenu({ onClick }) {
+  const [notif, setNotif] = useState(false);
+  return (
+    <div className="z-10 flex h-full flex-1 flex-col justify-between gap-2 sm:gap-3">
+      {/* search and Notificatin */}
+      <div>
+        <div className=" flex items-center justify-between px-1 py-3">
+          {/* search */}
+          <div className="mb-3 flex items-center">
+            <Icon
+              className="h-5 w-5 text-tx01 xs:h-6 xs:w-6"
+              icon="guidance:search"
+            />
+            <input
+              className="ml-3 h-8 w-full border-b border-tx03 bg-bg01 text-base font-extralight xs:text-xl"
+              defaultValue="Search"
+            />
+          </div>
+
+          {/* notif */}
+          <button
+            className="hidden lg:block"
+            onClick={() => {
+              setNotif(!notif);
+            }}
+          >
+            <Icon
+              className={clsx("mb-1 h-7 w-7 text-tx01", notif && "text-tx02")}
+              icon={
+                notif
+                  ? "icon-park-outline:close"
+                  : "solar:notification-unread-broken"
+              }
+            />
+          </button>
+        </div>
+        {notif && <Notificatin />}
+      </div>
+
+      {/* setting and log-out */}
+      <div className="mb-5 flex items-center justify-between text-tx02">
+        <button
+          className="flex items-center space-x-2 rounded-xl border-b p-1"
+          onClick={onClick}
+        >
+          <Icon
+            className="h-5 w-5 xs:h-6 xs:w-6"
+            icon="solar:settings-broken"
+          />
+          <div className="text-base font-normal capitalize xs:text-xl xs:tracking-[5px]">
+            setting
+          </div>
+        </button>
+
+        <Link
+          className="flex items-center space-x-2 rounded-xl border-b p-1"
+          href={"/.."}
+        >
+          <Icon
+            className="h-5 w-5 xs:h-6 xs:w-6"
+            icon="fluent-mdl2:navigate-back"
+          />
+          <div className="text-base font-normal capitalize xs:text-xl xs:tracking-[5px]">
+            log out
+          </div>
+        </Link>
+      </div>
+
+      {/* Friends elements */}
+      <Friends />
+    </div>
+  );
+}
 
 function ProfileInfo(props) {
   const [bar, setBar] = useState(false);
@@ -140,94 +218,6 @@ function PlayRate() {
   );
 }
 
-function Rank({ index, ...props }) {
-  return (
-    <div
-      className={clsx(
-        "my-1 flex w-full items-center sm:my-3",
-        index && "text-tx05",
-      )}
-    >
-      <div className="mr-2 w-2 text-xs xs:text-base sm:w-3 sm:text-xl ">
-        {props.pos}
-      </div>
-      <div
-        className={clsx(
-          " flex w-full items-center justify-between rounded-xl border border-tx02 p-[2px] pr-4",
-          index && "border-tx06",
-        )}
-      >
-        <Image
-          className="mr-2 h-7 w-7  rounded-full object-cover xs:ml-2 xs:h-10 xs:w-10 sm:ml-4 sm:mr-10 md:h-16 md:w-16"
-          src={props.pic}
-          quality={100}
-        />
-        <div className="w-24 text-left">{props.name}</div>
-        <div className="w-9 text-center">{props.games}</div>
-        <div className="w-9 text-center">{props.rate}</div>
-        <div className="w-9 text-center">{props.level}</div>
-      </div>
-    </div>
-  );
-}
-
-function Ranking(props) {
-  return (
-    <section className="my-4 w-full text-[10px] font-light capitalize text-tx01 xs:text-xs sm:text-base">
-      <div className="m-1 flex items-center justify-between pr-4 uppercase text-tx02">
-        <div className="mr-7 xs:mr-12 sm:mx-16"></div>
-        <div className="w-32 text-center">player</div>
-        <div className="w-9 text-center">games</div>
-        <div className="w-9 text-center">rate</div>
-        <div className="w-9 text-center">level</div>
-      </div>
-      <div>
-        <Rank
-          pos="1"
-          pic={Pic01}
-          name="syakoubinato"
-          games="105"
-          rate="78%"
-          level="11"
-        />
-        <Rank
-          pos="3"
-          pic={Pic11}
-          name="badrbansh"
-          games="99"
-          rate="73%"
-          level="10"
-        />
-        <Rank
-          pos="5"
-          pic={Pic15}
-          name="megashoot"
-          games="97"
-          rate="60%"
-          level="9"
-          index
-        />
-        <Rank
-          pos="6"
-          pic={Pic06}
-          name="aitlandlia"
-          games="100"
-          rate="55%"
-          level="7"
-        />
-        <Rank
-          pos="9"
-          pic={Pic05}
-          name="moonshot"
-          games="123"
-          rate="40%"
-          level="6"
-        />
-      </div>
-    </section>
-  );
-}
-
 function Achiv({ locked, className, ...props }) {
   return (
     <div
@@ -326,135 +316,58 @@ function Achievement() {
   );
 }
 
-const icons = {
-  ONLINE: {
-    name: "octicon:dot-fill-16",
-    color: "text-[#24E5A5]",
-  },
-  OFFLINE: {
-    name: "octicon:dot-fill-16",
-    color: "text-tx03",
-  },
-  INGAME: {
-    name: "arcticons:gameturbo",
-    color: "text-[#EB5A3A]",
-  },
-};
-
-function Friend(props) {
+export function Ranking(props) {
   return (
-    <div className="m-3 flex items-center justify-between">
-      <div className="flex items-center">
-        <Image
-          className="mr-4 h-8 w-8 rounded-full object-cover"
-          src={props.pic}
-          quality={100}
-        />
-        <div className="font-extralight tracking-widest">{props.name}</div>
+    <section className="my-4 w-full text-[10px] font-light capitalize text-tx01 xs:text-xs sm:text-base">
+      <div className="m-1 flex items-center justify-between pr-4 uppercase text-tx02">
+        <div className="mr-7 xs:mr-12 sm:mx-16"></div>
+        <div className="w-32 text-center">player</div>
+        <div className="w-9 text-center">games</div>
+        <div className="w-9 text-center">rate</div>
+        <div className="w-9 text-center">level</div>
       </div>
-      <Icon
-        className={clsx("h-5 w-5", icons[props.status].color)}
-        icon={icons[props.status].name}
-      />
-    </div>
-  );
-}
-
-function RightBar(props) {
-  const [notif, setNotif] = useState(false);
-  return (
-    <section className="hidden h-screen w-[22rem] flex-col justify-between border-l border-tx03 px-4 lg:flex">
-      {/* search and notif */}
       <div>
-        <div className="mr-3 mt-5 flex items-center justify-between 2xl:mt-10">
-          {/* search */}
-          <div className="mb-3 flex items-center">
-            <Icon className="htext-tx01 h-7 w-7" icon="guidance:search" />
-            <input
-              className="ml-3 h-8 w-full border-b border-tx03 bg-bg01 text-base font-extralight xs:text-xl"
-              defaultValue="Search"
-            />
-          </div>
-
-          {/* notif */}
-          <button
-            onClick={() => {
-              setNotif(!notif);
-            }}
-          >
-            <Icon
-              className={clsx("htext-tx01 h-7 w-7", notif && "text-tx02")}
-              icon={
-                notif
-                  ? "icon-park-outline:close"
-                  : "solar:notification-unread-broken"
-              }
-            />
-          </button>
-        </div>
-        {notif && <Notificatin />}
-      </div>
-
-      {/* setting and log-out */}
-      <div className="mb-5 flex items-center justify-between text-tx02">
-        <button
-          className="flex items-center space-x-2 rounded-xl border-b p-1"
-          onClick={props.onSettingClick}
-        >
-          <Icon
-            className="h-5 w-5 xs:h-6 xs:w-6"
-            icon="solar:settings-broken"
-          />
-          <div className="text-base font-normal capitalize xs:text-xl xs:tracking-[5px]">
-            setting
-          </div>
-        </button>
-
-        <Link
-          className="flex items-center space-x-2 rounded-xl border-b p-1"
-          href={"/.."}
-        >
-          <Icon
-            className="h-5 w-5 xs:h-6 xs:w-6"
-            icon="fluent-mdl2:navigate-back"
-          />
-          <div className="text-base font-normal capitalize xs:text-xl xs:tracking-[5px]">
-            log out
-          </div>
-        </Link>
-      </div>
-
-      {/* Friends elements */}
-      <div className="no-scrollbar mb-20 h-[70%] w-full overflow-auto rounded-3xl border-y border-tx02 2xl:mb-36">
-        <div className="sticky top-0 flex items-center justify-between bg-bg01 px-2 py-5 pb-2 text-base capitalize tracking-[3px] text-tx02">
-          <div>friends</div>
-          <Icon className="h-6 w-6" icon="ph:caret-up-down-bold" />
-        </div>
-        <div>
-          <Friend pic={Pic01} name="syakoubinato" status="ONLINE" />
-          <Friend pic={Pic02} name="badrbansh" status="OFFLINE" />
-          <Friend pic={Pic15} name="megashoot" status="INGAME" />
-          <Friend pic={Pic11} name="aitlandlia" status="ONLINE" />
-          <Friend pic={Pic06} name="moonshot" status="INGAME" />
-
-          <Friend pic={Pic01} name="syakoubinato" status="ONLINE" />
-          <Friend pic={Pic02} name="badrbansh" status="OFFLINE" />
-          <Friend pic={Pic15} name="megashoot" status="INGAME" />
-          <Friend pic={Pic11} name="aitlandlia" status="ONLINE" />
-          <Friend pic={Pic06} name="moonshot" status="INGAME" />
-
-          <Friend pic={Pic01} name="syakoubinato" status="ONLINE" />
-          <Friend pic={Pic02} name="badrbansh" status="OFFLINE" />
-          <Friend pic={Pic15} name="megashoot" status="INGAME" />
-          <Friend pic={Pic11} name="aitlandlia" status="ONLINE" />
-          <Friend pic={Pic06} name="moonshot" status="INGAME" />
-
-          <Friend pic={Pic01} name="syakoubinato" status="ONLINE" />
-          <Friend pic={Pic02} name="badrbansh" status="OFFLINE" />
-          <Friend pic={Pic15} name="megashoot" status="INGAME" />
-          <Friend pic={Pic11} name="aitlandlia" status="ONLINE" />
-          <Friend pic={Pic06} name="moonshot" status="INGAME" />
-        </div>
+        <Rank
+          pos="1"
+          pic={Pic01}
+          name="syakoubinato"
+          games="105"
+          rate="78%"
+          level="11"
+        />
+        <Rank
+          pos="3"
+          pic={Pic11}
+          name="badrbansh"
+          games="99"
+          rate="73%"
+          level="10"
+        />
+        <Rank
+          pos="5"
+          pic={Pic15}
+          name="megashoot"
+          games="97"
+          rate="60%"
+          level="9"
+          index
+        />
+        <Rank
+          pos="6"
+          pic={Pic06}
+          name="aitlandlia"
+          games="100"
+          rate="55%"
+          level="7"
+        />
+        <Rank
+          pos="9"
+          pic={Pic05}
+          name="moonshot"
+          games="123"
+          rate="40%"
+          level="6"
+        />
       </div>
     </section>
   );
@@ -618,216 +531,40 @@ function SettingSection({ onClick, ...props }) {
   );
 }
 
-function Notif(props) {
-  return (
-    <div className="m-3 flex items-center justify-between">
-      <div className="flex items-center">
-        {/* image */}
-        <Image
-          className="mr-4 h-12 w-12 rounded-full border border-tx05 object-cover"
-          src={props.pic}
-          quality={100}
-        />
-
-        {/* title & descriiption */}
-        <div className="text-tx01">
-          <div className="w-36 truncate capitalize tracking-widest xs:w-52 sm:w-40 lg:w-36">
-            {props.title}
-          </div>
-          <div className="w-36 truncate text-xs font-extralight xs:w-52 sm:w-40 lg:w-36">
-            {props.desc}
-          </div>
-        </div>
-      </div>
-      {/* time */}
-      <div className="w-8 text-center text-xs text-tx02">{props.time}</div>
-    </div>
-  );
-}
-
- function Notificatin() {
-  return (
-    <div className="z-10 flex flex-col items-center sm:items-end lg:sticky lg:items-center">
-      <div className="no-scrollbar absolute h-[30rem] w-full overflow-auto rounded-b-[2rem] border-y border-tx05 border-t-tx02 bg-bg01 shadow-2xl shadow-tx05/40 xs:h-[33rem] sm:w-80 sm:rounded-3xl sm:border sm:border-t-tx05">
-        <div className="sticky  top-0 bg-bg01 px-5 py-3 text-base capitalize tracking-widest text-tx05">
-          Recent Notification
-        </div>
-        <div className="px-2">
-          <Notif
-            pic={Pic02}
-            title="syakoubi"
-            desc="invited you to a game"
-            time="5min"
-          />
-          <Notif
-            pic={Pic02}
-            title="syakoubi"
-            desc="added you as Friend"
-            time="15min"
-          />
-          <Notif
-            pic={Pic05}
-            title="mmessaou"
-            desc="added you to the group 'zwaml'"
-            time="5min"
-          />
-          <Notif
-            pic={Pic01}
-            title="mel-hous"
-            desc="added you as Friend"
-            time="30min"
-          />
-          <Notif
-            pic={Pic03}
-            title="aait-oma"
-            desc="invited you to a game"
-            time="1h"
-          />
-          <Notif
-            pic={AvCmBack}
-            title="comeback kid"
-            desc="achievement unlocked"
-            time="15min"
-          />
-          <Notif
-            pic={Pic03}
-            title="aait-oma"
-            desc="added you as Friend"
-            time="1h"
-          />
-
-          <Notif
-            pic={Pic02}
-            title="syakoubi"
-            desc="invited you to a game"
-            time="5min"
-          />
-          <Notif
-            pic={Pic02}
-            title="syakoubi"
-            desc="added you as Friend"
-            time="15min"
-          />
-          <Notif
-            pic={Pic05}
-            title="mmessaou"
-            desc="added you to the group 'zwaml'"
-            time="5min"
-          />
-          <Notif
-            pic={Pic01}
-            title="mel-hous"
-            desc="added you as Friend"
-            time="30min"
-          />
-          <Notif
-            pic={Pic03}
-            title="aait-oma"
-            desc="invited you to a game"
-            time="1h"
-          />
-          <Notif
-            pic={AvCmBack}
-            title="comeback kid"
-            desc="achievement unlocked"
-            time="15min"
-          />
-          <Notif
-            pic={Pic03}
-            title="aait-oma"
-            desc="added you as Friend"
-            time="1h"
-          />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export function HomeMenu(props) {
-  return (
-    <div className="flex-1 flex flex-col items-center justify-between h-full pb-10">
-      {/* search  */}
-      <div className="mb-3 flex items-center">
-        <Icon
-          className="h-5 w-5 text-tx01 xs:h-6 xs:w-6"
-          icon="guidance:search"
-        />
-        <input
-          className="ml-3 h-8 w-full border-b border-tx03 bg-bg01 text-base font-extralight xs:text-xl"
-          defaultValue="Search"
-        />
-      </div>
-
-      {/* setting and log-out */}
-      <div className="mb-5 flex items-center justify-between text-tx02">
-        <button
-          className="flex items-center space-x-2 rounded-xl border-b p-1"
-          // onClick={() => {}}
-        >
-          <Icon
-            className="h-5 w-5 xs:h-6 xs:w-6"
-            icon="solar:settings-broken"
-          />
-          <div className="text-base font-normal capitalize xs:text-xl xs:tracking-[5px]">
-            setting
-          </div>
-        </button>
-
-        <Link
-          className="flex items-center space-x-2 rounded-xl border-b p-1"
-          href={"/.."}
-        >
-          <Icon
-            className="h-5 w-5 xs:h-6 xs:w-6"
-            icon="fluent-mdl2:navigate-back"
-          />
-          <div className="text-base font-normal capitalize xs:text-xl xs:tracking-[5px]">
-            log out
-          </div>
-        </Link>
-      </div>
-
-      {/* Friends elements */}
-      <Friends />
-    </div>
-  );
-}
-
-import { Title, Header, RightBarr, Friends } from "@/components/common";
-
-const SettingContext = createContext();
-
 export default function Home() {
   const [setting, setSetting] = useState(false);
   return (
-    <main className="flex h-screen max-h-screen flex-col bg-bg01 text-tx01">
+    <main className="flex h-screen max-h-screen flex-col bg-bg01 text-tx01 ">
       {/* top of the window */}
       <Title />
 
       <div className="flex flex-1 overflow-hidden">
         <div className="hidden xl:block">
-          <Header/>
+          <Header
+            home={true}
+            menu={<HomeMenu onClick={() => setSetting(true)} />}
+          />
         </div>
 
-        <div className="no-scrollbar mx-2 flex flex-1 flex-col justify-between overflow-auto xs:mx-3 sm:mx-5 lg:mx-8">
-          {/* content */}
-          <div className="sticky top-0 z-10 bg-bg01 xl:hidden">
-            <SettingContext.Provider value={[setting, setSetting]}>
-              <Header home={true}  menu={<HomeMenu />}/>
-            </SettingContext.Provider>
+        <div className="no-scrollbar mx-2 flex flex-1 flex-col justify-between overflow-auto xs:mx-3 sm:mx-5">
+          <div className="xl:hidden z-10">
+            <Header
+              home={true}
+              menu={<HomeMenu onClick={() => setSetting(true)} />}
+            />
           </div>
-          <ProfileInfo />
-          <PlayRate />
-          <Ranking />
-          <div>
-            <Achievement />
+
+          <div className="flex flex-1 flex-col justify-between ">
+            <ProfileInfo />
+            <PlayRate />
+            <Ranking />
+            <div>
+              <Achievement />
+            </div>
           </div>
         </div>
 
-        <div>
-          <RightBarr menu={<HomeMenu />}/>
-        </div>
+        <RightBar menu={<HomeMenu onClick={() => setSetting(true)} />} />
       </div>
 
       {setting && (
