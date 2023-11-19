@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'nestjs-prisma';
 import { MessageEntity } from 'src/common/entities/message.entity';
 import { GroupMessageDTO } from './dto/group-message.dto';
@@ -38,69 +38,73 @@ export class GroupService {
   async banSomeone(admineId: number, toBanId: number, channelId: number) {
     const admin = await this.findMember(channelId, admineId);
     const toBan = await this.findMember(channelId, toBanId);
+
     if (admin && toBan) {
       if (admin.role === roleType.OWNER) {
         await this.prismaService.groupConversation.update({
-          where: {id: channelId,},
-          data: { 
-            banned : { connect : {id: toBan.id} }
+          where: { id: channelId },
+          data: {
+            banned: { connect: { id: toBan.id } },
           },
         });
         await this.prismaService.groupMember.delete({
-          where: {id: toBan.id}
+          where: { id: toBan.id },
         });
-      } else if (admin.role === roleType.ADMIN && toBan.role === roleType.MEMBER) {
+      } else if (
+        admin.role === roleType.ADMIN &&
+        toBan.role === roleType.MEMBER
+      ) {
         await this.prismaService.groupConversation.update({
-          where: {id: channelId,},
-          data: { 
-            banned : { connect : {id: toBan.id} }
+          where: { id: channelId },
+          data: {
+            banned: { connect: { id: toBan.id } },
           },
         });
         await this.prismaService.groupMember.delete({
-          where: {id: toBan.id}
+          where: { id: toBan.id },
         });
+      } else {
+        throw new BadRequestException('Invalid permissions');
       }
     }
   }
 
-  // async unbanSomeone(admineId: number, toUnbanId: number, channelId: number) {
-  //   const admin = await this.findMember(channelId, admineId);
-  //   const toUnban = await this.findMember(channelId, toUnbanId);
-  //   if (admin && toUnban) {
-  //     if (admin.role === roleType.OWNER) {
-  //       await this.prismaService.groupConversation.update({
-  //         where: {id: channelId,},
-  //         data: { 
-  //           banned : { connect : {id: toUnban.id} }
-  //         },
-  //       });
-  //     } else if (admin.role === roleType.ADMIN && toUnban.role === roleType.MEMBER) {
-  //       await this.prismaService.groupConversation.update({
-  //         where: {id: channelId,},
-  //         data: { 
-  //           banned : { connect : {id: toUnban.id} }
-  //         },
-  //       });
-  //     }
-  //   }
-  // }
+  async unbanSomeone(admineId: number, toUnbanId: number, channelId: number) {
+    const admin = await this.findMember(channelId, admineId);
+    const toUnban = await this.prismaService.user.findFirstOrThrow({
+      where: { id: toUnbanId },
+    });
+    if (admin && toUnban) {
+      if (admin.role === roleType.OWNER || admin.role === roleType.ADMIN) {
+        await this.prismaService.user.update({
+          where: { id: toUnbanId },
+          data: { bannedFromGroups: { disconnect: { id: channelId } } },
+        });
+      }
+      else {
+        throw new BadRequestException('Invalid permissions');
+      }
+    }
+  }
 
   async kickSomeone(admineId: number, toKickId: number, channelId: number) {
     const admin = await this.findMember(channelId, admineId);
     const toKick = await this.findMember(channelId, toKickId);
-    
+
     if (admin && toKick) {
       if (admin.role === roleType.OWNER) {
         await this.prismaService.groupMember.delete({
-          where: {id: toKick.id}
+          where: { id: toKick.id },
         });
       } else if (admin.role === roleType.ADMIN) {
         await this.prismaService.groupMember.delete({
           where: {
             role: roleType.MEMBER,
             id: toKick.id,
-          }
+          },
         });
+      } else {
+        throw new BadRequestException('Invalid permissions');
       }
     }
   }
@@ -114,14 +118,19 @@ export class GroupService {
     if (admin && toMute) {
       if (admin.role === roleType.OWNER) {
         await this.prismaService.groupMember.update({
-          where: { id: toMute.id},
-          data: { mutedUntil: fifteenMinutesFromNow, },
+          where: { id: toMute.id },
+          data: { mutedUntil: fifteenMinutesFromNow },
         });
-      } else if (admin.role === roleType.ADMIN && toMute.role === roleType.MEMBER) {
+      } else if (
+        admin.role === roleType.ADMIN &&
+        toMute.role === roleType.MEMBER
+      ) {
         await this.prismaService.groupMember.update({
-          where: { id: toMute.id},
-          data: { mutedUntil: fifteenMinutesFromNow, },
+          where: { id: toMute.id },
+          data: { mutedUntil: fifteenMinutesFromNow },
         });
+      } else {
+        throw new BadRequestException('Invalid permissions');
       }
     }
   }

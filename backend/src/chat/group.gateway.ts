@@ -1,5 +1,6 @@
 import { UseFilters, UsePipes, ValidationPipe } from '@nestjs/common';
 import {
+  MessageBody,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
@@ -41,4 +42,17 @@ export class GroupGateway {
     client.leave(`channel-${id}`);
   }
 
+  @SubscribeMessage('channel.ban')
+  banFromChannel(client: Socket, @MessageBody() data: {channelId: number, userId: number}) {
+    this.groupconversationService.banSomeone(client.data.id, data.userId, data.channelId);
+    this.server.in(`channel-${data.channelId}`).socketsLeave(`user-${data.userId}`);
+    this.server.to(`user-${data.userId}`).emit("channel.banned", data.channelId);
+  }
+  
+  @SubscribeMessage('channel.kick')
+  kickFromChannel(client: Socket, @MessageBody() data: {channelId: number, userId: number}) {
+    this.groupconversationService.kickSomeone(client.data.id, data.userId, data.channelId);
+    this.server.in(`channel-${data.channelId}`).socketsLeave(`user-${data.userId}`);
+    this.server.to(`user-${data.userId}`).emit("channel.kicked", data.channelId);
+  }
 }
