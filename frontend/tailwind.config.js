@@ -26,6 +26,8 @@ module.exports = {
       'xs': '380px',
       ...defaultTheme.screens,
       'md': '769px',
+      'sm-h': { 'raw': '(min-height: 900px)' },
+      'md-h': { 'raw': '(min-height: 1200px)' },
     },
     colors: {
       // Primary colors

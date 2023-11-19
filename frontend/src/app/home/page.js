@@ -13,6 +13,8 @@ import { Icon } from "@iconify/react";
 import Link from "next/link";
 import { useState } from "react";
 import clsx from "clsx";
+
+import qrCode from "@/images/pics/qrcode.jpeg";
 //Profils
 import Pic01 from "@/images/profils/01.jpg";
 import Pic02 from "@/images/profils/02.jpg";
@@ -319,14 +321,16 @@ function Achievement() {
 export function Ranking(props) {
   return (
     <section className="my-4 w-full text-[10px] font-light capitalize text-tx01 xs:text-xs sm:text-base">
-      <div className="m-1 flex items-center justify-between pr-4 uppercase text-tx02">
-        <div className="mr-7 xs:mr-12 sm:mx-16"></div>
-        <div className="w-32 text-center">player</div>
-        <div className="w-9 text-center">games</div>
-        <div className="w-9 text-center">rate</div>
-        <div className="w-9 text-center">level</div>
-      </div>
       <div>
+      <Rank
+        pos="x"
+        pic={Pic01}
+        name="player"
+        games="games"
+        rate="rate"
+        level="level"
+        first
+      />
         <Rank
           pos="1"
           pic={Pic01}
@@ -546,7 +550,7 @@ export default function Home() {
           />
         </div>
 
-        <div className="no-scrollbar mx-2 flex flex-1 flex-col justify-between overflow-auto xs:mx-3 sm:mx-5">
+        <div className="no-scrollbar px-2 flex flex-1 flex-col justify-between overflow-auto xs:px-3 sm:px-5 lg:px-8 max-w-[1400px] mx-auto">
           <div className="xl:hidden z-10">
             <Header
               home={true}
@@ -554,7 +558,7 @@ export default function Home() {
             />
           </div>
 
-          <div className="flex flex-1 flex-col justify-between ">
+          <div className="flex flex-1 flex-col justify-between">
             <ProfileInfo />
             <PlayRate />
             <Ranking />

@@ -8,7 +8,6 @@ import React from "react";
 import { useState } from "react";
 
 import logoPic from "@/images/logos/logo.png";
-import qrCode from "@/images/pics/qrcode.jpeg";
 //Profils
 import Pic01 from "@/images/profils/01.jpg";
 import Pic02 from "@/images/profils/02.jpg";
@@ -291,7 +290,7 @@ export function Header(props) {
 export function RightBar(props) {
   const [notif, setNotif] = useState(false);
   return (
-    <section className="mb-4 hidden h-screen w-[22rem] justify-between border-l border-tx03 px-5 py-8 lg:flex">
+    <section className="mb-4 hidden h-screen w-[22rem] items-center justify-between border-l border-tx03 px-5 py-8 lg:flex">
       {props.menu}
     </section>
   );
@@ -310,32 +309,43 @@ export function MenuBar(props) {
   );
 }
 
-export function Rank({ index, ...props }) {
+export function Rank({ index, first, ...props }) {
   return (
     <div
       className={clsx(
-        "my-1 flex w-full items-center sm:my-3",
+        "flex w-full items-center",
         index && "text-tx05",
+        !first && "my-1 sm:my-3",
+        first && "sticky top-0 border-b border-tx03 bg-bg01",
       )}
     >
-      <div className="mr-2 w-2 text-xs xs:text-base sm:w-3 sm:text-xl ">
+      <div
+        className={clsx(
+          "mr-2 w-4 text-center text-xs xs:mr-3 xs:text-base sm:mr-4 sm:w-3 sm:text-xl",
+          first && "invisible",
+        )}
+      >
         {props.pos}
       </div>
       <div
         className={clsx(
-          " flex w-full items-center justify-between rounded-xl border border-tx02 p-[2px] pr-4",
+          "flex w-full items-center justify-between rounded-full border border-tx02 p-1 xs:pr-4",
           index && "border-tx06",
+          first && "border-0 text-tx02",
         )}
       >
         <Image
-          className="mr-2 h-7 w-7  rounded-full object-cover xs:ml-2 xs:h-10 xs:w-10 sm:ml-4 sm:mr-10 md:h-16 md:w-16"
+          className={clsx(
+            "sm-h:h-12 sm-h:w-12 md-h:h-14 md-h:w-14 mr-2 h-7 w-7 rounded-full  object-cover xs:m-1 xs:h-10 xs:w-10 sm:mr-12",
+            first && "invisible",
+          )}
           src={props.pic}
           quality={100}
         />
-        <div className="w-24 text-left">{props.name}</div>
-        <div className="w-9 text-center">{props.games}</div>
-        <div className="w-9 text-center">{props.rate}</div>
-        <div className="w-9 text-center">{props.level}</div>
+        <div className="w-20 text-left sm:w-28">{props.name}</div>
+        <div className="w-9 text-center xs:w-11 sm:w-16">{props.rate}</div>
+        <div className="w-9 text-center xs:w-11 sm:w-16">{props.games}</div>
+        <div className="w-9 text-center xs:w-11 sm:w-16">{props.level}</div>
       </div>
     </div>
   );
