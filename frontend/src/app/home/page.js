@@ -550,7 +550,7 @@ export default function Home() {
           />
         </div>
 
-        <div className="no-scrollbar px-2 flex flex-1 flex-col justify-between overflow-auto xs:px-3 sm:px-5 lg:px-8 max-w-[1400px] mx-auto">
+        <div className="flex flex-1 flex-col justify-between max-w-[1400px] mx-auto overflow-hidden">
           <div className="xl:hidden z-10">
             <Header
               home={true}
@@ -558,7 +558,7 @@ export default function Home() {
             />
           </div>
 
-          <div className="flex flex-1 flex-col justify-between">
+          <div className="px-2 xs:px-3 sm:px-5 lg:px-8 flex flex-1 flex-col justify-between no-scrollbar overflow-auto">
             <ProfileInfo />
             <PlayRate />
             <Ranking />

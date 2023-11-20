@@ -351,18 +351,21 @@ export function Rank({ index, first, ...props }) {
   );
 }
 
-const icons = {
+export const status = {
   ONLINE: {
     name: "octicon:dot-fill-16",
     color: "text-[#24E5A5]",
+    border: "border-[1.5px] border-[#24E5A5]"
   },
   OFFLINE: {
     name: "octicon:dot-fill-16",
     color: "text-tx03",
+    border: "border-[1.5px] border-tx01"
   },
   INGAME: {
     name: "arcticons:gameturbo",
     color: "text-[#EB5A3A]",
+    border: "border-[1.5px] border-[#EB5A3A]"
   },
 };
 
@@ -378,8 +381,8 @@ function Friend(props) {
         <div className="font-extralight tracking-widest">{props.name}</div>
       </div>
       <Icon
-        className={clsx("h-5 w-5", icons[props.status].color)}
-        icon={icons[props.status].name}
+        className={clsx("h-5 w-5", status[props.status].color)}
+        icon={status[props.status].name}
       />
     </div>
   );
@@ -387,7 +390,7 @@ function Friend(props) {
 
 export function Friends(props) {
   return (
-    <div className="no-scrollbar w-full overflow-auto rounded-3xl border-y border-tx02 lg:mb-14">
+    <div className="no-scrollbar h-full w-full overflow-auto rounded-3xl border-y border-tx02 lg:mb-14">
       <div className="sticky top-0 flex items-center justify-between bg-bg01 px-2 py-5 pb-2 text-base capitalize tracking-[3px] text-tx02">
         <div>friends</div>
         <Icon className="h-6 w-6" icon="ph:caret-up-down-bold" />

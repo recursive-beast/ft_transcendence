@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  Title,
-  Header,
-  RightBar,
-  Rank,
-} from "@/components/common";
+import { Title, Header, RightBar, Rank } from "@/components/common";
 import clsx from "clsx";
 import Image from "next/image";
 import { Icon } from "@iconify/react";
@@ -24,7 +19,7 @@ import Pic15 from "@/images/profils/15.jpg";
 
 function LeaderMenu(props) {
   return (
-    <div className="grid h-[35rem] w-72 grid-rows-4 items-center justify-center justify-items-center rounded-2xl border border-t-0 border-tx01 bg-gradient-to-t from-tx02/80 px-1 py-10 text-tx05 md-h:h-[40rem]">
+    <div className="md-h:h-[40rem] grid h-[35rem] w-full grid-rows-4 items-center justify-center justify-items-center rounded-2xl border border-t-0 border-tx01 bg-gradient-to-t from-tx02/80 px-1 py-10 text-tx05">
       {/* pic */}
       <div>
         <Image
@@ -75,6 +70,14 @@ function Ranking(props) {
         rate="rate"
         level="level"
         first
+      />
+      <Rank
+        pos="4"
+        pic={Pic02}
+        name="MichaJohnson"
+        games="98"
+        rate="63%"
+        level="9"
       />
       <Rank
         pos="5"
@@ -246,7 +249,7 @@ function Place({ className, index, ...props }) {
       <div>
         <Icon
           className="h-5 w-5 xs:h-6 xs:w-6 sm:h-8 sm:w-8 lg:h-9 lg:w-9"
-          icon="pepicons-pencil:trophy-circle"
+          icon={props.place}
         />
       </div>
     </div>
@@ -265,6 +268,7 @@ function FirstPlaces(props) {
         games="99"
         up="78%"
         level="10"
+        place="tabler:circle-3-filled"
       />
       <Place
         className="mb-4 h-32 w-[90px] bg-gradient-to-t from-[#F1B31C]/50 text-[#F1B31C] xs:h-44 xs:w-[122px] sm:h-56 sm:w-44 xl:h-60 xl:w-48"
@@ -274,6 +278,7 @@ function FirstPlaces(props) {
         games="105"
         up="78%"
         level="11"
+        place="tabler:circle-1-filled"
       />
       <Place
         className="h-28 w-20 bg-gradient-to-t from-[#CD7F32]/50 text-[#CD7F32] xs:h-40 xs:w-28 sm:h-52 sm:w-40 xl:h-56 xl:w-44"
@@ -283,6 +288,7 @@ function FirstPlaces(props) {
         games="102"
         up="75%"
         level="10"
+        place="tabler:circle-2-filled"
       />
     </div>
   );
@@ -299,7 +305,7 @@ export default function Home() {
           <Header />
         </div>
 
-        <div className="px-2 flex flex-1 flex-col xs:px-3 sm:px-5 lg:px-8 max-w-[1400px] mx-auto">
+        <div className="mx-auto flex max-w-[1400px] flex-1 flex-col px-2 xs:px-3 sm:px-5 lg:px-8">
           {/* content */}
           <div className="xl:hidden">
             <Header />
