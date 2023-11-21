@@ -41,7 +41,7 @@ export class UserController {
     @CurrentUser() user: UserEntity,
     @UploadedFile(ParseFilePipe) file: Express.Multer.File,
   ) {
-    return { data: await this.userService.setAvatar(user.id, file.path) };
+    return { data: await this.userService.setAvatar(user.id, file) };
   }
 
   @Patch('me')
