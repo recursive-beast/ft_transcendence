@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { PrismaModule } from 'nestjs-prisma';
@@ -11,6 +12,7 @@ import { OTPGuard } from './otp.guard';
 import { FortyTwoStrategy } from './strategies/42.strategy';
 import { GoogleStrategy } from './strategies/google.strategy';
 import { JWTStrategy } from './strategies/jwt.strategy';
+import { TokenErrorFilter } from './token-error.filter';
 
 @Module({
   imports: [
@@ -31,8 +33,18 @@ import { JWTStrategy } from './strategies/jwt.strategy';
     JWTStrategy,
     GoogleStrategy,
     AuthService,
-    JWTGuard,
-    OTPGuard,
+    {
+      provide: APP_FILTER,
+      useClass: TokenErrorFilter,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: JWTGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: OTPGuard,
+    },
   ],
   controllers: [AuthController],
   exports: [AuthService],
