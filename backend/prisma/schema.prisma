@@ -85,11 +85,12 @@ model GroupMember {
 }
 
 model GroupConversation {
-    id          Int           @id @default(autoincrement())
-    title       String        @unique()
-    banned      User[]
-    members     GroupMember[]
-    messages    Message[]
-    createdAt   DateTime      @default(now())
-    updatedAt   DateTime      @updatedAt
+    id        Int           @id @default(autoincrement())
+    title     String        @unique()
+    avatar    String
+    banned    User[]
+    members   GroupMember[]
+    messages  Message[]
+    createdAt DateTime      @default(now())
+    updatedAt DateTime      @updatedAt
 }

@@ -6,6 +6,7 @@ import { GroupConversationEntity } from 'src/common/entities/group-conversation.
 import { GroupMemberEntity } from 'src/common/entities/group-member.entity';
 import { roleType } from '@prisma/client';
 import { now } from 'lodash';
+import { connect } from 'http2';
 
 @Injectable()
 export class GroupService {
@@ -80,8 +81,7 @@ export class GroupService {
           where: { id: toUnbanId },
           data: { bannedFromGroups: { disconnect: { id: channelId } } },
         });
-      }
-      else {
+      } else {
         throw new BadRequestException('Invalid permissions');
       }
     }
@@ -135,6 +135,40 @@ export class GroupService {
     }
   }
 
+  async addNewMembers(admineId: number, channelId: number, members: number[]) {
+    const admin = await this.findMember(channelId, admineId);
+    if (admin.role === roleType.OWNER || admin.role === roleType.ADMIN) {
+      for (let index = 0; index < members.length; index++) {
+        const element = members[index];
+        const toAdd = await this.prismaService.user.findFirst({
+          where: { id: element },
+        });
+        if (!toAdd) continue;
+        await this.prismaService.groupMember.create({
+          data: {
+            user: { connect: { id: element } },
+            groupConversation: { connect: { id: channelId } },
+          },
+        });
+      }
+    }
+  }
+
+  async leaveChannel(userId: number, channelId: number) {
+    const member = await this.findMember(channelId, userId);
+    if (member) {
+      await this.prismaService.groupMember.delete({
+        where: {id: member.id,}
+      })
+    }
+  }
+
+  async setChannelAvatar(id: number, filepath: string) {
+    const updated = await this.prismaService.groupConversation.update({
+      where: { id: id, },
+      data: { avatar: filepath },
+    });
+  }
   async findManyChannels(userId: number) {
     const channels = await this.prismaService.groupConversation.findMany({
       where: {
