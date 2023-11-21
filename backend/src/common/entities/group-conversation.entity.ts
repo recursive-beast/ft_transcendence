@@ -5,11 +5,14 @@ import { GroupMemberEntity } from './group-member.entity';
 
 export class GroupConversationEntity implements GroupConversation {
   @Expose()
+  avatar: string;
+
+  @Expose()
   id: number;
 
   @Expose()
   title: string;
-  
+
   @Expose()
   @Type(() => MessageEntity)
   messages?: MessageEntity[];
