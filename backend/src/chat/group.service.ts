@@ -171,9 +171,8 @@ export class GroupService {
       where: { id },
       data: { avatar: url },
       include: {
-        members: true,
         messages: true,
-        banned: true,
+        members: { include: { user: true } },
       },
     });
 
@@ -197,8 +196,8 @@ export class GroupService {
         },
       },
       include: {
-        members: true,
         messages: true,
+        members: { include: { user: true } },
       },
     });
 
@@ -214,7 +213,7 @@ export class GroupService {
       },
       include: {
         messages: true,
-        members: true,
+        members: { include: { user: true } },
       },
     });
     return GroupConversationEntity.fromGroupConversation(channels);
@@ -231,7 +230,7 @@ export class GroupService {
         },
         include: {
           messages: true,
-          members: true,
+          members: { include: { user: true } },
         },
       });
     return GroupConversationEntity.fromGroupConversation(channel);
