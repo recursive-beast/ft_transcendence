@@ -87,7 +87,7 @@ model GroupMember {
 model GroupConversation {
     id        Int           @id @default(autoincrement())
     title     String        @unique()
-    avatar    String
+    avatar    String?
     banned    User[]
     members   GroupMember[]
     messages  Message[]

@@ -5,12 +5,14 @@ import { GroupMessageDTO } from './dto/group-message.dto';
 import { GroupConversationEntity } from 'src/common/entities/group-conversation.entity';
 import { GroupMemberEntity } from 'src/common/entities/group-member.entity';
 import { roleType } from '@prisma/client';
-import { now } from 'lodash';
-import { connect } from 'http2';
+import { CommonService } from 'src/common/common.service';
 
 @Injectable()
 export class GroupService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(
+    private prismaService: PrismaService,
+    private commonService: CommonService,
+  ) {}
 
   async sendMessage(senderId: number, dto: GroupMessageDTO) {
     const message = await this.prismaService.message.create({
@@ -158,17 +160,51 @@ export class GroupService {
     const member = await this.findMember(channelId, userId);
     if (member) {
       await this.prismaService.groupMember.delete({
-        where: {id: member.id,}
-      })
+        where: { id: member.id },
+      });
     }
   }
 
-  async setChannelAvatar(id: number, filepath: string) {
+  async setChannelAvatar(id: number, file: Express.Multer.File) {
+    const url = await this.commonService.saveAvatar(`channel-${id}`, file);
     const updated = await this.prismaService.groupConversation.update({
-      where: { id: id, },
-      data: { avatar: filepath },
+      where: { id },
+      data: { avatar: url },
+      include: {
+        members: true,
+        messages: true,
+        banned: true,
+      },
     });
+
+    return GroupConversationEntity.fromGroupConversation(updated);
   }
+
+  async createChannel(ownerId: number, title: string, members: number[]) {
+    members = [...members, ownerId];
+    members = Array.from(new Set(members));
+
+    const channel = await this.prismaService.groupConversation.create({
+      data: {
+        title: title,
+        members: {
+          createMany: {
+            data: members.map((id) => ({
+              userId: id,
+              role: id === ownerId ? roleType.OWNER : roleType.MEMBER,
+            })),
+          },
+        },
+      },
+      include: {
+        members: true,
+        messages: true,
+      },
+    });
+
+    return GroupConversationEntity.fromGroupConversation(channel);
+  }
+
   async findManyChannels(userId: number) {
     const channels = await this.prismaService.groupConversation.findMany({
       where: {

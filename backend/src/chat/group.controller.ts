@@ -1,7 +1,19 @@
-import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
-import { GroupService } from './group.service';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseFilePipe,
+  ParseIntPipe,
+  Post,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { CurrentUser } from 'src/auth/current-user.decorator';
 import { UserEntity } from 'src/common/entities/user.entity';
+import { GroupCreateDTO } from './dto/group-create.dto';
+import { GroupService } from './group.service';
 
 @Controller('chat/group')
 export class GroupController {
@@ -10,6 +22,28 @@ export class GroupController {
   @Get()
   index(@CurrentUser() user: UserEntity) {
     return this.groupService.findManyChannels(user.id);
+  }
+
+  @Post()
+  async create(@CurrentUser() user: UserEntity, @Body() dto: GroupCreateDTO) {
+    return {
+      data: await this.groupService.createChannel(
+        user.id,
+        dto.title,
+        dto.members,
+      ),
+    };
+  }
+
+  @UseInterceptors(FileInterceptor('avatar'))
+  @Post(':id')
+  async avatar(
+    @UploadedFile(ParseFilePipe) file: Express.Multer.File,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return {
+      data: await this.groupService.setChannelAvatar(id, file),
+    };
   }
 
   @Get(':id')

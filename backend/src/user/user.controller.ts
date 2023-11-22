@@ -6,7 +6,7 @@ import {
   ParseFilePipe,
   ParseIntPipe,
   Patch,
-  Put,
+  Post,
   Query,
   SerializeOptions,
   UploadedFile,
@@ -36,7 +36,7 @@ export class UserController {
   }
 
   @UseInterceptors(FileInterceptor('avatar'))
-  @Put('me/avatar')
+  @Post('me/avatar')
   async avatar(
     @CurrentUser() user: UserEntity,
     @UploadedFile(ParseFilePipe) file: Express.Multer.File,

@@ -18,7 +18,7 @@ export class CommonService {
 
     await fs.mkdir(directory, { recursive: true });
 
-    try {
+    try {      
       await sharp(file.path).resize(300, 300).toFile(fullpath);
     } catch (error) {
       throw new BadRequestException('Invalid image');
