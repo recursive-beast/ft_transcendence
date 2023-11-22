@@ -1,5 +1,7 @@
 import { GroupMember, roleType } from '@prisma/client';
-import { Expose, Transform, Type, plainToInstance } from 'class-transformer';
+import { Exclude, Expose, Transform, Type, plainToInstance } from 'class-transformer';
+import { GroupConversationEntity } from './group-conversation.entity';
+import { UserEntity } from './user.entity';
 
 export class GroupMemberEntity implements GroupMember {
 
@@ -9,11 +11,19 @@ export class GroupMemberEntity implements GroupMember {
   @Expose()
   id: number;
   
-  @Expose()
+  @Exclude()
   groupConversationId: number;
-  
+
   @Expose()
+  @Type(() => GroupConversationEntity)
+  groupConversation: GroupConversationEntity;
+  
+  @Exclude()
   userId: number;
+
+  @Expose()
+  @Type(() => UserEntity)
+  user: UserEntity;
 
   @Expose()
   role: roleType;
