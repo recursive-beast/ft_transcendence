@@ -34,6 +34,7 @@ export class GroupGateway {
 
   @SubscribeMessage('channel.join')
   joinRoom(client: Socket, id: number) {
+    this.groupconversationService.findMember(id, client.data.id);
     client.join(`channel-${id}`);
   }
   
@@ -54,5 +55,11 @@ export class GroupGateway {
     this.groupconversationService.kickSomeone(client.data.id, data.userId, data.channelId);
     this.server.in(`channel-${data.channelId}`).socketsLeave(`user-${data.userId}`);
     this.server.to(`user-${data.userId}`).emit("channel.kicked", data.channelId);
+  }
+  
+  @SubscribeMessage('channel.mute')
+  getMutedFromChannel(client: Socket, @MessageBody() data: {channelId: number, userId: number}) {
+    this.groupconversationService.muteSomeone(client.data.id, data.userId, data.channelId);
+    this.server.to(`user-${data.userId}`).emit("channel.muted", data.channelId);
   }
 }
