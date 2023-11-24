@@ -32,11 +32,11 @@ import {
 
 faker.seed(2);
 
-const conversations = Array(50)
+const conversations = Array(20)
   .fill()
   .map(() => ({
     avatar: faker.internet.avatar(),
-    messages: Array(50)
+    messages: Array(30)
       .fill()
       .map(() => ({
         text: faker.lorem.sentence({ min: 3, max: 8 }),
@@ -49,7 +49,7 @@ const conversations = Array(50)
     status: faker.helpers.arrayElement(["ONLINE", "OFFLINE", "INGAME"]),
   }));
 
-const groups = Array(15)
+const groups = Array(10)
   .fill()
   .map(() => ({
     avatar: faker.internet.avatar(),
@@ -57,12 +57,15 @@ const groups = Array(15)
       .fill()
       .map(() => ({
         text: faker.lorem.sentence({ min: 3, max: 15 }),
-        sent: faker.datatype.boolean(),
+        sent: faker.datatype.boolean(0.3),
         date: faker.date.recent(),
+        user: faker.internet.displayName(),
+        status: faker.helpers.arrayElement(["ONLINE", "OFFLINE", "INGAME"]),
+        avatar: faker.internet.avatar(),
       })),
     members: faker.number.int({ min: 3, max: 8 }),
     displayName: faker.internet.displayName(),
-    status: faker.helpers.arrayElement(["ONLINE", "OFFLINE", "INGAME"]),
+    status: "OFFLINE",
   }));
 
 function GroupMessage(props) {
@@ -82,22 +85,22 @@ function GroupMessage(props) {
               {/* avatar */}
               <Image
                 className="mr-2 h-12 w-12 flex-none rounded-full border-[1.5px] border-tx02 object-cover p-[2px] xs:mr-3 xs:h-14 xs:w-14"
-                // src={group.avatar}
-                src={Pic03}
+                src={group.avatar}
+                // src={Pic03}
                 quality={100}
                 width={56}
                 height={56}
               />
 
               {/* Group name and lastMessage time */}
-              <div className="flex flex-grow flex-col w-10">
+              <div className="flex w-10 flex-grow flex-col">
                 {/* name */}
                 <div className="truncate text-sm tracking-wide xs:text-base xs:tracking-widest">
                   {group.displayName}
                 </div>
 
                 {/* lastMessage */}
-                <div className="truncate text-xs xs:text-sm text-tx02">
+                <div className="truncate text-xs text-tx02 xs:text-sm">
                   {formatDistanceToNowStrict(group.messages.at(-1).date, {
                     addSuffix: true,
                   })}
@@ -161,8 +164,8 @@ function DirectMessage(props) {
                   "mr-2 h-12 w-12 flex-none rounded-full object-cover p-[3px] xs:mr-3 xs:h-14 xs:w-14",
                   status[conversation.status].border,
                 )}
-                // src={conversation.avatar}
-                src={Pic03}
+                src={conversation.avatar}
+                // src={Pic03}
                 quality={100}
                 width={56}
                 height={56}
@@ -189,7 +192,7 @@ function DirectMessage(props) {
                 {/* div contain last Message end nbrMessages */}
                 <div className="flex items-center">
                   {/* lastMessage */}
-                  <div className="w-10 flex-grow truncate text-xs xs:text-sm text-tx02">
+                  <div className="w-10 flex-grow truncate text-xs text-tx02 xs:text-sm">
                     {conversation.messages.at(-1).text}
                   </div>
 
@@ -233,61 +236,102 @@ function BoxMessages({ onClick, ...props }) {
   );
 }
 
-function ConversationBox(props) {
+function ConversationBox({ onClick, ...props }) {
   return (
-    <div className="no-scrollbar hidden h-full flex-1 flex-col justify-between overflow-auto sm:flex sm:bg-bg02">
+    <div
+      className={clsx(
+        !props.conversation && "hidden sm:flex",
+        "no-scrollbar flex h-full w-full flex-1 flex-col justify-between overflow-auto sm:bg-bg02",
+      )}
+    >
       {props.conversation ? (
-        <div>
+        <div className="flex flex-1 flex-col">
           {/* top bar, friend info */}
-          <button className="sticky top-0 flex h-16 w-full items-center border-b bg-bg03 py-2">
-            {/* avatar */}
-            <Image
-              className={clsx(
-                "mx-4 my-1 h-[52px] w-[52px] rounded-full object-cover p-[2px]",
-                props.conversation && status[props.conversation.status].border,
-              )}
-              src={Pic15}
-              quality={100}
-            />
+          <div className="sticky top-0 flex h-16 w-full items-center space-x-4 border-b bg-bg03 py-2">
+            {/* return */}
+            <button onClick={onClick}>
+              <Icon
+                className="ml-3 h-9 w-9 text-tx01"
+                icon="solar:arrow-left-broken"
+              />
+            </button>
 
-            <div className="flex flex-col items-start">
-              {/* full name */}
-              <div className="text-base font-semibold capitalize tracking-[widest] text-tx05 sm:tracking-[3px]">
-                {props.conversation && props.conversation.displayName}
-              </div>
+            {/* friend info */}
+            <button className="flex flex-grow items-center">
+              {/* avatar */}
+              <Image
+                className={clsx(
+                  "my-1 mr-2 h-[52px] w-[52px] rounded-full object-cover p-[2px]",
+                  props.conversation &&
+                    status[props.conversation.status].border,
+                )}
+                src={props.conversation.avatar}
+                quality={100}
+                width={56}
+                height={56}
+              />
 
-              <div className="text-[10px] font-light capitalize text-tx02 md:text-[14px]">
-                Click here to visit profile
+              <div className="flex flex-col items-start">
+                {/* full name */}
+                <div className="text-base font-semibold capitalize tracking-[widest] text-tx05 sm:tracking-[3px]">
+                  {props.conversation && props.conversation.displayName}
+                </div>
+
+                <div className="text-[10px] font-light capitalize text-tx02 md:text-[14px]">
+                  Click here to visit profile
+                </div>
               </div>
-            </div>
-          </button>
+            </button>
+          </div>
 
           {/* conversation */}
-          <div>
+          <div className="flex grow flex-col justify-end">
             {props.conversation &&
               props.conversation.messages.map((message) => {
                 return (
-                  <div
-                    className={clsx(
-                      "my-3 flex w-fit max-w-[70%] flex-col rounded-lg px-2 py-[2px] 2xl:py-1",
-                      message.sent
-                        ? "ml-auto mr-5 rounded-tr-none bg-tx03"
-                        : "ml-5 mr-auto rounded-tl-none bg-tx02",
+                  <div className="my-3 flex items-start">
+                    {props.group && !message.sent && (
+                      <Image
+                        className={clsx(
+                          "ml-1 h-7 w-7 rounded-full object-cover",
+                          status[message.status].border,
+                        )}
+                        src={message.avatar}
+                        quality={100}
+                        width={56}
+                        height={56}
+                      />
                     )}
-                  >
-                    <span>{message.text}</span>
-                    <span
-                      className={clsx(
-                        "ml-auto text-xs",
-                        message.sent ? "text-tx02" : "text-tx03",
+                    <div className="flex w-full flex-col space-y-1">
+                      {props.group && !message.sent && (
+                        <div className="ml-1 mt-1 text-xs text-tx05">
+                          {message.user}
+                        </div>
                       )}
-                    >
-                      {isToday(message.date)
-                        ? format(message.date, "HH:mm")
-                        : isYesterday(message.date)
-                        ? "yesterday " + format(message.date, "HH:mm")
-                        : format(message.date, "yyyy/MM/dd HH:mm")}
-                    </span>
+                      <div
+                        className={clsx(
+                          " flex w-fit max-w-[70%] flex-col rounded-lg px-2 py-[2px] 2xl:py-1",
+                          message.sent
+                            ? "ml-auto mr-5 rounded-tr-none bg-tx03"
+                            : "mr-auto rounded-tl-none bg-tx02",
+                          props.group ? "ml-1" : "ml-5",
+                        )}
+                      >
+                        <span>{message.text}</span>
+                        <span
+                          className={clsx(
+                            "ml-auto text-xs",
+                            message.sent ? "text-tx02" : "text-tx03",
+                          )}
+                        >
+                          {isToday(message.date)
+                            ? format(message.date, "HH:mm")
+                            : isYesterday(message.date)
+                            ? "yesterday " + format(message.date, "HH:mm")
+                            : format(message.date, "yyyy/MM/dd HH:mm")}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 );
               })}
@@ -325,6 +369,7 @@ function ConversationBox(props) {
 export default function Home() {
   const [directMsg, setDirectMsg] = useState(true);
   const [groupMsg, setGroupMsg] = useState(true);
+  const [group, setGroup] = useState(false);
   const [conversation, setConversation] = useState(null);
 
   return (
@@ -347,14 +392,19 @@ export default function Home() {
           <div className="flex h-96 flex-1 bg-bg01 p-3 sm:p-5">
             {/* Messages */}
             <div
-              className="flex h-full flex-grow flex-col space-y-2 border-tx03 bg-bg02 
-             sm:w-[45%] sm:max-w-[25rem] sm:flex-none sm:border-r md:w-1/2"
+              className={clsx(
+                conversation && "hidden sm:flex",
+                "flex h-full flex-grow flex-col space-y-2 border-tx03 bg-bg02",
+                "sm:w-[45%] sm:max-w-[25rem] sm:flex-none sm:border-r md:w-1/2",
+              )}
             >
               {/* Direct Msgs */}
               <BoxMessages
                 onClick={() => {
-                  setDirectMsg(true);
-                  setGroupMsg(false);
+                  directMsg && groupMsg
+                    ? setGroupMsg(false)
+                    : setGroupMsg(true);
+                  !directMsg ? setDirectMsg(true) : undefined;
                 }}
                 activ={directMsg}
                 title="Direct Messages"
@@ -363,9 +413,10 @@ export default function Home() {
                 }
                 messages={
                   <DirectMessage
-                    onConversation={(conversation) =>
-                      setConversation(conversation)
-                    }
+                    onConversation={(conversation) => {
+                      setConversation(conversation);
+                      setGroup(false);
+                    }}
                   />
                 }
               />
@@ -373,8 +424,10 @@ export default function Home() {
               {/* Group Msgs */}
               <BoxMessages
                 onClick={() => {
-                  setDirectMsg(false);
-                  setGroupMsg(true);
+                  groupMsg && directMsg
+                    ? setDirectMsg(false)
+                    : setDirectMsg(true);
+                  !groupMsg ? setGroupMsg(true) : undefined;
                 }}
                 activ={groupMsg}
                 title="Group Messages"
@@ -383,16 +436,23 @@ export default function Home() {
                 }
                 messages={
                   <GroupMessage
-                    onConversation={(conversation) =>
-                      setConversation(conversation)
-                    }
+                    onConversation={(conversation) => {
+                      setConversation(conversation);
+                      setGroup(true);
+                    }}
                   />
                 }
               />
             </div>
 
             {/* conversation */}
-            <ConversationBox conversation={conversation} />
+            <ConversationBox
+              conversation={conversation}
+              group={group}
+              onClick={() => {
+                setConversation(null);
+              }}
+            />
           </div>
         </div>
 
