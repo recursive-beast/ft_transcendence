@@ -15,16 +15,18 @@ export class GroupService {
   ) {}
 
   async sendMessage(senderId: number, dto: GroupMessageDTO) {
-    const message = await this.prismaService.message.create({
-      data: {
-        sender: { connect: { id: senderId } },
-        text: dto.text,
-        groupConversation: { connect: { id: dto.groupConversationId } },
-      },
-      include: { groupConversation: true },
-    });
-
-    return MessageEntity.fromMessage(message);
+    const member = await this.findMember(dto.groupConversationId, senderId);
+    if (member) {
+      const message = await this.prismaService.message.create({
+        data: {
+          sender: { connect: { id: senderId } },
+          text: dto.text,
+          groupConversation: { connect: { id: dto.groupConversationId } },
+        },
+        include: { groupConversation: true },
+      });
+      return MessageEntity.fromMessage(message);
+    }
   }
 
   async findMember(channelId: number, userId: number) {

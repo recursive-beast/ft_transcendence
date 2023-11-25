@@ -7,6 +7,7 @@ import { DirectController } from './direct.controller';
 import { DirectGateway } from './direct.gateway';
 import { DirectService } from './direct.service';
 import { GroupController } from './group.controller';
+import { GroupGateway } from './group.gateway';
 import { GroupService } from './group.service';
 
 @Module({
@@ -16,6 +17,6 @@ import { GroupService } from './group.service';
     PrismaModule,
     CommonModule,
   ],
-  providers: [DirectService, DirectGateway, GroupService],
+  providers: [DirectService, DirectGateway, GroupService, GroupGateway],
 })
 export class ChatModule {}
