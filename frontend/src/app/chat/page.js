@@ -212,7 +212,7 @@ function DirectMessage(props) {
   );
 }
 
-function BoxMessages({ onClick, ...props }) {
+function BoxMessages({ onGroupClick, onClick, ...props }) {
   return (
     <div
       className={clsx(
@@ -221,14 +221,28 @@ function BoxMessages({ onClick, ...props }) {
       )}
     >
       <div className="no-scrollbar h-full overflow-auto">
-        <button
-          className="sticky top-0 flex h-14 w-full items-center justify-between border-b border-tx01 bg-bg03
-            px-2 py-4 text-base capitalize tracking-[3px] text-tx02 sm:h-16"
-          onClick={onClick}
+        <div
+          className="sticky top-0 flex h-14 w-full items-center justify-between space-x-3
+            border-b border-tx01 bg-bg03 px-2 sm:h-16"
         >
-          <div>{props.title}</div>
-          <div>{props.iconBtn}</div>
-        </button>
+          <button
+            className="h-full flex-grow text-left text-base capitalize tracking-[3px] text-tx02"
+            onClick={onClick}
+          >
+            <div>{props.title}</div>
+          </button>
+          {props.group && (
+            <button
+              className="texe-tx02 hover:text-tx01"
+              onClick={onGroupClick}
+            >
+              <Icon
+                className="mr-1 h-6 w-6"
+                icon="solar:pen-new-square-broken"
+              />
+            </button>
+          )}
+        </div>
 
         {props.activ && props.messages}
       </div>
@@ -236,7 +250,31 @@ function BoxMessages({ onClick, ...props }) {
   );
 }
 
+function Option(props) {
+  return (
+    <button className="flex items-center border-b border-tx02 py-3 text-tx02 last:border-0 hover:text-tx01">
+      <Icon className="ml-4 mr-3 h-6 w-6" icon={props.icon} />
+      <div className="mr-4 grow font-light uppercase tracking-wider">
+        {props.title}
+      </div>
+    </button>
+  );
+}
+
+function Options() {
+  return (
+    <div className="absolute right-5 top-full rounded-lg border border-tx01 bg-bg02 ">
+      {/* new game */}
+      <Option title="new game" icon="solar:gamepad-broken" />
+
+      {/* block */}
+      <Option title="block" icon="solar:user-block-rounded-broken" />
+    </div>
+  );
+}
+
 function ConversationBox({ onClick, ...props }) {
+  const [options, setOptions] = useState(false);
   return (
     <div
       className={clsx(
@@ -247,11 +285,11 @@ function ConversationBox({ onClick, ...props }) {
       {props.conversation ? (
         <div className="flex flex-1 flex-col">
           {/* top bar, friend info */}
-          <div className="sticky top-0 flex h-16 w-full items-center space-x-4 border-b bg-bg03 py-2">
+          <div className="sticky top-0 flex h-14 w-full items-center space-x-2 border-b bg-bg03 py-2 xs:h-16 sm:space-x-4">
             {/* return */}
             <button onClick={onClick}>
               <Icon
-                className="ml-3 h-9 w-9 text-tx01"
+                className="ml-1 h-8 w-8 text-tx01 xs:ml-2 xs:h-9 xs:w-9 sm:ml-3"
                 icon="solar:arrow-left-broken"
               />
             </button>
@@ -261,7 +299,7 @@ function ConversationBox({ onClick, ...props }) {
               {/* avatar */}
               <Image
                 className={clsx(
-                  "my-1 mr-2 h-[52px] w-[52px] rounded-full object-cover p-[2px]",
+                  "my-1 mr-2 h-11 w-11 rounded-full object-cover p-[1px] xs:h-[52px] xs:w-[52px] xs:p-[2px] lg:mr-3",
                   props.conversation &&
                     status[props.conversation.status].border,
                 )}
@@ -273,15 +311,30 @@ function ConversationBox({ onClick, ...props }) {
 
               <div className="flex flex-col items-start">
                 {/* full name */}
-                <div className="text-base font-semibold capitalize tracking-[widest] text-tx05 sm:tracking-[3px]">
+                <div className="text-sm font-semibold capitalize tracking-[widest] text-tx05 xs:text-base sm:tracking-[3px]">
                   {props.conversation && props.conversation.displayName}
                 </div>
 
-                <div className="text-[10px] font-light capitalize text-tx02 md:text-[14px]">
+                <div className="text-[8px] font-light capitalize text-tx02 xs:text-[10px] md:text-[14px]">
                   Click here to visit profile
                 </div>
               </div>
             </button>
+
+            {/* options */}
+            <div>
+              <button
+                onClick={() => {
+                  setOptions(!options);
+                }}
+              >
+                <Icon
+                  className="mr-3 h-6 w-6 text-tx01 sm:h-7 sm:w-8"
+                  icon="circum:menu-kebab"
+                />
+              </button>
+              {options && <Options />}
+            </div>
           </div>
 
           {/* conversation */}
@@ -338,12 +391,12 @@ function ConversationBox({ onClick, ...props }) {
           </div>
 
           {/* input message */}
-          <div className="sticky bottom-0 flex w-full  items-center space-x-3 bg-bg03 px-5 py-3">
-            <input className=" h-8 flex-1 rounded-xl bg-tx02 text-base font-extralight xs:text-xl" />
+          <div className="sticky bottom-0 flex w-full  items-center space-x-3 bg-bg03 px-3 py-2 xs:py-3 sm:px-5">
+            <input className="h-7 flex-1 rounded-xl bg-tx02 text-base font-extralight xs:h-8 xs:text-xl" />
 
             <button>
               <Icon
-                className=" h-7 w-7 text-tx01"
+                className="h-6 w-6 text-tx01 sm:h-7 sm:w-7"
                 icon="fluent:send-32-filled"
               />
             </button>
@@ -354,7 +407,9 @@ function ConversationBox({ onClick, ...props }) {
         <div className="flex h-full flex-col items-center justify-center gap-6">
           <Image src={logoPic} alt="Logo of the game" className="h-52 w-52" />
 
-          <div className="text-3xl font-extralight">Select Conversation</div>
+          <div className="text-center text-3xl font-extralight">
+            Select Conversation
+          </div>
 
           <div className="w-1/2 text-center text-sm text-tx02">
             No conversation selected. Please choose a conversation to start
@@ -366,10 +421,36 @@ function ConversationBox({ onClick, ...props }) {
   );
 }
 
+function NewGroup({ onGroupClick, ...props }) {
+  return (
+    <div
+      className="flex h-full flex-grow flex-col space-y-2 border-tx03 bg-bg02 sm:w-[45%]
+     sm:max-w-[25rem] sm:border-r xl:w-2/5 xl:flex-none"
+    >
+      <div
+        className="sticky top-0 flex h-14 w-full items-center space-x-3
+            border-b border-tx01 bg-bg03 px-2 sm:h-16"
+      >
+        {/* return */}
+        <button onClick={onGroupClick}>
+          <Icon
+            className="ml-1 h-8 w-8 text-tx01 xs:ml-2 xs:h-9 xs:w-9 sm:ml-3"
+            icon="solar:arrow-left-broken"
+          />
+        </button>
+        <div className="text-left text-base capitalize tracking-widest text-tx02 xs:text-lg xs:tracking-[3px]">
+          Add group members
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
   const [directMsg, setDirectMsg] = useState(true);
   const [groupMsg, setGroupMsg] = useState(true);
   const [group, setGroup] = useState(false);
+  const [newGroup, setNewGroup] = useState(false);
   const [conversation, setConversation] = useState(null);
 
   return (
@@ -390,60 +471,70 @@ export default function Home() {
 
           {/* content */}
           <div className="flex h-96 flex-1 bg-bg01 p-3 sm:p-5">
-            {/* Messages */}
-            <div
-              className={clsx(
-                conversation && "hidden sm:flex",
-                "flex h-full flex-grow flex-col space-y-2 border-tx03 bg-bg02",
-                "sm:w-[45%] sm:max-w-[25rem] sm:flex-none sm:border-r md:w-1/2",
-              )}
-            >
-              {/* Direct Msgs */}
-              <BoxMessages
-                onClick={() => {
-                  directMsg && groupMsg
-                    ? setGroupMsg(false)
-                    : setGroupMsg(true);
-                  !directMsg ? setDirectMsg(true) : undefined;
+            {newGroup ? (
+              <NewGroup
+                onGroupClick={() => {
+                  setNewGroup(false);
                 }}
-                activ={directMsg}
-                title="Direct Messages"
-                iconBtn={
-                  <Icon className="h-6 w-6" icon="ph:caret-up-down-bold" />
-                }
-                messages={
-                  <DirectMessage
-                    onConversation={(conversation) => {
-                      setConversation(conversation);
-                      setGroup(false);
-                    }}
-                  />
-                }
               />
+            ) : (
+              <div
+                className={clsx(
+                  conversation && "hidden xl:flex",
+                  "flex h-full flex-grow flex-col space-y-2 border-tx03 bg-bg02",
+                  "sm:w-[45%] sm:max-w-[25rem] sm:border-r xl:w-2/5 xl:flex-none",
+                )}
+              >
+                {/* Direct Msgs */}
+                <BoxMessages
+                  onClick={() => {
+                    directMsg && groupMsg
+                      ? setGroupMsg(false)
+                      : setGroupMsg(true);
+                    !directMsg ? setDirectMsg(true) : undefined;
+                  }}
+                  activ={directMsg}
+                  title="Direct Messages"
+                  // iconBtn={
+                  //   <Icon className="h-6 w-6" icon="ph:caret-up-down-bold" />
+                  // }
+                  messages={
+                    <DirectMessage
+                      onConversation={(conversation) => {
+                        setConversation(conversation);
+                        setGroup(false);
+                      }}
+                    />
+                  }
+                />
 
-              {/* Group Msgs */}
-              <BoxMessages
-                onClick={() => {
-                  groupMsg && directMsg
-                    ? setDirectMsg(false)
-                    : setDirectMsg(true);
-                  !groupMsg ? setGroupMsg(true) : undefined;
-                }}
-                activ={groupMsg}
-                title="Group Messages"
-                iconBtn={
-                  <Icon className="h-6 w-6" icon="ph:caret-up-down-bold" />
-                }
-                messages={
-                  <GroupMessage
-                    onConversation={(conversation) => {
-                      setConversation(conversation);
-                      setGroup(true);
-                    }}
-                  />
-                }
-              />
-            </div>
+                {/* Group Msgs */}
+                <BoxMessages
+                  onClick={() => {
+                    groupMsg && directMsg
+                      ? setDirectMsg(false)
+                      : setDirectMsg(true);
+                    !groupMsg ? setGroupMsg(true) : undefined;
+                  }}
+                  onGroupClick={() => {
+                    setNewGroup(true);
+                    setConversation(null);
+                  }}
+                  activ={groupMsg}
+                  title="Group Messages"
+                  group={true}
+                  messages={
+                    <GroupMessage
+                      onConversation={(conversation) => {
+                        setConversation(conversation);
+                        setGroup(true);
+                      }}
+                    />
+                  }
+                />
+              </div>
+            )}
+            {/* Messages */}
 
             {/* conversation */}
             <ConversationBox

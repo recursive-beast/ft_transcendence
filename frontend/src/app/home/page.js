@@ -122,11 +122,11 @@ function ProfileInfo(props) {
 
         <div className="flex flex-col">
           <div className="-mb-1 text-base font-extrabold uppercase text-tx02  xs:text-lg sm:text-xl">
-            welkome
+            welcome
           </div>
 
           <div className="text-base font-semibold capitalize tracking-widest text-tx05 xs:text-lg sm:text-xl sm:tracking-[3px]">
-            megashoot
+            {props.name}
           </div>
 
           <div className="text-[8px] font-light capitalize xs:text-xs sm:text-lg">
@@ -559,7 +559,7 @@ export default function Home() {
           </div>
 
           <div className="px-2 xs:px-3 sm:px-5 lg:px-8 flex flex-1 flex-col justify-between no-scrollbar overflow-auto">
-            <ProfileInfo />
+            <ProfileInfo name="megashoot"/>
             <PlayRate />
             <Ranking />
             <div>
