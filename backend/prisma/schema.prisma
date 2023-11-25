@@ -84,10 +84,18 @@ model GroupMember {
     seenAt              DateTime          @default(now())
 }
 
+enum groupType {
+    PUBLIC
+    PROTECTED
+    PRIVATE
+}
+
 model GroupConversation {
     id        Int           @id @default(autoincrement())
     title     String        @unique()
     avatar    String?
+    type      groupType     @default(PUBLIC)
+    password  String?
     banned    User[]
     members   GroupMember[]
     messages  Message[]

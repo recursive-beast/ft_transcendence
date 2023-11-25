@@ -56,6 +56,7 @@ export class GroupGateway {
     @ConnectedSocket() client: Socket,
     @MessageBody(ParseIntPipe) id: number,
   ) {
+    // this.groupconversationService.leaveChannel(client.data.id, id)
     client.leave(`channel-${id}`);
   }
 
@@ -75,6 +76,24 @@ export class GroupGateway {
     this.server
       .to(`user-${data.userId}`)
       .emit('channel.banned', data.channelId);
+  }
+
+  @SubscribeMessage('channel.add')
+  addMembersChannel(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: { channelId: number; members: number[] },
+  ) {
+    console.log(data);
+    this.groupconversationService.addNewMembers(
+      client.data.id,
+      data.channelId,
+      data.members,
+    );
+    for (let index = 0; index < data.members.length; index++) {
+      this.server
+        .to(`user-${data.members[index]}`)
+        .emit('channel.added', data.channelId);
+    }
   }
 
   @SubscribeMessage('channel.kick')
