@@ -49,6 +49,15 @@ const conversations = Array(20)
     status: faker.helpers.arrayElement(["ONLINE", "OFFLINE", "INGAME"]),
   }));
 
+const friendsList = Array(30)
+  .fill()
+  .map(() => ({
+    avatar: faker.internet.avatar(),
+    fullname: faker.person.fullName(),
+    displayName: faker.internet.displayName(),
+    status: faker.helpers.arrayElement(["ONLINE", "OFFLINE", "INGAME"]),
+  }));
+
 const groups = Array(10)
   .fill()
   .map(() => ({
@@ -421,27 +430,106 @@ function ConversationBox({ onClick, ...props }) {
   );
 }
 
+function FrList(props) {
+  return (
+    <div>
+      {friendsList.map((friend, index) => {
+        return (
+          <div key={index} className="flex border-b border-tx03 p-2">
+            {/* flex div contain avatar ans name */}
+            <div className="flex flex-1 items-center">
+              {/* avatar */}
+              <Image
+                className="mr-2 h-12 w-12 flex-none rounded-full border-[1.5px] border-tx02 object-cover p-[2px] xs:mr-3 xs:h-14 xs:w-14"
+                src={friend.avatar}
+                quality={100}
+                width={56}
+                height={56}
+              />
+
+              {/* friend name */}
+
+              <div className="truncate text-sm tracking-wide xs:text-base xs:tracking-widest">
+                {friend.displayName}
+              </div>
+            </div>
+            {/* Checkbox */}
+            <input className=" m-3" type="checkbox" />
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function CustomizeGroup() {
+  return (
+    <div className="mx-2">
+      <div className="flex h-full flex-col items-center justify-center gap-6">
+        <div className="text-center text-2xl font-light tracking-widest xs:text-3xl">
+          Customize Your Group
+        </div>
+
+        <div className=" text-center text-xs text-tx02 xs:text-sm">
+          Give your new group a personality with a name and an avatar. You can
+          always change it later.
+        </div>
+
+        <button className="flex h-28 w-28 flex-col items-center justify-center gap-2 rounded-full border border-dashed border-tx01">
+          <Icon className="h-10 w-10 text-tx02" icon="solar:upload-broken" />
+          <div className="font-light tracking-wider">UPLOAD</div>
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function NewGroup({ onGroupClick, ...props }) {
+  const [next, setNext] = useState(false);
   return (
     <div
-      className="flex h-full flex-grow flex-col space-y-2 border-tx03 bg-bg02 sm:w-[45%]
-     sm:max-w-[25rem] sm:border-r xl:w-2/5 xl:flex-none"
+      className="no-scrollbar relative flex h-full flex-grow flex-col justify-between space-y-2 overflow-auto
+     border-tx03 bg-bg02 sm:w-[45%] sm:max-w-[25rem] sm:border-r xl:w-2/5 xl:flex-none"
     >
+      {/* top section */}
       <div
-        className="sticky top-0 flex h-14 w-full items-center space-x-3
-            border-b border-tx01 bg-bg03 px-2 sm:h-16"
+        className="sticky top-0 flex h-14 w-full flex-none items-center
+            space-x-3 border-b border-tx01 bg-bg03 px-2 sm:h-16"
       >
         {/* return */}
-        <button onClick={onGroupClick}>
+        <button
+          onClick={
+            next
+              ? () => {
+                  setNext(false);
+                }
+              : onGroupClick
+          }
+        >
           <Icon
             className="ml-1 h-8 w-8 text-tx01 xs:ml-2 xs:h-9 xs:w-9 sm:ml-3"
             icon="solar:arrow-left-broken"
           />
         </button>
         <div className="text-left text-base capitalize tracking-widest text-tx02 xs:text-lg xs:tracking-[3px]">
-          Add group members
+          {next ? "new group" : "Add group members"}
         </div>
       </div>
+
+      {next ? <CustomizeGroup /> : <FrList />}
+
+      {/* next button */}
+      <button
+        className="sticky bottom-5 left-[80%] flex h-11 w-11 flex-none items-center justify-center rounded-full bg-tx01"
+        onClick={() => {
+          !next ? setNext(true) : undefined;
+        }}
+      >
+        <Icon
+          className="h-8 w-8 text-tx03"
+          icon={next ? "solar:check-read-broken" : "solar:arrow-right-broken"}
+        />
+      </button>
     </div>
   );
 }
