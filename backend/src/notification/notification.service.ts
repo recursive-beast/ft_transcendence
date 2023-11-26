@@ -15,25 +15,10 @@ export class NotificationService {
     args?: Prisma.NotificationFindManyArgs,
   ) {
     args = merge({ where: { recipient: { id: userId } } }, query, args);
-    const { distinct, where } = args;
+
     const result = await this.prismaService.notification.findMany(args);
-    const total = await this.prismaService.notification.count({
-      distinct,
-      where,
-    });
-    const last = result[result.length - 1];
 
     return {
-      meta: {
-        total,
-        pageSize: query.take,
-        hasNextPage: query.cursor
-          ? result.length >= query.take
-          : query.skip + query.take < total,
-        nextCursor: {
-          id: last?.id,
-        },
-      },
       data: NotificationEntity.fromNotification(result),
     };
   }

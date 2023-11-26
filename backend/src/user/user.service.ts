@@ -74,49 +74,19 @@ export class UserService {
 
     args = merge(rest, args);
 
-    if (search)
-      args = merge(args, {
-        where: {
-          OR: [
-            {
-              displayName: {
-                contains: search,
-                mode: 'insensitive',
-              },
-            },
-            {
-              fullName: {
-                contains: search,
-                mode: 'insensitive',
-              },
-            },
-          ],
-        },
-      } as Prisma.UserFindManyArgs);
-
-    const { distinct, where } = args;
     let result = await this.prismaService.user.findMany(args);
-    const total = await this.prismaService.user.count({ distinct, where });
-    const last = result[result.length - 1];
 
-    if (query.search) {
-      const fuse = new Fuse(result, { keys: ['displayName', 'fullName'] });
+    if (search) {
+      const fuse = new Fuse(result, {
+        keys: ['displayName', 'fullName'],
+        threshold: 0.4,
+        ignoreLocation: true,
+      });
 
-      result = fuse.search(query.search).map((elem) => elem.item);
+      result = fuse.search(search).map((elem) => elem.item);
     }
 
     return {
-      meta: {
-        total,
-        pageSize: query.take,
-        hasNextPage: query.cursor
-          ? result.length >= query.take
-          : query.skip + query.take < total,
-        nextCursor: {
-          id: last?.id,
-          displayName: last?.displayName,
-        },
-      },
       data: UserEntity.fromUser(result),
     };
   }

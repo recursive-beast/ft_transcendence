@@ -13,16 +13,7 @@ export class NotificationController {
     @Query() query: NotificationQueryDTO,
     @CurrentUser() user: UserEntity,
   ) {
-    const { data, meta } = await this.notificationService.findMany(
-      user.id,
-      query,
-    );
-    const unseen = await this.notificationService.countUnseen(user.id);
-
-    return {
-      meta: { ...meta, unseen },
-      data,
-    };
+    return this.notificationService.findMany(user.id, query);
   }
 
   @Patch('seen')
