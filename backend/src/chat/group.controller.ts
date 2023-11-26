@@ -30,7 +30,9 @@ export class GroupController {
       data: await this.groupService.createChannel(
         user.id,
         dto.title,
+        dto.type,
         dto.members,
+        dto.password,
       ),
     };
   }

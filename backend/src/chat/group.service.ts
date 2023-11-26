@@ -6,6 +6,7 @@ import { GroupConversationEntity } from 'src/common/entities/group-conversation.
 import { GroupMemberEntity } from 'src/common/entities/group-member.entity';
 import { roleType } from '@prisma/client';
 import { CommonService } from 'src/common/common.service';
+import { groupType } from '@prisma/client';
 
 @Injectable()
 export class GroupService {
@@ -181,29 +182,35 @@ export class GroupService {
     return GroupConversationEntity.fromGroupConversation(updated);
   }
 
-  async createChannel(ownerId: number, title: string, members: number[]) {
+  async createChannel(ownerId: number, title: string, type: groupType,  members: number[],  password?: string) {
     members = [...members, ownerId];
     members = Array.from(new Set(members));
 
-    const channel = await this.prismaService.groupConversation.create({
-      data: {
-        title: title,
-        members: {
-          createMany: {
-            data: members.map((id) => ({
-              userId: id,
-              role: id === ownerId ? roleType.OWNER : roleType.MEMBER,
-            })),
+    try {
+      const channel = await this.prismaService.groupConversation.create({
+        data: {
+          title: title,
+          type: type,
+          password: password,
+          members: {
+            createMany: {
+              data: members.map((id) => ({
+                userId: id,
+                role: id === ownerId ? roleType.OWNER : roleType.MEMBER,
+              })),
+            },
           },
         },
-      },
-      include: {
-        messages: true,
-        members: { include: { user: true } },
-      },
-    });
-
-    return GroupConversationEntity.fromGroupConversation(channel);
+        include: {
+          messages: true,
+          members: { include: { user: true } },
+        },
+      });
+  
+      return GroupConversationEntity.fromGroupConversation(channel);
+    } catch {
+      return null;
+    }
   }
 
   async findManyChannels(userId: number) {
@@ -236,5 +243,37 @@ export class GroupService {
         },
       });
     return GroupConversationEntity.fromGroupConversation(channel);
+  }
+
+  async upgradeMember(userId: number, toUpgradeId: number, channelId: number) {
+    const admin = await this.findMember(channelId, userId);
+    const toUp = await this.findMember(channelId, toUpgradeId);
+
+    if (admin && toUp) {
+      if(admin.role === roleType.ADMIN || admin.role === roleType.OWNER) {
+        if (toUp.role === roleType.MEMBER) {
+          await this.prismaService.groupMember.update({
+            where: {id: toUp.id},
+            data: {role: roleType.ADMIN},
+          });
+        }
+      }
+    }
+  }
+  
+  async downgradeMember(userId: number, toDowngradeId: number, channelId: number) {
+    const admin = await this.findMember(channelId, userId);
+    const toDown = await this.findMember(channelId, toDowngradeId);
+
+    if (admin && toDown) {
+      if(admin.role === roleType.OWNER) {
+        if (toDown.role === roleType.ADMIN) {
+          await this.prismaService.groupMember.update({
+            where: {id: toDown.id},
+            data: {role: roleType.MEMBER},
+          });
+        }
+      }
+    }
   }
 }

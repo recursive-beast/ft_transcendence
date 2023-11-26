@@ -1,4 +1,4 @@
-import { GroupConversation } from '@prisma/client';
+import { GroupConversation, groupType } from '@prisma/client';
 import { Expose, Type, plainToInstance } from 'class-transformer';
 import { MessageEntity } from './message.entity';
 import { GroupMemberEntity } from './group-member.entity';
@@ -12,6 +12,12 @@ export class GroupConversationEntity implements GroupConversation {
 
   @Expose()
   title: string;
+  
+  @Expose()
+  password: string | null;
+  
+  @Expose()
+  type: groupType;
 
   @Expose()
   @Type(() => MessageEntity)

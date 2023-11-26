@@ -7,11 +7,13 @@ import {
 import { instanceToPlain } from 'class-transformer';
 import { Server, Socket } from 'socket.io';
 import { HttpToWsFilter } from 'src/common/http-to-ws.filter';
+import { PrismaIgnoreFilter } from 'src/common/prisma-ignore.filter';
 import { DirectService } from './direct.service';
 import { DirectMessageDTO } from './dto/direct-message.dto';
 
 @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
 @UseFilters(HttpToWsFilter)
+@UseFilters(PrismaIgnoreFilter)
 @WebSocketGateway()
 export class DirectGateway {
   constructor(private directconversationService: DirectService) {}
