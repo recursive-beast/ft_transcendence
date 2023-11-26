@@ -7,8 +7,8 @@ import { DirectController } from './direct.controller';
 import { DirectGateway } from './direct.gateway';
 import { DirectService } from './direct.service';
 import { GroupController } from './group.controller';
-import { GroupGateway } from './group.gateway';
 import { GroupService } from './group.service';
+import { GroupGateway } from './group.gateway';
 
 @Module({
   controllers: [DirectController, GroupController],
