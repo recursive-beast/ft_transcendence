@@ -15,9 +15,7 @@ export class NotificationService {
       },
     });
 
-    return {
-      data: NotificationEntity.fromNotification(result),
-    };
+    return NotificationEntity.fromNotification(result);
   }
 
   async create(

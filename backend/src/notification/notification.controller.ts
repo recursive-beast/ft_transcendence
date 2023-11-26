@@ -14,6 +14,6 @@ export class NotificationController {
 
   @Patch('seen')
   async seen(@CurrentUser() user: UserEntity) {
-    return { data: await this.notificationService.markSeen(user.id) };
+    return this.notificationService.markSeen(user.id);
   }
 }

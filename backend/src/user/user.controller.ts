@@ -32,7 +32,7 @@ export class UserController {
   @SerializeOptions({ groups: [ClassTransformerGroups.GROUP_ME] })
   @Get('me')
   async getMe(@CurrentUser() user: UserEntity) {
-    return { data: user };
+    return user;
   }
 
   @UseInterceptors(FileInterceptor('avatar'))
@@ -41,16 +41,16 @@ export class UserController {
     @CurrentUser() user: UserEntity,
     @UploadedFile(ParseFilePipe) file: Express.Multer.File,
   ) {
-    return { data: await this.userService.setAvatar(user.id, file.path) };
+    return this.userService.setAvatar(user.id, file.path);
   }
 
   @Patch('me')
   async updateMe(@CurrentUser() user: UserEntity, @Body() body: UserUpdateDTO) {
-    return { data: await this.userService.update(user.id, body) };
+    return this.userService.update(user.id, body);
   }
 
   @Get(':id')
   async getById(@Param('id', ParseIntPipe) id: number) {
-    return { data: await this.userService.findByIdOrThrow(id) };
+    return this.userService.findByIdOrThrow(id);
   }
 }

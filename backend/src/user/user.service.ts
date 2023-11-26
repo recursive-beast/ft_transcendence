@@ -86,9 +86,7 @@ export class UserService {
       result = fuse.search(search).map((elem) => elem.item);
     }
 
-    return {
-      data: UserEntity.fromUser(result),
-    };
+    return UserEntity.fromUser(result);
   }
 
   async update(id: User['id'], data: UserUpdateDTO) {

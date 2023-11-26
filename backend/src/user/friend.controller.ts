@@ -46,7 +46,7 @@ export class FriendController {
       this.eventEmitter.emit('user.friend.add', user, entity);
     }
 
-    return { data: entity };
+    return entity;
   }
 
   @Delete(':id')
@@ -54,6 +54,6 @@ export class FriendController {
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser() user: UserEntity,
   ) {
-    return { data: await this.friendService.delete(user.id, id) };
+    return this.friendService.delete(user.id, id);
   }
 }
