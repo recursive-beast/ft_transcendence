@@ -273,17 +273,19 @@ function Option(props) {
 function Options() {
   return (
     <div className="absolute right-5 top-full rounded-lg border border-tx01 bg-bg02 ">
-      {/* new game */}
+      {/* New Game */}
       <Option title="new game" icon="solar:gamepad-broken" />
 
-      {/* block */}
+      {/* Block */}
       <Option title="block" icon="solar:user-block-rounded-broken" />
     </div>
   );
 }
 
 function ConversationBox({ onClick, ...props }) {
+  // State to control the visibility of options
   const [options, setOptions] = useState(false);
+
   return (
     <div
       className={clsx(
@@ -293,9 +295,9 @@ function ConversationBox({ onClick, ...props }) {
     >
       {props.conversation ? (
         <div className="flex flex-1 flex-col">
-          {/* top bar, friend info */}
+          {/* Top Bar: Friend Info */}
           <div className="sticky top-0 flex h-14 w-full items-center space-x-2 border-b bg-bg03 py-2 xs:h-16 sm:space-x-4">
-            {/* return */}
+            {/* Return Button */}
             <button onClick={onClick}>
               <Icon
                 className="ml-1 h-8 w-8 text-tx01 xs:ml-2 xs:h-9 xs:w-9 sm:ml-3"
@@ -303,9 +305,9 @@ function ConversationBox({ onClick, ...props }) {
               />
             </button>
 
-            {/* friend info */}
+            {/* Friend Info */}
             <button className="flex flex-grow items-center">
-              {/* avatar */}
+              {/* Avatar */}
               <Image
                 className={clsx(
                   "my-1 mr-2 h-11 w-11 rounded-full object-cover p-[1px] xs:h-[52px] xs:w-[52px] xs:p-[2px] lg:mr-3",
@@ -319,7 +321,7 @@ function ConversationBox({ onClick, ...props }) {
               />
 
               <div className="flex flex-col items-start">
-                {/* full name */}
+                {/* Full Name */}
                 <div className="text-sm font-semibold capitalize tracking-[widest] text-tx05 xs:text-base sm:tracking-[3px]">
                   {props.conversation && props.conversation.displayName}
                 </div>
@@ -330,7 +332,7 @@ function ConversationBox({ onClick, ...props }) {
               </div>
             </button>
 
-            {/* options */}
+            {/* Options Menu */}
             <div>
               <button
                 onClick={() => {
@@ -346,7 +348,7 @@ function ConversationBox({ onClick, ...props }) {
             </div>
           </div>
 
-          {/* conversation */}
+          {/* Conversation Section */}
           <div className="flex grow flex-col justify-end">
             {props.conversation &&
               props.conversation.messages.map((message) => {
@@ -399,7 +401,7 @@ function ConversationBox({ onClick, ...props }) {
               })}
           </div>
 
-          {/* input message */}
+          {/* Input Message Section */}
           <div className="sticky bottom-0 flex w-full  items-center space-x-3 bg-bg03 px-3 py-2 xs:py-3 sm:px-5">
             <input className="h-7 flex-1 rounded-xl bg-tx02 text-base font-extralight xs:h-8 xs:text-xl" />
 
@@ -412,7 +414,7 @@ function ConversationBox({ onClick, ...props }) {
           </div>
         </div>
       ) : (
-        // no conversation selected
+        // No Conversation Selected
         <div className="flex h-full flex-col items-center justify-center gap-6">
           <Image src={logoPic} alt="Logo of the game" className="h-52 w-52" />
 
@@ -433,12 +435,13 @@ function ConversationBox({ onClick, ...props }) {
 function FrList(props) {
   return (
     <div>
+      {/* Map through the friendsList array to render each friend */}
       {friendsList.map((friend, index) => {
         return (
           <div key={index} className="flex border-b border-tx03 p-2">
-            {/* flex div contain avatar ans name */}
+            {/* Flex container for avatar and name */}
             <div className="flex flex-1 items-center">
-              {/* avatar */}
+              {/* Avatar */}
               <Image
                 className="mr-2 h-12 w-12 flex-none rounded-full border-[1.5px] border-tx02 object-cover p-[2px] xs:mr-3 xs:h-14 xs:w-14"
                 src={friend.avatar}
@@ -447,13 +450,13 @@ function FrList(props) {
                 height={56}
               />
 
-              {/* friend name */}
-
+              {/* Friend Name */}
               <div className="truncate text-sm tracking-wide xs:text-base xs:tracking-widest">
                 {friend.displayName}
               </div>
             </div>
-            {/* Checkbox */}
+
+            {/* Checkbox for friend selection */}
             <input className=" m-3" type="checkbox" />
           </div>
         );
@@ -463,40 +466,85 @@ function FrList(props) {
 }
 
 function CustomizeGroup() {
+  // State to track the selected group type
+  const [groupType, setGroupType] = useState("");
+
+  //Handles the change event when the user selects a group type.
+  const handleGroupTypeChange = (event) => {
+    setGroupType(event.target.value);
+  };
+
   return (
     <div className="mx-2">
       <div className="flex h-full flex-col items-center justify-center gap-6">
+        {/* Title Section */}
         <div className="text-center text-2xl font-light tracking-widest xs:text-3xl">
           Customize Your Group
         </div>
 
+        {/* Description Section */}
         <div className=" text-center text-xs text-tx02 xs:text-sm">
           Give your new group a personality with a name and an avatar. You can
           always change it later.
         </div>
 
+        {/* Set Avatar Button */}
         <button className="flex h-28 w-28 flex-col items-center justify-center gap-2 rounded-full border border-dashed border-tx01">
           <Icon className="h-10 w-10 text-tx02" icon="solar:upload-broken" />
           <div className="font-light tracking-wider">UPLOAD</div>
         </button>
+
+        <div className="flex w-full flex-col space-y-5 px-5 text-xs font-light tracking-wider text-tx02 xs:text-sm">
+          {/* Group Name Input */}
+          <div>
+            <label>Group Name:</label>
+            <input className="h-6 w-full rounded-sm border-b bg-bg03 px-1 text-tx01 xs:h-8 sm:rounded-md"></input>
+          </div>
+
+          {/* Group Type Dropdown */}
+          <div>
+            <label>Select Group Type:</label>
+            <select
+              value={groupType}
+              onChange={handleGroupTypeChange}
+              className="h-6 w-full rounded-sm border-b bg-bg03 px-1 text-tx01 xs:h-8 sm:rounded-md"
+            >
+              <option value="public">Public</option>
+              <option value="private">Private</option>
+              <option value="protected">Protected</option>
+            </select>
+          </div>
+
+          {/* {/* Password Input Section (visible if group type is 'protected') */}
+          <div
+            className={clsx(
+              groupType === "protected" ? "visible" : "invisible",
+            )}
+          >
+            <label>Password:</label>
+            <input className="h-6 w-full rounded-sm border-b bg-bg03 px-1 text-tx01 xs:h-8 sm:rounded-md"></input>
+          </div>
+        </div>
       </div>
     </div>
   );
 }
 
 function NewGroup({ onGroupClick, ...props }) {
+  // State to track the progress to the next step
   const [next, setNext] = useState(false);
+
   return (
     <div
       className="no-scrollbar relative flex h-full flex-grow flex-col justify-between space-y-2 overflow-auto
      border-tx03 bg-bg02 sm:w-[45%] sm:max-w-[25rem] sm:border-r xl:w-2/5 xl:flex-none"
     >
-      {/* top section */}
+      {/* Top Section */}
       <div
         className="sticky top-0 flex h-14 w-full flex-none items-center
             space-x-3 border-b border-tx01 bg-bg03 px-2 sm:h-16"
       >
-        {/* return */}
+        {/* Return Button */}
         <button
           onClick={
             next
@@ -511,14 +559,16 @@ function NewGroup({ onGroupClick, ...props }) {
             icon="solar:arrow-left-broken"
           />
         </button>
+
+        {/* Title */}
         <div className="text-left text-base capitalize tracking-widest text-tx02 xs:text-lg xs:tracking-[3px]">
           {next ? "new group" : "Add group members"}
         </div>
       </div>
-
+      {/* Render either CustomizeGroup or FrList based on the 'next' state */}
       {next ? <CustomizeGroup /> : <FrList />}
 
-      {/* next button */}
+      {/* Next Button */}
       <button
         className="sticky bottom-5 left-[80%] flex h-11 w-11 flex-none items-center justify-center rounded-full bg-tx01"
         onClick={() => {
