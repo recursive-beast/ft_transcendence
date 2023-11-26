@@ -1,22 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { Notification, Prisma, User } from '@prisma/client';
-import { merge } from 'lodash';
 import { PrismaService } from 'nestjs-prisma';
 import { NotificationEntity } from 'src/common/entities/notification.entity';
-import { NotificationQueryDTO } from './dto/query.dto';
 
 @Injectable()
 export class NotificationService {
   constructor(private prismaService: PrismaService) {}
 
-  async findMany(
-    userId: User['id'],
-    query: NotificationQueryDTO,
-    args?: Prisma.NotificationFindManyArgs,
-  ) {
-    args = merge({ where: { recipient: { id: userId } } }, query, args);
-
-    const result = await this.prismaService.notification.findMany(args);
+  async findMany(userId: User['id']) {
+    const result = await this.prismaService.notification.findMany({
+      where: { recipient: { id: userId } },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
 
     return {
       data: NotificationEntity.fromNotification(result),
