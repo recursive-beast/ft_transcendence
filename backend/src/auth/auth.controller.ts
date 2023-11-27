@@ -32,7 +32,7 @@ export class AuthController {
 
     res.cookie('authorization', token, { httpOnly: true });
 
-    return { token };
+    return { token, otp: { enabled: user.otpIsEnabled, verified: false } };
   }
 
   @Public()
@@ -46,7 +46,7 @@ export class AuthController {
 
     res.cookie('authorization', token, { httpOnly: true });
 
-    return { token };
+    return { token, otp: { enabled: user.otpIsEnabled, verified: false } };
   }
 
   @Public()
@@ -88,7 +88,7 @@ export class AuthController {
 
     res.cookie('authorization', token, { httpOnly: true });
 
-    return { token };
+    return { token, otp: { enabled: false, verified: false } };
   }
 
   @skipOTP()
@@ -108,6 +108,6 @@ export class AuthController {
 
     res.cookie('authorization', token, { httpOnly: true });
 
-    return { token };
+    return { token, otp: { enabled: true, verified: true } };
   }
 }
