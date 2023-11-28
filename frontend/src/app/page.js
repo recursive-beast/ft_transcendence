@@ -716,7 +716,7 @@ function LoginSection({ onClick, ...props }) {
           </div>
 
           <div>
-            <Link className="group flex items-center mb-3" href={"/auth"}>
+            <Link className="group flex items-center mb-3" href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/42`}>
               <Image
                 className="lg:h-8 lg:w-8 2xl:h-10 2xl:w-10 mr-3 w-8 h-8"
                 src={intrat}
@@ -727,7 +727,7 @@ function LoginSection({ onClick, ...props }) {
               </div>
             </Link>
 
-            <Link className="group flex items-center mb-2" href={"/auth"}>
+            <Link className="group flex items-center mb-2" href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google`}>
               <Image
                 className="lg:h-8 lg:w-8 2xl:h-10 2xl:w-10 mr-3 w-8 h-8"
                 src={google}
