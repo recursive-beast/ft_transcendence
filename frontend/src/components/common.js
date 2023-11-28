@@ -230,7 +230,7 @@ function NavBar() {
       {[
         { path: "/home", text: "home", icon: "solar:home-2-broken" },
         { path: "/game", text: "game", icon: "solar:gamepad-broken" },
-        { path: "/chat", text: "chat", icon: "fluent:chat-28-regular" },
+        { path: "/chat", text: "chat", icon: "solar:chat-round-line-broken" },
         {
           path: "/leaderboard",
           text: "leaderboard",
