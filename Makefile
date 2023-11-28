@@ -8,7 +8,7 @@ db:
 
 setup: db
 	cd frontend && npm i
-	cd backend && npm i && npx prisma migrate dev
+	cd backend && npm i && npx prisma migrate reset -f
 
 down:
 	docker compose down --remove-orphans
