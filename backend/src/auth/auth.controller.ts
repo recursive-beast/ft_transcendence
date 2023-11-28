@@ -4,18 +4,19 @@ import {
   Controller,
   Get,
   Patch,
+  Res,
   UnprocessableEntityException,
   UseGuards,
-  Res,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { Response } from 'express';
+import ms from 'ms';
 import { UserEntity } from 'src/common/entities/user.entity';
 import { AuthService } from './auth.service';
 import { CurrentUser } from './current-user.decorator';
 import { OTPDTO } from './dto/otp.dto';
 import { Public } from './public.decorator';
 import { skipOTP } from './skip-otp.decorator';
-import { Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -30,7 +31,7 @@ export class AuthController {
   ) {
     const token = await this.authService.generateJWT(user, false);
 
-    res.cookie('authorization', token, { httpOnly: true });
+    this.sendAuthCookie(res, token);
 
     return { token, otp: { enabled: user.otpIsEnabled, verified: false } };
   }
@@ -44,7 +45,7 @@ export class AuthController {
   ) {
     const token = await this.authService.generateJWT(user, false);
 
-    res.cookie('authorization', token, { httpOnly: true });
+    this.sendAuthCookie(res, token);
 
     return { token, otp: { enabled: user.otpIsEnabled, verified: false } };
   }
@@ -86,7 +87,7 @@ export class AuthController {
 
     const token = await this.authService.generateJWT(user, false);
 
-    res.cookie('authorization', token, { httpOnly: true });
+    this.sendAuthCookie(res, token);
 
     return { token, otp: { enabled: false, verified: false } };
   }
@@ -106,8 +107,15 @@ export class AuthController {
 
     const token = await this.authService.generateJWT(user, true);
 
-    res.cookie('authorization', token, { httpOnly: true });
+    this.sendAuthCookie(res, token);
 
     return { token, otp: { enabled: true, verified: true } };
+  }
+
+  private sendAuthCookie(res: Response, token: string) {
+    res.cookie('authorization', token, {
+      httpOnly: true,
+      maxAge: ms('999years'),
+    });
   }
 }
