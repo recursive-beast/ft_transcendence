@@ -1,12 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { groupType, roleType } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
 import { PrismaService } from 'nestjs-prisma';
-import { MessageEntity } from 'src/common/entities/message.entity';
-import { GroupMessageDTO } from './dto/group-message.dto';
+import { CommonService } from 'src/common/common.service';
 import { GroupConversationEntity } from 'src/common/entities/group-conversation.entity';
 import { GroupMemberEntity } from 'src/common/entities/group-member.entity';
-import { roleType } from '@prisma/client';
-import { CommonService } from 'src/common/common.service';
-import { groupType } from '@prisma/client';
+import { MessageEntity } from 'src/common/entities/message.entity';
+import { GroupMessageDTO } from './dto/group-message.dto';
 
 @Injectable()
 export class GroupService {
@@ -187,6 +187,9 @@ export class GroupService {
     members = Array.from(new Set(members));
 
     try {
+      if (!password && type === groupType.PROTECTED) throw new BadRequestException();
+      if (password && type === groupType.PROTECTED) password = await bcrypt.hash(password, 10);
+
       const channel = await this.prismaService.groupConversation.create({
         data: {
           title: title,
@@ -276,4 +279,39 @@ export class GroupService {
       }
     }
   }
+
+  async joinChannel(userId: number, channelTitle: string, password?: string) {
+    const channel = await this.prismaService.groupConversation.findFirstOrThrow({
+      where: { title: channelTitle }
+    });
+    const toAdd = await this.prismaService.user.findFirst({
+      where: { id: userId },
+    });
+    if (!toAdd) throw new BadRequestException();
+    if(channel.type === groupType.PUBLIC) {
+      await this.prismaService.groupMember.create({
+        data: {
+          user: { connect: { id: userId } },
+          groupConversation: { connect: { id: channel.id } },
+        },
+      });
+    } else if (channel.type === groupType.PROTECTED) {
+      if (channel.password) {
+        if (!password || !await bcrypt.compare(password, channel.password)) throw new BadRequestException();
+        const toAdd = await this.prismaService.user.findFirst({
+          where: { id: userId },
+        });
+        await this.prismaService.groupMember.create({
+          data: {
+            user: { connect: { id: userId } },
+            groupConversation: { connect: { id: channel.id } },
+          },
+        });
+      }
+    }
+  }
+
+  // async searchforChannel() {
+
+  // }
 }
