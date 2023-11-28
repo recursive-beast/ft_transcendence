@@ -6,6 +6,10 @@ up:
 db:
 	docker compose up -d postgresql
 
+setup: db
+	cd frontend && npm i
+	cd backend && npm i && npx prisma migrate dev
+
 down:
 	docker compose down --remove-orphans
 
