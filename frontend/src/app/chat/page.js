@@ -271,6 +271,94 @@ function Options() {
   );
 }
 
+function GroupInfo({ onClick, ...props }) {
+  const [newTitle, setNewTitle] = useState(false);
+  return (
+    <div className="no-scrollbar flex flex-grow flex-col overflow-auto border-tx03 bg-bg03 sm:w-1/2 sm:max-w-[25rem] sm:border-l xl:flex-none">
+      {/* Header and close */}
+      <div
+        className="sticky top-0 flex h-14 w-full flex-none items-center
+            space-x-5 border-b border-tx01 bg-tx02 px-2 sm:h-16"
+      >
+        {/* Return Button */}
+        <button onClick={onClick}>
+          <Icon
+            className="ml-1 h-5 w-5 text-tx03 xs:ml-2 xs:h-6 xs:w-6 sm:ml-3"
+            icon="icon-park-outline:close"
+          />
+        </button>
+
+        {/* Title */}
+        <div className="text-left text-base capitalize tracking-widest text-tx03 xs:text-lg xs:tracking-[3px]">
+          Group info
+        </div>
+      </div>
+
+      {/* Avatar and title */}
+      <div className="flex flex-col gap-4 bg-bg02 py-8">
+        {/* avatar */}
+        <div className="relative flex items-center justify-center">
+          <Image
+            className="w-1/3 flex-none rounded-full sm:w-2/5"
+            src={props.conversation.avatar}
+            quality={100}
+            width={56}
+            height={56}
+          />
+
+          {/* Set Avatar Button */}
+          <button
+            className="absolute flex h-full w-1/3 flex-col items-center justify-center gap-2 rounded-full border border-dashed border-tx01
+           opacity-0 hover:bg-bg02/80 hover:opacity-100 sm:w-2/5"
+          >
+            <Icon className="h-10 w-10 text-tx02" icon="solar:upload-broken" />
+            <div className="text-xs font-light tracking-wider sm:text-sm">
+              UPLOAD NEW
+            </div>
+          </button>
+        </div>
+
+        {/* title */}
+        {newTitle ? (
+          <div className="relative flex items-end justify-center gap-2 border-b-2 mx-3">
+            <input
+              className="w-full border-none bg-bg02 outline-none focus:border-none"
+              value={props.conversation.displayName}
+            />
+
+          {/* Set Avatar Button */}
+          <button onClick={() => setNewTitle(false)}>
+            <Icon
+              className="h-5 w-5 text-tx02 xs:h-6 xs:w-6"
+              icon="solar:check-read-broken"
+            />
+          </button>
+        </div>
+        ) : (
+          <div className="relative flex items-end justify-center gap-2">
+            <div className="text-base xs:text-lg">
+              {props.conversation.displayName}
+            </div>
+
+            {/* Set Avatar Button */}
+            <button onClick={() => setNewTitle(true)}>
+              <Icon
+                className="mb-1 h-5 w-5 text-tx02 xs:h-6 xs:w-6"
+                icon="solar:pen-broken"
+              />
+            </button>
+          </div>
+        )}
+
+        {/* members */}
+        <div className="relative flex items-center justify-center text-tx02 font-light tracking-widest -m-3">
+          Group -&nbsp; <span>{props.conversation.members}</span> &nbsp;Members
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function ConversationBox({ onClick, ...props }) {
   // State to control the visibility of options
   const [options, setOptions] = useState(false);
@@ -278,151 +366,162 @@ function ConversationBox({ onClick, ...props }) {
   const [grInfo, setGrInfo] = useState(false);
 
   return (
-    <div
-      className={clsx(
-        !props.conversation && "hidden sm:flex",
-        "no-scrollbar flex h-full w-full flex-1 flex-col justify-between overflow-auto sm:bg-bg02",
-      )}
-    >
-      {props.conversation ? (
-        <div className="flex flex-1 flex-col">
-          {/* Top Bar: Friend Info */}
-          <div className="sticky top-0 flex h-14 w-full items-center space-x-2 border-b bg-tx02 py-2 xs:h-16 sm:space-x-4">
-            {/* Return Button */}
-            <button onClick={onClick}>
-              <Icon
-                className="ml-1 h-8 w-8 text-tx03 xs:ml-2 xs:h-9 xs:w-9 sm:ml-3"
-                icon="solar:arrow-left-broken"
-              />
-            </button>
-            {/* Friend or group Info */}
-            <button
-              className="flex flex-grow items-center"
-              onClick={() => (props.group ? setGrInfo(true) : undefined)}
-            >
-              {/* Avatar */}
-              <Image
-                className={clsx(
-                  "my-1 mr-2 h-11 w-11 rounded-full object-cover p-[1px] xs:h-[52px] xs:w-[52px] xs:p-[2px] lg:mr-3",
-                  props.conversation &&
-                    status[props.conversation.status].border,
-                )}
-                src={props.conversation.avatar}
-                quality={100}
-                width={56}
-                height={56}
-              />
+    <div className="flex flex-1">
+      {/* conversation */}
+      <div
+        className={clsx(
+          (!props.conversation || grInfo) && "hidden sm:flex",
+          "no-scrollbar flex h-full w-full flex-1 flex-col justify-between overflow-auto bg-bg02",
+        )}
+      >
+        {props.conversation ? (
+          <div className="flex flex-1 flex-col">
+            {/* Top Bar: Info */}
+            <div className="sticky top-0 flex h-14 w-full items-center space-x-2 border-b bg-tx02 py-2 xs:h-16 sm:space-x-4">
+              {/* Return Button */}
+              <button onClick={onClick}>
+                <Icon
+                  className="ml-1 h-8 w-8 text-tx03 xs:ml-2 xs:h-9 xs:w-9 sm:ml-3"
+                  icon="solar:arrow-left-broken"
+                />
+              </button>
+              {/* Friend or group Info */}
+              <button
+                className="flex flex-grow items-center"
+                onClick={() => (props.group ? setGrInfo(true) : undefined)}
+              >
+                {/* Avatar */}
+                <Image
+                  className={clsx(
+                    "my-1 mr-2 h-11 w-11 rounded-full object-cover p-[1px] xs:h-[52px] xs:w-[52px] xs:p-[2px] lg:mr-3",
+                    props.conversation &&
+                      status[props.conversation.status].border,
+                  )}
+                  src={props.conversation.avatar}
+                  quality={100}
+                  width={56}
+                  height={56}
+                />
 
-              <div className="flex flex-col items-start">
-                {/* Full Name */}
-                <div className="text-sm font-semibold capitalize tracking-[widest] text-tx05 xs:text-base sm:tracking-[3px]">
-                  {props.conversation && props.conversation.displayName}
+                <div className="flex flex-col items-start">
+                  {/* Full Name */}
+                  <div className="truncate text-sm font-semibold capitalize tracking-[widest] text-tx05 xs:text-base sm:tracking-[3px]">
+                    {props.conversation && props.conversation.displayName}
+                  </div>
+
+                  <div className="text-[8px] capitalize text-tx03 xs:text-[10px] sm:text-[14px]">
+                    {props.group
+                      ? "Click here to get group info"
+                      : "Click here to visit profile"}
+                  </div>
                 </div>
-
-                <div className="text-[8px] capitalize text-tx03 xs:text-[10px] sm:text-[14px]">
-                  {props.group
-                    ? "Click here to get group info"
-                    : "Click here to visit profile"}
+              </button>
+              {/* Options Menu */}
+              {!props.group && (
+                <div>
+                  <button
+                    onClick={() => {
+                      setOptions(!options);
+                    }}
+                  >
+                    <Icon
+                      className="mr-3 h-6 w-6 text-tx03 sm:h-7 sm:w-8"
+                      icon="circum:menu-kebab"
+                    />
+                  </button>
+                  {options && <Options />}
                 </div>
-              </div>
-            </button>
-            {/* Options Menu */}
-            {!props.group && (
-              <div>
-                <button
-                  onClick={() => {
-                    setOptions(!options);
-                  }}
-                >
-                  <Icon
-                    className="mr-3 h-6 w-6 text-tx03 sm:h-7 sm:w-8"
-                    icon="circum:menu-kebab"
-                  />
-                </button>
-                {options && <Options />}
-              </div>
-            )}
-          </div>
+              )}
+            </div>
 
-          {/* Conversation Section */}
-          <div className="flex grow flex-col justify-end">
-            {props.conversation &&
-              props.conversation.messages.map((message) => {
-                return (
-                  <div className="my-3 flex items-start">
-                    {props.group && !message.sent && (
-                      <Image
-                        className={clsx(
-                          "ml-1 h-7 w-7 rounded-full object-cover",
-                          status[message.status].border,
-                        )}
-                        src={message.avatar}
-                        quality={100}
-                        width={56}
-                        height={56}
-                      />
-                    )}
-                    <div className="flex w-full flex-col space-y-1">
+            {/* Conversation Section */}
+            <div className="flex grow flex-col justify-end">
+              {props.conversation &&
+                props.conversation.messages.map((message) => {
+                  return (
+                    <div className="my-3 flex items-start">
                       {props.group && !message.sent && (
-                        <div className="ml-1 mt-1 text-xs text-tx05">
-                          {message.user}
-                        </div>
-                      )}
-                      <div
-                        className={clsx(
-                          " flex w-fit max-w-[70%] flex-col rounded-lg px-2 py-[2px] 2xl:py-1",
-                          message.sent
-                            ? "ml-auto mr-5 rounded-tr-none bg-tx03"
-                            : "mr-auto rounded-tl-none bg-tx02",
-                          props.group ? "ml-1" : "ml-5",
-                        )}
-                      >
-                        <span>{message.text}</span>
-                        <span
+                        <Image
                           className={clsx(
-                            "ml-auto text-xs",
-                            message.sent ? "text-tx02" : "text-tx03",
+                            "ml-1 h-7 w-7 rounded-full object-cover",
+                            status[message.status].border,
+                          )}
+                          src={message.avatar}
+                          quality={100}
+                          width={56}
+                          height={56}
+                        />
+                      )}
+                      <div className="flex w-full flex-col space-y-1">
+                        {props.group && !message.sent && (
+                          <div className="ml-1 mt-1 text-xs text-tx05">
+                            {message.user}
+                          </div>
+                        )}
+                        <div
+                          className={clsx(
+                            " flex w-fit max-w-[70%] flex-col rounded-lg px-2 py-[2px] 2xl:py-1",
+                            message.sent
+                              ? "ml-auto mr-5 rounded-tr-none bg-tx03"
+                              : "mr-auto rounded-tl-none bg-tx02",
+                            props.group ? "ml-1" : "ml-5",
                           )}
                         >
-                          {isToday(message.date)
-                            ? format(message.date, "HH:mm")
-                            : isYesterday(message.date)
-                            ? "yesterday " + format(message.date, "HH:mm")
-                            : format(message.date, "yyyy/MM/dd HH:mm")}
-                        </span>
+                          <span>{message.text}</span>
+                          <span
+                            className={clsx(
+                              "ml-auto text-xs",
+                              message.sent ? "text-tx02" : "text-tx03",
+                            )}
+                          >
+                            {isToday(message.date)
+                              ? format(message.date, "HH:mm")
+                              : isYesterday(message.date)
+                              ? "yesterday " + format(message.date, "HH:mm")
+                              : format(message.date, "yyyy/MM/dd HH:mm")}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
-          </div>
+                  );
+                })}
+            </div>
 
-          {/* Input Message Section */}
-          <div className="sticky bottom-0 flex w-full  items-center space-x-3 bg-bg03 px-3 py-2 xs:py-3 sm:px-5">
-            <input className="h-7 flex-1 rounded-xl bg-tx02 text-base font-extralight xs:h-8 xs:text-xl" />
+            {/* Input Message Section */}
+            <div className="sticky bottom-0 flex w-full  items-center space-x-3 bg-bg03 px-3 py-2 xs:py-3 sm:px-5">
+              <input className="h-7 flex-1 rounded-xl bg-tx02 text-base font-extralight xs:h-8 xs:text-xl" />
 
-            <button>
-              <Icon
-                className="h-6 w-6 text-tx01 sm:h-7 sm:w-7"
-                icon="fluent:send-32-filled"
-              />
-            </button>
+              <button>
+                <Icon
+                  className="h-6 w-6 text-tx01 sm:h-7 sm:w-7"
+                  icon="fluent:send-32-filled"
+                />
+              </button>
+            </div>
           </div>
-        </div>
-      ) : (
-        // No Conversation Selected
-        <div className="flex h-full flex-col items-center justify-center gap-6">
-          <Image src={logoPic} alt="Logo of the game" className="h-52 w-52" />
+        ) : (
+          // No Conversation Selected
+          <div className="flex h-full flex-col items-center justify-center gap-6">
+            <Image src={logoPic} alt="Logo of the game" className="h-52 w-52" />
 
-          <div className="text-center text-3xl font-extralight">
-            Select Conversation
-          </div>
+            <div className="text-center text-3xl font-extralight">
+              Select Conversation
+            </div>
 
-          <div className="w-1/2 text-center text-sm text-tx02">
-            No conversation selected. Please choose a conversation to start
-            chatting.
+            <div className="w-1/2 text-center text-sm text-tx02">
+              No conversation selected. Please choose a conversation to start
+              chatting.
+            </div>
           </div>
-        </div>
+        )}
+      </div>
+
+      {/* Group Info */}
+      {grInfo && (
+        <GroupInfo
+          onClick={() => setGrInfo(false)}
+          conversation={props.conversation}
+        />
       )}
     </div>
   );
@@ -434,7 +533,13 @@ function FrList(props) {
       {/* Map through the friendsList array to render each friend */}
       {friendsList.map((friend, index) => {
         return (
-          <div key={index} className="flex border-b border-tx03 p-2">
+          <div
+            key={index}
+            className={clsx(
+              "flex border-b border-tx03 p-2 hover:bg-tx03",
+              !props.group && "cursor-pointer",
+            )}
+          >
             {/* Flex container for avatar and name */}
             <div className="flex flex-1 items-center">
               {/* Avatar */}
@@ -562,7 +667,7 @@ function NewGroup({ onGroupClick, ...props }) {
         </div>
       </div>
       {/* Render either CustomizeGroup or FrList based on the 'next' state */}
-      {next ? <CustomizeGroup /> : <FrList />}
+      {next ? <CustomizeGroup /> : <FrList group={true} />}
 
       {/* Next Button */}
       <button
@@ -585,44 +690,58 @@ function NewGroup({ onGroupClick, ...props }) {
 }
 
 function NewChat({ onChatClick }) {
+  const [newGroup, setNewGroup] = useState(false);
   return (
-    <div className="no-scrollbar flex flex-col overflow-auto border-tx03 bg-bg02 sm:w-1/2 sm:max-w-[25rem] sm:border-r  xl:flex-none">
-      <div
-        className="sticky top-0 flex h-14 w-full flex-none items-center
+    <>
+      {newGroup ? (
+        <NewGroup onGroupClick={() => setNewGroup(false)} />
+      ) : (
+        <div className="no-scrollbar flex flex-grow flex-col overflow-auto border-tx03 bg-bg02 sm:w-1/2 sm:max-w-[25rem] sm:border-r  xl:flex-none">
+          <div
+            className="sticky top-0 flex h-14 w-full flex-none items-center
             space-x-3 border-b border-tx01 bg-bg03 px-2 sm:h-16"
-      >
-        {/* Return Button */}
-        <button onClick={onChatClick}>
-          <Icon
-            className="ml-1 h-8 w-8 text-tx01 xs:ml-2 xs:h-9 xs:w-9 sm:ml-3"
-            icon="solar:arrow-left-broken"
-          />
-        </button>
+          >
+            {/* Return Button */}
+            <button onClick={onChatClick}>
+              <Icon
+                className="ml-1 h-8 w-8 text-tx01 xs:ml-2 xs:h-9 xs:w-9 sm:ml-3"
+                icon="solar:arrow-left-broken"
+              />
+            </button>
 
-        {/* Title */}
-        <div className="text-left text-base capitalize tracking-widest text-tx02 xs:text-lg xs:tracking-[3px]">
-          new chat
-        </div>
-      </div>
-
-      <div className="flex border-b border-tx03 p-2">
-        {/* Flex container for avatar and name */}
-        <div className="flex flex-1 items-center">
-          {/* Avatar */}
-          <Icon
-            className="mr-2 h-12 w-12 flex-none rounded-full p-[2px] xs:mr-3 xs:h-14 xs:w-14 text-tx01"
-            icon="solar:users-group-two-rounded-broken"
-          />
-
-          {/* Friend Name */}
-          <div className="truncate text-sm tracking-wide xs:text-base xs:tracking-widest">
-            New Group
+            {/* Title */}
+            <div className="text-left text-base capitalize tracking-widest text-tx02 xs:text-lg xs:tracking-[3px]">
+              new chat
+            </div>
           </div>
-        </div>
-      </div>
 
-      <FrList />
-    </div>
+          {/* Flex container new group*/}
+          <div
+            className="flex cursor-pointer border-b border-tx02 p-2 hover:bg-tx03"
+            onClick={() => setNewGroup(true)}
+          >
+            <div className="flex flex-1 items-center">
+              {/* Avatar */}
+              <Icon
+                className="mr-2 h-12 w-12 flex-none rounded-full bg-tx02 p-[2px] text-tx04 xs:mr-3 xs:h-14 xs:w-14"
+                icon="solar:users-group-two-rounded-bold-duotone"
+              />
+
+              {/* Friend Name */}
+              <div className="truncate text-sm tracking-wide xs:text-base xs:tracking-widest">
+                New Group
+              </div>
+            </div>
+          </div>
+
+          <div className="mx-3 my-4 text-base font-light tracking-wide text-tx02 xs:text-lg xs:tracking-widest">
+            New Direct Message
+          </div>
+
+          <FrList />
+        </div>
+      )}
+    </>
   );
 }
 
@@ -740,7 +859,7 @@ export default function Home() {
               <div
                 className={clsx(
                   conversation && "hidden lg:flex",
-                  "flex flex-col border-tx03 bg-bg02 sm:w-1/2 sm:max-w-[25rem] sm:border-r xl:flex-none",
+                  "flex w-full flex-col border-tx03 bg-bg02 sm:max-w-[25rem] sm:border-r xl:flex-none",
                 )}
               >
                 {/* Serach and new cnv */}
