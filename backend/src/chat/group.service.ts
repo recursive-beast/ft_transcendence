@@ -182,13 +182,21 @@ export class GroupService {
     return GroupConversationEntity.fromGroupConversation(updated);
   }
 
-  async createChannel(ownerId: number, title: string, type: groupType,  members: number[],  password?: string) {
+  async createChannel(
+    ownerId: number,
+    title: string,
+    type: groupType,
+    members: number[],
+    password?: string,
+  ) {
     members = [...members, ownerId];
     members = Array.from(new Set(members));
 
     try {
-      if (!password && type === groupType.PROTECTED) throw new BadRequestException();
-      if (password && type === groupType.PROTECTED) password = await bcrypt.hash(password, 10);
+      if (!password && type === groupType.PROTECTED)
+        throw new BadRequestException();
+      if (password && type === groupType.PROTECTED)
+        password = await bcrypt.hash(password, 10);
 
       const channel = await this.prismaService.groupConversation.create({
         data: {
@@ -209,7 +217,7 @@ export class GroupService {
           members: { include: { user: true } },
         },
       });
-  
+
       return GroupConversationEntity.fromGroupConversation(channel);
     } catch {
       return null;
@@ -253,27 +261,31 @@ export class GroupService {
     const toUp = await this.findMember(channelId, toUpgradeId);
 
     if (admin && toUp) {
-      if(admin.role === roleType.ADMIN || admin.role === roleType.OWNER) {
+      if (admin.role === roleType.ADMIN || admin.role === roleType.OWNER) {
         if (toUp.role === roleType.MEMBER) {
           await this.prismaService.groupMember.update({
-            where: {id: toUp.id},
-            data: {role: roleType.ADMIN},
+            where: { id: toUp.id },
+            data: { role: roleType.ADMIN },
           });
         }
       }
     }
   }
-  
-  async downgradeMember(userId: number, toDowngradeId: number, channelId: number) {
+
+  async downgradeMember(
+    userId: number,
+    toDowngradeId: number,
+    channelId: number,
+  ) {
     const admin = await this.findMember(channelId, userId);
     const toDown = await this.findMember(channelId, toDowngradeId);
 
     if (admin && toDown) {
-      if(admin.role === roleType.OWNER) {
+      if (admin.role === roleType.OWNER) {
         if (toDown.role === roleType.ADMIN) {
           await this.prismaService.groupMember.update({
-            where: {id: toDown.id},
-            data: {role: roleType.MEMBER},
+            where: { id: toDown.id },
+            data: { role: roleType.MEMBER },
           });
         }
       }
@@ -281,14 +293,16 @@ export class GroupService {
   }
 
   async joinChannel(userId: number, channelTitle: string, password?: string) {
-    const channel = await this.prismaService.groupConversation.findFirstOrThrow({
-      where: { title: channelTitle }
-    });
+    const channel = await this.prismaService.groupConversation.findFirstOrThrow(
+      {
+        where: { title: channelTitle },
+      },
+    );
     const toAdd = await this.prismaService.user.findFirst({
       where: { id: userId },
     });
     if (!toAdd) throw new BadRequestException();
-    if(channel.type === groupType.PUBLIC) {
+    if (channel.type === groupType.PUBLIC) {
       await this.prismaService.groupMember.create({
         data: {
           user: { connect: { id: userId } },
@@ -297,7 +311,8 @@ export class GroupService {
       });
     } else if (channel.type === groupType.PROTECTED) {
       if (channel.password) {
-        if (!password || !await bcrypt.compare(password, channel.password)) throw new BadRequestException();
+        if (!password || !(await bcrypt.compare(password, channel.password)))
+          throw new BadRequestException();
         const toAdd = await this.prismaService.user.findFirst({
           where: { id: userId },
         });
@@ -311,7 +326,14 @@ export class GroupService {
     }
   }
 
-  // async searchforChannel() {
+  async searchforChannel(channelTitle: string) {
+    const channel =
+      await this.prismaService.groupConversation.findFirstOrThrow({
+        where: {
+          title: channelTitle,
+        },
+      });
 
-  // }
+    return GroupConversationEntity.fromGroupConversation(channel);
+  }
 }

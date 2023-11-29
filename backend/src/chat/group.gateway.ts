@@ -2,7 +2,7 @@ import {
   ParseIntPipe,
   UseFilters,
   UsePipes,
-  ValidationPipe
+  ValidationPipe,
 } from '@nestjs/common';
 import {
   ConnectedSocket,
@@ -17,6 +17,7 @@ import { HttpToWsFilter } from 'src/common/http-to-ws.filter';
 import { PrismaIgnoreFilter } from 'src/common/prisma-ignore.filter';
 import { GroupMessageDTO } from './dto/group-message.dto';
 import { GroupService } from './group.service';
+import { groupType } from '@prisma/client';
 
 @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
 @UseFilters(HttpToWsFilter)
@@ -75,7 +76,7 @@ export class GroupGateway {
       .to(`user-${data.userId}`)
       .emit('channel.banned', data.channelId);
   }
-  
+
   @SubscribeMessage('channel.unban')
   async unbanFromChannel(
     @ConnectedSocket() client: Socket,
@@ -141,7 +142,7 @@ export class GroupGateway {
     );
     this.server.to(`user-${data.userId}`).emit('channel.muted', data.channelId);
   }
-  
+
   @SubscribeMessage('channel.upgrade')
   async upgradeUserRole(
     @ConnectedSocket() client: Socket,
@@ -152,9 +153,11 @@ export class GroupGateway {
       data.userId,
       data.channelId,
     );
-    this.server.to(`user-${data.userId}`).emit('channel.upgraded', data.channelId);
+    this.server
+      .to(`user-${data.userId}`)
+      .emit('channel.upgraded', data.channelId);
   }
-  
+
   @SubscribeMessage('channel.downgrade')
   async downgradeUserRole(
     @ConnectedSocket() client: Socket,
@@ -165,6 +168,23 @@ export class GroupGateway {
       data.userId,
       data.channelId,
     );
-    this.server.to(`user-${data.userId}`).emit('channel.downgraded', data.channelId);
+    this.server
+      .to(`user-${data.userId}`)
+      .emit('channel.downgraded', data.channelId);
+  }
+
+  @SubscribeMessage('channel.search')
+  async getChannel(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() channelTitle: string
+  ) {
+    try {
+      const res = await this.groupconversationService.searchforChannel(
+        channelTitle,
+      );
+      this.server.to(`user-${client.data.id}`).emit('channel.found', res);
+    } catch {
+      this.server.to(`user-${client.data.id}`).emit('channel.found', null);
+    }
   }
 }
