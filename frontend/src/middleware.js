@@ -1,12 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-
-/** @param {NextRequest} request  */
-function redirect(request, pathname) {
-  const url = request.nextUrl.clone();
-
-  url.pathname = pathname;
-  return NextResponse.redirect(url);
-}
+import { redirect } from "./common";
 
 /** @param {NextRequest} request  */
 export async function middleware(request) {

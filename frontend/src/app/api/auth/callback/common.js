@@ -1,23 +1,20 @@
+import { redirect } from "@/common";
 import ms from "ms";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 
 export function tokenFetcher(tokenUrl) {
   /** @param {NextRequest} request  */
   return async function GET(request) {
     const query = request.nextUrl.searchParams.toString();
-    const res = await fetch(`${tokenUrl}?${query}`);
-    const data = await res.json();
+    const data = await fetch(`${tokenUrl}?${query}`).then((res) => res.json());
+    const isOTP = data.otp.enabled && !data.otp.verified;
+    const res = redirect(request, isOTP ? "/auth/otp" : "/profile");
 
-    const pathname = data.otp.enabled && !data.otp.verified ? "/auth/otp" : "/profile";
-    const redirect = NextResponse.redirect(
-      `${request.nextUrl.origin}${pathname}`,
-    );
-
-    redirect.cookies.set("authorization", data.token, {
+    res.cookies.set("authorization", data.token, {
       httpOnly: true,
       maxAge: ms("999years"),
     });
 
-    return redirect;
+    return res;
   };
 }
