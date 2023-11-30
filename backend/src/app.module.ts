@@ -15,6 +15,7 @@ import { ChatModule } from './chat/chat.module';
 import { FileCleanupInterceptor } from './common/file-cleanup.interceptor';
 import { NotificationModule } from './notification/notification.module';
 import { UserModule } from './user/user.module';
+import { GameModule } from './game/game.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { UserModule } from './user/user.module';
     UserModule,
     NotificationModule,
     ChatModule,
+    GameModule,
   ],
   providers: [
     providePrismaClientExceptionFilter(),
