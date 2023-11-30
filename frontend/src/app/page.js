@@ -56,10 +56,9 @@ import { useRef } from "react";
 
 // mouse traking
 import { useMouse } from "../hooks/useMouse";
-import { useWindowScroll } from "@uidotdev/usehooks";
+import { useLockBodyScroll, useWindowScroll } from "@uidotdev/usehooks";
 import { MaskedLines } from "@/components/MaskedLines";
 import { SplitText } from "@/components/SplitText";
-import { ScrollContext } from "@/components/ScrollProvider";
 
 function Title(props) {
   return (
@@ -669,6 +668,8 @@ function Blur() {
 }
 
 function StartSection(props) {
+  useLockBodyScroll();
+
   return (
     <motion.div
       initial={{ opacity: 1 }}
@@ -699,6 +700,8 @@ function StartSection(props) {
 }
 
 function LoginSection({ onClick, ...props }) {
+  useLockBodyScroll();
+
   return (
     <div
       className="bg-bg01/90 fixed inset-0 z-40 flex items-center justify-center"
@@ -769,7 +772,6 @@ export default function Home() {
   const mouse = useMouse();
   const [scroll] = useWindowScroll();
   const [login, setLogin] = useState(false);
-  const [, setScroll] = useContext(ScrollContext);
 
   return (
     <main
@@ -783,7 +785,6 @@ export default function Home() {
             onClick={() => {
               setIsHidden(false);
               setIsHover(true);
-              setScroll(true);
               setSlideUp(true);
               setOverlay(false);
             }}
@@ -811,19 +812,13 @@ export default function Home() {
           onMouseLeave={() => setIsHidden(false)}
         />
         <StartButton
-          onClick={() => {
-            setLogin(true);
-            setScroll(false);
-          }}
+          onClick={() => setLogin(true)}
           onMouseEnter={() => setIsHidden(true)}
           onMouseLeave={() => setIsHidden(false)}
         />
         {login && (
           <LoginSection
-            onClick={() => {
-              setLogin(false);
-              setScroll(true);
-            }}
+            onClick={() => setLogin(false)}
             onMouseEnter={() => setIsHidden(true)}
             onMouseLeave={() => setIsHidden(false)}
           />
