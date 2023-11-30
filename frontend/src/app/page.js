@@ -10,6 +10,7 @@ import {
   useState,
 } from "react";
 import Link from "next/link";
+import useSWR from "swr";
 
 import heroImg from "@/images/pics/hero-bg.jpg";
 import footerImg from "@/images/pics/footer.jpg";
@@ -608,15 +609,27 @@ function FooterSectionHover(props) {
   );
 }
 
-function StartButton(props) {
+function StartButton({ onClick, onMouseEnter, onMouseLeave }) {
+  const { data } = useSWR("/users/me");
+
+  const className =
+    "text-center text-tx01 text-xl lg:text-2xl font-extralight tracking-[4.80px] uppercase border border-tx01 rounded-full px-10 py-1 lg:px-14 lg:py-2 2xl:px-16 hover:text-tx03 hover:bg-tx01 ease-linear transition-colors duration-[400ms]  z-30 mt-10 lg:mt-48";
+
   return (
-    <div className="w-screen flex justify-center items-center flex-col pb-40 lg:pb-64  bg-bg01" {...props}>
-      <button
-        className="text-center text-tx01 text-xl lg:text-2xl font-extralight tracking-[4.80px] uppercase border border-tx01 rounded-full px-10 py-1 lg:px-14 lg:py-2 2xl:px-16
-          hover:text-tx03 hover:bg-tx01 ease-linear transition-colors duration-[400ms]  z-30 mt-10 lg:mt-48"
-      >
-        Start
-      </button>
+    <div
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      className="w-screen flex justify-center items-center flex-col pb-40 lg:pb-64  bg-bg01"
+    >
+      {data ? (
+        <Link href="/profile" className={className}>
+          Start
+        </Link>
+      ) : (
+        <button onClick={onClick} className={className}>
+          Start
+        </button>
+      )}
     </div>
   );
 }
@@ -716,7 +729,7 @@ function LoginSection({ onClick, ...props }) {
           </div>
 
           <div>
-            <Link className="group flex items-center mb-3" href={"/auth"}>
+            <Link className="group flex items-center mb-3" href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/42`}>
               <Image
                 className="lg:h-8 lg:w-8 2xl:h-10 2xl:w-10 mr-3 w-8 h-8"
                 src={intrat}
@@ -727,7 +740,7 @@ function LoginSection({ onClick, ...props }) {
               </div>
             </Link>
 
-            <Link className="group flex items-center mb-2" href={"/auth"}>
+            <Link className="group flex items-center mb-2" href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google`}>
               <Image
                 className="lg:h-8 lg:w-8 2xl:h-10 2xl:w-10 mr-3 w-8 h-8"
                 src={google}

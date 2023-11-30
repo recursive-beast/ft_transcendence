@@ -26,7 +26,7 @@ export class BlockedController {
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser() user: UserEntity,
   ) {
-    return { data: await this.blockedService.block(user.id, id) };
+    return this.blockedService.block(user.id, id);
   }
 
   @Delete(':id')
@@ -34,6 +34,6 @@ export class BlockedController {
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser() user: UserEntity,
   ) {
-    return { data: await this.blockedService.unblock(user.id, id) };
+    return this.blockedService.unblock(user.id, id);
   }
 }

@@ -10,6 +10,8 @@ import "./globals.scss";
 import { Poppins } from "next/font/google";
 import { useContext, useEffect } from "react";
 import clsx from "clsx";
+import { SWRConfig } from "swr";
+import { fetcher } from "@/common";
 
 const exa = Poppins({
   subsets: ["latin"],
@@ -36,8 +38,10 @@ export default function RootLayout(props) {
   });
 
   return (
-    <ScrollProvider defaultValue={true}>
-      <Content {...props} />
-    </ScrollProvider>
+    <SWRConfig value={{ fetcher }}>
+      <ScrollProvider defaultValue={true}>
+        <Content {...props} />
+      </ScrollProvider>
+    </SWRConfig>
   );
 }

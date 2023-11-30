@@ -10,6 +10,10 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const cookie_secret = configService.get('COOKIE_SECRET');
 
+  app.enableCors({
+    origin: configService.get('FRONTEND_URL'),
+    credentials: true,
+  });
   app.useStaticAssets('static', { prefix: '/static' });
   app.use(cookieParser(cookie_secret));
   app.useWebSocketAdapter(new WSAdapter(app));

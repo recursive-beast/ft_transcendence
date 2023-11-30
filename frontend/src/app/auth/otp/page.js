@@ -1,34 +1,15 @@
 "use client";
 
-import "./style.css";
-import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
 
 import logoPic from "@/images/logos/logo.png";
-import { useEffect, useState } from "react";
 
 export default function Home() {
-  const [dash, setDash] = useState(1000);
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    setDash(940);
-    setTimeout(() => setDash(900), 2000);
-    setTimeout(() => setDash(840), 2800);
-    setTimeout(() => setDash(800), 3500);
-    setTimeout(() => {
-      setDash(0);
-    }, 5000);
-
-    setTimeout(() => setVisible(true), 6500);
-  }, []);
-
   return (
     <main className="relative bg-bg01 text-tx01">
       {/* verivication Section */}
-      {visible ? (
+      {
         <div className="fixed inset-0 flex items-center justify-center bg-bg01">
           <div className="bg-bg01 border-[1.5px] border-tx05 rounded-2xl flex flex-col items-center justify-between w-11/12  h-4/5 sm:w-[30rem] xs:h-2/3 relative">
             <div className="font-light tracking-[8px] uppercase text-base sm:text-xl sm:tracking-[10px] lg:text-2xl my-5 sm:my-10">
@@ -71,36 +52,7 @@ export default function Home() {
             <div></div>
           </div>
         </div>
-      ) : (
-        <div className="h-screen w-screen flex items-center justify-center">
-          <div className="flex flex-col items-center">
-            <div className="text-tx01 font-normal uppercase text-xs tracking-[6px] md:text-lg xl:text-xl 2xl:text-2xl mb-7 animate-pulse">
-              Loading...
-            </div>
-
-            <div className="w-64 md:w-72 lg:w-96 items-center justify-center relative">
-              <svg viewBox="0 0 100 100" className="-rotate-90">
-                <circle
-                  style={{ strokeDashoffset: dash }}
-                  className={clsx(
-                    "circle",
-                    "text-tx01 stroke-tx01 stroke-[0.5] ",
-                  )}
-                  cx="50"
-                  cy="50"
-                  r="48"
-                  fillOpacity="0"
-                />
-              </svg>
-              <Image
-                src={logoPic}
-                alt="Logo of the game"
-                className="w-28 h-28 lg:w-40 lg:h-40 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 "
-              />
-            </div>
-          </div>
-        </div>
-      )}
+      }
     </main>
   );
 }

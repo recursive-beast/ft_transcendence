@@ -8,6 +8,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      aspectRatio: {
+        'video-portrait': '9 / 16',
+      },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
