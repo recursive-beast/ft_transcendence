@@ -278,7 +278,7 @@ function GroupInfo({ onClick, ...props }) {
       {/* Header and close */}
       <div
         className="sticky top-0 flex h-14 w-full flex-none items-center
-            space-x-5 border-b border-tx01 bg-tx02 px-2 sm:h-16"
+            space-x-5 border-b border-tx01 bg-tx02 px-2 sm:h-16 z-10"
       >
         {/* Return Button */}
         <button onClick={onClick}>
@@ -295,7 +295,7 @@ function GroupInfo({ onClick, ...props }) {
       </div>
 
       {/* Avatar and title */}
-      <div className="flex flex-col gap-4 bg-bg02 py-8">
+      <div className="mb-3 flex flex-col gap-4 bg-bg02 py-8">
         {/* avatar */}
         <div className="relative flex items-center justify-center">
           <Image
@@ -320,20 +320,20 @@ function GroupInfo({ onClick, ...props }) {
 
         {/* title */}
         {newTitle ? (
-          <div className="relative flex items-end justify-center gap-2 border-b-2 mx-3">
+          <div className="relative mx-3 flex items-end justify-center gap-2 border-b-2 sm:mx-5">
             <input
               className="w-full border-none bg-bg02 outline-none focus:border-none"
               value={props.conversation.displayName}
             />
 
-          {/* Set Avatar Button */}
-          <button onClick={() => setNewTitle(false)}>
-            <Icon
-              className="h-5 w-5 text-tx02 xs:h-6 xs:w-6"
-              icon="solar:check-read-broken"
-            />
-          </button>
-        </div>
+            {/* Set Avatar Button */}
+            <button onClick={() => setNewTitle(false)}>
+              <Icon
+                className="h-5 w-5 text-tx02 xs:h-6 xs:w-6"
+                icon="solar:check-read-broken"
+              />
+            </button>
+          </div>
         ) : (
           <div className="relative flex items-end justify-center gap-2">
             <div className="text-base xs:text-lg">
@@ -351,9 +351,81 @@ function GroupInfo({ onClick, ...props }) {
         )}
 
         {/* members */}
-        <div className="relative flex items-center justify-center text-tx02 font-light tracking-widest -m-3">
-          Group -&nbsp; <span>{props.conversation.members}</span> &nbsp;Members
+        <div className="relative -m-3 flex items-center justify-center font-light tracking-widest text-tx02">
+          Group:&nbsp; <span>Protected</span>
         </div>
+      </div>
+
+      {/* Group Type and password */}
+      <div className="mb-3 flex flex-col gap-4 bg-bg02 px-5 py-8 font-light text-tx02">
+        <div>
+          <label>Group Type:</label>
+          <select
+            value="protected"
+            className="h-6 w-full rounded-sm border-b bg-bg03 px-1 text-tx01 xs:h-8 sm:rounded-md"
+          >
+            <option value="public">Public</option>
+            <option value="private">Private</option>
+            <option value="protected">Protected</option>
+          </select>
+        </div>
+
+        {/* {/* Password Input Section (visible if group type is 'protected') */}
+        <div
+          // className={clsx(groupType === "protected" ? "visible" : "invisible")}
+          className="flex flex-col"
+        >
+          <label>Current Password:</label>
+          <input
+            className="mb-2 h-6 w-full rounded-sm border-b bg-bg03 px-1 text-tx01 xs:h-8 sm:rounded-md"
+            type="password"
+          ></input>
+
+          <label>New Password:</label>
+          <input
+            className="mb-2 h-6 w-full rounded-sm border-b bg-bg03 px-1 text-tx01 xs:h-8 sm:rounded-md"
+            type="password"
+          ></input>
+
+          <label>Confirm:</label>
+          <input
+            className="h-6 w-full rounded-sm border-b bg-bg03 px-1 text-tx01 xs:h-8 sm:rounded-md"
+            type="password"
+          ></input>
+
+          <button
+            className="mx-auto mt-4 rounded-full border border-tx01 p-1 px-2 text-center text-xs font-light uppercase tracking-wider text-tx01 transition-colors duration-[400ms] ease-linear
+          hover:bg-tx01 hover:text-tx03 xs:text-sm "
+          >
+            Change Password
+          </button>
+        </div>
+      </div>
+
+      {/* members */}
+      <div className=" bg-bg02">
+        <div className="mx-3 my-2 text-sm font-light tracking-wide text-tx02 xs:text-base xs:tracking-widest">
+          Group -&nbsp; <span>{props.conversation.members}</span>&nbsp;Members
+        </div>
+        <div
+          className="flex cursor-pointer border-b border-tx02 p-2 hover:bg-tx03"
+          // onClick={() => setNewGroup(true)}
+        >
+          <div className="flex flex-1 items-center">
+            {/* Avatar */}
+            <Icon
+              className="mr-2 h-10 w-10 flex-none rounded-full bg-tx02 p-[2px] text-tx04 xs:mr-3 xs:h-12 xs:w-12"
+              icon="solar:user-plus-bold-duotone"
+            />
+
+            {/* Friend Name */}
+            <div className="truncate text-sm tracking-wide xs:text-base xs:tracking-widest">
+              Add Member
+            </div>
+          </div>
+        </div>
+
+        <FrList />
       </div>
     </div>
   );
@@ -623,7 +695,16 @@ function CustomizeGroup() {
             )}
           >
             <label>Password:</label>
-            <input className="h-6 w-full rounded-sm border-b bg-bg03 px-1 text-tx01 xs:h-8 sm:rounded-md"></input>
+            <input
+              className="mb-2 h-6 w-full rounded-sm border-b bg-bg03 px-1 text-tx01 xs:h-8 sm:rounded-md"
+              type="password"
+            ></input>
+
+            <label>Confirm:</label>
+            <input
+              className="h-6 w-full rounded-sm border-b bg-bg03 px-1 text-tx01 xs:h-8 sm:rounded-md"
+              type="password"
+            ></input>
           </div>
         </div>
       </div>
@@ -637,7 +718,7 @@ function NewGroup({ onGroupClick, ...props }) {
 
   return (
     <div
-      className="no-scrollbar relative flex h-full flex-grow flex-col justify-between space-y-2 overflow-auto
+      className="no-scrollbar relative flex h-full w-full flex-grow flex-col justify-between space-y-2 overflow-auto
      border-tx03 bg-bg02 sm:w-[45%] sm:max-w-[25rem] sm:border-r xl:w-2/5 xl:flex-none"
     >
       {/* Top Section */}
@@ -696,7 +777,7 @@ function NewChat({ onChatClick }) {
       {newGroup ? (
         <NewGroup onGroupClick={() => setNewGroup(false)} />
       ) : (
-        <div className="no-scrollbar flex flex-grow flex-col overflow-auto border-tx03 bg-bg02 sm:w-1/2 sm:max-w-[25rem] sm:border-r  xl:flex-none">
+        <div className="no-scrollbar flex w-full flex-grow flex-col overflow-auto border-tx03 bg-bg02 sm:w-1/2 sm:max-w-[25rem] sm:border-r  xl:flex-none">
           <div
             className="sticky top-0 flex h-14 w-full flex-none items-center
             space-x-3 border-b border-tx01 bg-bg03 px-2 sm:h-16"
@@ -818,6 +899,7 @@ function Search() {
         <input
           ref={inputRef}
           className="w-full border-none bg-tx03 outline-none focus:border-none"
+          type="search"
           onBlur={handleInputBlur}
           onFocus={handleInputFocus}
         />
