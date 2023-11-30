@@ -41,6 +41,11 @@ export class GroupService {
     return GroupMemberEntity.fromGroupMember(member);
   }
 
+  hasMuteExpired(muteUntil: Date) {
+    const currentDate = new Date();
+    return currentDate > muteUntil;
+  }
+
   async banSomeone(admineId: number, toBanId: number, channelId: number) {
     const admin = await this.findMember(channelId, admineId);
     const toBan = await this.findMember(channelId, toBanId);
@@ -60,6 +65,8 @@ export class GroupService {
         admin.role === roleType.ADMIN &&
         toBan.role === roleType.MEMBER
       ) {
+        if (admin.mutedUntil && !this.hasMuteExpired(admin.mutedUntil))
+          throw new BadRequestException();
         await this.prismaService.groupConversation.update({
           where: { id: channelId },
           data: {
@@ -82,6 +89,12 @@ export class GroupService {
     });
     if (admin && toUnban) {
       if (admin.role === roleType.OWNER || admin.role === roleType.ADMIN) {
+        if (
+          admin.role === roleType.ADMIN &&
+          admin.mutedUntil &&
+          !this.hasMuteExpired(admin.mutedUntil)
+        )
+          throw new BadRequestException();
         await this.prismaService.user.update({
           where: { id: toUnbanId },
           data: { bannedFromGroups: { disconnect: { id: channelId } } },
@@ -102,6 +115,8 @@ export class GroupService {
           where: { id: toKick.id },
         });
       } else if (admin.role === roleType.ADMIN) {
+        if (admin.mutedUntil && !this.hasMuteExpired(admin.mutedUntil))
+          throw new BadRequestException();
         await this.prismaService.groupMember.delete({
           where: {
             role: roleType.MEMBER,
@@ -130,6 +145,8 @@ export class GroupService {
         admin.role === roleType.ADMIN &&
         toMute.role === roleType.MEMBER
       ) {
+        if (admin.mutedUntil && !this.hasMuteExpired(admin.mutedUntil))
+          throw new BadRequestException();
         await this.prismaService.groupMember.update({
           where: { id: toMute.id },
           data: { mutedUntil: fifteenMinutesFromNow },
@@ -148,7 +165,13 @@ export class GroupService {
         const toAdd = await this.prismaService.user.findFirst({
           where: { id: element },
         });
-        if (!toAdd) continue;
+        const isMember = await this.prismaService.groupMember.findFirst({
+          where: {
+            userId: element,
+            groupConversationId: channelId,
+          },
+        });
+        if (!toAdd || isMember) continue;
         await this.prismaService.groupMember.create({
           data: {
             user: { connect: { id: element } },
@@ -327,12 +350,13 @@ export class GroupService {
   }
 
   async searchforChannel(channelTitle: string) {
-    const channel =
-      await this.prismaService.groupConversation.findFirstOrThrow({
+    const channel = await this.prismaService.groupConversation.findFirstOrThrow(
+      {
         where: {
           title: channelTitle,
         },
-      });
+      },
+    );
 
     return GroupConversationEntity.fromGroupConversation(channel);
   }

@@ -17,7 +17,6 @@ import { HttpToWsFilter } from 'src/common/http-to-ws.filter';
 import { PrismaIgnoreFilter } from 'src/common/prisma-ignore.filter';
 import { GroupMessageDTO } from './dto/group-message.dto';
 import { GroupService } from './group.service';
-import { groupType } from '@prisma/client';
 
 @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
 @UseFilters(HttpToWsFilter)
@@ -37,17 +36,30 @@ export class GroupGateway {
     );
     if (message)
       this.server
-        .in(`channel-${dto.groupConversationId}`)
+        .to(`channel-${dto.groupConversationId}`)
         .emit('channel.message', instanceToPlain(message));
   }
 
-  @SubscribeMessage('channel.join')
+  @SubscribeMessage('room.join')
   joinRoom(
     @ConnectedSocket() client: Socket,
     @MessageBody(ParseIntPipe) id: number,
   ) {
-    // this.groupconversationService.findMember(id, client.data.id);
     client.join(`channel-${id}`);
+  }
+
+  @SubscribeMessage('channel.join')
+  async joinChannel(
+    @ConnectedSocket() client: Socket,
+    @MessageBody()
+    data: { channelId: number; channelTitle: string; password?: string },
+  ) {
+    await this.groupconversationService.joinChannel(
+      client.data.id,
+      data.channelTitle,
+      data.password,
+    );
+    client.join(`channel-${data.channelId}`);
   }
 
   @SubscribeMessage('channel.leave')
@@ -55,7 +67,6 @@ export class GroupGateway {
     @ConnectedSocket() client: Socket,
     @MessageBody(ParseIntPipe) id: number,
   ) {
-    // this.groupconversationService.leaveChannel(client.data.id, id)
     client.leave(`channel-${id}`);
   }
 
@@ -176,7 +187,7 @@ export class GroupGateway {
   @SubscribeMessage('channel.search')
   async getChannel(
     @ConnectedSocket() client: Socket,
-    @MessageBody() channelTitle: string
+    @MessageBody() channelTitle: string,
   ) {
     try {
       const res = await this.groupconversationService.searchforChannel(
