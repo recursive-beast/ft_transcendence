@@ -5,7 +5,8 @@ import Image from "next/image";
 import { Icon } from "@iconify/react";
 import Link from "next/link";
 import React from "react";
-import { useState } from "react";
+import { useState, useRef } from "react";
+import { faker } from "@faker-js/faker";
 
 import logoPic from "@/images/logos/logo.png";
 //Profils
@@ -27,6 +28,15 @@ import AvUnsto from "@/images/achievements/unsto.png";
 import AvShoot from "@/images/achievements/shoot.png";
 import { useHorizontalScroll } from "@/hooks/useHorizontalScroll";
 import { usePathname } from "next/navigation";
+
+const friends = Array(50)
+  .fill()
+  .map(() => ({
+    avatar: faker.internet.avatar(),
+    fullname: faker.person.fullName(),
+    displayName: faker.internet.displayName(),
+    status: faker.helpers.arrayElement(["ONLINE", "OFFLINE", "INGAME"]),
+  }));
 
 function Notif(props) {
   return (
@@ -336,7 +346,7 @@ export function Rank({ index, first, ...props }) {
       >
         <Image
           className={clsx(
-            "sm-h:h-12 sm-h:w-12 md-h:h-14 md-h:w-14 mr-2 h-7 w-7 rounded-full  object-cover xs:m-1 xs:h-10 xs:w-10 sm:mr-12",
+            "mr-2 h-7 w-7 rounded-full object-cover xs:m-1 xs:h-10 xs:w-10  sm:mr-12 sm-h:h-12 sm-h:w-12 md-h:h-14 md-h:w-14",
             first && "invisible",
           )}
           src={props.pic}
@@ -355,71 +365,124 @@ export const status = {
   ONLINE: {
     name: "octicon:dot-fill-16",
     color: "text-[#24E5A5]",
-    border: "border-[1.5px] border-[#24E5A5]"
+    border: "border-[1.5px] border-[#24E5A5]",
   },
   OFFLINE: {
     name: "octicon:dot-fill-16",
     color: "text-tx03",
-    border: "border-[1.5px] border-tx01"
+    border: "border-[1.5px] border-tx01",
   },
   INGAME: {
     name: "arcticons:gameturbo",
     color: "text-[#EB5A3A]",
-    border: "border-[1.5px] border-[#EB5A3A]"
+    border: "border-[1.5px] border-[#EB5A3A]",
   },
 };
 
-function Friend(props) {
+export function Search(props) {
+  const [search, setSearch] = useState(false);
+  const inputRef = useRef(null);
+
+  const handleSearchClick = () => {
+    setSearch(!search);
+    // Focus on the input field when the "Search" button or text is clicked
+    if (!search) {
+      inputRef.current.focus();
+    }
+  };
+  // Set the search variable to false when the input loses focus
+  const handleInputBlur = () => {
+    setSearch(false);
+  };
+  // Set the search variable to true when the input focus
+  const handleInputFocus = () => {
+    setSearch(true);
+  };
+
   return (
-    <div className="m-3 flex items-center justify-between">
-      <div className="flex items-center">
-        <Image
-          className="mr-4 h-8 w-8 rounded-full object-cover"
-          src={props.pic}
-          quality={100}
+    <div
+      className={clsx(
+        "flex h-7 grow items-center xs:h-8",
+        props.home ? "mx-3 bg-bg01" : " rounded-lg bg-tx03",
+        search && props.home &&"border-b ",
+      )}
+    >
+      <button className="ml-3 w-10 xs:w-12" onClick={handleSearchClick}>
+        <Icon
+          className="h-4 w-4 text-tx02 xs:h-5 xs:w-5"
+          icon={search ? "solar:arrow-left-broken" : "guidance:search"}
         />
-        <div className="font-extralight tracking-widest">{props.name}</div>
+      </button>
+
+      <div className="grow pr-3 text-base font-light text-tx02  xs:text-xl">
+        {!search && (
+          <div onClick={handleSearchClick} className="absolute tracking-widest">
+            Search
+          </div>
+        )}
+        <input
+          ref={inputRef}
+          className={clsx(
+            "w-full border-none outline-none focus:border-none",
+            props.home ? "mx-3 bg-bg01" : " bg-tx03",
+          )}
+          type="search"
+          onBlur={handleInputBlur}
+          onFocus={handleInputFocus}
+        />
       </div>
-      <Icon
-        className={clsx("h-5 w-5", status[props.status].color)}
-        icon={status[props.status].name}
-      />
     </div>
   );
 }
 
 export function Friends(props) {
   return (
-    <div className="no-scrollbar h-full w-full overflow-auto rounded-3xl border-y border-tx02 lg:mb-14">
-      <div className="sticky top-0 flex items-center justify-between bg-bg01 px-2 py-5 pb-2 text-base capitalize tracking-[3px] text-tx02">
-        <div>friends</div>
-        <Icon className="h-6 w-6" icon="ph:caret-up-down-bold" />
-      </div>
-      <div>
-        <Friend pic={Pic01} name="syakoubinato" status="ONLINE" />
-        <Friend pic={Pic02} name="badrbansh" status="OFFLINE" />
-        <Friend pic={Pic15} name="megashoot" status="INGAME" />
-        <Friend pic={Pic11} name="aitlandlia" status="ONLINE" />
-        <Friend pic={Pic06} name="moonshot" status="INGAME" />
+    <div
+      className={clsx(
+        props.home &&
+          "no-scrollbar max-h-[80%] flex-grow w-full overflow-auto rounded-lg border-y border-tx02 lg:mb-14",
+      )}
+    >
+      {/* Title in home page */}
+      {props.home && (
+        <div className="sticky top-0 flex items-center justify-between bg-bg03 px-2 py-3 text-base capitalize tracking-[3px] text-tx02">
+          <div>friends</div>
+          <Icon className="h-6 w-6" icon="ph:caret-up-down-bold" />
+        </div>
+      )}
 
-        <Friend pic={Pic01} name="syakoubinato" status="ONLINE" />
-        <Friend pic={Pic02} name="badrbansh" status="OFFLINE" />
-        <Friend pic={Pic15} name="megashoot" status="INGAME" />
-        <Friend pic={Pic11} name="aitlandlia" status="ONLINE" />
-        <Friend pic={Pic06} name="moonshot" status="INGAME" />
+      {/* Friends List */}
+      {friends.map((friend, index) => {
+        return (
+          <div
+            key={index}
+            className={clsx(
+              "flex border-b border-tx03 p-2 hover:bg-tx03",
+              !props.group && "cursor-pointer",
+            )}
+          >
+            {/* Flex container for avatar and name */}
+            <div className="flex flex-1 items-center">
+              {/* Avatar */}
+              <Image
+                className="mr-2 h-12 w-12 flex-none rounded-full border-[1.5px] border-tx02 object-cover p-[2px] xs:mr-3 xs:h-14 xs:w-14"
+                src={friend.avatar}
+                quality={100}
+                width={56}
+                height={56}
+              />
 
-        <Friend pic={Pic01} name="syakoubinato" status="ONLINE" />
-        <Friend pic={Pic02} name="badrbansh" status="OFFLINE" />
-        <Friend pic={Pic15} name="megashoot" status="INGAME" />
-        <Friend pic={Pic11} name="aitlandlia" status="ONLINE" />
-        <Friend pic={Pic06} name="moonshot" status="INGAME" />
+              {/* Friend Name */}
+              <div className="truncate text-sm tracking-wide xs:text-base xs:tracking-widest">
+                {friend.displayName}
+              </div>
+            </div>
 
-        <Friend pic={Pic01} name="syakoubinato" status="ONLINE" />
-        <Friend pic={Pic02} name="badrbansh" status="OFFLINE" />
-        <Friend pic={Pic15} name="megashoot" status="INGAME" />
-        <Friend pic={Pic11} name="aitlandlia" status="ONLINE" />
-        <Friend pic={Pic06} name="moonshot" status="INGAME" />
-      </div>
+            {/* Checkbox for friend selection */}
+            {props.group && <input className=" m-3" type="checkbox" />}
+          </div>
+        );
+      })}
     </div>
   );
 }

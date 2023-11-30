@@ -7,6 +7,7 @@ import {
   RightBar,
   Notificatin,
   Rank,
+  Search,
 } from "@/components/common";
 import Image from "next/image";
 import { Icon } from "@iconify/react";
@@ -43,7 +44,7 @@ function HomeMenu({ onClick }) {
       <div>
         <div className=" flex items-center justify-between px-1 py-3">
           {/* search */}
-          <div className="mb-3 flex items-center">
+          {/* <div className="mb-3 flex items-center">
             <Icon
               className="h-5 w-5 text-tx01 xs:h-6 xs:w-6"
               icon="guidance:search"
@@ -52,7 +53,9 @@ function HomeMenu({ onClick }) {
               className="ml-3 h-8 w-full border-b border-tx03 bg-bg01 text-base font-extralight xs:text-xl"
               defaultValue="Search"
             />
-          </div>
+          </div> */}
+          <Search home={true}/>
+
 
           {/* notif */}
           <button
@@ -104,7 +107,7 @@ function HomeMenu({ onClick }) {
       </div>
 
       {/* Friends elements */}
-      <Friends />
+      <Friends home={true}/>
     </div>
   );
 }

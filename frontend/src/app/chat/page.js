@@ -18,7 +18,14 @@ import Pic06 from "@/images/profils/06.jpg";
 import Pic15 from "@/images/profils/15.jpg";
 import { faker } from "@faker-js/faker";
 
-import { Title, Header, RightBar, Friends, status } from "@/components/common";
+import {
+  Title,
+  Header,
+  RightBar,
+  Friends,
+  status,
+  Search,
+} from "@/components/common";
 import {
   format,
   formatDistanceToNow,
@@ -44,15 +51,6 @@ const conversations = Array(20)
         date: faker.date.recent({ days: 2 }),
       })),
     unseen: faker.number.int({ min: 0, max: 3 }),
-    fullname: faker.person.fullName(),
-    displayName: faker.internet.displayName(),
-    status: faker.helpers.arrayElement(["ONLINE", "OFFLINE", "INGAME"]),
-  }));
-
-const friendsList = Array(30)
-  .fill()
-  .map(() => ({
-    avatar: faker.internet.avatar(),
     fullname: faker.person.fullName(),
     displayName: faker.internet.displayName(),
     status: faker.helpers.arrayElement(["ONLINE", "OFFLINE", "INGAME"]),
@@ -277,8 +275,8 @@ function GroupInfo({ onClick, ...props }) {
     <div className="no-scrollbar flex flex-grow flex-col overflow-auto border-tx03 bg-bg03 sm:w-1/2 sm:max-w-[25rem] sm:border-l xl:flex-none">
       {/* Header and close */}
       <div
-        className="sticky top-0 flex h-14 w-full flex-none items-center
-            space-x-5 border-b border-tx01 bg-tx02 px-2 sm:h-16 z-10"
+        className="sticky top-0 z-10 flex h-14 w-full flex-none
+            items-center space-x-5 border-b border-tx01 bg-tx02 px-2 sm:h-16"
       >
         {/* Return Button */}
         <button onClick={onClick}>
@@ -425,7 +423,7 @@ function GroupInfo({ onClick, ...props }) {
           </div>
         </div>
 
-        <FrList />
+        <Friends />
       </div>
     </div>
   );
@@ -460,7 +458,9 @@ function ConversationBox({ onClick, ...props }) {
               {/* Friend or group Info */}
               <button
                 className="flex flex-grow items-center"
-                onClick={() => (props.group ? setGrInfo(true) : undefined)}
+                onClick={() =>
+                  props.group ? setGrInfo(true) : setGrInfo(false)
+                }
               >
                 {/* Avatar */}
                 <Image
@@ -589,51 +589,12 @@ function ConversationBox({ onClick, ...props }) {
       </div>
 
       {/* Group Info */}
-      {grInfo && (
+      {grInfo && props.group && (
         <GroupInfo
           onClick={() => setGrInfo(false)}
           conversation={props.conversation}
         />
       )}
-    </div>
-  );
-}
-
-function FrList(props) {
-  return (
-    <div>
-      {/* Map through the friendsList array to render each friend */}
-      {friendsList.map((friend, index) => {
-        return (
-          <div
-            key={index}
-            className={clsx(
-              "flex border-b border-tx03 p-2 hover:bg-tx03",
-              !props.group && "cursor-pointer",
-            )}
-          >
-            {/* Flex container for avatar and name */}
-            <div className="flex flex-1 items-center">
-              {/* Avatar */}
-              <Image
-                className="mr-2 h-12 w-12 flex-none rounded-full border-[1.5px] border-tx02 object-cover p-[2px] xs:mr-3 xs:h-14 xs:w-14"
-                src={friend.avatar}
-                quality={100}
-                width={56}
-                height={56}
-              />
-
-              {/* Friend Name */}
-              <div className="truncate text-sm tracking-wide xs:text-base xs:tracking-widest">
-                {friend.displayName}
-              </div>
-            </div>
-
-            {/* Checkbox for friend selection */}
-            {props.group && <input className=" m-3" type="checkbox" />}
-          </div>
-        );
-      })}
     </div>
   );
 }
@@ -748,7 +709,7 @@ function NewGroup({ onGroupClick, ...props }) {
         </div>
       </div>
       {/* Render either CustomizeGroup or FrList based on the 'next' state */}
-      {next ? <CustomizeGroup /> : <FrList group={true} />}
+      {next ? <CustomizeGroup /> : <Friends group={true} />}
 
       {/* Next Button */}
       <button
@@ -819,7 +780,8 @@ function NewChat({ onChatClick }) {
             New Direct Message
           </div>
 
-          <FrList />
+          {/* <FrList /> */}
+          <Friends />
         </div>
       )}
     </>
@@ -857,53 +819,6 @@ function Messages(props) {
         group={true}
         messages={<GroupMessage onConversation={props.onGroupConversation} />}
       />
-    </div>
-  );
-}
-
-function Search() {
-  const [search, setSearch] = useState(false);
-  const inputRef = useRef(null);
-
-  const handleSearchClick = () => {
-    setSearch(!search);
-    // Focus on the input field when the "Search" button or text is clicked
-    if (!search) {
-      inputRef.current.focus();
-    }
-  };
-  // Set the search variable to false when the input loses focus
-  const handleInputBlur = () => {
-    setSearch(false);
-  };
-  // Set the search variable to true when the input focus
-  const handleInputFocus = () => {
-    setSearch(true);
-  };
-
-  return (
-    <div className="flex h-7 grow items-center rounded-lg bg-tx03 xs:h-8">
-      <button className="ml-3 w-10 xs:w-12" onClick={handleSearchClick}>
-        <Icon
-          className="h-4 w-4 text-tx02 xs:h-5 xs:w-5"
-          icon={search ? "solar:arrow-left-broken" : "guidance:search"}
-        />
-      </button>
-
-      <div className="grow pr-3 text-base font-light text-tx02  xs:text-xl">
-        {!search && (
-          <div onClick={handleSearchClick} className="absolute tracking-widest">
-            Search
-          </div>
-        )}
-        <input
-          ref={inputRef}
-          className="w-full border-none bg-tx03 outline-none focus:border-none"
-          type="search"
-          onBlur={handleInputBlur}
-          onFocus={handleInputFocus}
-        />
-      </div>
     </div>
   );
 }
