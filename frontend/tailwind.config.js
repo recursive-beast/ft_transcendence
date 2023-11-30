@@ -29,6 +29,8 @@ module.exports = {
       'xs': '380px',
       ...defaultTheme.screens,
       'md': '769px',
+      'sm-h': { 'raw': '(min-height: 900px)' },
+      'md-h': { 'raw': '(min-height: 1200px)' },
     },
     colors: {
       // Primary colors
@@ -50,6 +52,4 @@ module.exports = {
       tx06: "#EB5A3A",
     },
   },
-  // prettier.config.js
-  plugins: ["prettier-plugin-tailwindcss"],
 };

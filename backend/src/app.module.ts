@@ -4,15 +4,11 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
+import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import * as Joi from 'joi';
 import { providePrismaClientExceptionFilter } from 'nestjs-prisma';
 import { AuthModule } from './auth/auth.module';
-import { JWTGuard } from './auth/jwt.guard';
-import { OTPGuard } from './auth/otp.guard';
-import { TokenErrorFilter } from './auth/token-error.filter';
 import { ChatModule } from './chat/chat.module';
-import { FileCleanupInterceptor } from './common/file-cleanup.interceptor';
 import { NotificationModule } from './notification/notification.module';
 import { UserModule } from './user/user.module';
 import { GameModule } from './game/game.module';
@@ -49,24 +45,8 @@ import { GameModule } from './game/game.module';
   providers: [
     providePrismaClientExceptionFilter(),
     {
-      provide: APP_FILTER,
-      useClass: TokenErrorFilter,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: JWTGuard,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: OTPGuard,
-    },
-    {
       provide: APP_INTERCEPTOR,
       useClass: ClassSerializerInterceptor,
-    },
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: FileCleanupInterceptor,
     },
     {
       provide: APP_PIPE,

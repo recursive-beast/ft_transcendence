@@ -4,6 +4,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { MulterModule } from '@nestjs/platform-express';
 import { PrismaModule } from 'nestjs-prisma';
 import os from 'os';
+import { CommonModule } from 'src/common/common.module';
 import { BlockedController } from './blocked.controller';
 import { BlockedService } from './blocked.service';
 import { FriendController } from './friend.controller';
@@ -18,6 +19,7 @@ import { UserService } from './user.service';
     MulterModule.register({ dest: os.tmpdir() }),
     EventEmitterModule.forRoot(),
     PrismaModule,
+    CommonModule,
   ],
   providers: [
     UserService,

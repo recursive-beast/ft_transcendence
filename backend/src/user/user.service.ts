@@ -1,18 +1,10 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import fs from 'fs/promises';
 import Fuse from 'fuse.js';
 import { merge } from 'lodash';
 import { PrismaService } from 'nestjs-prisma';
-import path from 'path';
-import { rimraf } from 'rimraf';
-import sharp from 'sharp';
+import { CommonService } from 'src/common/common.service';
 import * as uuid from 'uuid';
 import { UserEntity } from '../common/entities/user.entity';
 import { UserQueryDTO } from './dto/query.dto';
@@ -22,7 +14,7 @@ import { UserUpdateDTO } from './dto/update.dto';
 export class UserService {
   constructor(
     private prismaService: PrismaService,
-    private configService: ConfigService,
+    private commonService: CommonService,
   ) {}
 
   async findOrCreate(data: Prisma.UserCreateInput) {
@@ -98,31 +90,12 @@ export class UserService {
     return UserEntity.fromUser(updated);
   }
 
-  async setAvatar(id: User['id'], filepath: string) {
-    const filename = `${id}-${Date.now()}.png`;
-    const directory = path.resolve('static/avatars');
-    const output = `${directory}/${filename}`;
-    const backend_url = this.configService.get('BACKEND_URL');
-    const avatar = new URL(`/static/avatars/${filename}`, backend_url).href;
-
-    await fs.mkdir(directory, { recursive: true });
-
-    try {
-      await sharp(filepath).resize(300, 300).toFile(output);
-    } catch (error) {
-      throw new BadRequestException('Invalid image');
-    }
-
+  async setAvatar(id: User['id'], file: Express.Multer.File) {
+    const url = await this.commonService.saveAvatar(`user-${id}`, file);
     const updated = await this.prismaService.user.update({
       where: { id },
-      data: { avatar },
+      data: { avatar: url },
     });
-
-    try {
-      await rimraf(`${directory}/${id}-*`, { glob: { ignore: output } });
-    } catch (error) {
-      console.error(error); // print and ignore error
-    }
 
     return UserEntity.fromUser(updated);
   }
