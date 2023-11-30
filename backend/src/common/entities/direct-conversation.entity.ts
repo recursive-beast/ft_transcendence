@@ -10,7 +10,6 @@ export class DirectConversationEntity implements DirectConversation {
   @Expose()
   @Type(() => MessageEntity)
   messages?: MessageEntity[];
-
   
   @Expose()
   @Type(() => UserEntity)

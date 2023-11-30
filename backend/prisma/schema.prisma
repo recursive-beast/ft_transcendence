@@ -25,6 +25,7 @@ model User {
     messages            Message[]
     directConversations DirectConversation[]
     GroupMember         GroupMember[]
+    bannedFromGroups    GroupConversation[]
 }
 
 model Notification {
@@ -49,9 +50,10 @@ model Message {
     text                 String
     createdAt            DateTime            @default(now())
     updatedAt            DateTime            @updatedAt
+    seen                 Boolean             @default(false)
     directConversation   DirectConversation? @relation(fields: [directConversationId], references: [id])
     directConversationId Int?
-    GroupConversation    GroupConversation?  @relation(fields: [groupConversationId], references: [id])
+    groupConversation    GroupConversation?  @relation(fields: [groupConversationId], references: [id])
     groupConversationId  Int?
 }
 
@@ -71,21 +73,30 @@ enum roleType {
 
 model GroupMember {
     id                  Int               @id @default(autoincrement())
-    user                User              @relation(fields: [userId], references: [id])
+    user                User              @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId              Int
     role                roleType          @default(MEMBER)
-    isBanned            Boolean
-    isMuted             Boolean
-    mutedAt             DateTime?
-    groupConversation   GroupConversation @relation(fields: [groupConversationId], references: [id])
+    mutedUntil          DateTime?
+    groupConversation   GroupConversation @relation(fields: [groupConversationId], references: [id], onDelete: Cascade)
     groupConversationId Int
     createdAt           DateTime          @default(now())
     updatedAt           DateTime          @updatedAt
+    seenAt              DateTime          @default(now())
+}
+
+enum groupType {
+    PUBLIC
+    PROTECTED
+    PRIVATE
 }
 
 model GroupConversation {
     id        Int           @id @default(autoincrement())
     title     String        @unique()
+    avatar    String?
+    type      groupType     @default(PUBLIC)
+    password  String?
+    banned    User[]
     members   GroupMember[]
     messages  Message[]
     createdAt DateTime      @default(now())
