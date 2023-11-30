@@ -622,7 +622,7 @@ function StartButton({ onClick, onMouseEnter, onMouseLeave }) {
       className="w-screen flex justify-center items-center flex-col pb-40 lg:pb-64  bg-bg01"
     >
       {data ? (
-        <Link href="/profile" className={className}>
+        <Link href="/home" className={className}>
           Start
         </Link>
       ) : (
