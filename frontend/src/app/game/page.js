@@ -1,55 +1,82 @@
 "use client";
 
-import { Icon } from "@iconify/react";
-import Image from "next/image";
-import logoPic from "@/images/logos/logo.png";
+import { useEffect, useState } from "react";
+import io from "socket.io-client";
 
-function WebHeader() {
+function Name(){
+  const [socket, setsocket] = useState({});
+  const [waiting, setWat] = useState(false);
+  const [srvRes, setRes] = useState(false);
+  useEffect(() => {
+    const newsocket = io('http://localhost:8000', {
+    withCredentials: true
+});
+    setsocket(newsocket);
+    newsocket.on("connect", () => {
+      console.log("connected");
+    });
+    newsocket.on('game.found', (data) => {
+      // console.log('Received message:', data);
+      setRes(true);
+    });
+
+    return () => {
+      newsocket.disconnect();
+    };
+  }, []);
+
+  function clickhandler(){
+    const mode = 'classic'
+    socket.emit('game.queue', { mode }, (x) => console.log("response: ", x));
+    console.log(socket);
+    setWat(true);
+  }
+  function clickhandler1(){
+    const mode = 'mode 1'
+    socket.emit('game.queue', { mode });
+    setWat(true);
+  }
+  function clickhandler2(){
+    const mode = 'mode 2'
+    socket.emit('game.queue', { mode });
+    setWat(true);
+  }
+  function clickhandler3(){
+    const mode = 'mode 2'
+    socket.emit('cancel', { mode });
+    setWat(false);
+  }
+  // return(
+  //   <div className="page text-pr01">
+  //     <button onClick={clickhandler}>classic</button>
+  //     <button onClick={clickhandler1}>mode 2</button>
+  //     <button onClick={clickhandler2}>mode 3</button>
+
+  //   </div>
+  // );
   return (
-    <header className="hidden  h-screen xl:flex flex-col items-center w-36 2xl:w-56 border-r border-tx02">
-      <div className="my-20 xl:my-24 2xl:my-28">
-        <div className=" h-72">
-          <Image
-            className="w-28 xl:w-32 2xl:w-36"
-            src={logoPic}
-            alt="Logo of the game"
-          />
+    <div className="page text-pr01">
+      {waiting ? (
+        <div>
+          <p>Waiting for server response...</p>
+          <button onClick={clickhandler3}>cancel</button>
+          {/* You can customize the waiting page content here */}
         </div>
+      ) : (
+        <div>
+          <button onClick={clickhandler}>classic</button>
+          <button onClick={clickhandler1}>mode 2</button>
+          <button onClick={clickhandler2}>mode 3</button>
+        </div>
+      )}
 
-        <div className="flex flex-col items-center justify-between h-96 pb-3  xs:pb-4">
-          {[
-            { text: "home", icon: "solar:home-2-broken" },
-            { text: "game", icon: "solar:gamepad-broken" },
-            { text: "chat", icon: "fluent:chat-28-regular" },
-            { text: "leaderboard", icon: "solar:ranking-broken" },
-          ].map((v) => {
-            return (
-              <button key={v.text} className="group flex flex-col items-center">
-                <Icon
-                  className="text-tx01 w-6 lg:w-7 xl:w-8 2xl:w-10 lg:transition lg:duration-500 lg:group-hover:text-tx02 group-hover:-translate-y-1"
-                  icon={v.icon}
-                  width="36"
-                />
-                <div className=" text-tx01 font-light tracking-[3px] uppercase text-sm  lg:opacity-0 lg:group-hover:opacity-100 lg:transition lg:duration-700">
-                  {v.text}
-                </div>
-              </button>
-            );
-          })}
+      {srvRes && (
+        <div>
+           <p>match fond</p>
         </div>
-      </div>
-    </header>
+      )}
+    </div>
   );
 }
 
-export default function Game() {
-  return (
-    <main className=" bg-bg01 text-tx01">
-      <section className="min-h-screen lg:h-screen bg-bg01 flex justify-between px-3 pt-3 pb-1 xl:p-0 sm:px-7 sm:py-5">
-        <div className="flex flex-col">
-          <WebHeader />
-        </div>
-      </section>
-    </main>
-  );
-}
+export default Name;
