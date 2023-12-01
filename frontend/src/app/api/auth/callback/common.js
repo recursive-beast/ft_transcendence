@@ -8,7 +8,7 @@ export function tokenFetcher(tokenUrl) {
     const query = request.nextUrl.searchParams.toString();
     const data = await fetch(`${tokenUrl}?${query}`).then((res) => res.json());
     const isOTP = data.otp.enabled && !data.otp.verified;
-    const res = redirect(request, isOTP ? "/auth/otp" : "/profile");
+    const res = redirect(request, isOTP ? "/auth/otp" : "/home");
 
     res.cookies.set("authorization", data.token, {
       httpOnly: true,
