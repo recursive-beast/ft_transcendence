@@ -12,6 +12,7 @@ import { ChatModule } from './chat/chat.module';
 import { NotificationModule } from './notification/notification.module';
 import { UserModule } from './user/user.module';
 import { GameModule } from './game/game.module';
+import { GamelogicService } from './gamelogic/gamelogic.service';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { GameModule } from './game/game.module';
       provide: APP_PIPE,
       useValue: new ValidationPipe({ transform: true, whitelist: true }),
     },
+    GamelogicService,
   ],
 })
 export class AppModule {}
