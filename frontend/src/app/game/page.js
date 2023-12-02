@@ -1,55 +1,47 @@
 "use client";
 
-import { Icon } from "@iconify/react";
-import Image from "next/image";
-import logoPic from "@/images/logos/logo.png";
+import { Title, Header, RightBar } from "@/components/common";
+import { History } from "@/app/user/[id]/page";
 
-function WebHeader() {
+export default function Home({ params }) {
   return (
-    <header className="hidden  h-screen xl:flex flex-col items-center w-36 2xl:w-56 border-r border-tx02">
-      <div className="my-20 xl:my-24 2xl:my-28">
-        <div className=" h-72">
-          <Image
-            className="w-28 xl:w-32 2xl:w-36"
-            src={logoPic}
-            alt="Logo of the game"
+    <main className="flex h-screen max-h-screen flex-col bg-bg01 text-tx01 ">
+      {/* top of the window */}
+      <Title />
+
+      <div className="flex flex-1 overflow-hidden">
+        <div className="hidden xl:block">
+          <Header
+
+          // menu={<HomeMenu onClick={() => setSetting(true)} />}
           />
         </div>
 
-        <div className="flex flex-col items-center justify-between h-96 pb-3  xs:pb-4">
-          {[
-            { text: "home", icon: "solar:home-2-broken" },
-            { text: "game", icon: "solar:gamepad-broken" },
-            { text: "chat", icon: "fluent:chat-28-regular" },
-            { text: "leaderboard", icon: "solar:ranking-broken" },
-          ].map((v) => {
-            return (
-              <button key={v.text} className="group flex flex-col items-center">
-                <Icon
-                  className="text-tx01 w-6 lg:w-7 xl:w-8 2xl:w-10 lg:transition lg:duration-500 lg:group-hover:text-tx02 group-hover:-translate-y-1"
-                  icon={v.icon}
-                  width="36"
-                />
-                <div className=" text-tx01 font-light tracking-[3px] uppercase text-sm  lg:opacity-0 lg:group-hover:opacity-100 lg:transition lg:duration-700">
-                  {v.text}
-                </div>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-    </header>
-  );
-}
+        <div className="mx-auto flex max-w-[1400px] flex-1 flex-col justify-between overflow-hidden">
+          <div className="z-10 xl:hidden">
+            <Header
+            // menu={<HomeMenu onClick={() => setSetting(true)} />}
+            />
+          </div>
 
-export default function Game() {
-  return (
-    <main className=" bg-bg01 text-tx01">
-      <section className="min-h-screen lg:h-screen bg-bg01 flex justify-between px-3 pt-3 pb-1 xl:p-0 sm:px-7 sm:py-5">
-        <div className="flex flex-col">
-          <WebHeader />
+          <div className="no-scrollbar flex flex-1 flex-col justify-between overflow-auto px-2 xs:px-3 sm:px-5 lg:px-8">
+            <div className="flex w-full flex-col items-center justify-center mt-10 xs:mt-14 sm:mt-20 md:mt-32">
+
+              <div className="text-2xl xs:text-3xl sm:text-5xl xl:text-6xl font-thin tracking-widest mb-5 xs:mb-7 sm:mb-10 md:mb-16">
+                Paddle smash
+              </div>
+
+              <div className="text-xs xs:text-sm sm:text-2xl font-light tracking-wide text-tx02 text-center sm:mx-10">
+                Personalize your game by selecting a theme that matches your
+                style. Use the slider below to preview and select from a variety
+                of themes, ranging from classic to modern
+              </div>
+            </div>
+          </div>
         </div>
-      </section>
+
+        <RightBar menu={<History />} />
+      </div>
     </main>
   );
 }

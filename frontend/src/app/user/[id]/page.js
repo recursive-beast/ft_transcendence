@@ -162,7 +162,7 @@ function Match() {
   );
 }
 
-function History() {
+export function History() {
   return (
     <div className="h-2/3">
       <div className="mb-5 w-full border-b pb-2 text-center text-lg font-light tracking-widest text-tx02">
