@@ -382,7 +382,7 @@ export const status = {
 
 export function Search(props) {
   const [text, setText] = useState("");
-  const { data } = useSWR(encodeURI(`/users?search=${text}`));
+  const { data } = useSWR(encodeURI(`/search/users?search=${text}`));
   const [search, setSearch] = useState(false);
   const inputRef = useRef(null);
 
@@ -395,7 +395,7 @@ export function Search(props) {
   };
   // Set the search variable to false when the input loses focus
   const handleInputBlur = () => {
-    setSearch(false);
+    // setSearch(false);
   };
   // Set the search variable to true when the input focus
   const handleInputFocus = () => {
@@ -450,31 +450,35 @@ export function Search(props) {
           <div
             className={clsx(
               "no-scrollbar absolute z-10 max-h-72 w-full overflow-y-auto rounded-lg border",
-              props.home
-                ? "rounded-t-none border-t-0 bg-bg01"
-                : "bg-tx03 mt-2",
+              props.home ? "rounded-t-none border-t-0 bg-bg01" : "mt-2 bg-tx03",
             )}
           >
-            {data.map((user) => (
-              <div className="flex cursor-pointer items-center border-b border-bg03 hover:bg-bg03">
-                <Image
-                  className="mx-2 h-10 w-10 flex-none rounded-full border-[1.5px] border-tx02 object-cover p-[2px]"
-                  src={user.avatar}
-                  quality={100}
-                  width={56}
-                  height={56}
-                />
-
-                <div
-                  key={user.id}
-                  className="truncate py-3 pr-2 text-base font-light text-tx01"
+            {data?.map((user, index) => {
+              return (
+                <Link
+                  href={`/user/${user.id}`}
+                  key={index}
+                  className="flex cursor-pointer items-center border-b border-bg03 hover:bg-bg03"
                 >
-                  <div>{user.displayName}</div>
+                  <Image
+                    className="mx-2 h-10 w-10 flex-none rounded-full border-[1.5px] border-tx02 object-cover p-[2px]"
+                    src={user.avatar}
+                    quality={100}
+                    width={56}
+                    height={56}
+                  />
 
-                  <div className="text-sm text-tx02">{user.fullName}</div>
-                </div>
-              </div>
-            ))}
+                  <div
+                    key={user.id}
+                    className="truncate py-3 pr-2 text-base font-light text-tx01"
+                  >
+                    <div>{user.displayName}</div>
+
+                    <div className="text-sm text-tx02">{user.fullName}</div>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </div>
       )}
@@ -517,7 +521,8 @@ export function Friends(props) {
         <>
           {data?.map((friend, index) => {
             return (
-              <div
+              <Link
+                href={`/user/${friend.id}`}
                 key={index}
                 className={clsx(
                   "flex border-b border-tx03 p-2 hover:bg-tx03",
@@ -543,7 +548,7 @@ export function Friends(props) {
 
                 {/* Checkbox for friend selection */}
                 {props.group && <input className=" m-3" type="checkbox" />}
-              </div>
+              </Link>
             );
           })}
         </>

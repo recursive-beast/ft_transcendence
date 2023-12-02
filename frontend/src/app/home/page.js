@@ -110,7 +110,7 @@ function ProfileInfo() {
     <section className="relative my-2 flex items-center justify-between xs:my-4">
       <div className="flex items-center">
         <Image
-          className="mr-4 h-14 w-14 rounded-full object-cover xs:ml-2 xs:mr-6 xs:h-20 xs:w-20 sm:ml-4 sm:mr-10 sm:h-28 sm:w-28"
+          className="mr-4 h-14 w-14 rounded-full border-2 border-tx02 object-cover p-1 xs:ml-2 xs:mr-6 xs:h-20 xs:w-20 sm:ml-4 sm:mr-10 sm:h-28 sm:w-28"
           src={data?.avatar}
           quality={100}
           width={56}
@@ -199,7 +199,7 @@ function Rate(props) {
   );
 }
 
-function PlayRate() {
+export function PlayRate() {
   return (
     <section className="flex justify-between xs:my-3 sm:my-4">
       <Rate
@@ -264,7 +264,7 @@ function Achiv({ locked, className, ...props }) {
   );
 }
 
-function Achievement() {
+export function Achievement() {
   const ref = useHorizontalScroll();
 
   return (
