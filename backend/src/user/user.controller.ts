@@ -7,7 +7,6 @@ import {
   ParseIntPipe,
   Patch,
   Post,
-  Query,
   SerializeOptions,
   UploadedFile,
   UseInterceptors,
@@ -16,7 +15,6 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { CurrentUser } from 'src/auth/current-user.decorator';
 import { ClassTransformerGroups } from 'src/common/enum';
 import { UserEntity } from '../common/entities/user.entity';
-import { UserQueryDTO } from './dto/query.dto';
 import { UserUpdateDTO } from './dto/update.dto';
 import { UserService } from './user.service';
 
@@ -25,8 +23,8 @@ export class UserController {
   constructor(private userService: UserService) {}
 
   @Get()
-  async index(@Query() query: UserQueryDTO) {
-    return this.userService.findMany(query);
+  async index() {
+    return this.userService.findMany();
   }
 
   @SerializeOptions({ groups: [ClassTransformerGroups.GROUP_ME] })

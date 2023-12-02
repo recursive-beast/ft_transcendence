@@ -1,16 +1,11 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { PrismaService } from 'nestjs-prisma';
-import { UserQueryDTO } from './dto/query.dto';
 import { UserEntity } from '../common/entities/user.entity';
-import { UserService } from './user.service';
 
 @Injectable()
 export class FriendService {
-  constructor(
-    private prismaService: PrismaService,
-    private userService: UserService,
-  ) {}
+  constructor(private prismaService: PrismaService) {}
 
   async findById(userId: User['id'], targetId: User['id']) {
     const user = await this.prismaService.user.findUnique({
@@ -70,8 +65,8 @@ export class FriendService {
     return UserEntity.fromUser(target);
   }
 
-  async findMany(userId: User['id'], query: UserQueryDTO) {
-    return this.userService.findMany(query, {
+  async findMany(userId: User['id']) {
+    return this.prismaService.user.findMany({
       where: {
         friendOf: {
           some: {
@@ -82,12 +77,8 @@ export class FriendService {
     });
   }
 
-  async findManyMutual(
-    userId: User['id'],
-    targetId: User['id'],
-    query: UserQueryDTO,
-  ) {
-    return this.userService.findMany(query, {
+  async findManyMutual(userId: User['id'], targetId: User['id']) {
+    return this.prismaService.user.findMany({
       where: {
         AND: [
           {
