@@ -5,20 +5,18 @@ import {
   Param,
   ParseIntPipe,
   Put,
-  Query,
 } from '@nestjs/common';
 import { CurrentUser } from 'src/auth/current-user.decorator';
 import { UserEntity } from '../common/entities/user.entity';
 import { BlockedService } from './blocked.service';
-import { UserQueryDTO } from './dto/query.dto';
 
 @Controller('users/blocked')
 export class BlockedController {
   constructor(private blockedService: BlockedService) {}
 
   @Get()
-  async index(@Query() query: UserQueryDTO, @CurrentUser() user: UserEntity) {
-    return this.blockedService.findMany(user.id, query);
+  async index(@CurrentUser() user: UserEntity) {
+    return this.blockedService.findMany(user.id);
   }
 
   @Put(':id')

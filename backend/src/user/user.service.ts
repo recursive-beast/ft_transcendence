@@ -1,13 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import Fuse from 'fuse.js';
-import { merge } from 'lodash';
 import { PrismaService } from 'nestjs-prisma';
 import { CommonService } from 'src/common/common.service';
 import * as uuid from 'uuid';
 import { UserEntity } from '../common/entities/user.entity';
-import { UserQueryDTO } from './dto/query.dto';
 import { UserUpdateDTO } from './dto/update.dto';
 
 @Injectable()
@@ -61,22 +58,8 @@ export class UserService {
     return user;
   }
 
-  async findMany(query: UserQueryDTO, args: Prisma.UserFindManyArgs = {}) {
-    const { search, ...rest } = query;
-
-    args = merge(rest, args);
-
-    let result = await this.prismaService.user.findMany(args);
-
-    if (search) {
-      const fuse = new Fuse(result, {
-        keys: ['displayName', 'fullName'],
-        threshold: 0.4,
-        ignoreLocation: true,
-      });
-
-      result = fuse.search(search).map((elem) => elem.item);
-    }
+  async findMany() {
+    const result = await this.prismaService.user.findMany();
 
     return UserEntity.fromUser(result);
   }

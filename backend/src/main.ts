@@ -16,7 +16,7 @@ async function bootstrap() {
   });
   app.useStaticAssets('static', { prefix: '/static' });
   app.use(cookieParser(cookie_secret));
-  app.useWebSocketAdapter(new WSAdapter(app));
+  app.useWebSocketAdapter(new WSAdapter(app, configService));
   await app.listen(8000);
 }
 

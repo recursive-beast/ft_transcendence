@@ -1,16 +1,11 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { PrismaService } from 'nestjs-prisma';
-import { UserQueryDTO } from './dto/query.dto';
 import { UserEntity } from '../common/entities/user.entity';
-import { UserService } from './user.service';
 
 @Injectable()
 export class BlockedService {
-  constructor(
-    private prismaService: PrismaService,
-    private userService: UserService,
-  ) {}
+  constructor(private prismaService: PrismaService) {}
 
   async block(userId: User['id'], targetId: User['id']) {
     if (userId === targetId) throw new ConflictException();
@@ -58,8 +53,8 @@ export class BlockedService {
     return UserEntity.fromUser(target);
   }
 
-  async findMany(userId: User['id'], query: UserQueryDTO) {
-    return this.userService.findMany(query, {
+  async findMany(userId: User['id']) {
+    return this.prismaService.user.findMany({
       where: {
         blockedBy: {
           some: {
