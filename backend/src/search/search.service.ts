@@ -9,8 +9,10 @@ import { UserEntity } from 'src/common/entities/user.entity';
 export class SearchService {
   constructor(private prismaService: PrismaService) {}
 
-  async filterUsers(search: string) {
-    const users = await this.prismaService.user.findMany();
+  async filterUsers(search: string, id: User['id']) {
+    const users = await this.prismaService.user.findMany({
+      where: { id: { not: id } },
+    });
     const keys: (keyof User)[] = ['fullName', 'displayName'];
     const fuse = new Fuse(users, { keys, threshold: 0.2 });
     const filtered = fuse.search(search).map((elem) => elem.item);
