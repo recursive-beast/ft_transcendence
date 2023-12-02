@@ -2,48 +2,60 @@
 
 import { useEffect, useState } from "react";
 import io from "socket.io-client";
+import { DrawGame } from "./DrawGame";
 
-function Name(){
+function Name() {
   const [socket, setsocket] = useState({});
   const [waiting, setWat] = useState(false);
-  const [srvRes, setRes] = useState(false);
+  const [data, setData] = useState(null);
+  // const [key, setKey] = useState(null);
+
   useEffect(() => {
-    const newsocket = io('http://localhost:8000', {
-    withCredentials: true
-});
+    const newsocket = io("http://localhost:8000", {
+      withCredentials: true,
+    });
     setsocket(newsocket);
     newsocket.on("connect", () => {
       console.log("connected");
     });
-    newsocket.on('game.found', (data) => {
+    newsocket.on("game.found", (data) => {
       // console.log('Received message:', data);
-      setRes(true);
+      setData(data);
     });
+    const handleKeyPress = (event) => {
+      // console.log(event.key);
+      if (event.key === "ArrowUP"){
+    //     setKey("UP")
+        socket.emit("game.move", { direction: "up" });
+      }
+    }
+    window.addEventListener("keydown",handleKeyPress)
 
     return () => {
       newsocket.disconnect();
+      window.removeEventListener("keydown",handleKeyPress)
     };
   }, []);
 
-  function clickhandler(){
-    const mode = 'classic'
-    socket.emit('game.queue', { mode }, (x) => console.log("response: ", x));
+  function clickhandler() {
+    const mode = "classic";
+    socket.emit("game.queue", { mode });
     console.log(socket);
     setWat(true);
   }
-  function clickhandler1(){
-    const mode = 'mode 1'
-    socket.emit('game.queue', { mode });
+  function clickhandler1() {
+    const mode = "mode 1";
+    socket.emit("game.queue", { mode });
     setWat(true);
   }
-  function clickhandler2(){
-    const mode = 'mode 2'
-    socket.emit('game.queue', { mode });
+  function clickhandler2() {
+    const mode = "mode 2";
+    socket.emit("game.queue", { mode });
     setWat(true);
   }
-  function clickhandler3(){
-    const mode = 'mode 2'
-    socket.emit('cancel', { mode });
+  function clickhandler3() {
+    const mode = "mode 2";
+    socket.emit("cancel", { mode });
     setWat(false);
   }
   // return(
@@ -70,9 +82,9 @@ function Name(){
         </div>
       )}
 
-      {srvRes && (
+      {data && (
         <div>
-           <p>match fond</p>
+          <DrawGame data={data} />
         </div>
       )}
     </div>
