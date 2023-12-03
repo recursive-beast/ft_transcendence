@@ -12,6 +12,7 @@ interface player{
   y: number;
   width: number;
   height: number;
+  score: number;
 };
 
 interface Ball {
@@ -21,6 +22,7 @@ interface Ball {
   velocityY: number;
   speed: number;
   space: number;
+  radius: number;
 };
 interface Game {
   player1: player;
@@ -39,10 +41,32 @@ const ball : Ball = {
   y: table.height / 2,
   velocityX: 5,
   velocityY: 5,
-  speed: 1,
+  speed: 5,
   space : 0,
+  radius : 16,
 };
+function collision(ball: Ball, paddle : player){
+    
+  const pTop = paddle.y;
+  const pbottom = paddle.y + paddle.height;
+  const pleft = paddle.x;
+  const pright = paddle.x + paddle.width;
+  const ballTop = ball.y - ball.radius;
+  const ballbottom = ball.y + ball.radius;
+  const ballleft = ball.x - ball.radius;
+  const ballright = ball.x + ball.radius;
 
+  return ballright > pleft && ballbottom > pTop && ballleft < pright && ballTop < pbottom
+}
+function resetBall(game:Game){
+  game.ball.x = table.width/2;
+  game.ball.y = table.height/2;
+  game.ball.speed = 5;
+  game.ball.velocityX *= -1;
+  game.ball.space = 0;
+  game.player1.y = (table.height/2) - (((25 * table.height) / 100)/2);
+  game.player2.y = (table.height/2) - (((25 * table.height) / 100)/2);
+}
 const queue: Queue[] = []; 
 // const games: Game[] = [];
 let currentGameId = -1;
@@ -65,8 +89,8 @@ export class GameGateway {
     const toFind = queue.find((q) => q.mode === mode);
     if(toFind){
       queue.splice(queue.indexOf(toFind), 1);
-      const player1 : player = {id:toFind.id, width:10, height:150, x:0, y:(table.height - 150) / 2};
-      const player2 : player = {id:id, width:10, height:150, x:table.width - 10, y:(table.height - 150) / 2};
+      const player1 : player = {id:toFind.id, width:10, height:150, x:0, y:(table.height - 150) / 2, score:0};
+      const player2 : player = {id:id, width:10, height:150, x:table.width - 10, y:(table.height - 150) / 2, score:0};
       const game : Game = {player1, player2,ball: {...ball}, mode: mode, id:++currentGameId};
       s.set(player1.id,game);
       s.set(player2.id,game);
@@ -75,6 +99,42 @@ export class GameGateway {
       this.server.in(`user-${player1.id}`).socketsJoin(`game-${game.id}`);
       this.server.in(`user-${player2.id}`).socketsJoin(`game-${game.id}`);
       this.server.to(`game-${game.id}`).emit('game.found', game);
+      setInterval(() => {
+        if (game.ball.space === 1){
+          game.ball.x += game.ball.velocityX;
+          game.ball.y += game.ball.velocityY;
+      }
+      if (table.width >= table.height)
+     { if(game.ball.y + game.ball.radius > table.height || game.ball.y - game.ball.radius < 0)
+          game.ball.velocityY *= -1;
+      let paddle = (game.ball.x < table.width/2) ? game.player1 : game.player2;
+      if(collision(game.ball, paddle)){
+          let interPoint = (game.ball.y - (paddle.y + paddle.height/2)) / (paddle.height/2);
+          // console.log("interPoint =",interPoint);
+          let angle = interPoint * (Math.PI/4);
+          let direction = (game.ball.x < table.width/2) ? 1 : -1;
+          game.ball.velocityX = direction * (Math.cos(angle) * game.ball.speed);
+          game.ball.velocityY = Math.sin(angle) * game.ball.speed;
+          console.log(game.ball.speed);
+          game.ball.speed += 0.5
+      }
+      if(game.ball.x - game.ball.radius < 0){
+          player2.score++;
+          resetBall(game);
+          // recalculate();
+          game.ball.space = 0;
+      }
+      else if(game.ball.x + game.ball.radius > table.width){
+          player1.score++;
+          // recalculate();
+          resetBall(game);
+          game.ball.x = table.width / 2;
+          game.ball.y = table.height / 2;
+          game.ball.space = 0;
+      }
+      this.server.to(`game-${game.id}`).emit('game.found', game);
+    }
+      },15)
       return 'Game found';
     }
     else {
@@ -125,87 +185,10 @@ export class GameGateway {
 
       this.server.to(`game-${game.id}`).emit('game.found', game);
 
-      setInterval(() =>{
-    //     function collision(ball, paddle){
-    
-    //       const pTop = paddle.y;
-    //       const pbottom = paddle.y + paddle.height;
-    //       const pleft = paddle.x;
-    //       const pright = paddle.x + paddle.width;
-    //       const ballTop = ball.y - ball.radius;
-    //       const ballbottom = ball.y + ball.radius;
-    //       const ballleft = ball.x - ball.radius;
-    //       const ballright = ball.x + ball.radius;
-      
-    //       return ballright > pleft && ballbottom > pTop && ballleft < pright && ballTop < pbottom
-    //   }
-    //   function resetBall(){
-    //     ball.x = canvas.width/2;
-    //     ball.y = canvas.height/2;
-    //     ball.speed = (0.625 * canvas.width) / 100;
-    //     ball.velocityX *= -1;
-    //     ball.space = 0;
-    //     paddleB.y = (canvas.height/2) - (((25 * canvas.height) / 100)/2);
-    //     paddleA.y = (canvas.height/2) - (((25 * canvas.height) / 100)/2);
-    // }
-    
-    // function update(){
-    //     if (ball.space === 1){
-    //         ball.x += ball.velocityX;
-    //         ball.y += ball.velocityY;
-    //     }
-    //     if (canvas.width >= canvas.height)
-    //    { if(ball.y + ball.radius > canvas.height || ball.y - ball.radius < 0)
-    //         ball.velocityY *= -1;
-    //     let paddle = (ball.x < canvas.width/2) ? paddleA : paddleB;
-    //     if(collision(ball, paddle)){
-    //         let interPoint = (ball.y - (paddle.y + paddle.height/2)) / (paddle.height/2);
-    //         // console.log("interPoint =",interPoint);
-    //         let angle = interPoint * (Math.PI/4);
-    //         let direction = (ball.x < canvas.width/2) ? 1 : -1;
-    //         ball.velocityX = direction * (Math.cos(angle) * ball.speed);
-    //         ball.velocityY = Math.sin(angle) * ball.speed;
-    //         ball.speed += 0.5
-    //     }
-    //     if(ball.x - ball.radius < 0){
-    //         paddleB.score++;
-    //         recalculate();
-    //         ball.space = 0;
-    //     }
-    //     else if(ball.x + ball.radius > canvas.width){
-    //         paddleA.score++;
-    //         recalculate();
-    //         ball.space = 0;
-    //     }}
-    //     else{
-    //       if(ball.x + ball.radius > canvas.width || ball.x - ball.radius < 0)
-    //           ball.velocityX *= -1;
-    //       let paddle = (ball.y < canvas.height/2) ? paddleA : paddleB;
-    //       if(collision(ball, paddle)){
-    //           let interPoint = (ball.x - (paddle.x + paddle.width/2)) / (paddle.width/2);
-    //           // console.log("interPoint =",interPoint);
-    //           let angle = interPoint * (Math.PI/4);
-    //           let direction = (ball.y < canvas.height/2) ? 1 : -1;
-    //           ball.velocityX = Math.sin(angle) * ball.speed;
-    //           ball.velocityY = direction *(Math.cos(angle) * ball.speed);
-    //           ball.speed += 0.1
-    //       }
-    //       if(ball.y - ball.radius < 0){
-    //           paddleB.score++;
-    //           recalculate();
-    //           ball.space = 0;
-    //       }
-    //       else if(ball.y + ball.radius > canvas.height){
-    //           paddleA.score++;
-    //           recalculate();
-    //           ball.space = 0;
-    //       }
-    //       }
-    //   }
-      })
     }
   }
   
+
 }
 
 //crate front end for testing queue
