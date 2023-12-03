@@ -27,13 +27,13 @@ import ice2 from "@/images/thems/ice2.png";
 import space2 from "@/images/thems/space2.png";
 import jungle2 from "@/images/thems/jungle2.png";
 import underwater2 from "@/images/thems/Underwater2.png";
-import classic_bg from "@/images/thems/classic_bg.jpg";
-import beach_bg from "@/images/thems/beach_bg.jpg";
-import ice_bg from "@/images/thems/ice_bg.jpg";
-import space_bg from "@/images/thems/space_bg.jpg";
-import jungle_bg from "@/images/thems/jungle_bg.jpg";
-import underwater_bg from "@/images/thems/water_bg.jpg";
 
+import classic_bg from "@/images/thems/classicbg.jpg";
+import beach_bg from "@/images/thems/beachbg.jpg";
+import ice_bg from "@/images/thems/icebg.jpg";
+import space_bg from "@/images/thems/spacebg.jpg";
+import jungle_bg from "@/images/thems/junglebg.jpg";
+import underwater_bg from "@/images/thems/waterbg.jpg";
 function Theme(props) {
   return (
     <div
@@ -43,8 +43,7 @@ function Theme(props) {
     >
       <div className="hidden sm:block">
         <Image
-          className="flex-none rounded-lg object-cover"
-          fill
+          className="rounded-lg object-cover w-full h-full"
           src={props.pic}
           quality={100}
         />
@@ -95,7 +94,7 @@ export default function Home({ params }) {
           />
         </div>
 
-        <div className="flex flex-1 flex-col justify-between overflow-hidden xl:mx-10">
+        <div className="flex flex-1 flex-col justify-between overflow-hidden">
           <div className="z-10 xl:hidden">
             <Header
             // menu={<HomeMenu onClick={() => setSetting(true)} />}
@@ -180,23 +179,23 @@ export default function Home({ params }) {
               />
             </SwiperSlide>
 
-            <div className="absolute right-0 top-0 z-10 hidden h-full w-36 bg-gradient-to-l from-bg01 from-5% via-bg01/60 xl:block"></div>
-            <div className="absolute left-0 top-0 z-10 hidden h-full w-36 bg-gradient-to-r from-bg01 from-5% via-bg01/60 xl:block"></div>
+            {/* <div className="absolute right-0 top-0 z-10 hidden h-full w-36 bg-gradient-to-l from-bg01 from-5% via-bg01/60 xl:block"></div>
+            <div className="absolute left-0 top-0 z-10 hidden h-full w-36 bg-gradient-to-r from-bg01 from-5% via-bg01/60 xl:block"></div> */}
             <button
               id="navigation-left"
-              className="absolute left-2 top-1/2 z-10 -translate-y-1/2 text-tx01 disabled:text-tx02 sm:left-5 xl:left-10"
+              className="absolute left-2 top-1/2 z-10 -translate-y-1/2 text-tx05 disabled:text-tx02 sm:left-5 xl:left-10"
             >
               <Icon
-                className="h-8 w-8 sm:h-12 sm:w-12 lg:h-14 lg:w-14"
+                className="h-8 w-8 sm:h-12 sm:w-12 lg:h-14 lg:w-14 shadow-sm rounded-full"
                 icon="solar:double-alt-arrow-left-broken"
               />
             </button>
             <button
               id="navigation-right"
-              className="absolute right-2 top-1/2 z-10 -translate-y-1/2 text-tx01 disabled:text-tx02 sm:right-5 xl:right-10"
+              className="absolute right-2 top-1/2 z-10 -translate-y-1/2 text-tx05 disabled:text-tx02 sm:right-5 xl:right-10"
             >
               <Icon
-                className="h-8 w-8 sm:h-12 sm:w-12 lg:h-14 lg:w-14"
+                className="h-8 w-8 sm:h-12 sm:w-12 lg:h-14 lg:w-14 shadow-sm rounded-full"
                 icon="solar:double-alt-arrow-right-broken"
               />
             </button>
