@@ -1,46 +1,73 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import io from "socket.io-client";
 import { DrawGame } from "./DrawGame";
+import { useMediaQuery } from "@uidotdev/usehooks";
 
 function Name() {
-  const [socket, setsocket] = useState({});
+  const [socket, setsocket] = useState(null);
   const [waiting, setWat] = useState(false);
-  const [data, setData] = useState(null);
+  const [ready, setReady] = useState(false);
+  const ref = useRef(null);
   // const [key, setKey] = useState(null);
+  const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
 
   useEffect(() => {
     const newsocket = io("http://localhost:8000", {
       withCredentials: true,
     });
+
     setsocket(newsocket);
-    newsocket.on("connect", () => {
-      console.log("connected");
+
+    return () => newsocket.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (socket) socket.on("game.found", (data) => {
+      ref.current = data;
+      setReady(true);
     });
-    newsocket.on("game.found", (data) => {
-      // console.log('Received message:', data);
-      setData(data);
-    });
+    return () => {
+      // TODO: cleanup socket listeners
+    };
+  }, [socket]);
+
+  useEffect(() => {
     const handleKeyPress = (event) => {
-      // console.log(event.key);
-      if (event.key === "ArrowUP"){
-    //     setKey("UP")
-        socket.emit("game.move", { direction: "up" });
+      console.log(event.key);
+      if (event.key === " " ) {
+        //     setKey("UP")
+        socket.emit("game.move", " ");
       }
-    }
-    window.addEventListener("keydown",handleKeyPress)
+      if (event.key === "ArrowUp" && !isSmallDevice) {
+        //     setKey("UP")
+        socket.emit("game.move", "up");
+      }
+      if (event.key === "ArrowDown" && !isSmallDevice) {
+        //     setKey("UP")
+        socket.emit("game.move", "down");
+      }
+      if (event.key === "ArrowLeft" && isSmallDevice) {
+        //     setKey("UP")
+        socket.emit("game.move", "left");
+      }
+      if (event.key === "ArrowRight" && isSmallDevice) {
+        //     setKey("UP")
+        socket.emit("game.move", "right");
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
 
     return () => {
-      newsocket.disconnect();
-      window.removeEventListener("keydown",handleKeyPress)
+      window.removeEventListener("keydown", handleKeyPress);
     };
-  }, []);
+  }, [socket, isSmallDevice]);
 
   function clickhandler() {
     const mode = "classic";
     socket.emit("game.queue", { mode });
-    console.log(socket);
     setWat(true);
   }
   function clickhandler1() {
@@ -82,9 +109,9 @@ function Name() {
         </div>
       )}
 
-      {data && (
+      {ready && (
         <div>
-          <DrawGame data={data} />
+          <DrawGame data={ref} />
         </div>
       )}
     </div>

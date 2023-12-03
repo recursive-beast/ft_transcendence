@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { forwardRef, useEffect, useRef } from "react";
 
 const height = 700;
 const width = height * (16 / 9);
@@ -16,7 +16,7 @@ const net = {
   color: "black",
 };
 export const DrawGame = ({data}) => {
-  
+
   function drawCircle(context, x, y, r, color) {
     context.beginPath();
     context.fillStyle = color;
@@ -44,20 +44,20 @@ export const DrawGame = ({data}) => {
 
     // console.log(data.player1)
     context.fillRect(
-      data.player1.x,
-      data.player1.y,
-      data.player1.width,
-      data.player1.height,
+    data.current.player1.x,
+    data.current.player1.y,
+    data.current.player1.width,
+    data.current.player1.height,
     );
 
     context.fillRect(
-      data.player2.x,
-      data.player2.y,
-      data.player2.width,
-      data.player2.height,
+    data.current.player2.x,
+    data.current.player2.y,
+    data.current.player2.width,
+    data.current.player2.height,
     );
 
-    drawCircle(context, data.ball.x, data.ball.y, 16, "black");
+    drawCircle(context,data.current.ball.x,data.current.ball.y, 16, "black");
     Drawnet(context);
     // console.log(Math.sqrt((0.0981*(height * width)/100)*(1/Math.PI)));
     //   context.fillRect(width - paddle.width - 2, 100, paddle.width, paddle.height);
