@@ -1,13 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import Fuse from 'fuse.js';
-import { merge } from 'lodash';
 import { PrismaService } from 'nestjs-prisma';
 import { CommonService } from 'src/common/common.service';
 import * as uuid from 'uuid';
 import { UserEntity } from '../common/entities/user.entity';
-import { UserQueryDTO } from './dto/query.dto';
 import { UserUpdateDTO } from './dto/update.dto';
 
 @Injectable()
@@ -61,56 +58,10 @@ export class UserService {
     return user;
   }
 
-  async findMany(query: UserQueryDTO, args: Prisma.UserFindManyArgs = {}) {
-    const { search, ...rest } = query;
+  async findMany() {
+    const result = await this.prismaService.user.findMany();
 
-    args = merge(rest, args);
-
-    if (search)
-      args = merge(args, {
-        where: {
-          OR: [
-            {
-              displayName: {
-                contains: search,
-                mode: 'insensitive',
-              },
-            },
-            {
-              fullName: {
-                contains: search,
-                mode: 'insensitive',
-              },
-            },
-          ],
-        },
-      } as Prisma.UserFindManyArgs);
-
-    const { distinct, where } = args;
-    let result = await this.prismaService.user.findMany(args);
-    const total = await this.prismaService.user.count({ distinct, where });
-    const last = result[result.length - 1];
-
-    if (query.search) {
-      const fuse = new Fuse(result, { keys: ['displayName', 'fullName'] });
-
-      result = fuse.search(query.search).map((elem) => elem.item);
-    }
-
-    return {
-      meta: {
-        total,
-        pageSize: query.take,
-        hasNextPage: query.cursor
-          ? result.length >= query.take
-          : query.skip + query.take < total,
-        nextCursor: {
-          id: last?.id,
-          displayName: last?.displayName,
-        },
-      },
-      data: UserEntity.fromUser(result),
-    };
+    return UserEntity.fromUser(result);
   }
 
   async update(id: User['id'], data: UserUpdateDTO) {

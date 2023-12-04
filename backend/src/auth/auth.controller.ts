@@ -4,10 +4,13 @@ import {
   Controller,
   Get,
   Patch,
+  Res,
   UnprocessableEntityException,
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { Response } from 'express';
+import ms from 'ms';
 import { UserEntity } from 'src/common/entities/user.entity';
 import { AuthService } from './auth.service';
 import { CurrentUser } from './current-user.decorator';
@@ -22,19 +25,35 @@ export class AuthController {
   @Public()
   @UseGuards(AuthGuard('42'))
   @Get('42')
-  async fortyTwo(@CurrentUser() user: UserEntity) {
-    return {
-      token: await this.authService.generateJWT(user, false),
-    };
+  async fortyTwo(
+    @CurrentUser() user: UserEntity,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const token = await this.authService.generateJWT(user, false);
+
+    this.sendAuthCookie(res, token);
+
+    return { token, otp: { enabled: user.otpIsEnabled, verified: false } };
   }
 
   @Public()
   @UseGuards(AuthGuard('google'))
   @Get('google')
-  async google(@CurrentUser() user: UserEntity) {
-    return {
-      token: await this.authService.generateJWT(user, false),
-    };
+  async google(
+    @CurrentUser() user: UserEntity,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const token = await this.authService.generateJWT(user, false);
+
+    this.sendAuthCookie(res, token);
+
+    return { token, otp: { enabled: user.otpIsEnabled, verified: false } };
+  }
+
+  @Public()
+  @Get('logout')
+  async logout(@Res({ passthrough: true }) res: Response) {
+    res.clearCookie('authorization', { httpOnly: true });
   }
 
   @skipOTP()
@@ -60,17 +79,26 @@ export class AuthController {
   }
 
   @Patch('otp/disable')
-  async otpDisable(@CurrentUser() user: UserEntity) {
+  async otpDisable(
+    @CurrentUser() user: UserEntity,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     await this.authService.disableOTP(user.id);
 
     const token = await this.authService.generateJWT(user, false);
 
-    return { token };
+    this.sendAuthCookie(res, token);
+
+    return { token, otp: { enabled: false, verified: false } };
   }
 
   @skipOTP()
   @Patch('otp/verify')
-  async otpVerify(@Body() body: OTPDTO, @CurrentUser() user: UserEntity) {
+  async otpVerify(
+    @Body() body: OTPDTO,
+    @CurrentUser() user: UserEntity,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     if (!user.otpIsEnabled) throw new ConflictException();
 
     const success = this.authService.verifyOTP(user, body.otp);
@@ -79,6 +107,15 @@ export class AuthController {
 
     const token = await this.authService.generateJWT(user, true);
 
-    return { token };
+    this.sendAuthCookie(res, token);
+
+    return { token, otp: { enabled: true, verified: true } };
+  }
+
+  private sendAuthCookie(res: Response, token: string) {
+    res.cookie('authorization', token, {
+      httpOnly: true,
+      maxAge: ms('999years'),
+    });
   }
 }

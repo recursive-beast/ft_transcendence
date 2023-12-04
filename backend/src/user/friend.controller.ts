@@ -5,12 +5,10 @@ import {
   Param,
   ParseIntPipe,
   Put,
-  Query,
 } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { CurrentUser } from 'src/auth/current-user.decorator';
 import { UserEntity } from '../common/entities/user.entity';
-import { UserQueryDTO } from './dto/query.dto';
 import { FriendService } from './friend.service';
 
 @Controller('users/friends')
@@ -21,17 +19,16 @@ export class FriendController {
   ) {}
 
   @Get()
-  async index(@Query() query: UserQueryDTO, @CurrentUser() user: UserEntity) {
-    return this.friendService.findMany(user.id, query);
+  async index(@CurrentUser() user: UserEntity) {
+    return this.friendService.findMany(user.id);
   }
 
   @Get('mutual/:id')
   async mutual(
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser() user: UserEntity,
-    @Query() query: UserQueryDTO,
   ) {
-    return this.friendService.findManyMutual(user.id, id, query);
+    return this.friendService.findManyMutual(user.id, id);
   }
 
   @Put(':id')
@@ -46,7 +43,7 @@ export class FriendController {
       this.eventEmitter.emit('user.friend.add', user, entity);
     }
 
-    return { data: entity };
+    return entity;
   }
 
   @Delete(':id')
@@ -54,6 +51,6 @@ export class FriendController {
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser() user: UserEntity,
   ) {
-    return { data: await this.friendService.delete(user.id, id) };
+    return this.friendService.delete(user.id, id);
   }
 }

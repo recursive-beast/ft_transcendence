@@ -10,6 +10,7 @@ import { providePrismaClientExceptionFilter } from 'nestjs-prisma';
 import { AuthModule } from './auth/auth.module';
 import { ChatModule } from './chat/chat.module';
 import { NotificationModule } from './notification/notification.module';
+import { SearchModule } from './search/search.module';
 import { UserModule } from './user/user.module';
 
 @Module({
@@ -39,6 +40,7 @@ import { UserModule } from './user/user.module';
     UserModule,
     NotificationModule,
     ChatModule,
+    SearchModule,
   ],
   providers: [
     providePrismaClientExceptionFilter(),
