@@ -10,6 +10,7 @@ import { providePrismaClientExceptionFilter } from 'nestjs-prisma';
 import { AuthModule } from './auth/auth.module';
 import { ChatModule } from './chat/chat.module';
 import { NotificationModule } from './notification/notification.module';
+import { SearchModule } from './search/search.module';
 import { UserModule } from './user/user.module';
 import { GameModule } from './game/game.module';
 import { GamelogicService } from './gamelogic/gamelogic.service';
@@ -41,6 +42,7 @@ import { GamelogicService } from './gamelogic/gamelogic.service';
     UserModule,
     NotificationModule,
     ChatModule,
+    SearchModule,
     GameModule,
   ],
   providers: [

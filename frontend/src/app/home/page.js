@@ -14,6 +14,7 @@ import { Icon } from "@iconify/react";
 import Link from "next/link";
 import { useState } from "react";
 import clsx from "clsx";
+import useSWR from "swr";
 
 import qrCode from "@/images/pics/qrcode.jpeg";
 //Profils
@@ -44,18 +45,7 @@ function HomeMenu({ onClick }) {
       <div>
         <div className=" flex items-center justify-between px-1 py-3">
           {/* search */}
-          {/* <div className="mb-3 flex items-center">
-            <Icon
-              className="h-5 w-5 text-tx01 xs:h-6 xs:w-6"
-              icon="guidance:search"
-            />
-            <input
-              className="ml-3 h-8 w-full border-b border-tx03 bg-bg01 text-base font-extralight xs:text-xl"
-              defaultValue="Search"
-            />
-          </div> */}
-          <Search home={true}/>
-
+          <Search home={true} />
 
           {/* notif */}
           <button
@@ -107,20 +97,24 @@ function HomeMenu({ onClick }) {
       </div>
 
       {/* Friends elements */}
-      <Friends home={true}/>
+      <Friends home={true} />
     </div>
   );
 }
 
-function ProfileInfo(props) {
-  const [bar, setBar] = useState(false);
+function ProfileInfo() {
+  // import data
+  const { data } = useSWR("/users/me");
+
   return (
     <section className="relative my-2 flex items-center justify-between xs:my-4">
       <div className="flex items-center">
         <Image
-          className="mr-4 h-14 w-14 rounded-full object-cover xs:ml-2 xs:mr-6 xs:h-20 xs:w-20 sm:ml-4 sm:mr-10 sm:h-28 sm:w-28"
-          src={Pic15}
+          className="mr-4 h-14 w-14 rounded-full border-2 border-tx02 object-cover p-1 xs:ml-2 xs:mr-6 xs:h-20 xs:w-20 sm:ml-4 sm:mr-10 sm:h-28 sm:w-28"
+          src={data?.avatar}
           quality={100}
+          width={56}
+          height={56}
         />
 
         <div className="flex flex-col">
@@ -129,7 +123,7 @@ function ProfileInfo(props) {
           </div>
 
           <div className="text-base font-semibold capitalize tracking-widest text-tx05 xs:text-lg sm:text-xl sm:tracking-[3px]">
-            {props.name}
+            {data?.displayName}
           </div>
 
           <div className="text-[8px] font-light capitalize xs:text-xs sm:text-lg">
@@ -205,7 +199,7 @@ function Rate(props) {
   );
 }
 
-function PlayRate() {
+export function PlayRate() {
   return (
     <section className="flex justify-between xs:my-3 sm:my-4">
       <Rate
@@ -270,7 +264,7 @@ function Achiv({ locked, className, ...props }) {
   );
 }
 
-function Achievement() {
+export function Achievement() {
   const ref = useHorizontalScroll();
 
   return (
@@ -325,15 +319,15 @@ export function Ranking(props) {
   return (
     <section className="my-4 w-full text-[10px] font-light capitalize text-tx01 xs:text-xs sm:text-base">
       <div>
-      <Rank
-        pos="x"
-        pic={Pic01}
-        name="player"
-        games="games"
-        rate="rate"
-        level="level"
-        first
-      />
+        <Rank
+          pos="x"
+          pic={Pic01}
+          name="player"
+          games="games"
+          rate="rate"
+          level="level"
+          first
+        />
         <Rank
           pos="1"
           pic={Pic01}
@@ -553,16 +547,16 @@ export default function Home() {
           />
         </div>
 
-        <div className="flex flex-1 flex-col justify-between max-w-[1400px] mx-auto overflow-hidden">
-          <div className="xl:hidden z-10">
+        <div className="mx-auto flex max-w-[1400px] flex-1 flex-col justify-between overflow-hidden">
+          <div className="z-10 xl:hidden">
             <Header
               home={true}
               menu={<HomeMenu onClick={() => setSetting(true)} />}
             />
           </div>
 
-          <div className="px-2 xs:px-3 sm:px-5 lg:px-8 flex flex-1 flex-col justify-between no-scrollbar overflow-auto">
-            <ProfileInfo name="megashoot"/>
+          <div className="no-scrollbar flex flex-1 flex-col justify-between overflow-auto px-2 xs:px-3 sm:px-5 lg:px-8">
+            <ProfileInfo />
             <PlayRate />
             <Ranking />
             <div>

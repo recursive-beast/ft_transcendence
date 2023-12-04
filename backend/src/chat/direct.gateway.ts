@@ -1,4 +1,10 @@
-import { UseFilters, UsePipes, ValidationPipe } from '@nestjs/common';
+import {
+  BadGatewayException,
+  BadRequestException,
+  UseFilters,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import {
   SubscribeMessage,
   WebSocketGateway,
@@ -23,13 +29,20 @@ export class DirectGateway {
 
   @SubscribeMessage('direct.message')
   async sendMessage(client: Socket, dto: DirectMessageDTO) {
-    const message = await this.directconversationService.sendMessage(
-      client.data.id,
-      dto,
-    );
-
-    this.server
-      .in(`user-${dto.recieverId}`)
-      .emit('direct.message', instanceToPlain(message));
+    try {
+      await this.directconversationService.checkBlock(
+        client.data.id,
+        dto.recieverId,
+      );
+      const message = await this.directconversationService.sendMessage(
+        client.data.id,
+        dto,
+      );
+      this.server
+        .in(`user-${dto.recieverId}`)
+        .emit('direct.message', instanceToPlain(message));
+    } catch (error) {
+      throw new BadRequestException();
+    }
   }
 }

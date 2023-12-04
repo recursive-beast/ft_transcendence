@@ -19,5 +19,5 @@ export async function middleware(request) {
 }
 
 export const config = {
-  matcher: ["/chat/:path*", "/game/:path*", "/home/:path*", "/leaderboard/:path*"],
+  matcher: ["/chat/:path*", "/game/:path*", "/home/:path*", "/leaderboard/:path*", "/user/:path*"],
 };

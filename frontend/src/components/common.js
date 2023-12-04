@@ -7,6 +7,7 @@ import Link from "next/link";
 import React from "react";
 import { useState, useRef } from "react";
 import { faker } from "@faker-js/faker";
+import useSWR from "swr";
 
 import logoPic from "@/images/logos/logo.png";
 //Profils
@@ -380,6 +381,8 @@ export const status = {
 };
 
 export function Search(props) {
+  const [text, setText] = useState("");
+  const { data } = useSWR(encodeURI(`/search/users?search=${text}`));
   const [search, setSearch] = useState(false);
   const inputRef = useRef(null);
 
@@ -392,55 +395,104 @@ export function Search(props) {
   };
   // Set the search variable to false when the input loses focus
   const handleInputBlur = () => {
-    setSearch(false);
+    // setSearch(false);
   };
   // Set the search variable to true when the input focus
   const handleInputFocus = () => {
     setSearch(true);
   };
 
-  return (
-    <div
-      className={clsx(
-        "flex h-7 grow items-center xs:h-8",
-        props.home ? "mx-3 bg-bg01" : " rounded-lg bg-tx03",
-        search && props.home &&"border-b ",
-      )}
-    >
-      <button className="ml-3 w-10 xs:w-12" onClick={handleSearchClick}>
-        <Icon
-          className="h-4 w-4 text-tx02 xs:h-5 xs:w-5"
-          icon={search ? "solar:arrow-left-broken" : "guidance:search"}
-        />
-      </button>
+  const handleInputChange = (e) => {
+    setText(e.target.value);
+  };
 
-      <div className="grow pr-3 text-base font-light text-tx02  xs:text-xl">
-        {!search && (
-          <div onClick={handleSearchClick} className="absolute tracking-widest">
-            Search
-          </div>
+  return (
+    <div className={clsx(props.home && "mx-3")}>
+      <div
+        className={clsx(
+          "flex h-7 grow items-center xs:h-8",
+          props.home ? "bg-bg01" : " rounded-lg bg-tx03",
+          search && props.home && "border-b ",
         )}
-        <input
-          ref={inputRef}
-          className={clsx(
-            "w-full border-none outline-none focus:border-none",
-            props.home ? "mx-3 bg-bg01" : " bg-tx03",
+      >
+        <button className="ml-3 w-10 xs:w-12" onClick={handleSearchClick}>
+          <Icon
+            className="h-4 w-4 text-tx02 xs:h-5 xs:w-5"
+            icon={search ? "solar:arrow-left-broken" : "guidance:search"}
+          />
+        </button>
+
+        <div className="grow pr-3 text-base font-light text-tx02 xs:text-xl">
+          {!search && text === "" && (
+            <div
+              onClick={handleSearchClick}
+              className="absolute tracking-widest"
+            >
+              Search
+            </div>
           )}
-          type="search"
-          onBlur={handleInputBlur}
-          onFocus={handleInputFocus}
-        />
+          <input
+            ref={inputRef}
+            className={clsx(
+              "w-full border-none outline-none focus:border-none",
+              props.home ? "mx-3 bg-bg01" : " bg-tx03",
+            )}
+            type="search"
+            onBlur={handleInputBlur}
+            onFocus={handleInputFocus}
+            onChange={handleInputChange}
+            value={text}
+          />
+        </div>
       </div>
+      {search && data && (
+        <div className="relative">
+          <div
+            className={clsx(
+              "no-scrollbar absolute z-10 max-h-72 w-full overflow-y-auto rounded-lg border",
+              props.home ? "rounded-t-none border-t-0 bg-bg01" : "mt-2 bg-tx03",
+            )}
+          >
+            {data?.map((user, index) => {
+              return (
+                <Link
+                  href={`/user/${user.id}`}
+                  key={index}
+                  className="flex cursor-pointer items-center border-b border-bg03 hover:bg-bg03"
+                >
+                  <Image
+                    className="mx-2 h-10 w-10 flex-none rounded-full border-[1.5px] border-tx02 object-cover p-[2px]"
+                    src={user.avatar}
+                    quality={100}
+                    width={56}
+                    height={56}
+                  />
+
+                  <div
+                    key={user.id}
+                    className="truncate py-3 pr-2 text-base font-light text-tx01"
+                  >
+                    <div>{user.displayName}</div>
+
+                    <div className="text-sm text-tx02">{user.fullName}</div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
 export function Friends(props) {
+  const { data } = useSWR("/users/friends");
   return (
     <div
       className={clsx(
         props.home &&
-          "no-scrollbar max-h-[80%] flex-grow w-full overflow-auto rounded-lg border-y border-tx02 lg:mb-14",
+          "no-scrollbar max-h-[80%] w-full flex-grow overflow-auto rounded-lg border-y border-tx02 lg:mb-14",
       )}
     >
       {/* Title in home page */}
@@ -452,37 +504,55 @@ export function Friends(props) {
       )}
 
       {/* Friends List */}
-      {friends.map((friend, index) => {
-        return (
-          <div
-            key={index}
-            className={clsx(
-              "flex border-b border-tx03 p-2 hover:bg-tx03",
-              !props.group && "cursor-pointer",
-            )}
-          >
-            {/* Flex container for avatar and name */}
-            <div className="flex flex-1 items-center">
-              {/* Avatar */}
-              <Image
-                className="mr-2 h-12 w-12 flex-none rounded-full border-[1.5px] border-tx02 object-cover p-[2px] xs:mr-3 xs:h-14 xs:w-14"
-                src={friend.avatar}
-                quality={100}
-                width={56}
-                height={56}
-              />
+      {data?.length === 0 ? (
+        // No Conversation Selected
+        <div className="flex h-full flex-col items-center justify-center gap-6">
+          <Image src={logoPic} alt="Logo of the game" className="h-52 w-52" />
 
-              {/* Friend Name */}
-              <div className="truncate text-sm tracking-wide xs:text-base xs:tracking-widest">
-                {friend.displayName}
-              </div>
-            </div>
-
-            {/* Checkbox for friend selection */}
-            {props.group && <input className=" m-3" type="checkbox" />}
+          <div className="text-center text-3xl font-extralight">
+            Add Friends
           </div>
-        );
-      })}
+
+          <div className="w-4/5 text-center text-sm text-tx02">
+            Find new friends by using the search bar at the top of the page
+          </div>
+        </div>
+      ) : (
+        <>
+          {data?.map((friend, index) => {
+            return (
+              <Link
+                href={`/user/${friend.id}`}
+                key={index}
+                className={clsx(
+                  "flex border-b border-tx03 p-2 hover:bg-tx03",
+                  !props.group && "cursor-pointer",
+                )}
+              >
+                {/* Flex container for avatar and name */}
+                <div className="flex flex-1 items-center">
+                  {/* Avatar */}
+                  <Image
+                    className="mr-2 h-12 w-12 flex-none rounded-full border-[1.5px] border-tx02 object-cover p-[2px] xs:mr-3 xs:h-14 xs:w-14"
+                    src={friend.avatar}
+                    quality={100}
+                    width={56}
+                    height={56}
+                  />
+
+                  {/* Friend Name */}
+                  <div className="truncate text-sm tracking-wide xs:text-base xs:tracking-widest">
+                    {friend.displayName}
+                  </div>
+                </div>
+
+                {/* Checkbox for friend selection */}
+                {props.group && <input className=" m-3" type="checkbox" />}
+              </Link>
+            );
+          })}
+        </>
+      )}
     </div>
   );
 }

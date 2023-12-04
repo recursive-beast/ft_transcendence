@@ -82,7 +82,7 @@ function GroupMessage(props) {
         return (
           <div
             key={index}
-            className="flex cursor-pointer border-b  border-tx03 p-2"
+            className="flex cursor-pointer border-b border-tx03 p-2 hover:bg-bg03"
             onClick={() => {
               props.onConversation?.(group);
             }}
@@ -158,7 +158,7 @@ function DirectMessage(props) {
         return (
           <div
             key={index}
-            className="flex cursor-pointer border-b border-tx03 p-2"
+            className="flex cursor-pointer border-b border-tx03 p-2 hover:bg-bg03"
             onClick={() => {
               props.onConversation?.(conversation);
             }}
@@ -246,11 +246,14 @@ function BoxMessages({ onGroupClick, onClick, ...props }) {
   );
 }
 
-function Option(props) {
+export function Option({ onClick, ...props }) {
   return (
-    <button className="flex items-center border-b border-tx02 py-3 text-tx02 last:border-0 hover:text-tx01">
+    <button
+      className="flex w-full items-center border-b border-tx02 py-3 text-tx02 last:border-0 hover:text-tx01"
+      onClick={onClick}
+    >
       <Icon className="ml-4 mr-3 h-6 w-6" icon={props.icon} />
-      <div className="mr-4 grow font-light uppercase tracking-wider">
+      <div className="mr-4 grow text-left font-light uppercase tracking-wider">
         {props.title}
       </div>
     </button>
