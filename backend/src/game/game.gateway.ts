@@ -13,6 +13,7 @@ interface player{
   width: number;
   height: number;
   score: number;
+  serve: number;
 };
 
 interface Ball {
@@ -30,6 +31,7 @@ interface Game {
   ball: Ball;
   mode: string;
   id : number;
+  finish : number;
 };
 
 const table = {
@@ -89,9 +91,9 @@ export class GameGateway {
     const toFind = queue.find((q) => q.mode === mode);
     if(toFind){
       queue.splice(queue.indexOf(toFind), 1);
-      const player1 : player = {id:toFind.id, width:10, height:150, x:0, y:(table.height - 150) / 2, score:0};
-      const player2 : player = {id:id, width:10, height:150, x:table.width - 10, y:(table.height - 150) / 2, score:0};
-      const game : Game = {player1, player2,ball: {...ball}, mode: mode, id:++currentGameId};
+      const player1 : player = {id:toFind.id, width:10, height:150, x:0, y:(table.height - 150) / 2, score:0, serve:1};
+      const player2 : player = {id:id, width:10, height:150, x:table.width - 10, y:(table.height - 150) / 2, score:0, serve:0};
+      const game : Game = {player1, player2,ball: {...ball}, mode: mode, id:++currentGameId, finish:0};
       s.set(player1.id,game);
       s.set(player2.id,game);
       // games.push(game);
@@ -110,23 +112,27 @@ export class GameGateway {
       let paddle = (game.ball.x < table.width/2) ? game.player1 : game.player2;
       if(collision(game.ball, paddle)){
           let interPoint = (game.ball.y - (paddle.y + paddle.height/2)) / (paddle.height/2);
-          // console.log("interPoint =",interPoint);
           let angle = interPoint * (Math.PI/4);
           let direction = (game.ball.x < table.width/2) ? 1 : -1;
           game.ball.velocityX = direction * (Math.cos(angle) * game.ball.speed);
           game.ball.velocityY = Math.sin(angle) * game.ball.speed;
-          console.log(game.ball.speed);
           game.ball.speed += 0.5
       }
       if(game.ball.x - game.ball.radius < 0){
           player2.score++;
+          // if (player2.score)
+          //   this.server.to(`game-${game.id}`).emit('game.finish', game);
+          player1.serve = 1;
+          player2.serve = 0;
           resetBall(game);
-          // recalculate();
           game.ball.space = 0;
       }
       else if(game.ball.x + game.ball.radius > table.width){
           player1.score++;
-          // recalculate();
+          // if (player1.score)
+          //   this.server.to(`game-${game.id}`).emit('game.finish', game);
+          player2.serve = 1;
+          player1.serve = 0;
           resetBall(game);
           game.ball.x = table.width / 2;
           game.ball.y = table.height / 2;
@@ -164,7 +170,7 @@ export class GameGateway {
       else{
         player = game.player1;
       }
-      if (direction === ' ')
+      if (direction === ' ' && player.serve === 1)
       {
           game.ball.space = 1;
       }

@@ -2,6 +2,7 @@
 
 import { forwardRef, useEffect, useRef } from "react";
 
+
 const height = 700;
 const width = height * (16 / 9);
 const paddle = {
@@ -16,6 +17,16 @@ const net = {
   color: "black",
 };
 export const DrawGame = ({data}) => {
+
+  // if(data.finish == 1){
+  //   return(
+  //     <div>
+  //     <p>you won    </p>
+  //     {/* <button onClick={clickhandler3}>cancel</button> */}
+  //     {/* You can customize the waiting page content here */}
+  //   </div>
+  //   )
+  // }
 
   function drawCircle(context, x, y, r, color) {
     context.beginPath();
