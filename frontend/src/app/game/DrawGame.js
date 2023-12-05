@@ -60,13 +60,25 @@ export const DrawGame = ({data}) => {
     data.current.player1.width,
     data.current.player1.height,
     );
-
-    context.fillRect(
-    data.current.player2.x,
-    data.current.player2.y,
-    data.current.player2.width,
-    data.current.player2.height,
-    );
+    
+    // if ( data.current.ia === 0)
+    // {
+      context.fillRect(
+      data.current.player2.x,
+      data.current.player2.y,
+      data.current.player2.width,
+      data.current.player2.height,
+      );
+    // }
+    // else{
+    //   ;
+    //   context.fillRect(
+    //   data.current.player2.x,
+    //   data.current.player2.y,
+    //   data.current.player2.width,
+    //   data.current.player2.height,
+    //   );
+    // }
 
     drawCircle(context,data.current.ball.x,data.current.ball.y, 16, "black");
     Drawnet(context);

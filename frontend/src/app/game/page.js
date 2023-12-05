@@ -3,18 +3,19 @@
 import { useEffect, useRef, useState } from "react";
 import io from "socket.io-client";
 import { DrawGame } from "./DrawGame";
-import { useMediaQuery } from "@uidotdev/usehooks";
+import { useWindowSize } from "@uidotdev/usehooks";
 
 function Name() {
   const [socket, setsocket] = useState(null);
   const [waiting, setWat] = useState(false);
   const [ready, setReady] = useState(false);
+  const windowSize = useWindowSize();
   const ref = useRef(null);
   // const [key, setKey] = useState(null);
-  const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
+  const isSmallDevice = windowSize.width <= 768;
 
   useEffect(() => {
-    const newsocket = io("http://localhost:8000", {
+    const newsocket = io(process.env.NEXT_PUBLIC_BACKEND_URL, {
       withCredentials: true,
     });
 
@@ -34,8 +35,9 @@ function Name() {
   }, [socket]);
 
   useEffect(() => {
-    const handleKeyPress = (event) => {
-      console.log(event.key);
+    const handleKeyDown = (event) => {
+      if (event.repeat) return;
+
       if (event.key === " " ) {
         //     setKey("UP")
         socket.emit("game.move", " ");
@@ -50,18 +52,24 @@ function Name() {
       }
       if (event.key === "ArrowLeft" && isSmallDevice) {
         //     setKey("UP")
-        socket.emit("game.move", "left");
+        socket.emit("game.move", "down");
       }
       if (event.key === "ArrowRight" && isSmallDevice) {
         //     setKey("UP")
-        socket.emit("game.move", "right");
+        socket.emit("game.move", "up");
       }
     };
 
-    window.addEventListener("keydown", handleKeyPress);
+    const handleKeyUp= (event) => {
+      socket.emit("game.move", null);
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
 
     return () => {
-      window.removeEventListener("keydown", handleKeyPress);
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
     };
   }, [socket, isSmallDevice]);
 
@@ -77,8 +85,9 @@ function Name() {
   }
   function clickhandler2() {
     const mode = "mode 2";
-    socket.emit("game.queue", { mode });
+    socket.emit("play.ia", { mode });
     setWat(true);
+    // setReady(true);
   }
   function clickhandler3() {
     const mode = "mode 2";
@@ -105,7 +114,7 @@ function Name() {
         <div className="grid">
           <button onClick={clickhandler}>classic</button>
           <button onClick={clickhandler1}>mode 2</button>
-          <button onClick={clickhandler2}>mode 3</button>
+          <button onClick={clickhandler2}>computer</button>
         </div>
       )}
 
