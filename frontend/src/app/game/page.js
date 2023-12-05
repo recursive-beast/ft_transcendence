@@ -14,48 +14,43 @@ import { Navigation } from "swiper/modules";
 
 import { Title, Header, RightBar } from "@/components/common";
 import { History } from "@/app/user/[id]/page";
-import classic from "@/images/thems/classic.png";
-import beach from "@/images/thems/beach.png";
-import ice from "@/images/thems/ice.png";
-import space from "@/images/thems/space.png";
-import jungle from "@/images/thems/jungle.png";
-import underwater from "@/images/thems/Underwater.png";
+import classic from "@/images/thems/classic_.jpg";
+import beach from "@/images/thems/beach_.jpg";
+import snow from "@/images/thems/snow.jpg";
+import space from "@/images/thems/space_.jpg";
+import jungle from "@/images/thems/jungle.jpg";
+import sahara from "@/images/thems/sahara.jpg";
 
-import classic2 from "@/images/thems/classic2.png";
-import beach2 from "@/images/thems/beach2.png";
-import ice2 from "@/images/thems/ice2.png";
-import space2 from "@/images/thems/space2.png";
-import jungle2 from "@/images/thems/jungle2.png";
-import underwater2 from "@/images/thems/Underwater2.png";
+import classic_bg from "@/images/thems/classic_bg.png";
+import beach_bg from "@/images/thems/beach_bg.png";
+import ice_bg from "@/images/thems/snow_bg.png";
+import space_bg from "@/images/thems/space_bg.png";
+import jungle_bg from "@/images/thems/jungle_bg.png";
+import sahara_bg from "@/images/thems/sahara_bg.png";
 
-import classic_bg from "@/images/thems/classicbg.jpg";
-import beach_bg from "@/images/thems/beachbg.jpg";
-import ice_bg from "@/images/thems/icebg.jpg";
-import space_bg from "@/images/thems/spacebg.jpg";
-import jungle_bg from "@/images/thems/junglebg.jpg";
-import underwater_bg from "@/images/thems/waterbg.jpg";
+function Shoose(props) {
+  return (
+    <button
+      className="z-10 flex grow flex-col items-center justify-center gap-3 border-b
+             text-tx05 last:border-0 hover:bg-bg01/60 sm:border-b-0 sm:border-r-[0.5px]"
+    >
+      <Icon className="h-5 w-5 sm:h-6 sm:w-6 xl:h-7 xl:w-7" icon={props.icon} />
+      <div className="text-xs font-light sm:text-sm xl:text-base ">
+        {props.title}
+      </div>
+    </button>
+  );
+}
+
 function Theme(props) {
   return (
-    <div
-      className={clsx(
-        "h-72 w-40 flex-none rounded-lg border drop-shadow-2xl xs:h-80 xs:w-48 sm:h-48 sm:w-96 2xl:h-[20rem] 2xl:w-[40rem]",
-      )}
-    >
-      <div className="hidden sm:block">
-        <Image
-          className="rounded-lg object-cover w-full h-full"
-          src={props.pic}
-          quality={100}
-        />
-      </div>
+    <div className="flex h-72 w-40 flex-none overflow-hidden rounded-lg border-2 drop-shadow-2xl xs:h-80 xs:w-48 sm:h-48 sm:w-96 2xl:h-[20rem] 2xl:w-[40rem]">
+      <Image className="opacity" fill src={props.pic} quality={100} />
 
-      <div className="sm:hidden">
-        <Image
-          className="flex-none rounded-lg object-cover"
-          fill
-          src={props.minPic}
-          quality={100}
-        />
+      <div className="z-10 flex flex-1 flex-col items-stretch bg-bg01/40 sm:flex-row">
+        <Shoose icon="fa6-solid:user-group" title="invite friend" />
+        <Shoose icon="bxs:bot" title="play with bot" />
+        <Shoose icon="bxs:time-five" title="join a queue" />
       </div>
     </div>
   );
@@ -67,15 +62,25 @@ function Slide(props) {
       <Image className="opacity-80" src={props.bg} quality={100} fill />
 
       {/* flex container for title and description */}
-      <div className={clsx("z-10 mt-10 flex w-fit flex-col items-center justify-center rounded-lg border px-8",
-              "pb-8 backdrop-blur-md xs:mt-14 xs:px-10 sm:mt-20 sm:px-20 sm:pb-10 md:mt-32", props.className)}>
-        <div className={clsx("text-center text-4xl font-semibold uppercase leading-[62px]", props.className)}>
+      <div
+        className={clsx(
+          "z-10 mt-10 flex w-fit flex-col items-center justify-center rounded-lg border px-8",
+          "pb-8 backdrop-blur-md xs:mt-14 xs:px-10 sm:mt-20 sm:px-20 sm:pb-10 md:mt-32",
+          props.className,
+        )}
+      >
+        <div
+          className={clsx(
+            "text-center text-4xl font-semibold uppercase leading-[62px]",
+            props.className,
+          )}
+        >
           {props.title}
         </div>
         <div className="mb-3 text-center text-xs font-extralight tracking-wide text-tx04 xs:text-sm sm:text-2xl">
           {props.des}
         </div>
-        <Theme pic={props.pic} minPic={props.minPic} />
+        <Theme pic={props.pic} />
       </div>
     </div>
   );
@@ -109,7 +114,7 @@ export default function Home({ params }) {
             modules={[Navigation]}
             className="mySwiper"
           >
-            <div className="absolute top-5 z-10 w-full text-center text-2xl font-extralight tracking-widest text-tx01 xs:top-14 xs:text-3xl sm:top-32 sm:text-5xl xl:text-6xl">
+            <div className="absolute top-5 z-10 w-full text-center text-2xl font-light tracking-widest text-tx05 xs:top-14 xs:text-3xl sm:top-32 sm:text-5xl xl:text-6xl">
               Paddle smash
             </div>
 
@@ -117,9 +122,8 @@ export default function Home({ params }) {
               <Slide
                 title="classic"
                 des="Traditional Paddle Clash"
-                className="text-tx02"
+                className="text-tx01"
                 pic={classic}
-                minPic={classic2}
                 bg={classic_bg}
               />
             </SwiperSlide>
@@ -127,54 +131,49 @@ export default function Home({ params }) {
             <SwiperSlide>
               <Slide
                 title="beach"
-                des="Traditional Paddle Clash"
+                des="Beachfront Clash Fiesta"
                 className="text-[#EAD2AC]"
                 pic={beach}
-                minPic={beach2}
                 bg={beach_bg}
               />
             </SwiperSlide>
 
             <SwiperSlide>
               <Slide
-                title="space"
-                des="Traditional Paddle Clash"
+                title="snow"
+                des="Frosty Paddle Blizzard"
                 className="text-tx05"
-                pic={space}
-                minPic={space2}
-                bg={space_bg}
-              />
-            </SwiperSlide>
-
-            <SwiperSlide>
-              <Slide
-                title="ice"
-                des="Traditional Paddle Clash"
-                className="text-[#20C3D0]"
-                pic={ice}
-                minPic={ice2}
+                pic={snow}
                 bg={ice_bg}
               />
             </SwiperSlide>
 
             <SwiperSlide>
               <Slide
-                title="underwater"
-                des="Traditional Paddle Clash"
-                className="text-[#001642]"
-                pic={underwater}
-                minPic={underwater2}
-                bg={underwater_bg}
+                title="sahara"
+                des="Sahara Sand Paddle Duel"
+                className="text-tx02"
+                pic={sahara}
+                bg={sahara_bg}
+              />
+            </SwiperSlide>
+
+            <SwiperSlide>
+              <Slide
+                title="space"
+                des="Cosmic Paddle Encounter"
+                className="text-tx05"
+                pic={space}
+                bg={space_bg}
               />
             </SwiperSlide>
 
             <SwiperSlide>
               <Slide
                 title="jungle"
-                des="Traditional Paddle Clash"
+                des="Jungle Canopy Paddle Safari"
                 className="text-[#1C4226]"
                 pic={jungle}
-                minPic={jungle2}
                 bg={jungle_bg}
               />
             </SwiperSlide>
@@ -186,7 +185,7 @@ export default function Home({ params }) {
               className="absolute left-2 top-1/2 z-10 -translate-y-1/2 text-tx05 disabled:text-tx02 sm:left-5 xl:left-10"
             >
               <Icon
-                className="h-8 w-8 sm:h-12 sm:w-12 lg:h-14 lg:w-14 shadow-sm rounded-full"
+                className="h-8 w-8 rounded-full shadow-sm sm:h-12 sm:w-12 lg:h-14 lg:w-14"
                 icon="solar:double-alt-arrow-left-broken"
               />
             </button>
@@ -195,7 +194,7 @@ export default function Home({ params }) {
               className="absolute right-2 top-1/2 z-10 -translate-y-1/2 text-tx05 disabled:text-tx02 sm:right-5 xl:right-10"
             >
               <Icon
-                className="h-8 w-8 sm:h-12 sm:w-12 lg:h-14 lg:w-14 shadow-sm rounded-full"
+                className="h-8 w-8 rounded-full shadow-sm sm:h-12 sm:w-12 lg:h-14 lg:w-14"
                 icon="solar:double-alt-arrow-right-broken"
               />
             </button>
