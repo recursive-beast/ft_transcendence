@@ -2,7 +2,7 @@
 import Image from "next/image";
 import clsx from "clsx";
 import { Icon } from "@iconify/react";
-
+import { useState } from "react";
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
 // Import Swiper styles
@@ -12,7 +12,7 @@ import "./styles.css";
 // import required modules
 import { Navigation } from "swiper/modules";
 
-import { Title, Header, RightBar } from "@/components/common";
+import { Title, Header, Search, Friends } from "@/components/common";
 import { History } from "@/app/user/[id]/page";
 import classic from "@/images/thems/classic_.jpg";
 import beach from "@/images/thems/beach_.jpg";
@@ -28,11 +28,12 @@ import space_bg from "@/images/thems/space_bg.png";
 import jungle_bg from "@/images/thems/jungle_bg.png";
 import sahara_bg from "@/images/thems/sahara_bg.png";
 
-function Shoose(props) {
+function Mode({ onClick, ...props }) {
   return (
     <button
       className="z-10 flex grow flex-col items-center justify-center gap-3 border-b
              text-tx05 last:border-0 hover:bg-bg01/60 sm:border-b-0 sm:border-r-[0.5px]"
+      onClick={onClick}
     >
       <Icon className="h-5 w-5 sm:h-6 sm:w-6 xl:h-7 xl:w-7" icon={props.icon} />
       <div className="text-xs font-light sm:text-sm xl:text-base ">
@@ -42,17 +43,52 @@ function Shoose(props) {
   );
 }
 
-function Theme(props) {
+function Modes(props) {
+  const [mode, setMode] = useState("");
   return (
-    <div className="flex h-72 w-40 flex-none overflow-hidden rounded-lg border-2 drop-shadow-2xl xs:h-80 xs:w-48 sm:h-48 sm:w-96 2xl:h-[20rem] 2xl:w-[40rem]">
-      <Image className="opacity" fill src={props.pic} quality={100} />
+    <>
+      {" "}
+      <div className="flex h-72 w-48 flex-none overflow-hidden rounded-lg border-2 drop-shadow-2xl xs:h-80 xs:w-56 sm:h-48 sm:w-96 2xl:h-[20rem] 2xl:w-[40rem]">
+        <Image className="opacity" fill src={props.pic} quality={100} />
 
-      <div className="z-10 flex flex-1 flex-col items-stretch bg-bg01/40 sm:flex-row">
-        <Shoose icon="fa6-solid:user-group" title="invite friend" />
-        <Shoose icon="bxs:bot" title="play with bot" />
-        <Shoose icon="bxs:time-five" title="join a queue" />
+        {!mode && (
+          <div className="z-10 flex flex-1 flex-col items-stretch bg-bg01/40 sm:flex-row">
+            <Mode
+              icon="fa6-solid:user-group"
+              title="invite friend"
+              onClick={() => setMode("friend")}
+            />
+            <Mode
+              icon="bxs:bot"
+              title="play with bot"
+              onClick={() => setMode("bot")}
+            />
+            <Mode
+              icon="bxs:time-five"
+              title="join a queue"
+              onClick={() => setMode("queue")}
+            />
+          </div>
+        )}
+        {mode === "friend" && (
+          <div className="z-10 flex flex-1 flex-col space-y-2 bg-bg01/90">
+            <div className="no-scrollbar flex-1 overflow-auto">
+              <Friends />
+            </div>
+          </div>
+        )}
       </div>
-    </div>
+      <button
+        onClick={() => setMode("")}
+        className={clsx(
+          "z-10 mx-auto my-2 rounded-full border border-tx05 px-4 py-1 text-center text-sm font-light uppercase tracking-wider",
+          "text-tx05 transition-colors duration-[400ms] ease-linear hover:bg-tx05 hover:text-tx03 sm:text-base",
+          mode === "friend" ? "visible" : "invisible",
+        )}
+      >
+        cancel
+      </button>
+    </>
   );
 }
 
@@ -65,7 +101,7 @@ function Slide(props) {
       <div
         className={clsx(
           "z-10 mt-10 flex w-fit flex-col items-center justify-center rounded-lg border px-8",
-          "pb-8 backdrop-blur-md xs:mt-14 xs:px-10 sm:mt-20 sm:px-20 sm:pb-10 md:mt-32",
+          "backdrop-blur-md xs:mt-14 xs:px-10 sm:mt-20 sm:px-20 md:mt-32",
           props.className,
         )}
       >
@@ -80,7 +116,7 @@ function Slide(props) {
         <div className="mb-3 text-center text-xs font-extralight tracking-wide text-tx04 xs:text-sm sm:text-2xl">
           {props.des}
         </div>
-        <Theme pic={props.pic} />
+        <Modes pic={props.pic} />
       </div>
     </div>
   );

@@ -449,8 +449,9 @@ export function Search(props) {
         <div className="relative">
           <div
             className={clsx(
-              "no-scrollbar absolute z-10 max-h-72 w-full overflow-y-auto rounded-lg border",
+              "no-scrollbar absolute z-10 max-h-52 w-full overflow-y-auto rounded-lg border",
               props.home ? "rounded-t-none border-t-0 bg-bg01" : "mt-2 bg-tx03",
+              props.game && "max-h-44"
             )}
           >
             {data?.map((user, index) => {
@@ -503,9 +504,8 @@ export function Friends(props) {
         </div>
       )}
 
-      {/* Friends List */}
+      {/* No Friends */}
       {data?.length === 0 ? (
-        // No Conversation Selected
         <div className="flex h-full flex-col items-center justify-center gap-6">
           <Image src={logoPic} alt="Logo of the game" className="h-52 w-52" />
 
