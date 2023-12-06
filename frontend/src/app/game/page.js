@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import io from "socket.io-client";
 import { DrawGame } from "./DrawGame";
 import { useWindowSize } from "@uidotdev/usehooks";
+import { useRouter } from "next/navigation";
 
 function Name() {
   const [socket, setsocket] = useState(null);
@@ -11,6 +12,8 @@ function Name() {
   const [ready, setReady] = useState(false);
   const windowSize = useWindowSize();
   const ref = useRef(null);
+  const router = useRouter();
+
   // const [key, setKey] = useState(null);
   const isSmallDevice = windowSize.width <= 768;
 
@@ -25,43 +28,57 @@ function Name() {
   }, []);
 
   useEffect(() => {
-    if (socket) socket.on("game.found", (data) => {
-      ref.current = data;
-      setReady(true);
-    });
+    if (!socket) return;
+
+      socket.on("game.found", (data) => {
+        ref.current = data;
+        setReady(true);
+      });
+      socket.on("game.over", () => {
+        router.push("/game/over");
+      });
+
     return () => {
       // TODO: cleanup socket listeners
     };
   }, [socket]);
 
   useEffect(() => {
+    let directions = [];
+
     const handleKeyDown = (event) => {
       if (event.repeat) return;
 
-      if (event.key === " " ) {
-        //     setKey("UP")
+      if (event.key === " ") {
         socket.emit("game.move", " ");
+        return;
       }
-      if (event.key === "ArrowUp" && !isSmallDevice) {
-        //     setKey("UP")
-        socket.emit("game.move", "up");
-      }
-      if (event.key === "ArrowDown" && !isSmallDevice) {
-        //     setKey("UP")
-        socket.emit("game.move", "down");
-      }
-      if (event.key === "ArrowLeft" && isSmallDevice) {
-        //     setKey("UP")
-        socket.emit("game.move", "down");
-      }
-      if (event.key === "ArrowRight" && isSmallDevice) {
-        //     setKey("UP")
-        socket.emit("game.move", "up");
-      }
+
+      let direction;
+
+      if (event.key === "ArrowUp" && !isSmallDevice) direction = "up";
+      if (event.key === "ArrowDown" && !isSmallDevice) direction = "down";
+      if (event.key === "ArrowLeft" && isSmallDevice) direction = "down";
+      if (event.key === "ArrowRight" && isSmallDevice) direction = "up";
+
+      directions.unshift(direction);
+      socket.emit("game.move", direction);
     };
 
-    const handleKeyUp= (event) => {
-      socket.emit("game.move", null);
+    const handleKeyUp = (event) => {
+      let direction;
+
+      if (event.key === "ArrowUp" && !isSmallDevice) direction = "up";
+      if (event.key === "ArrowDown" && !isSmallDevice) direction = "down";
+      if (event.key === "ArrowLeft" && isSmallDevice) direction = "down";
+      if (event.key === "ArrowRight" && isSmallDevice) direction = "up";
+
+      directions = directions.filter(elem => elem !== direction);
+
+      if (directions.length > 0)
+        socket.emit("game.move", directions[0]);
+      else
+        socket.emit("game.move", null);
     };
 
     window.addEventListener("keydown", handleKeyDown);
@@ -103,7 +120,7 @@ function Name() {
   //   </div>
   // );
   return (
-    <div className="page text-pr01 flex flex-col items-center justify-center h-screen">
+    <div className="page flex h-screen flex-col items-center justify-center text-pr01">
       {waiting ? (
         <div>
           <p>Waiting for server response...</p>
@@ -119,7 +136,7 @@ function Name() {
       )}
 
       {ready && (
-        <div className="flex-1 flex items-center justify-center">
+        <div className="flex flex-1 items-center justify-center">
           <DrawGame data={ref} />
         </div>
       )}
