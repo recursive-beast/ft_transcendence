@@ -44,6 +44,7 @@ function Mode({ onClick, ...props }) {
 }
 
 function Modes(props) {
+  const [friend, setFriend] = useState(null);
   const [mode, setMode] = useState("");
   return (
     <>
@@ -70,12 +71,48 @@ function Modes(props) {
             />
           </div>
         )}
+
         {mode === "friend" && (
           <div className="z-10 flex flex-1 flex-col space-y-2 bg-bg01/90">
             <div className="no-scrollbar flex-1 overflow-auto">
-              <Friends />
+              {!friend ? (
+                <Friends game={true} onClick={setFriend} />
+              ) : (
+                <div className="flex h-full w-full flex-col items-center justify-center gap-8 text-xs sm:gap-5 sm:text-sm xl:text-base">
+                  <div className="text-center text-xl font-extralight tracking-widest sm:text-2xl xl:text-3xl">
+                    Break Point
+                  </div>
+
+                  <div className="w-4/5 text-center font-light tracking-wide text-tx02">
+                    Select one of the options below to set a breack Point for
+                    the game
+                  </div>
+
+                  <div className="flex gap-3 sm:gap-5 xl:gap-7">
+                    {[
+                      { value: "3" },
+                      { value: "5" },
+                      { value: "7" },
+                      { value: "9" },
+                    ].map((v) => {
+                      return (
+                        <button
+                          className="hover:text-tx04 hover:bg-tx05 h-6 w-6 rounded-lg border text-tx05 sm:h-8 sm:w-8 xl:h-10 xl:w-10"
+                          key={v.value}
+                        >
+                          {v.value}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
+        )}
+
+        {mode === "queue" && (
+          <div className="z-10 flex flex-1 flex-col space-y-2 bg-bg01/90"></div>
         )}
       </div>
       <button
@@ -83,7 +120,7 @@ function Modes(props) {
         className={clsx(
           "z-10 mx-auto my-2 rounded-full border border-tx05 px-4 py-1 text-center text-sm font-light uppercase tracking-wider",
           "text-tx05 transition-colors duration-[400ms] ease-linear hover:bg-tx05 hover:text-tx03 sm:text-base",
-          mode === "friend" ? "visible" : "invisible",
+          mode ? "visible" : "invisible",
         )}
       >
         cancel

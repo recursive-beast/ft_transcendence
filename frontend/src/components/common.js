@@ -401,7 +401,6 @@ export function Search(props) {
   const handleInputFocus = () => {
     setSearch(true);
   };
-
   const handleInputChange = (e) => {
     setText(e.target.value);
   };
@@ -451,7 +450,7 @@ export function Search(props) {
             className={clsx(
               "no-scrollbar absolute z-10 max-h-52 w-full overflow-y-auto rounded-lg border",
               props.home ? "rounded-t-none border-t-0 bg-bg01" : "mt-2 bg-tx03",
-              props.game && "max-h-44"
+              props.game && "max-h-44",
             )}
           >
             {data?.map((user, index) => {
@@ -520,12 +519,16 @@ export function Friends(props) {
       ) : (
         <>
           {data?.map((friend, index) => {
+            const Component = props.game ? "button" : Link;
+            const componentProps = props.game
+              ? { onClick: () => props?.onClick(friend) }
+              : { href: `/user/${friend.id}` };
             return (
-              <Link
-                href={`/user/${friend.id}`}
+              <Component
+                {...componentProps}
                 key={index}
                 className={clsx(
-                  "flex border-b border-tx03 p-2 hover:bg-tx03",
+                  "flex border-b border-tx03 p-2 hover:bg-tx03 w-full",
                   !props.group && "cursor-pointer",
                 )}
               >
@@ -548,7 +551,7 @@ export function Friends(props) {
 
                 {/* Checkbox for friend selection */}
                 {props.group && <input className=" m-3" type="checkbox" />}
-              </Link>
+              </Component>
             );
           })}
         </>
