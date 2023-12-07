@@ -1,4 +1,5 @@
 "use client";
+
 import useSWR, { mutate } from "swr";
 import Image from "next/image";
 import { Icon } from "@iconify/react";
@@ -138,7 +139,7 @@ function ProfileInfo({ id }) {
 
 function Match() {
   return (
-    <div className="mx-1 flex items-center mb-3">
+    <div className="mx-1 flex items-center mb-5">
       <Image
         className="mx-2 h-12 w-12 flex-none rounded-full border-[1.5px] border-tx02 object-cover p-[2px]"
         src={Pic01}
@@ -191,7 +192,7 @@ export default function Home({ params }) {
         <div className="hidden xl:block">
           <Header
             home={true}
-            // menu={<HomeMenu onClick={() => setSetting(true)} />}
+            menu={<History />}
           />
         </div>
 
@@ -199,7 +200,7 @@ export default function Home({ params }) {
           <div className="z-10 xl:hidden">
             <Header
               home={true}
-              // menu={<HomeMenu onClick={() => setSetting(true)} />}
+              menu={<History />}
             />
           </div>
 
