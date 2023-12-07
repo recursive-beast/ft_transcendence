@@ -111,11 +111,14 @@ function GroupMessage(props) {
                 </div>
 
                 {/* lastMessage */}
-                {/* <div className="truncate text-xs text-tx02 xs:text-sm">
-                  { formatDistanceToNowStrict(new Date(group.messages.at(-1).createdAt), {
-                    addSuffix: true,
-                  })}
-                </div> */}
+                <div className="truncate text-xs text-tx02 xs:text-sm">
+                  {formatDistanceToNowStrict(
+                    new Date(group.messages.at(-1).createdAt),
+                    {
+                      addSuffix: true,
+                    },
+                  )}
+                </div>
               </div>
             </div>
 
@@ -143,7 +146,7 @@ function GroupMessage(props) {
                   />
                 ) : (
                   <div className="flex h-6 w-6 items-center justify-center rounded-full border  border-tx01 bg-tx02 text-tx04 xs:h-8 xs:w-8">{`+${
-                    group.members.length -2
+                    group.members.length - 2
                   }`}</div>
                 )}
               </div>
@@ -159,9 +162,8 @@ function DirectMessage(props) {
   const { data } = useSWR("/chat/direct");
   const { data: data1 } = useSWR("/users/me");
   const [myID, setMyId] = useState(0);
-  if (data1 && !myID)
-    setMyId(data1.id);
-  
+  if (data1 && !myID) setMyId(data1.id);
+
   return (
     <div>
       {data?.map((conversation, index) => {
@@ -176,35 +178,46 @@ function DirectMessage(props) {
             {/* flex div contain avatar, name and lastMessage */}
             <div className="flex flex-1 items-center">
               {/* avatar */}
-              { myID && 
+              {myID && (
                 <Image
                   className={clsx(
                     "mr-2 h-12 w-12 flex-none rounded-full object-cover p-[3px] xs:mr-3 xs:h-14 xs:w-14",
                     // status[conversation.members.find(obj => obj.id !== myID).status].border,
                   )}
-                  src={conversation.members.find(obj => obj.id != myID).avatar}
+                  src={
+                    conversation.members.find((obj) => obj.id != myID).avatar
+                  }
                   quality={100}
                   width={56}
                   height={56}
                 />
-              }
+              )}
               <div className="flex flex-grow flex-col pr-1">
                 {/* name and time */}
                 <div className="flex items-center">
                   {/* name */}
                   <div className="w-10 flex-grow truncate text-sm tracking-wide xs:text-base xs:tracking-widest">
-                    {conversation.members.find(obj => obj.id !== myID).displayName}
+                    {
+                      conversation.members.find((obj) => obj.id !== myID)
+                        .displayName
+                    }
                   </div>
 
                   {/* time */}
                   <div className="text-sm text-tx02">
-                    {
-                      isToday(new Date(conversation.messages.at(-1).createdAt))
-                      ? format(new Date(conversation.messages.at(-1).createdAt), "HH:mm")
-                      : isYesterday(new Date(conversation.messages.at(-1).createdAt))
-                      ? "yesterday"
-                      : format(new Date(conversation.messages.at(-1).createdAt), "yyyy/MM/dd")
-                    }
+                    {isToday(new Date(conversation.messages.at(-1).createdAt))
+                      ? format(
+                          new Date(conversation.messages.at(-1).createdAt),
+                          "HH:mm",
+                        )
+                      : isYesterday(
+                            new Date(conversation.messages.at(-1).createdAt),
+                          )
+                        ? "yesterday"
+                        : format(
+                            new Date(conversation.messages.at(-1).createdAt),
+                            "yyyy/MM/dd",
+                          )}
                   </div>
                 </div>
 
@@ -216,13 +229,19 @@ function DirectMessage(props) {
                   </div>
 
                   {/* nbrMessages */}
-                  {
-                    conversation.messages.filter(message => message.senderId != myID && message.seen === false).length != 0 && (
-                      <div className="ml-1 h-5 w-5 rounded-full bg-tx02 text-center text-sm font-semibold text-tx04">
-                        {conversation.messages.filter(message => message.senderId != myID && message.seen === false).length}
-                      </div>
-                    )
-                  }
+                  {conversation.messages.filter(
+                    (message) =>
+                      message.senderId != myID && message.seen === false,
+                  ).length != 0 && (
+                    <div className="ml-1 h-5 w-5 rounded-full bg-tx02 text-center text-sm font-semibold text-tx04">
+                      {
+                        conversation.messages.filter(
+                          (message) =>
+                            message.senderId != myID && message.seen === false,
+                        ).length
+                      }
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -338,7 +357,7 @@ function GroupInfo({ onClick, ...props }) {
           <div className="relative mx-3 flex items-end justify-center gap-2 border-b-2 sm:mx-5">
             <input
               className="w-full border-none bg-bg02 outline-none focus:border-none"
-              value={props.conversation.displayName}
+              value={props.conversation.title}
             />
 
             {/* Set Avatar Button */}
@@ -352,7 +371,7 @@ function GroupInfo({ onClick, ...props }) {
         ) : (
           <div className="relative flex items-end justify-center gap-2">
             <div className="text-base xs:text-lg">
-              {props.conversation.displayName}
+              {props.conversation.title}
             </div>
 
             {/* Set Avatar Button */}
@@ -367,7 +386,7 @@ function GroupInfo({ onClick, ...props }) {
 
         {/* members */}
         <div className="relative -m-3 flex items-center justify-center font-light tracking-widest text-tx02">
-          Group:&nbsp; <span>Protected</span>
+          Group:&nbsp; <span>{props.conversation.type}</span>
         </div>
       </div>
 
@@ -376,12 +395,12 @@ function GroupInfo({ onClick, ...props }) {
         <div>
           <label>Group Type:</label>
           <select
-            value="protected"
+            value={props.conversation.type}
             className="h-6 w-full rounded-sm border-b bg-bg03 px-1 text-tx01 xs:h-8 sm:rounded-md"
           >
-            <option value="public">Public</option>
-            <option value="private">Private</option>
-            <option value="protected">Protected</option>
+            <option value="PUBLIC">PUBLIC</option>
+            <option value="PRIVATE">PRIVATE</option>
+            <option value="PROTECTED">PROTECTED</option>
           </select>
         </div>
 
@@ -420,7 +439,7 @@ function GroupInfo({ onClick, ...props }) {
       {/* members */}
       <div className=" bg-bg02">
         <div className="mx-3 my-2 text-sm font-light tracking-wide text-tx02 xs:text-base xs:tracking-widest">
-          Group -&nbsp; <span>{props.conversation.members}</span>&nbsp;Members
+          Group -&nbsp; <span>{props.conversation.members.length}</span>&nbsp;Members
         </div>
         <div
           className="flex cursor-pointer border-b border-tx02 p-2 hover:bg-tx03"
@@ -446,7 +465,7 @@ function GroupInfo({ onClick, ...props }) {
   );
 }
 
-function ConversationBox({ onClick, ...props }) { 
+function ConversationBox({ onClick, ...props }) {
   // State to control the visibility of options
   const [options, setOptions] = useState(false);
   // State to control the visibility of group informations
@@ -454,8 +473,7 @@ function ConversationBox({ onClick, ...props }) {
 
   const { data: data1 } = useSWR("/users/me");
   const [myID, setMyId] = useState(0);
-  if (data1 && !myID)
-    setMyId(data1.id);
+  if (data1 && !myID) setMyId(data1.id);
 
   return (
     <div className="flex flex-1">
@@ -488,10 +506,15 @@ function ConversationBox({ onClick, ...props }) {
                 <Image
                   className={clsx(
                     "my-1 mr-2 h-11 w-11 rounded-full object-cover p-[1px] xs:h-[52px] xs:w-[52px] xs:p-[2px] lg:mr-3",
-                    // props.conversation 
-                      //&& status[props.conversation.status].border,
+                    // props.conversation
+                    //&& status[props.conversation.status].border,
                   )}
-                  src={props.conversation.members.find(obj => obj.id != myID).avatar}
+                  src={
+                    props.group
+                      ? props.conversation.avatar
+                      : props.conversation.members.find((obj) => obj.id != myID)
+                          .avatar
+                  }
                   quality={100}
                   width={56}
                   height={56}
@@ -500,7 +523,12 @@ function ConversationBox({ onClick, ...props }) {
                 <div className="flex flex-col items-start">
                   {/* Full Name */}
                   <div className="truncate text-sm font-semibold capitalize tracking-[widest] text-tx05 xs:text-base sm:tracking-[3px]">
-                    {props.conversation && props.conversation.members.find(obj => obj.id != myID).fullName}
+                    {props.conversation &&
+                      (props.group
+                        ? props.conversation.title
+                        : props.conversation.members.find(
+                            (obj) => obj.id != myID,
+                          ).fullName)}
                   </div>
 
                   <div className="text-[8px] capitalize text-tx03 xs:text-[10px] sm:text-[14px]">
@@ -565,14 +593,20 @@ function ConversationBox({ onClick, ...props }) {
                           <span
                             className={clsx(
                               "ml-auto text-xs",
-                              message.senderId === myID ? "text-tx02" : "text-tx03",
+                              message.senderId === myID
+                                ? "text-tx02"
+                                : "text-tx03",
                             )}
                           >
                             {isToday(new Date(message.createdAt))
                               ? format(new Date(message.createdAt), "HH:mm")
                               : isYesterday(new Date(message.createdAt))
-                              ? "yesterday " + format(new Date(message.createdAt), "HH:mm")
-                              : format(new Date(message.createdAt), "yyyy/MM/dd HH:mm")}
+                                ? "yesterday " +
+                                  format(new Date(message.createdAt), "HH:mm")
+                                : format(
+                                    new Date(message.createdAt),
+                                    "yyyy/MM/dd HH:mm",
+                                  )}
                           </span>
                         </div>
                       </div>
@@ -583,7 +617,7 @@ function ConversationBox({ onClick, ...props }) {
 
             {/* Input Message Section */}
             <div className="sticky bottom-0 flex w-full  items-center space-x-3 bg-bg03 px-3 py-2 xs:py-3 sm:px-5">
-              <input className="h-7 flex-1 rounded-xl bg-tx02 text-base font-extralight xs:h-8 xs:text-xl px-2 lg:px-3" />
+              <input className="h-7 flex-1 rounded-xl bg-tx02 px-2 text-base font-extralight xs:h-8 xs:text-xl lg:px-3" />
 
               <button>
                 <Icon
@@ -813,7 +847,7 @@ function NewChat({ onChatClick }) {
 function Messages(props) {
   const [directMsg, setDirectMsg] = useState(true);
   const [groupMsg, setGroupMsg] = useState(true);
-  
+
   return (
     <div
       className={clsx(
