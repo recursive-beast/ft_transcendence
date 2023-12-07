@@ -1,13 +1,44 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'nestjs-prisma';
 import { MessageEntity } from 'src/common/entities/message.entity';
 import { DirectMessageDTO } from './dto/direct-message.dto';
 import { DirectConversationEntity } from 'src/common/entities/direct-conversation.entity';
+import { UserEntity } from 'src/common/entities/user.entity';
 
 @Injectable()
 export class DirectService {
   constructor(private prismaService: PrismaService) {}
 
+  async getUser(id: number) {
+    const user = this.prismaService.user.findUnique({
+      where: { id: id },
+      include: {
+        blocked: true,
+        blockedBy: true,
+      },
+    });
+
+    return user;
+  }
+
+  async checkBlock(userId: number, recieverId: number) {
+    const sender = await this.getUser(userId);
+
+    if (sender) {
+      const blockedUsers = sender.blocked;
+      const blockedByUsers = sender.blockedBy;
+      const foundBlocked = blockedUsers.find((user) => {
+        return user.id === recieverId;
+      });
+      const foundBlockedBy = blockedByUsers.find((user) => {
+        return user.id === recieverId;
+      });
+      if (foundBlocked || foundBlockedBy) throw new BadRequestException();
+      else return null;
+    } else {
+      throw new BadRequestException();
+    }
+  }
   async sendMessage(senderId: number, dto: DirectMessageDTO) {
     let conversation = await this.prismaService.directConversation.findFirst({
       where: {
@@ -68,7 +99,7 @@ export class DirectService {
       },
       include: {
         messages: true,
-        members: true
+        members: true,
       },
     });
 

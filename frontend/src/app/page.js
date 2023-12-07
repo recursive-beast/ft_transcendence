@@ -316,8 +316,8 @@ function DescriptionSectionHover(props) {
 
 function Feature(props) {
   return (
-    <div className="pt-4 pb-6 border-b border-tx02 hover:bg-pr01 text-4xl font-semibold sm:text-5xl md:text-6xl 2xl:text-7xl">
-      <MaskedLines className="first:text-tx02 last:text-tx01 hover:first:text-tx04 hover:last:text-tx04 transition-colors">
+    <div className="pt-4 pb-6 border-b border-tx02 hover:bg-pr01 text-4xl font-semibold sm:text-5xl md:text-6xl 2xl:text-7xl group">
+      <MaskedLines className="first:text-tx02 last:text-tx01 group-hover:first:text-tx04 group-hover:last:text-tx04 transition-colors">
         {props.txt1}
         <br />
         {props.txt2}
@@ -350,7 +350,7 @@ function TechnologySection({ hover, ...props }) {
       <div className="flex flex-col mb-10 w-11/12 mx-auto sm:w-10/12 lg:w-3/4 xl:w-8/12">
         <Title text="frontend" />
 
-        <div className="flex flex-wrap gap-4 sm:gap-6 lg:gap-10 xl:gap-14 2xl:gap-20">
+        <div className="flex flex-wrap justify-between gap-4 sm:gap-6 lg:gap-10 xl:gap-14 2xl:gap-20">
           {[
             nextjs,
             javascript,
@@ -378,7 +378,7 @@ function TechnologySection({ hover, ...props }) {
         <Title text="backend" />
 
         <div
-          className="flex flex-wrap gap-4 sm:gap-6 lg:gap-10 xl:gap-14 2xl:gap-20"
+          className="flex flex-wrap justify-between gap-4 sm:gap-6 lg:gap-10 xl:gap-14 2xl:gap-20"
           // {...props}
         >
           {[
@@ -834,7 +834,7 @@ export default function Home() {
       />
       <motion.div
         id="masked"
-        className="bg-pr01 absolute pb-64 z-20"
+        className="bg-pr01 absolute pb-64 z-20 descendant:!text-tx04 descendant:!border-tx04"
         animate={{
           "--x": `${mouse.x}px`,
           "--y": `${scroll.y + mouse.y}px`,

@@ -10,6 +10,10 @@ const nextConfig = {
             protocol: 'https',
             hostname: 'cdn.intra.42.fr',
           },
+          {
+            protocol: 'http',
+            hostname: 'localhost',
+          },
         ],
       },
 }
