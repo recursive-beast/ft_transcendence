@@ -350,7 +350,7 @@ function TechnologySection({ hover, ...props }) {
       <div className="flex flex-col mb-10 w-11/12 mx-auto sm:w-10/12 lg:w-3/4 xl:w-8/12">
         <Title text="frontend" />
 
-        <div className="flex flex-wrap gap-4 sm:gap-6 lg:gap-10 xl:gap-14 2xl:gap-20">
+        <div className="flex flex-wrap justify-between gap-4 sm:gap-6 lg:gap-10 xl:gap-14 2xl:gap-20">
           {[
             nextjs,
             javascript,
@@ -378,7 +378,7 @@ function TechnologySection({ hover, ...props }) {
         <Title text="backend" />
 
         <div
-          className="flex flex-wrap gap-4 sm:gap-6 lg:gap-10 xl:gap-14 2xl:gap-20"
+          className="flex flex-wrap justify-between gap-4 sm:gap-6 lg:gap-10 xl:gap-14 2xl:gap-20"
           // {...props}
         >
           {[
