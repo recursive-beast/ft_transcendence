@@ -2,7 +2,8 @@
 import Image from "next/image";
 import clsx from "clsx";
 import { Icon } from "@iconify/react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import io from "socket.io-client";
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
 // Import Swiper styles
@@ -12,6 +13,12 @@ import "./styles.css";
 import useSWR from "swr";
 // import required modules
 import { Navigation } from "swiper/modules";
+// import { DrawGame } from "./playground/DrawGame";
+// import { Name } from "./playground/page";
+import { useRouter } from "next/navigation";
+// import { useWindowSize } from "@uidotdev/usehooks";
+// import { useRouter } from "next/navigation";
+
 
 import { Title, Header, Search, Friends } from "@/components/common";
 import { History } from "@/app/user/[id]/page";
@@ -30,6 +37,10 @@ import jungle_bg from "@/images/thems/jungle_bg.png";
 import sahara_bg from "@/images/thems/sahara_bg.png";
 import Pic01 from "@/images/profils/01.jpg";
 
+
+
+
+
 function Mode({ onClick, ...props }) {
   return (
     <button
@@ -44,6 +55,10 @@ function Mode({ onClick, ...props }) {
     </button>
   );
 }
+// function Rdr(){
+  
+//   return <div></div>;
+// }
 
 function Modes(props) {
   const { data: me } = useSWR("/users/me");
@@ -52,6 +67,7 @@ function Modes(props) {
   const [mode, setMode] = useState("");
   const { data: users } = useSWR("/users");
   const [src, setSrc] = useState(Pic01);
+  const router = useRouter();
 
   useEffect(() => {
     if (!users || mode !== "queue") return;
@@ -89,7 +105,9 @@ function Modes(props) {
             <Mode
               icon="bxs:bot"
               title="play with bot"
-              onClick={() => setMode("bot")}
+              onClick={() =>{
+                router.push("/game/playground/bot");
+              }}
             />
             <Mode
               icon="bxs:time-five"
@@ -207,6 +225,12 @@ function Modes(props) {
             </div>
           </div>
         )}
+        {/* {mode === "bot" && (
+         <div className="page flex h-screen flex-col items-center justify-center text-pr01">
+             <rdr />
+       </div>
+        )} */}
+
       </div>
       <button
         onClick={() => {

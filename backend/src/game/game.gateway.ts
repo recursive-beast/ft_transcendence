@@ -223,6 +223,7 @@ export class GameGateway {
   @SubscribeMessage('play.ia')
   palywithIA(client: Socket, payload: any) {
     
+    console.log(client);
     const id = client.data.id;
     const mode = payload.mode;
     const player2 = {id:-1, width:10, height:150, x:0, y:(table.height - 150) / 2, score:0, serve:0, direction: null};

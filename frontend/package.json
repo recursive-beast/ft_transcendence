@@ -19,6 +19,7 @@
     "next": "latest",
     "react": "latest",
     "react-dom": "latest",
+    "react-router-dom": "^6.20.1",
     "sass": "^1.69.3",
     "sharp": "^0.32.6",
     "socket.io-client": "^4.7.2",
