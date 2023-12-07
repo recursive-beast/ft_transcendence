@@ -528,7 +528,7 @@ export function Friends(props) {
                 {...componentProps}
                 key={index}
                 className={clsx(
-                  "flex border-b border-tx03 p-2 hover:bg-tx03 w-full",
+                  "flex w-full border-b border-tx03 p-2 hover:bg-tx03",
                   !props.group && "cursor-pointer",
                 )}
               >
