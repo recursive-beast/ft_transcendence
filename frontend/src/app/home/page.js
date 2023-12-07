@@ -36,6 +36,7 @@ import AvShar from "@/images/achievements/shar.png";
 import AvUnsto from "@/images/achievements/unsto.png";
 import AvShoot from "@/images/achievements/shoot.png";
 import { useHorizontalScroll } from "@/hooks/useHorizontalScroll";
+import { AvatarInput } from "@/components/AvatarInput";
 
 function HomeMenu({ onClick }) {
   const [notif, setNotif] = useState(false);
@@ -457,7 +458,9 @@ function SettingSection({ onClick, ...props }) {
                     quality={100}
                   />
                   <div>
-                    <SettingButton label="Upload New" />
+                    <AvatarInput className="w-28 rounded-lg border border-tx01 py-1 tracking-widest text-tx05 transition-colors duration-[400ms] ease-linear hover:bg-tx01 hover:text-tx03 xs:w-36 lg:w-48">
+                      Upload New
+                    </AvatarInput>
                     <div className="text-[0.51rem] font-light tracking-normal xs:text-[0.67rem] lg:mt-2 lg:text-xs">
                       Avatar help your friends recognize you
                     </div>
