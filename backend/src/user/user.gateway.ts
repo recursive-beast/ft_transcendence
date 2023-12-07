@@ -37,7 +37,9 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   async handleDisconnect(client: Socket) {
     const id = client.data.id;
+    const sockets = await this.server.in(`user-${id}`).fetchSockets();
 
-    this.server.emit('user.status', { id, status: UserStatus.OFFLINE });
+    if (sockets.length === 0)
+      this.server.emit('user.status', { id, status: UserStatus.OFFLINE });
   }
 }
