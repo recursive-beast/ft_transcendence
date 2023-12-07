@@ -11,7 +11,7 @@ export default function Home() {
       {/* verivication Section */}
       {
         <div className="fixed inset-0 flex items-center justify-center bg-bg01">
-          <div className="bg-bg01 border-[1.5px] border-tx05 rounded-2xl flex flex-col items-center justify-between w-11/12  h-4/5 sm:w-[30rem] xs:h-2/3 relative">
+          <div className="bg-bg01 border-[1.5px] border-tx05 rounded-2xl flex flex-col items-center justify-between w-11/12  h-4/5 sm:w-[30rem] xs:h-2/3 relative overflow-auto no-scrollbar max-h-[45rem]">
             <div className="font-light tracking-[8px] uppercase text-base sm:text-xl sm:tracking-[10px] lg:text-2xl my-5 sm:my-10">
               paddel smash
             </div>

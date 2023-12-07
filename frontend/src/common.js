@@ -17,12 +17,7 @@ export function redirect(request, pathname) {
  * @param {RequestInit} [init]
  */
 export async function fetcher(resource, init) {
-  const url = new URL(resource, process.env.NEXT_PUBLIC_BACKEND_URL);
-  const res = await fetch(url, {
-    mode: "cors",
-    credentials: "include",
-    ...init,
-  });
+  const res = await fetcherRaw(resource, init);
   const data = await res.json();
 
   if (!res.ok) {
@@ -34,4 +29,20 @@ export async function fetcher(resource, init) {
   }
 
   return data;
+}
+
+/**
+ *
+ * @param {RequestInfo} resource
+ * @param {RequestInit} [init]
+ */
+export async function fetcherRaw(resource, init) {
+  const url = new URL(resource, process.env.NEXT_PUBLIC_BACKEND_URL);
+  const res = await fetch(url, {
+    mode: "cors",
+    credentials: "include",
+    ...init,
+  });
+
+  return res;
 }

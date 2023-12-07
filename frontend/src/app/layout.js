@@ -11,6 +11,7 @@ import { useEffect } from "react";
 import clsx from "clsx";
 import { SWRConfig } from "swr";
 import { fetcher } from "@/common";
+import { SocketProvider } from "@/components/SocketProvider";
 
 const exa = Poppins({
   subsets: ["latin"],
@@ -25,14 +26,16 @@ export default function RootLayout({ children }) {
   });
 
   return (
-    <SWRConfig value={{ fetcher }}>
-      <html lang="en">
-        <body
-          className={clsx(exa.className, "no-scrollbar select-none bg-bg01")}
-        >
-          {children}
-        </body>
-      </html>
-    </SWRConfig>
+    <SocketProvider>
+      <SWRConfig value={{ fetcher }}>
+        <html lang="en">
+          <body
+            className={clsx(exa.className, "no-scrollbar select-none bg-bg01")}
+          >
+            {children}
+          </body>
+        </html>
+      </SWRConfig>
+    </SocketProvider>
   );
 }

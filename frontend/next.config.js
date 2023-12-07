@@ -10,6 +10,14 @@ const nextConfig = {
             protocol: 'https',
             hostname: 'cdn.intra.42.fr',
           },
+          {
+            protocol: 'https',
+            hostname: 'lh3.googleusercontent.com',
+          },
+          {
+            protocol: 'http',
+            hostname: 'localhost',
+          },
         ],
       },
 }

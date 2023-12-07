@@ -36,9 +36,28 @@ import AvShar from "@/images/achievements/shar.png";
 import AvUnsto from "@/images/achievements/unsto.png";
 import AvShoot from "@/images/achievements/shoot.png";
 import { useHorizontalScroll } from "@/hooks/useHorizontalScroll";
+import { AvatarInput } from "@/components/AvatarInput";
+import { fetcher, fetcherRaw } from "@/common";
+import { useRouter } from "next/navigation";
+
+function MenuButton({ onClick, ...props }) {
+  return (
+    <button
+      className="flex items-center space-x-2 rounded-lg border p-1 hover:bg-tx01 hover:text-tx04"
+      onClick={onClick}
+    >
+      <Icon className="h-4 w-4 xs:h-5 xs:w-5" icon={props.icon} />
+      <div className="text-base font-light capitalize xs:text-xl xs:tracking-[4px]">
+        {props.title}
+      </div>
+    </button>
+  );
+}
 
 function HomeMenu({ onClick }) {
   const [notif, setNotif] = useState(false);
+  const router = useRouter();
+
   return (
     <div className="z-10 flex h-full flex-1 flex-col justify-between gap-2 sm:gap-3">
       {/* search and Notificatin */}
@@ -69,31 +88,22 @@ function HomeMenu({ onClick }) {
 
       {/* setting and log-out */}
       <div className="mb-5 flex items-center justify-between text-tx02">
-        <button
-          className="flex items-center space-x-2 rounded-xl border-b p-1"
+        {/* setting button */}
+        <MenuButton
           onClick={onClick}
-        >
-          <Icon
-            className="h-5 w-5 xs:h-6 xs:w-6"
-            icon="solar:settings-broken"
-          />
-          <div className="text-base font-normal capitalize xs:text-xl xs:tracking-[5px]">
-            setting
-          </div>
-        </button>
+          icon="solar:settings-broken"
+          title="setting"
+        />
 
-        <Link
-          className="flex items-center space-x-2 rounded-xl border-b p-1"
-          href={"/.."}
-        >
-          <Icon
-            className="h-5 w-5 xs:h-6 xs:w-6"
-            icon="fluent-mdl2:navigate-back"
-          />
-          <div className="text-base font-normal capitalize xs:text-xl xs:tracking-[5px]">
-            log out
-          </div>
-        </Link>
+        {/* log out button */}
+        <MenuButton
+          icon="fluent-mdl2:navigate-back"
+          title="log out"
+          onClick={async () => { 
+            await fetcherRaw("/auth/logout");
+            router.push("/");
+          }}
+        />
       </div>
 
       {/* Friends elements */}
@@ -394,7 +404,7 @@ function SettingInput({ long, ...props }) {
       <div className="text-xs tracking-normal xs:text-sm ">{props.label}</div>
       <input
         className={clsx(
-          "h-6 w-24 rounded-sm bg-tx02 xs:h-8 xs:w-36 sm:h-10 sm:w-44 sm:rounded-md lg:w-60",
+          "h-6 w-24 rounded-sm border-none bg-tx02 px-2 outline-none focus:border-none xs:h-8 xs:w-36 sm:h-10 sm:w-44 sm:rounded-md lg:w-60",
           long && "w-40 xs:w-56 sm:w-80 lg:w-80",
         )}
       ></input>
@@ -403,6 +413,7 @@ function SettingInput({ long, ...props }) {
 }
 
 function SettingSection({ onClick, ...props }) {
+  const { data: me } = useSWR("/users/me");
   const [active, setActive] = useState("profile");
 
   return (
@@ -414,10 +425,12 @@ function SettingSection({ onClick, ...props }) {
           <div className="my-4 flex w-full items-center justify-between font-normal capitalize tracking-widest text-tx05 xs:my-7 sm:my-10 sm:tracking-[3px]">
             <div>account settings</div>
             <div className="flex justify-center space-x-2 xs:space-x-4 lg:space-x-6">
+              {/* save button */}
               <button className="w-12 rounded-lg border border-tx01 xs:w-16 sm:w-20 sm:p-0">
                 <div className="font-light">Save</div>
               </button>
 
+              {/* close button */}
               <button onClick={onClick}>
                 <Icon
                   className="h-6 w-6 text-tx05 xs:h-7 xs:w-7"
@@ -427,7 +440,7 @@ function SettingSection({ onClick, ...props }) {
             </div>
           </div>
 
-          {/* bottom */}
+          {/* button's */}
           <div className="my-2 flex items-center justify-between font-light text-tx05 sm:px-4 lg:mx-8">
             <SettingButton
               label="Profile"
@@ -453,11 +466,15 @@ function SettingSection({ onClick, ...props }) {
                 <div className="flex items-end">
                   <Image
                     className="mr-4 h-16 w-16 rounded-full object-cover xs:ml-2 xs:mr-6 xs:h-20 xs:w-20 sm:ml-4 sm:mr-10 sm:h-28 sm:w-28"
-                    src={Pic15}
+                    src={me?.avatar}
                     quality={100}
+                    width={56}
+                    height={56}
                   />
                   <div>
-                    <SettingButton label="Upload New" />
+                    <AvatarInput className="w-28 rounded-lg border border-tx01 py-1 tracking-widest text-tx05 transition-colors duration-[400ms] ease-linear hover:bg-tx01 hover:text-tx03 xs:w-36 lg:w-48">
+                      Upload New
+                    </AvatarInput>
                     <div className="text-[0.51rem] font-light tracking-normal xs:text-[0.67rem] lg:mt-2 lg:text-xs">
                       Avatar help your friends recognize you
                     </div>

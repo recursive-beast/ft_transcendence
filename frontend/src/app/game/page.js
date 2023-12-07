@@ -62,6 +62,7 @@ function Mode({ onClick, ...props }) {
 
 function Modes(props) {
   const { data: me } = useSWR("/users/me");
+  const { data: fr } = useSWR("/users/friends");
   const [friend, setFriend] = useState(null);
   const [breack, setBreack] = useState("");
   const [mode, setMode] = useState("");
@@ -119,72 +120,84 @@ function Modes(props) {
 
         {mode === "friend" && (
           <div className="z-10 flex flex-1 flex-col space-y-2 bg-bg01/90">
-            <div className="no-scrollbar flex-1 overflow-auto">
-              {/* if no friend selected >> select a frend and move to shoose breack point */}
-              {!friend ? (
-                <Friends game={true} onClick={setFriend} />
-              ) : (
-                <>
-                  {/* if no Breack point selected >> select a breck point and move to waiting friend */}
-                  {!breack ? (
-                    <div className="flex h-full w-full flex-col items-center justify-center gap-8 text-xs sm:gap-5 sm:text-sm xl:text-base">
-                      <div className="text-center text-xl font-extralight tracking-widest sm:text-2xl xl:text-3xl">
-                        Break Point
-                      </div>
+            {fr?.length === 0 ? (
+              <div className="flex h-full flex-col items-center justify-center gap-6">
+                <div className="text-center text-3xl font-extralight">
+                  Add Friends
+                </div>
 
-                      <div className="w-4/5 text-center font-light tracking-wide text-tx02">
-                        Select one of the options below to set a breack Point
-                        for the game
-                      </div>
+                <div className="w-4/5 text-center text-sm text-tx02">
+                  Find new friends by using the search bar at Home page
+                </div>
+              </div>
+            ) : (
+              <div className="no-scrollbar flex-1 overflow-auto">
+                {/* if no friend selected >> select a frend and move to shoose breack point */}
+                {!friend ? (
+                  <Friends game={true} onClick={setFriend} />
+                ) : (
+                  <>
+                    {/* if no Breack point selected >> select a breck point and move to waiting friend */}
+                    {!breack ? (
+                      <div className="flex h-full w-full flex-col items-center justify-center gap-8 text-xs sm:gap-5 sm:text-sm xl:text-base">
+                        <div className="text-center text-xl font-extralight tracking-widest sm:text-2xl xl:text-3xl">
+                          Break Point
+                        </div>
 
-                      <div className="flex gap-3 sm:gap-5 xl:gap-7">
-                        {[
-                          { value: "3" },
-                          { value: "5" },
-                          { value: "7" },
-                          { value: "9" },
-                        ].map((v) => {
-                          return (
-                            <button
-                              className="h-6 w-6 rounded-lg border text-tx05 hover:bg-tx05 hover:text-tx04 sm:h-8 sm:w-8 xl:h-10 xl:w-10"
-                              key={v.value}
-                              onClick={() => setBreack(v.value)}
-                            >
-                              {v.value}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="flex h-full w-full flex-col items-center justify-center gap-8 text-xs sm:gap-4 sm:text-sm 2xl:gap-6 2xl:text-base">
-                      <div className="text-center text-lg font-extralight tracking-widest sm:text-2xl xl:text-3xl">
-                        Game pending
-                      </div>
+                        <div className="w-4/5 text-center font-light tracking-wide text-tx02">
+                          Select one of the options below to set a breack Point
+                          for the game
+                        </div>
 
-                      <div className="w-4/5 text-center font-light tracking-wide text-tx02">
-                        waiting for your friend to join the game, Make sure that
-                        your friend is present.
+                        <div className="flex gap-3 sm:gap-5 xl:gap-7">
+                          {[
+                            { value: "3" },
+                            { value: "5" },
+                            { value: "7" },
+                            { value: "9" },
+                          ].map((v) => {
+                            return (
+                              <button
+                                className="h-6 w-6 rounded-lg border text-tx05 hover:bg-tx05 hover:text-tx04 sm:h-8 sm:w-8 xl:h-10 xl:w-10"
+                                key={v.value}
+                                onClick={() => setBreack(v.value)}
+                              >
+                                {v.value}
+                              </button>
+                            );
+                          })}
+                        </div>
                       </div>
+                    ) : (
+                      <div className="flex h-full w-full flex-col items-center justify-center gap-8 text-xs sm:gap-4 sm:text-sm 2xl:gap-6 2xl:text-base">
+                        <div className="text-center text-lg font-extralight tracking-widest sm:text-2xl xl:text-3xl">
+                          Game pending
+                        </div>
 
-                      <Image
-                        className="mr-2 h-12 w-12 flex-none rounded-full border-[1.5px] border-tx02 object-cover p-[2px] xs:mr-3 xs:h-14 xs:w-14 2xl:h-16 2xl:w-16"
-                        src={friend.avatar}
-                        quality={100}
-                        width={56}
-                        height={56}
-                      />
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
+                        <div className="w-4/5 text-center font-light tracking-wide text-tx02">
+                          waiting for your friend to join the game, Make sure
+                          that your friend is present.
+                        </div>
+
+                        <Image
+                          className="mr-2 h-12 w-12 flex-none animate-pulse rounded-full border-[1.5px] border-tx02 object-cover p-[2px] xs:mr-3 xs:h-14 xs:w-14 2xl:h-16 2xl:w-16"
+                          src={friend.avatar}
+                          quality={100}
+                          width={56}
+                          height={56}
+                        />
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
           </div>
         )}
 
         {mode === "queue" && (
           <div className="z-10 flex flex-1 flex-col items-center justify-center bg-bg01/90">
-            <div className="flex h-full w-full flex-col items-center justify-center gap-8 text-xs sm:gap-3 xl:gap-6 sm:text-sm xl:text-base">
+            <div className="flex h-full w-full flex-col items-center justify-center gap-8 text-xs sm:gap-3 sm:text-sm xl:text-base 2xl:gap-6">
               <div className="text-center text-xl font-extralight tracking-widest sm:text-2xl xl:text-3xl">
                 Finding Match
               </div>
