@@ -2,13 +2,14 @@
 import Image from "next/image";
 import clsx from "clsx";
 import { Icon } from "@iconify/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
 // Import Swiper styles
 import "swiper/css";
 import "swiper/css/navigation";
 import "./styles.css";
+import useSWR from "swr";
 // import required modules
 import { Navigation } from "swiper/modules";
 
@@ -27,6 +28,7 @@ import ice_bg from "@/images/thems/snow_bg.png";
 import space_bg from "@/images/thems/space_bg.png";
 import jungle_bg from "@/images/thems/jungle_bg.png";
 import sahara_bg from "@/images/thems/sahara_bg.png";
+import Pic01 from "@/images/profils/01.jpg";
 
 function Mode({ onClick, ...props }) {
   return (
@@ -44,9 +46,33 @@ function Mode({ onClick, ...props }) {
 }
 
 function Modes(props) {
+  const { data: me } = useSWR("/users/me");
   const [friend, setFriend] = useState(null);
   const [breack, setBreack] = useState("");
   const [mode, setMode] = useState("");
+  const { data: users } = useSWR("/users");
+  const [src, setSrc] = useState(Pic01);
+
+  useEffect(() => {
+    if (!users || mode !== "queue") return;
+
+    let i = 0;
+    let id;
+
+    const update = () => {
+      if (users && i >= users.length) i = 0;
+      else i++;
+
+      setSrc(users[i].avatar);
+      id = setTimeout(update, 200);
+      return id;
+    };
+
+    id = update();
+
+    return () => clearTimeout(id);
+  }, [mode, users]);
+
   return (
     <>
       {" "}
@@ -113,7 +139,7 @@ function Modes(props) {
                       </div>
                     </div>
                   ) : (
-                    <div className="flex h-full w-full flex-col items-center justify-center gap-8 text-xs sm:gap-4 2xl:gap-6 sm:text-sm 2xl:text-base">
+                    <div className="flex h-full w-full flex-col items-center justify-center gap-8 text-xs sm:gap-4 sm:text-sm 2xl:gap-6 2xl:text-base">
                       <div className="text-center text-lg font-extralight tracking-widest sm:text-2xl xl:text-3xl">
                         Game pending
                       </div>
@@ -124,7 +150,7 @@ function Modes(props) {
                       </div>
 
                       <Image
-                        className="mr-2 h-12 w-12 flex-none animate-pulse rounded-full border-[1.5px] border-tx02 object-cover p-[2px] xs:mr-3 xs:h-14 xs:w-14 2xl:h-16 2xl:w-16"
+                        className="mr-2 h-12 w-12 flex-none rounded-full border-[1.5px] border-tx02 object-cover p-[2px] xs:mr-3 xs:h-14 xs:w-14 2xl:h-16 2xl:w-16"
                         src={friend.avatar}
                         quality={100}
                         width={56}
@@ -139,11 +165,55 @@ function Modes(props) {
         )}
 
         {mode === "queue" && (
-          <div className="z-10 flex flex-1 flex-col space-y-2 bg-bg01/90"></div>
+          <div className="z-10 flex flex-1 flex-col items-center justify-center bg-bg01/90">
+            <div className="flex h-full w-full flex-col items-center justify-center gap-8 text-xs sm:gap-3 xl:gap-6 sm:text-sm xl:text-base">
+              <div className="text-center text-xl font-extralight tracking-widest sm:text-2xl xl:text-3xl">
+                Finding Match
+              </div>
+
+              <div className="w-4/5 text-center font-light tracking-wide text-tx02">
+                Queueing up your match, thanks for your patience.
+              </div>
+
+              <div className="flex items-center -space-x-2">
+                {/* my avatar */}
+                <Image
+                  className="h-12 w-12 flex-none rounded-full border-[1.5px] border-tx05 object-cover p-[2px] xs:h-14 xs:w-14 2xl:h-16 2xl:w-16"
+                  src={me.avatar}
+                  quality={100}
+                  width={56}
+                  height={56}
+                />
+
+                <div
+                  className="z-10 h-fit text-3xl font-bold tracking-tighter text-tx01"
+                  style={{
+                    textShadow:
+                      "1px 1px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff",
+                  }}
+                >
+                  VS
+                </div>
+
+                {/* random avatar */}
+                <Image
+                  className="h-12 w-12 flex-none rounded-full border-[1.5px] border-tx05 object-cover p-[2px] xs:h-14 xs:w-14 2xl:h-16 2xl:w-16"
+                  src={src}
+                  quality={100}
+                  width={56}
+                  height={56}
+                />
+              </div>
+            </div>
+          </div>
         )}
       </div>
       <button
-        onClick={() => setMode("")}
+        onClick={() => {
+          setMode("");
+          setFriend(null);
+          setBreack("");
+        }}
         className={clsx(
           "z-10 mx-auto my-2 rounded-full border border-tx05 px-4 py-1 text-center text-sm font-light uppercase tracking-wider",
           "text-tx05 transition-colors duration-[400ms] ease-linear hover:bg-tx05 hover:text-tx03 sm:text-base",
