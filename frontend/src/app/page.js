@@ -834,7 +834,7 @@ export default function Home() {
       />
       <motion.div
         id="masked"
-        className="bg-pr01 absolute pb-64 z-20"
+        className="bg-pr01 absolute pb-64 z-20 descendant:!text-tx04 descendant:!border-tx04"
         animate={{
           "--x": `${mouse.x}px`,
           "--y": `${scroll.y + mouse.y}px`,
