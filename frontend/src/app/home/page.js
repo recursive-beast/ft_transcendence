@@ -43,7 +43,7 @@ function HomeMenu({ onClick }) {
     <div className="z-10 flex h-full flex-1 flex-col justify-between gap-2 sm:gap-3">
       {/* search and Notificatin */}
       <div>
-        <div className=" flex items-center justify-between px-1 py-3">
+        <div className="flex items-center justify-between px-1 py-3">
           {/* search */}
           <Search home={true} />
 
