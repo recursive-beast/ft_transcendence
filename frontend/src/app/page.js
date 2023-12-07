@@ -62,7 +62,7 @@ import { SplitText } from "@/components/SplitText";
 
 function Title(props) {
   return (
-    <div className="text-sm font-medium tracking-[6px] uppercase mb-5 lg:text-lg">
+    <div className="mb-5 text-sm font-medium uppercase tracking-[6px] lg:text-lg">
       {props.text}
     </div>
   );
@@ -72,7 +72,7 @@ function HeroSection({ animate, ...props }) {
   const [on, setOn] = useState(true);
   return (
     <>
-      <header className="relative h-screen flex items-stretch mb-36">
+      <header className="relative mb-36 flex h-screen items-stretch">
         {/* background image */}
         <Image
           className="opacity-60"
@@ -88,15 +88,15 @@ function HeroSection({ animate, ...props }) {
         />
 
         {/*"the text" */}
-        <div className="space-y-6 my-auto text-center mx-auto z-10">
-          <div className="text-tx01 font-normal uppercase text-xs tracking-[6px] md:text-lg xl:text-xl 2xl:text-2xl">
+        <div className="z-10 mx-auto my-auto space-y-6 text-center">
+          <div className="text-xs font-normal uppercase tracking-[6px] text-tx01 md:text-lg xl:text-xl 2xl:text-2xl">
             Paddle Smash
           </div>
-          <div className=" text-tx01 font-semibold uppercase -tracking-wider text-7xl -space-y-2 sm:text-8xl lg:text-9xl 2xl:text-[160px]">
+          <div className=" -space-y-2 text-7xl font-semibold uppercase -tracking-wider text-tx01 sm:text-8xl lg:text-9xl 2xl:text-[160px]">
             <div className="overflow-hidden">
               <div
                 className={clsx(
-                  "transition-transform duration-1000 delay-500 touch:delay-0",
+                  "transition-transform delay-500 duration-1000 touch:delay-0",
                   animate ? "translate-y-0" : "translate-y-full",
                 )}
               >
@@ -106,17 +106,17 @@ function HeroSection({ animate, ...props }) {
             <div className="overflow-hidden">
               <div
                 className={clsx(
-                  "transition-transform duration-1000 delay-500 touch:delay-0",
+                  "transition-transform delay-500 duration-1000 touch:delay-0",
                   animate ? "translate-y-0" : "translate-y-full",
                 )}
               >
                 and
               </div>
             </div>
-            <div className="text-tx06 overflow-hidden">
+            <div className="overflow-hidden text-tx06">
               <div
                 className={clsx(
-                  "transition-transform duration-1000 delay-500 touch:delay-0",
+                  "transition-transform delay-500 duration-1000 touch:delay-0",
                   animate ? "translate-y-0" : "translate-y-full",
                 )}
               >
@@ -126,17 +126,17 @@ function HeroSection({ animate, ...props }) {
             <div className="overflow-hidden">
               <div
                 className={clsx(
-                  "transition-transform duration-1000 delay-500 touch:delay-0",
+                  "transition-transform delay-500 duration-1000 touch:delay-0",
                   animate ? "translate-y-0" : "translate-y-full",
                 )}
               >
                 some
               </div>
             </div>
-            <div className="text-tx06 overflow-hidden">
+            <div className="overflow-hidden text-tx06">
               <div
                 className={clsx(
-                  "transition-transform duration-1000 delay-500 touch:delay-0",
+                  "transition-transform delay-500 duration-1000 touch:delay-0",
                   animate ? "translate-y-0" : "translate-y-full",
                 )}
               >
@@ -148,10 +148,10 @@ function HeroSection({ animate, ...props }) {
       </header>
 
       {/* sticky elements */}
-      <section className="h-screen fixed flex items-stretch justify-between mb-36 z-50">
+      <section className="fixed z-50 mb-36 flex h-screen items-stretch justify-between">
         {/* left side logo and start button */}
-        <div className="flex justify-between fixed h-full top-0 left-0">
-          <div className="flex flex-col justify-between my-6 ml-3 lg:my-8 xl:my-12 2xl:my-20 md:ml-6 xl:ml-8 2xl:ml-14">
+        <div className="fixed left-0 top-0 flex h-full justify-between">
+          <div className="my-6 ml-3 flex flex-col justify-between md:ml-6 lg:my-8 xl:my-12 xl:ml-8 2xl:my-20 2xl:ml-14">
             <Image
               className="w-14 lg:w-16 xl:w-20 2xl:w-24"
               src={logoPic}
@@ -168,15 +168,15 @@ function HeroSection({ animate, ...props }) {
                   behavior: "smooth",
                 })
               }
-              className="group lg:flex items-center ml-6 hidden"
+              className="group ml-6 hidden items-center lg:flex"
               {...props}
             >
               <Icon
-                className="text-tx01 mr-2 w-6 lg:w-7 xl:w-8 2xl:w-10 lg:transition lg:duration-500 lg:group-hover:text-tx02"
+                className="mr-2 w-6 text-tx01 lg:w-7 lg:transition lg:duration-500 lg:group-hover:text-tx02 xl:w-8 2xl:w-10"
                 icon="solar:gamepad-broken"
                 width="36"
               />
-              <div className=" text-tx01 font-light tracking-normal uppercase text-xs md:text-sm 2xl:text-lg lg:opacity-0 lg:group-hover:opacity-100 lg:transition lg:duration-700">
+              <div className=" text-xs font-light uppercase tracking-normal text-tx01 md:text-sm lg:opacity-0 lg:transition lg:duration-700 lg:group-hover:opacity-100 2xl:text-lg">
                 start
               </div>
             </button>
@@ -185,16 +185,16 @@ function HeroSection({ animate, ...props }) {
 
         {/* right side sound button */}
         <div
-          className="flex -rotate-90 mb-20 mt-auto space-x-2 -mr-6 fixed right-0 bottom-0 xl:mr-1 2xl:mb-28"
+          className="fixed bottom-0 right-0 -mr-6 mb-20 mt-auto flex -rotate-90 space-x-2 xl:mr-1 2xl:mb-28"
           {...props}
         >
           <button
             onClick={() => setOn(!on)}
-            className=" text-tx02 text-xs font-medium tracking-normal uppercase lg:text-sm 2xl:text-base"
+            className=" text-xs font-medium uppercase tracking-normal text-tx02 lg:text-sm 2xl:text-base"
           >
             sound
           </button>
-          <div className=" text-tx01 text-xs font-medium tracking-normal uppercase w-10 lg:text-sm 2xl:text-base">
+          <div className=" w-10 text-xs font-medium uppercase tracking-normal text-tx01 lg:text-sm 2xl:text-base">
             {on ? "on" : "off"}
           </div>
         </div>
@@ -206,21 +206,21 @@ function HeroSection({ animate, ...props }) {
 function HeroSectionHover({ animate, ...props }) {
   const [on, setOn] = useState(true);
   return (
-    <header className="relative h-screen w-screen flex items-stretch mb-36">
+    <header className="relative mb-36 flex h-screen w-screen items-stretch">
       {/*"the text" */}
       <div
-        className="space-y-6 my-auto text-center mx-auto"
+        className="mx-auto my-auto space-y-6 text-center"
         onMouseEnter={props.onMouseEnter}
         onMouseLeave={props.onMouseLeave}
       >
-        <div className="font-normal uppercase text-xs tracking-[6px] md:text-lg xl:text-xl 2xl:text-2xl">
+        <div className="text-xs font-normal uppercase tracking-[6px] md:text-lg xl:text-xl 2xl:text-2xl">
           Paddle Smash
         </div>
-        <div className="font-semibold uppercase -tracking-wider text-7xl -space-y-2 sm:text-8xl lg:text-9xl 2xl:text-[160px]">
+        <div className="-space-y-2 text-7xl font-semibold uppercase -tracking-wider sm:text-8xl lg:text-9xl 2xl:text-[160px]">
           <div className="overflow-hidden">
             <div
               className={clsx(
-                "transition-transform duration-1000 delay-500 touch:delay-0",
+                "transition-transform delay-500 duration-1000 touch:delay-0",
                 animate ? "translate-y-0" : "translate-y-full",
               )}
             >
@@ -230,7 +230,7 @@ function HeroSectionHover({ animate, ...props }) {
           <div className="overflow-hidden">
             <div
               className={clsx(
-                "transition-transform duration-1000 delay-500 touch:delay-0",
+                "transition-transform delay-500 duration-1000 touch:delay-0",
                 animate ? "translate-y-0" : "translate-y-full",
               )}
             >
@@ -240,7 +240,7 @@ function HeroSectionHover({ animate, ...props }) {
           <div className="overflow-hidden">
             <div
               className={clsx(
-                "transition-transform duration-1000 delay-500 touch:delay-0",
+                "transition-transform delay-500 duration-1000 touch:delay-0",
                 animate ? "translate-y-0" : "translate-y-full",
               )}
             >
@@ -250,7 +250,7 @@ function HeroSectionHover({ animate, ...props }) {
           <div className="overflow-hidden">
             <div
               className={clsx(
-                "transition-transform duration-1000 delay-500 touch:delay-0",
+                "transition-transform delay-500 duration-1000 touch:delay-0",
                 animate ? "translate-y-0" : "translate-y-full",
               )}
             >
@@ -260,7 +260,7 @@ function HeroSectionHover({ animate, ...props }) {
           <div className="overflow-hidden">
             <div
               className={clsx(
-                "transition-transform duration-1000 delay-500 touch:delay-0",
+                "transition-transform delay-500 duration-1000 touch:delay-0",
                 animate ? "translate-y-0" : "translate-y-full",
               )}
             >
@@ -276,10 +276,10 @@ function HeroSectionHover({ animate, ...props }) {
 function DescriptionSection() {
   return (
     <section className="mb-36">
-      <div className="w-11/12 mx-auto sm:w-10/12 lg:w-3/4 xl:w-8/12">
+      <div className="mx-auto w-11/12 sm:w-10/12 lg:w-3/4 xl:w-8/12">
         <Title text="Paddle Smash" />
 
-        <MaskedLines className="text-4xl font-semibold sm:text-5xl md:text-6xl 2xl:text-7xl md:space-y-2 first:text-tx02 last:text-tx01 group">
+        <MaskedLines className="group text-4xl font-semibold first:text-tx02 last:text-tx01 sm:text-5xl md:space-y-2 md:text-6xl 2xl:text-7xl">
           Experience timeless{" "}
           <span className="group-first:text-tx06/20 group-last:text-tx06">
             ping pong
@@ -295,7 +295,7 @@ function DescriptionSectionHover(props) {
   return (
     <section className="mb-36">
       <div
-        className="w-11/12 mx-auto sm:w-10/12 lg:w-3/4 xl:w-8/12"
+        className="mx-auto w-11/12 sm:w-10/12 lg:w-3/4 xl:w-8/12"
         onMouseEnter={props.onMouseEnter}
         onMouseLeave={props.onMouseLeave}
       >
@@ -328,9 +328,12 @@ function Feature(props) {
 
 function FeaturesSection({ hover, ...props }) {
   return (
-    <section className={clsx("mb-36", !hover && "z-30 relative", "touch:z-10")} {...props}>
-      <div className="w-11/12 mx-auto sm:w-10/12 lg:w-3/4 xl:w-8/12">
-        <div className="pb-2 border-b border-tx02">
+    <section
+      className={clsx("mb-36", !hover && "relative z-30", "touch:z-10")}
+      {...props}
+    >
+      <div className="mx-auto w-11/12 sm:w-10/12 lg:w-3/4 xl:w-8/12">
+        <div className="border-b border-tx02 pb-2">
           <Title text="Features" />
         </div>
 
@@ -346,8 +349,11 @@ function FeaturesSection({ hover, ...props }) {
 
 function TechnologySection({ hover, ...props }) {
   return (
-    <section className={clsx("mb-36", !hover && "z-30 relative", "touch:z-0")} {...props}>
-      <div className="flex flex-col mb-10 w-11/12 mx-auto sm:w-10/12 lg:w-3/4 xl:w-8/12">
+    <section
+      className={clsx("mb-36", !hover && "relative z-30", "touch:z-0")}
+      {...props}
+    >
+      <div className="mx-auto mb-10 flex w-11/12 flex-col sm:w-10/12 lg:w-3/4 xl:w-8/12">
         <Title text="frontend" />
 
         <div className="flex flex-wrap justify-between gap-4 sm:gap-6 lg:gap-10 xl:gap-14 2xl:gap-20">
@@ -364,7 +370,7 @@ function TechnologySection({ hover, ...props }) {
             return (
               <Image
                 key={v.src}
-                className="aspect-square object-contain w-10 sm:w-14 xl:w-16 2xl:w-20"
+                className="aspect-square w-10 object-contain sm:w-14 xl:w-16 2xl:w-20"
                 src={v}
                 alt="Logo"
                 width={60}
@@ -374,7 +380,7 @@ function TechnologySection({ hover, ...props }) {
         </div>
       </div>
 
-      <div className="flex flex-col mb-10 w-11/12 mx-auto sm:w-10/12 lg:w-3/4 xl:w-8/12">
+      <div className="mx-auto mb-10 flex w-11/12 flex-col sm:w-10/12 lg:w-3/4 xl:w-8/12">
         <Title text="backend" />
 
         <div
@@ -394,7 +400,7 @@ function TechnologySection({ hover, ...props }) {
             return (
               <Image
                 key={v.src}
-                className="aspect-square object-contain w-10 sm:w-14 xl:w-16 2xl:w-20"
+                className="aspect-square w-10 object-contain sm:w-14 xl:w-16 2xl:w-20"
                 src={v}
                 alt="Logo"
                 width={60}
@@ -421,16 +427,16 @@ function TeamMember(props) {
   );
 
   return (
-    <div ref={ref} className="pb-14 mt-5 border-b border-tx02">
+    <div ref={ref} className="mt-5 border-b border-tx02 pb-14">
       <div className="my-8 sm:my-14 xl:my-20">
-        <MaskedLines className="text-2xl font-medium sm:text-4xl md:text-6xl xl:text-7xl 2xl:text-8xl xl:font-semibold space-y-1 sm:space-y-4 first:text-tx02 last:text-tx01">
+        <MaskedLines className="space-y-1 text-2xl font-medium first:text-tx02 last:text-tx01 sm:space-y-4 sm:text-4xl md:text-6xl xl:text-7xl xl:font-semibold 2xl:text-8xl">
           {props.first}
           <br />
           <span className="ml-10 sm:ml-20 xl:ml-20">{props.last}</span>
         </MaskedLines>
       </div>
 
-      <div className="font-light tracking-widest uppercase text-sm sm:text-base mb-6">
+      <div className="mb-6 text-sm font-light uppercase tracking-widest sm:text-base">
         {props.role}
       </div>
 
@@ -501,11 +507,11 @@ function TeamSection(props) {
 
   return (
     <section className="mb-36">
-      <div className="w-11/12 mx-auto sm:w-10/12 lg:w-3/4 xl:w-8/12  pb-2 border-b border-tx02">
+      <div className="mx-auto w-11/12 border-b border-tx02 pb-2  sm:w-10/12 lg:w-3/4 xl:w-8/12">
         <Title text="team" />
       </div>
 
-      <div className="relative flex flex-col w-11/12 mx-auto sm:w-10/12 lg:w-3/4 xl:w-8/12">
+      <div className="relative mx-auto flex w-11/12 flex-col sm:w-10/12 lg:w-3/4 xl:w-8/12">
         {members.map((member, i) => (
           <TeamMember
             key={member.first + member.last}
@@ -514,17 +520,17 @@ function TeamSection(props) {
           />
         ))}
 
-        <div className="w-fit h-full absolute right-0">
-          <div className=" py-3 sticky top-1/3 bottom-0">
-            <ul className="space-y-1 sm:space-y-2 flex flex-col items-center w-20 sm:w-28 xl:w-36">
+        <div className="absolute right-0 h-full w-fit">
+          <div className=" sticky bottom-0 top-1/3 py-3">
+            <ul className="flex w-20 flex-col items-center space-y-1 sm:w-28 sm:space-y-2 xl:w-36">
               {members.map((member, i) => (
                 <li key={member.first + member.last}>
                   <Image
                     className={clsx(
                       "rounded-full transition-team duration-500",
                       activeIndex === i
-                        ? "opacity-90 w-20 sm:w-28 xl:w-36"
-                        : "grayscale opacity-70 w-14 sm:w-20 xl:w-24",
+                        ? "w-20 opacity-90 sm:w-28 xl:w-36"
+                        : "w-14 opacity-70 grayscale sm:w-20 xl:w-24",
                     )}
                     src={member.img}
                     alt="Logo of the game"
@@ -540,7 +546,7 @@ function TeamSection(props) {
   );
 }
 
-function FooterSection({hover,...props}) {
+function FooterSection({ hover, ...props }) {
   return (
     <footer className="relative flex h-[75vh]">
       {/* background image */}
@@ -557,20 +563,23 @@ function FooterSection({hover,...props}) {
         }}
       />
 
-      <div className="w-11/12 mx-auto my-auto sm:w-10/12 lg:w-3/4 xl:w-3/5 z-10">
-        <div className="space-y-28 my-auto text-center mx-auto">
-          <div className="text-tx01 font-normal uppercase text-xs tracking-[6px] md:text-lg xl:text-xl 2xl:text-2xl">
+      <div className="z-10 mx-auto my-auto w-11/12 sm:w-10/12 lg:w-3/4 xl:w-3/5">
+        <div className="mx-auto my-auto space-y-28 text-center">
+          <div className="text-xs font-normal uppercase tracking-[6px] text-tx01 md:text-lg xl:text-xl 2xl:text-2xl">
             Paddle Smash
           </div>
 
-          <div className=" text-tx01 font-semibold text-5xl -space-y-2 sm:text-8xl lg:text-9xl 2xl:text-[160px]">
+          <div className=" -space-y-2 text-5xl font-semibold text-tx01 sm:text-8xl lg:text-9xl 2xl:text-[160px]">
             <div>Let&apos;s start</div>
             <div>the fun</div>
           </div>
         </div>
       </div>
       <div
-        className={clsx("w-full h-1/3 bottom-0  bg-gradient-to-t from-bg01 via-bg01/60  absolute", hover && "z-30")}
+        className={clsx(
+          "absolute bottom-0 h-1/3  w-full bg-gradient-to-t from-bg01  via-bg01/60",
+          hover && "z-30",
+        )}
         {...props}
       ></div>
     </footer>
@@ -580,17 +589,17 @@ function FooterSection({hover,...props}) {
 function FooterSectionHover(props) {
   return (
     <footer className="relative flex h-[75vh]">
-      <div className="w-11/12 mx-auto my-auto sm:w-10/12 lg:w-3/4 xl:w-3/5">
+      <div className="mx-auto my-auto w-11/12 sm:w-10/12 lg:w-3/4 xl:w-3/5">
         <div
-          className="space-y-28 my-auto text-center mx-auto pb-10"
+          className="mx-auto my-auto space-y-28 pb-10 text-center"
           onMouseEnter={props.onMouseEnter}
           onMouseLeave={props.onMouseLeave}
         >
-          <div className="font-normal uppercase text-xs tracking-[6px] md:text-lg xl:text-xl 2xl:text-2xl">
+          <div className="text-xs font-normal uppercase tracking-[6px] md:text-lg xl:text-xl 2xl:text-2xl">
             Paddle Smash
           </div>
 
-          <div className="font-semibold text-5xl -space-y-2 sm:text-8xl lg:text-9xl 2xl:text-[140px]">
+          <div className="-space-y-2 text-5xl font-semibold sm:text-8xl lg:text-9xl 2xl:text-[140px]">
             <div>Run away before</div>
             <div>you get depressed</div>
           </div>
@@ -609,7 +618,7 @@ function FooterSectionHover(props) {
 }
 
 function StartButton({ onClick, onMouseEnter, onMouseLeave }) {
-  const { data, } = useSWR("/users/me");
+  const { data } = useSWR("/users/me");
 
   const className =
     "text-center text-tx01 text-xl lg:text-2xl font-extralight tracking-[4.80px] uppercase border border-tx01 rounded-full px-10 py-1 lg:px-14 lg:py-2 2xl:px-16 hover:text-tx03 hover:bg-tx01 ease-linear transition-colors duration-[400ms]  z-30 mt-10 lg:mt-48";
@@ -618,7 +627,7 @@ function StartButton({ onClick, onMouseEnter, onMouseLeave }) {
     <div
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      className="w-screen flex justify-center items-center flex-col pb-40 lg:pb-64  bg-bg01"
+      className="flex w-screen flex-col items-center justify-center bg-bg01 pb-40  lg:pb-64"
     >
       {data ? (
         <Link href="/home" className={className}>
@@ -644,13 +653,13 @@ const PressButton = forwardRef(function PressButton(props, ref) {
     <button
       id="press-button"
       ref={ref}
-      className="hidden flex-col items-center justify-center rounded-full fixed bottom-8 left-2/4 -translate-x-1/2 touch:flex z-40"
+      className="fixed bottom-8 left-2/4 z-40 hidden -translate-x-1/2 flex-col items-center justify-center rounded-full touch:flex"
       onContextMenu={preventContextMenu}
       {...props}
     >
       <Image className="w-full select-none" src={pressImg} alt="Logo" />
       <Icon
-        className="text-tx06 absolute"
+        className="absolute text-tx06"
         icon="mingcute:finger-press-line"
         width={26}
       />
@@ -661,8 +670,8 @@ const PressButton = forwardRef(function PressButton(props, ref) {
 function Blur() {
   return (
     <>
-      <div className="w-full h-1/5 bottom-0 fixed bg-gradient-to-t from-bg01 from-30% via-bg01/80 hidden touch:block z-[19]"></div>
-      <div className="w-full h-1/6 top-0 fixed bg-gradient-to-b from-bg01 from-10% via-bg01/60 hidden touch:block z-[19]"></div>
+      <div className="fixed bottom-0 z-[19] hidden h-1/5 w-full bg-gradient-to-t from-bg01 from-30% via-bg01/80 touch:block"></div>
+      <div className="fixed top-0 z-[19] hidden h-1/6 w-full bg-gradient-to-b from-bg01 from-10% via-bg01/60 touch:block"></div>
     </>
   );
 }
@@ -675,7 +684,7 @@ function StartSection(props) {
       initial={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
-      className="w-screen h-screen flex justify-center items-center flex-col bg-bg01 fixed z-[60]"
+      className="fixed z-[60] flex h-screen w-screen flex-col items-center justify-center bg-bg01"
     >
       <motion.div
         initial={{ scale: 1 }}
@@ -685,12 +694,12 @@ function StartSection(props) {
         <Image
           src={logoPic}
           alt="Logo of the game"
-          className="w-52 h-52 lg:w-72 lg:h-72"
+          className="h-52 w-52 lg:h-72 lg:w-72"
         />
         <button
           onClick={props.onClick}
-          className="text-center text-tx01 text-xl lg:text-2xl font-extralight tracking-[4.80px] uppercase border border-tx01 rounded-full px-10 py-1 lg:px-14 lg:py-2 2xl:px-16
-          hover:text-tx03 hover:bg-tx01 ease-linear transition-colors duration-[400ms] absolute top-full translate-y-8 left-1/2 -translate-x-1/2 "
+          className="absolute left-1/2 top-full -translate-x-1/2 translate-y-8 rounded-full border border-tx01 px-10 py-1 text-center text-xl font-extralight uppercase tracking-[4.80px]
+          text-tx01 transition-colors duration-[400ms] ease-linear hover:bg-tx01 hover:text-tx03 lg:px-14 lg:py-2 lg:text-2xl 2xl:px-16 "
         >
           Start
         </button>
@@ -704,19 +713,19 @@ function LoginSection({ onClick, ...props }) {
 
   return (
     <div
-      className="bg-bg01/90 fixed inset-0 z-40 flex items-center justify-center"
+      className="fixed inset-0 z-40 flex items-center justify-center bg-bg01/90"
       {...props}
     >
-      <div className="bg-bg01 border-[1.5px] border-tx05 rounded-2xl flex flex-col items-center justify-between w-11/12 h-3/5 sm:w-[30rem] sm:h-2/3 relative">
+      <div className="no-scrollbar relative flex h-3/5 max-h-[45rem] w-11/12 flex-col items-center justify-between overflow-auto rounded-2xl border-[1.5px] border-tx05 bg-bg01 sm:h-2/3 sm:w-[30rem]">
         <button onClick={onClick}>
           <Icon
-            className="text-tx05 w-8 h-8 absolute top-6 right-6"
+            className="absolute right-6 top-6 h-7 w-7 xs:h-8 xs:w-8 text-tx05"
             icon="icon-park-outline:close"
             width="36"
           />
         </button>
 
-        <div className="font-light tracking-[8px] uppercase text-base sm:text-xl sm:tracking-[10px] lg:text-2xl">
+        <div className="text-base font-light uppercase tracking-[8px] sm:text-xl sm:tracking-[10px] lg:text-2xl">
           paddel smash
         </div>
 
@@ -727,29 +736,35 @@ function LoginSection({ onClick, ...props }) {
         />
 
         <div>
-          <div className="text-lg font-medium tracking-[5px] uppercase mt-6 mb-6 sm:text-xl lg:text:2xl">
+          <div className="lg:text:2xl mb-6 mt-6 text-lg font-medium uppercase tracking-[5px] sm:text-xl">
             login with
           </div>
 
           <div>
-            <Link className="group flex items-center mb-3" href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/42`}>
+            <Link
+              className="group mb-4 flex items-center"
+              href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/42`}
+            >
               <Image
-                className="lg:h-8 lg:w-8 2xl:h-10 2xl:w-10 mr-3 w-8 h-8"
+                className="mr-3 h-6 w-6 2xl:h-8 2xl:w-8"
                 src={intrat}
                 alt="intrat logo"
               />
-              <div className="text-base font-light tracking-widest uppercase sm:text-xl lg:text-2xl">
+              <div className="text-base font-light uppercase tracking-widest sm:text-xl lg:text-2xl">
                 intra
               </div>
             </Link>
 
-            <Link className="group flex items-center mb-2" href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google`}>
+            <Link
+              className="group mb-2 flex items-center"
+              href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google`}
+            >
               <Image
-                className="lg:h-8 lg:w-8 2xl:h-10 2xl:w-10 mr-3 w-8 h-8"
+                className="mr-3 h-6 w-6 2xl:h-8 2xl:w-8"
                 src={google}
                 alt="google logo"
               />
-              <div className="text-base font-light tracking-widest uppercase sm:text-xl lg:text-2xl">
+              <div className="text-base font-light uppercase tracking-widest sm:text-xl lg:text-2xl">
                 google
               </div>
             </Link>

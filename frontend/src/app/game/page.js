@@ -150,7 +150,7 @@ function Modes(props) {
                       </div>
 
                       <Image
-                        className="mr-2 h-12 w-12 flex-none rounded-full border-[1.5px] border-tx02 object-cover p-[2px] xs:mr-3 xs:h-14 xs:w-14 2xl:h-16 2xl:w-16"
+                        className="mr-2 h-12 w-12 flex-none animate-pulse rounded-full border-[1.5px] border-tx02 object-cover p-[2px] xs:mr-3 xs:h-14 xs:w-14 2xl:h-16 2xl:w-16"
                         src={friend.avatar}
                         quality={100}
                         width={56}
@@ -166,7 +166,7 @@ function Modes(props) {
 
         {mode === "queue" && (
           <div className="z-10 flex flex-1 flex-col items-center justify-center bg-bg01/90">
-            <div className="flex h-full w-full flex-col items-center justify-center gap-8 text-xs sm:gap-3 xl:gap-6 sm:text-sm xl:text-base">
+            <div className="flex h-full w-full flex-col items-center justify-center gap-8 text-xs sm:gap-3 sm:text-sm xl:text-base 2xl:gap-6">
               <div className="text-center text-xl font-extralight tracking-widest sm:text-2xl xl:text-3xl">
                 Finding Match
               </div>
