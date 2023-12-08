@@ -1,38 +1,29 @@
 "use client";
 
-import { fetcher } from "@/common";
 import { useRef } from "react";
-import { mutate } from "swr";
 
-export function AvatarInput({ onError, className, children }) {
+export function AvatarInput({ onChange, className, children }) {
   const ref = useRef(null);
 
-  async function uploadAvatar(event) {
+  async function onInputChange(event) {
     const file = event.target.files[0];
-    const formData = new FormData();
 
-    formData.append("avatar", file);
-
-    try {
-      await fetcher("/users/me/avatar", {
-        method: "POST",
-        body: formData,
-      });
-      await mutate("/users/me");
-    } catch (error) {
-      onError?.(error);
+    if (typeof onChange === "function") {
+      onChange(file);
     }
   }
 
+  const onButtonClick = () => ref.current.click();
+
   return (
-    <button className={className} onClick={() => ref.current.click()}>
+    <button className={className} onClick={onButtonClick}>
       {children}
       <input
         className="hidden"
         type="file"
         accept="image/*"
         ref={ref}
-        onChange={uploadAvatar}
+        onChange={onInputChange}
       />
     </button>
   );
