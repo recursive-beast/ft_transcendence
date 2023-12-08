@@ -464,8 +464,8 @@ function GroupInfo({ onClick, ...props }) {
         {props.conversation.members.map((member, index) => {
           return (
             <div
-            className="flex cursor-pointer border-b border-tx02 p-2 hover:bg-tx03"
-            key={index}
+              className="flex cursor-pointer border-b border-tx02 p-2 hover:bg-tx03"
+              key={index}
             >
               {console.log(member.id)}
               {/* Flex container for avatar and name */}
@@ -516,7 +516,10 @@ function ConversationBox({ onClick, ...props }) {
             {/* Top Bar: Info */}
             <div className="sticky top-0 flex h-14 w-full items-center space-x-2 border-b bg-tx02 py-2 xs:h-16 sm:space-x-4">
               {/* Return Button */}
-              <button onClick={onClick}>
+              <button onClick={() => {
+                setGrInfo(false);
+                onClick();
+              }}>
                 <Icon
                   className="ml-1 h-8 w-8 text-tx03 xs:ml-2 xs:h-9 xs:w-9 sm:ml-3"
                   icon="solar:arrow-left-broken"
@@ -525,17 +528,19 @@ function ConversationBox({ onClick, ...props }) {
               {/* Friend or group Info */}
               <button
                 className="flex flex-grow items-center"
-                onClick={() =>
-                  props.group
-                    ? setGrInfo(true)
-                    : router.push(
-                        `/user/${
-                          props.conversation?.members.find(
-                            (obj) => obj.id !== myID,
-                          ).id
-                        }`,
-                      )
-                }
+                onClick={() => {
+                  if (props.group) setGrInfo(true);
+                  else {
+                    setGrInfo(false);
+                    router.push(
+                      `/user/${
+                        props.conversation?.members.find(
+                          (obj) => obj.id !== myID,
+                        ).id
+                      }`,
+                    );
+                  }
+                }}
               >
                 {/* Avatar */}
                 <AvatarImage
