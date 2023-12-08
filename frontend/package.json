@@ -11,6 +11,7 @@
   "dependencies": {
     "@iconify/react": "^4.1.1",
     "@uidotdev/usehooks": "^2.4.0",
+    "bufferutil": "^4.0.8",
     "clsx": "^2.0.0",
     "date-fns": "^2.30.0",
     "framer-motion": "^10.16.9",
@@ -25,7 +26,9 @@
     "socket.io-client": "^4.7.2",
     "split-type": "^0.3.3",
     "swiper": "^11.0.5",
-    "swr": "^2.2.4"
+    "swr": "^2.2.4",
+    "utf-8-validate": "^5.0.10",
+    "ws": "^8.14.2"
   },
   "devDependencies": {
     "@faker-js/faker": "^8.3.1",

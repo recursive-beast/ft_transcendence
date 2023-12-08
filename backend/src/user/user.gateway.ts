@@ -1,5 +1,6 @@
 import { ParseIntPipe, UseFilters } from '@nestjs/common';
 import {
+  ConnectedSocket,
   MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
@@ -18,13 +19,14 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
   private server: Server;
 
   @SubscribeMessage('user.status')
-  async onUserStatus(@MessageBody(ParseIntPipe) id: number) {
+  async onUserStatus(
+    @ConnectedSocket() client: Socket,
+    @MessageBody(ParseIntPipe) id: number,
+  ) {
     const sockets = await this.server.in(`user-${id}`).fetchSockets();
+    const status = sockets.length > 0 ? UserStatus.ONLINE : UserStatus.OFFLINE;
 
-    return {
-      id,
-      status: sockets.length > 0 ? UserStatus.ONLINE : UserStatus.OFFLINE,
-    };
+    client.emit('user.status', { id, status });
   }
 
   async handleConnection(client: Socket) {
@@ -37,7 +39,9 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   async handleDisconnect(client: Socket) {
     const id = client.data.id;
+    const sockets = await this.server.in(`user-${id}`).fetchSockets();
 
-    this.server.emit('user.status', { id, status: UserStatus.OFFLINE });
+    if (sockets.length === 0)
+      this.server.emit('user.status', { id, status: UserStatus.OFFLINE });
   }
 }
