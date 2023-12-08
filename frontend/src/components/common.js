@@ -29,6 +29,7 @@ import AvUnsto from "@/images/achievements/unsto.png";
 import AvShoot from "@/images/achievements/shoot.png";
 import { useHorizontalScroll } from "@/hooks/useHorizontalScroll";
 import { usePathname } from "next/navigation";
+import { AvatarImage } from "./AvatarImage";
 
 const friends = Array(50)
   .fill()
@@ -347,12 +348,18 @@ export function Rank({ index, first, ...props }) {
       >
         <Image
           className={clsx(
-            "mr-2 h-7 w-7 rounded-full object-cover xs:m-1 xs:h-10 xs:w-10  sm:mr-12 sm-h:h-12 sm-h:w-12 md-h:h-14 md-h:w-14",
+            "mr-2 h-7 w-7 rounded-full border border-tx02 object-cover p-[2px]  xs:m-1 xs:h-10 xs:w-10 sm:mr-12 sm-h:h-12 sm-h:w-12 md-h:h-14 md-h:w-14",
             first && "invisible",
           )}
           src={props.pic}
           quality={100}
         />
+        {/* <AvatarImage
+          src={user.avatar}
+          id={user.id}
+          className="mx-2 h-10 w-10"
+        /> */}
+
         <div className="w-20 text-left sm:w-28">{props.name}</div>
         <div className="w-9 text-center xs:w-11 sm:w-16">{props.rate}</div>
         <div className="w-9 text-center xs:w-11 sm:w-16">{props.games}</div>
@@ -366,17 +373,14 @@ export const status = {
   ONLINE: {
     name: "octicon:dot-fill-16",
     color: "text-[#24E5A5]",
-    border: "border-[1.5px] border-[#24E5A5]",
   },
   OFFLINE: {
     name: "octicon:dot-fill-16",
     color: "text-tx03",
-    border: "border-[1.5px] border-tx01",
   },
   INGAME: {
     name: "arcticons:gameturbo",
     color: "text-[#EB5A3A]",
-    border: "border-[1.5px] border-[#EB5A3A]",
   },
 };
 
@@ -460,12 +464,10 @@ export function Search(props) {
                   key={index}
                   className="flex cursor-pointer items-center border-b border-bg03 hover:bg-bg03"
                 >
-                  <Image
-                    className="mx-2 h-10 w-10 flex-none rounded-full border-[1.5px] border-tx02 object-cover p-[2px]"
+                  <AvatarImage
                     src={user.avatar}
-                    quality={100}
-                    width={56}
-                    height={56}
+                    id={user.id}
+                    className="mx-2 h-10 w-10"
                   />
 
                   <div
@@ -535,12 +537,10 @@ export function Friends(props) {
                 {/* Flex container for avatar and name */}
                 <div className="flex flex-1 items-center">
                   {/* Avatar */}
-                  <Image
-                    className="mr-2 h-12 w-12 flex-none rounded-full border-[1.5px] border-tx02 object-cover p-[2px] xs:mr-3 xs:h-14 xs:w-14"
+                  <AvatarImage
                     src={friend.avatar}
-                    quality={100}
-                    width={56}
-                    height={56}
+                    id={friend.id}
+                    className="mr-2 h-12 w-12 xs:mr-3 xs:h-14 xs:w-14"
                   />
 
                   {/* Friend Name */}

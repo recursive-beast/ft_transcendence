@@ -13,6 +13,7 @@ import { fetcher } from "@/common";
 import Pic01 from "@/images/profils/01.jpg";
 import Pic02 from "@/images/profils/02.jpg";
 import Pic03 from "@/images/profils/03.png";
+import { AvatarImage } from "@/components/AvatarImage";
 
 function NavOptions({ onClick, ...props }) {
   return (
@@ -40,7 +41,7 @@ function NavOptions({ onClick, ...props }) {
 
 function ProfileInfo({ id }) {
   // import data
-  const { data } = useSWR(`/users/${id}`);
+  const { data: user } = useSWR(`/users/${id}`);
   const { data: me } = useSWR("/users/me");
   const [options, setOptions] = useState(false);
 
@@ -60,22 +61,20 @@ function ProfileInfo({ id }) {
         {/* info */}
         <div className="flex items-center">
           {/* avatar */}
-          <Image
-            className="mr-4 h-14 w-14 rounded-full border-2 border-tx02 object-cover p-1 xs:ml-2 xs:mr-6 xs:h-20 xs:w-20 sm:ml-4 sm:mr-10 sm:h-28 sm:w-28"
-            src={data?.avatar}
-            quality={100}
-            width={56}
-            height={56}
-          />
+          <AvatarImage
+          src={user?.avatar}
+          id={user?.id}
+          className="mr-4 h-14 w-14 xs:ml-2 xs:mr-6 xs:h-20 xs:w-20 sm:ml-4 sm:mr-10 sm:h-28 sm:w-28"
+        />
 
           {/* name */}
           <div className="flex flex-col">
             <div className="text-base font-semibold capitalize tracking-widest text-tx05 xs:text-lg sm:text-xl sm:tracking-[3px]">
-              {data?.displayName}
+              {user?.displayName}
             </div>
 
             <div className="text-xs font-light capitalize tracking-widest text-tx02 xs:text-sm sm:text-lg">
-              {data?.fullName}
+              {user?.fullName}
             </div>
           </div>
         </div>
@@ -95,7 +94,7 @@ function ProfileInfo({ id }) {
 
           {options && (
             <div className="absolute right-0 z-10 mt-2 w-52 rounded-lg border bg-bg01">
-              {data?.isFriend ? (
+              {user?.isFriend ? (
                 <Option
                   title="Remove Friend"
                   icon="solar:user-cross-broken"
@@ -115,7 +114,7 @@ function ProfileInfo({ id }) {
           )}
         </div>
         <div className="hidden items-center justify-between xl:flex">
-          {data?.isFriend ? (
+          {user?.isFriend ? (
             <NavOptions
               title="Remove Friend"
               icon="solar:user-cross-broken"

@@ -39,6 +39,8 @@ import {
   sub,
   subDays,
 } from "date-fns";
+import { AvatarImage } from "@/components/AvatarImage";
+import { useRouter } from "next/navigation";
 
 faker.seed(2);
 
@@ -95,12 +97,12 @@ function GroupMessage(props) {
             <div className="flex flex-1 items-center">
               {/* avatar */}
               {/* use Image <= img */}
-              <img
+              <Image
                 className="mr-2 h-12 w-12 flex-none rounded-full border-[1.5px] border-tx02 object-cover p-[2px] xs:mr-3 xs:h-14 xs:w-14"
                 src={group?.avatar}
                 quality={100}
-                width={56}
-                height={56}
+                width={300}
+                height={300}
               />
 
               {/* Group name and lastMessage time */}
@@ -111,14 +113,16 @@ function GroupMessage(props) {
                 </div>
 
                 {/* lastMessage */}
-                <div className="truncate text-xs text-tx02 xs:text-sm">
-                  {formatDistanceToNowStrict(
-                    new Date(group.messages.at(-1).createdAt),
-                    {
-                      addSuffix: true,
-                    },
-                  )}
-                </div>
+                {group.messages.length > 0 && (
+                  <div className="truncate text-xs text-tx02 xs:text-sm">
+                    {formatDistanceToNowStrict(
+                      new Date(group.messages.at(-1).createdAt),
+                      {
+                        addSuffix: true,
+                      },
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -178,20 +182,14 @@ function DirectMessage(props) {
             {/* flex div contain avatar, name and lastMessage */}
             <div className="flex flex-1 items-center">
               {/* avatar */}
-              {myID && (
-                <Image
-                  className={clsx(
-                    "mr-2 h-12 w-12 flex-none rounded-full object-cover p-[3px] xs:mr-3 xs:h-14 xs:w-14",
-                    // status[conversation.members.find(obj => obj.id !== myID).status].border,
-                  )}
-                  src={
-                    conversation.members.find((obj) => obj.id != myID).avatar
-                  }
-                  quality={100}
-                  width={56}
-                  height={56}
-                />
-              )}
+              <AvatarImage
+                src={
+                  conversation?.members.find((obj) => obj.id !== myID).avatar
+                }
+                id={conversation?.members.find((obj) => obj.id !== myID).id}
+                className="mr-2 h-12 w-12 xs:mr-3 xs:h-14 xs:w-14"
+              />
+
               <div className="flex flex-grow flex-col pr-1">
                 {/* name and time */}
                 <div className="flex items-center">
@@ -211,13 +209,13 @@ function DirectMessage(props) {
                           "HH:mm",
                         )
                       : isYesterday(
-                            new Date(conversation.messages.at(-1).createdAt),
-                          )
-                        ? "yesterday"
-                        : format(
-                            new Date(conversation.messages.at(-1).createdAt),
-                            "yyyy/MM/dd",
-                          )}
+                          new Date(conversation.messages.at(-1).createdAt),
+                        )
+                      ? "yesterday"
+                      : format(
+                          new Date(conversation.messages.at(-1).createdAt),
+                          "yyyy/MM/dd",
+                        )}
                   </div>
                 </div>
 
@@ -384,7 +382,7 @@ function GroupInfo({ onClick, ...props }) {
           </div>
         )}
 
-        {/* members */}
+        {/* type */}
         <div className="relative -m-3 flex items-center justify-center font-light tracking-widest text-tx02">
           Group:&nbsp; <span>{props.conversation.type}</span>
         </div>
@@ -406,8 +404,11 @@ function GroupInfo({ onClick, ...props }) {
 
         {/* {/* Password Input Section (visible if group type is 'protected') */}
         <div
-          // className={clsx(groupType === "protected" ? "visible" : "invisible")}
-          className="flex flex-col"
+          className={clsx(
+            "flex flex-col",
+            props.conversation.type === "PROTECTED" ? "block" : "hidden",
+          )}
+          // className=
         >
           <label>Current Password:</label>
           <input
@@ -439,7 +440,8 @@ function GroupInfo({ onClick, ...props }) {
       {/* members */}
       <div className=" bg-bg02">
         <div className="mx-3 my-2 text-sm font-light tracking-wide text-tx02 xs:text-base xs:tracking-widest">
-          Group -&nbsp; <span>{props.conversation.members.length}</span>&nbsp;Members
+          Group -&nbsp; <span>{props.conversation.members.length}</span>
+          &nbsp;Members
         </div>
         <div
           className="flex cursor-pointer border-b border-tx02 p-2 hover:bg-tx03"
@@ -459,7 +461,30 @@ function GroupInfo({ onClick, ...props }) {
           </div>
         </div>
 
-        <Friends />
+        {props.conversation.members.map((member, index) => {
+          return (
+            <div
+            className="flex cursor-pointer border-b border-tx02 p-2 hover:bg-tx03"
+            key={index}
+            >
+              {console.log(member.id)}
+              {/* Flex container for avatar and name */}
+              <div className="flex flex-1 items-center">
+                {/* Avatar */}
+                <AvatarImage
+                  src={member.user.avatar}
+                  id={member.user.id}
+                  className="mr-2 h-12 w-12 xs:mr-3 xs:h-14 xs:w-14"
+                />
+
+                {/* Friend Name */}
+                <div className="truncate text-sm tracking-wide xs:text-base xs:tracking-widest">
+                  {member.user.displayName}
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -473,6 +498,8 @@ function ConversationBox({ onClick, ...props }) {
 
   const { data: data1 } = useSWR("/users/me");
   const [myID, setMyId] = useState(0);
+  const router = useRouter();
+
   if (data1 && !myID) setMyId(data1.id);
 
   return (
@@ -499,30 +526,36 @@ function ConversationBox({ onClick, ...props }) {
               <button
                 className="flex flex-grow items-center"
                 onClick={() =>
-                  props.group ? setGrInfo(true) : setGrInfo(false)
+                  props.group
+                    ? setGrInfo(true)
+                    : router.push(
+                        `/user/${
+                          props.conversation?.members.find(
+                            (obj) => obj.id !== myID,
+                          ).id
+                        }`,
+                      )
                 }
               >
                 {/* Avatar */}
-                <Image
-                  className={clsx(
-                    "my-1 mr-2 h-11 w-11 rounded-full object-cover p-[1px] xs:h-[52px] xs:w-[52px] xs:p-[2px] lg:mr-3",
-                    // props.conversation
-                    //&& status[props.conversation.status].border,
-                  )}
+                <AvatarImage
                   src={
                     props.group
-                      ? props.conversation.avatar
-                      : props.conversation.members.find((obj) => obj.id != myID)
-                          .avatar
+                      ? props.conversation?.avatar
+                      : props.conversation?.members.find(
+                          (obj) => obj.id !== myID,
+                        ).avatar
                   }
-                  quality={100}
-                  width={56}
-                  height={56}
+                  id={
+                    props.conversation?.members.find((obj) => obj.id !== myID)
+                      .id
+                  }
+                  className="my-1 mr-2 h-11 w-11 xs:h-[52px] xs:w-[52px] xs:p-[2px] lg:mr-3"
                 />
 
-                <div className="flex flex-col items-start">
+                <div className="flex w-20 grow flex-col items-start">
                   {/* Full Name */}
-                  <div className="truncate text-sm font-semibold capitalize tracking-[widest] text-tx05 xs:text-base sm:tracking-[3px]">
+                  <div className="w-full truncate text-left text-sm font-semibold capitalize tracking-[widest] text-tx05 xs:text-base sm:tracking-[3px]">
                     {props.conversation &&
                       (props.group
                         ? props.conversation.title
@@ -561,17 +594,12 @@ function ConversationBox({ onClick, ...props }) {
               {props.conversation &&
                 props.conversation.messages.map((message) => {
                   return (
-                    <div className="my-1 flex items-start">
-                      {props.group && message.senderId != myID && (
-                        <Image
-                          className={clsx(
-                            "ml-1 h-7 w-7 rounded-full object-cover",
-                            status[message.status].border,
-                          )}
+                    <div className="my-3 flex items-start">
+                      {props.group && !message.sent && (
+                        <AvatarImage
                           src={message.avatar}
-                          quality={100}
-                          width={56}
-                          height={56}
+                          id={message.id}
+                          className="ml-1 h-7 w-7"
                         />
                       )}
                       <div className="flex w-full flex-col space-y-1">
@@ -601,12 +629,12 @@ function ConversationBox({ onClick, ...props }) {
                             {isToday(new Date(message.createdAt))
                               ? format(new Date(message.createdAt), "HH:mm")
                               : isYesterday(new Date(message.createdAt))
-                                ? "yesterday " +
-                                  format(new Date(message.createdAt), "HH:mm")
-                                : format(
-                                    new Date(message.createdAt),
-                                    "yyyy/MM/dd HH:mm",
-                                  )}
+                              ? "yesterday " +
+                                format(new Date(message.createdAt), "HH:mm")
+                              : format(
+                                  new Date(message.createdAt),
+                                  "yyyy/MM/dd HH:mm",
+                                )}
                           </span>
                         </div>
                       </div>
@@ -765,7 +793,13 @@ function NewGroup({ onGroupClick, ...props }) {
         </div>
       </div>
       {/* Render either CustomizeGroup or FrList based on the 'next' state */}
-      {next ? <CustomizeGroup /> : <Friends group={true} />}
+      {next ? (
+        <CustomizeGroup />
+      ) : (
+        <div className="flex-grow">
+          <Friends group={true} />
+        </div>
+      )}
 
       {/* Next Button */}
       <button
