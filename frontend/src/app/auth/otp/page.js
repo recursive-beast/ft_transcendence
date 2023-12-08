@@ -33,12 +33,12 @@ export default function Home() {
 
             <div className="flex flex-col items-center mb-8 sm:mb-16">
               <div className="flex space-x-2 xs:space-x-2 mb-5 xs:mb-12">
-                <input className="bg-tx01 w-7 h-10 rounded-lg xs:w-12 xs:h-16 xs:rounded-2xl" />
-                <input className="bg-tx01 w-7 h-10 rounded-lg xs:w-12 xs:h-16 xs:rounded-2xl" />
-                <input className="bg-tx01 w-7 h-10 rounded-lg xs:w-12 xs:h-16 xs:rounded-2xl" />
-                <input className="bg-tx01 w-7 h-10 rounded-lg xs:w-12 xs:h-16 xs:rounded-2xl" />
-                <input className="bg-tx01 w-7 h-10 rounded-lg xs:w-12 xs:h-16 xs:rounded-2xl" />
-                <input className="bg-tx01 w-7 h-10 rounded-lg xs:w-12 xs:h-16 xs:rounded-2xl" />
+                <input className="bg-tx01 w-7 h-10 rounded-lg xs:w-12 xs:h-16 xs:rounded-2xl border-none outline-none focus:border-none" />
+                <input className="bg-tx01 w-7 h-10 rounded-lg xs:w-12 xs:h-16 xs:rounded-2xl border-none outline-none focus:border-none" />
+                <input className="bg-tx01 w-7 h-10 rounded-lg xs:w-12 xs:h-16 xs:rounded-2xl border-none outline-none focus:border-none" />
+                <input className="bg-tx01 w-7 h-10 rounded-lg xs:w-12 xs:h-16 xs:rounded-2xl border-none outline-none focus:border-none" />
+                <input className="bg-tx01 w-7 h-10 rounded-lg xs:w-12 xs:h-16 xs:rounded-2xl border-none outline-none focus:border-none" />
+                <input className="bg-tx01 w-7 h-10 rounded-lg xs:w-12 xs:h-16 xs:rounded-2xl border-none outline-none focus:border-none" />
               </div>
 
               <div>

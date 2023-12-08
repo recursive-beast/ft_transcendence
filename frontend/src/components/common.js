@@ -464,10 +464,7 @@ export function Friends(props) {
               <Component
                 {...componentProps}
                 key={index}
-                className={clsx(
-                  "flex w-full border-b border-tx03 p-2 hover:bg-tx03",
-                  !props.group && "cursor-pointer",
-                )}
+                className="flex w-full border-b border-tx03 p-2 hover:bg-tx03 cursor-pointer"
               >
                 {/* Flex container for avatar and name */}
                 <div className="flex flex-1 items-center">
@@ -483,9 +480,6 @@ export function Friends(props) {
                     {friend.displayName}
                   </div>
                 </div>
-
-                {/* Checkbox for friend selection */}
-                {props.group && <input className=" m-3" type="checkbox" />}
               </Component>
             );
           })}
