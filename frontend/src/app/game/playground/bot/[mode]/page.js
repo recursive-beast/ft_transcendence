@@ -2,45 +2,40 @@
 
 import { useEffect, useRef, useState } from "react";
 import io from "socket.io-client";
-import { DrawGame } from "../DrawGame";
+import { DrawGame } from "../../DrawGame";
 import { useWindowSize } from "@uidotdev/usehooks";
 import { useRouter } from "next/navigation";
+import { useSocket } from "@/hooks/useSocket";
 
 function Name(){
-  const [socket, setsocket] = useState(null);
   const [ready, setReady] = useState(false);
   const windowSize = useWindowSize();
   const ref = useRef(null);
   const router = useRouter();
+  const socket = useSocket();
 
   const isSmallDevice = windowSize.width <= 768;
+  const getGmaeData = (data) => {
+    // console.log(data);
+  ref.current = data;
+  setReady(true);
+}
+const gameOver = () => {
+  router.push("/game/over");
+}
   useEffect(() => {
-    const newsocket = io(process.env.NEXT_PUBLIC_BACKEND_URL, {
-      withCredentials: true,
-    });
-
-    setsocket(newsocket);
-
-    return () => newsocket.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (!socket) return;
-
-    socket.on("game.found", (data) => {
-        console.log(data);
-      ref.current = data;
-      setReady(true);
-    });
-    socket.on("game.over", () => {
-      router.push("/game/over");
-    });
-      const mode = "mode 2";
-      socket.emit("play.ia", { mode });
+    // console.log("rendered");
+    socket.on("game.found", getGmaeData);
+    socket.on("game.over", gameOver);
+    const mode = "mode 2";
+    socket.emit("play.ai", { mode });
     return () => {
       // TODO: cleanup socket listeners
+      socket.emit("disconnected");
+      socket.off("game.found", getGmaeData);
+      socket.off("game.over", gameOver);
     };
-  }, [socket]);
+  }, []);
 
   useEffect(() => {
     let directions = [];
@@ -85,7 +80,7 @@ function Name(){
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
     };
-  }, [socket, isSmallDevice]);
+  }, [isSmallDevice]);
 
 
   return (

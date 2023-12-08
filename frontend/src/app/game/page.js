@@ -3,7 +3,7 @@ import Image from "next/image";
 import clsx from "clsx";
 import { Icon } from "@iconify/react";
 import { useEffect, useState, useRef } from "react";
-import io from "socket.io-client";
+import { useSocket } from "@/hooks/useSocket";
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
 // Import Swiper styles
@@ -69,6 +69,7 @@ function Modes(props) {
   const { data: users } = useSWR("/users");
   const [src, setSrc] = useState(Pic01);
   const router = useRouter();
+  const socket = useSocket();
 
   useEffect(() => {
     if (!users || mode !== "queue") return;
@@ -90,6 +91,17 @@ function Modes(props) {
     return () => clearTimeout(id);
   }, [mode, users]);
 
+  useEffect(() => {
+    socket.on("game.found", ({ mode, id }) => {
+      if (mode === "queue") {
+        router.push(`/game/playground/${mode}`);
+      }
+    });
+
+    return () => {
+      socket.off("game.start");
+    };
+  })
   return (
     <>
       {" "}
@@ -113,7 +125,10 @@ function Modes(props) {
             <Mode
               icon="bxs:time-five"
               title="join a queue"
-              onClick={() => setMode("queue")}
+              onClick={() =>{
+                setMode("queue");
+                socket.emit("queue");
+            } }
             />
           </div>
         )}

@@ -33,6 +33,9 @@ interface Game {
   mode: string;
   id?: number;
   ia : number;
+  intervalId?: ReturnType<typeof setInterval>;
+  p1ready: false | true;
+  p2ready: false | true;
 };
 function getRandomIntInclusive(min : number, max : number) {
   return Math.random() * (max - min) + min;
@@ -117,8 +120,8 @@ export class GameGateway {
     const toFind = queue.find((q) => q.mode === mode);
     if(toFind){
       queue.splice(queue.indexOf(toFind), 1);
-      const player1 = {id:toFind.id, width:10, height:150, x:0, y:(table.height - 150) / 2, score:0, serve:1,direction:null};
-      const player2 = {id:id, width:10, height:150, x:table.width - 10, y:(table.height - 150) / 2, score:0, serve:0,direction:null};
+      const player1 = {id:toFind.id, width:10, height:150, x:4, y:(table.height - 150) / 2, score:0, serve:1,direction:null};
+      const player2 = {id:id, width:10, height:150, x:table.width - 14, y:(table.height - 150) / 2, score:0, serve:0,direction:null};
       const ang = getRandomIntInclusive(-0.785398,0.785398);
       const game : Game = {player1, player2,ball: {
         x: table.width / 2,
@@ -128,14 +131,44 @@ export class GameGateway {
         speed: 5,
         space : 0,
         radius : 16,
-      }, mode: mode, id:++currentGameId, ia:0};
+      }, mode: mode, id:++currentGameId, ia:0,p1ready:false,p2ready:false};
       s.set(player1.id,game);
       s.set(player2.id,game);
       games.set(`game-${game.id}`,game);
       this.server.in(`user-${player1.id}`).socketsJoin(`game-${game.id}`);
       this.server.in(`user-${player2.id}`).socketsJoin(`game-${game.id}`);
       this.server.to(`game-${game.id}`).emit('game.found', game);
-      setInterval(() => {
+      return 'Game found';
+    }
+    else {
+      queue.push({id: id, mode: mode, socket: client});
+      return 'Added to queue';
+    }
+  }
+  @SubscribeMessage('ready')
+  playerReady(client : Socket){
+    const id = client.data.id;
+    const game = s.get(id);
+    if (game) {
+      if (game.player1.id === id) {
+        // game.player1.serve = 1;
+        // game.player2.serve = 0;
+        game.p1ready = true;
+      } else {
+        // game.player2.serve = 1;
+        // game.player1.serve = 0;
+        game.p2ready = true;
+      }
+      // this.server.to(`game-${game.id}`).emit('game.found', game);
+    }
+  }
+  @SubscribeMessage('start')
+  startGame(client :Socket)
+  {
+    const id = client.data.id;
+    const game = s.get(id);
+    if (game && game.p1ready && game.p2ready) {
+      game.intervalId = setInterval(() => {
         if (game.ball.space === 1){
           game.ball.x += game.ball.velocityX;
           game.ball.y += game.ball.velocityY;
@@ -152,20 +185,20 @@ export class GameGateway {
           game.ball.speed += 0.5
       }
       if(game.ball.x - game.ball.radius < 0){
-          player2.score++;
-          if (player2.score === 3)
+          game.player2.score++;
+          if (game.player2.score === 3)
             this.server.to(`game-${game.id}`).emit('game.over', game);
-          player1.serve = 1;
-          player2.serve = 0;
+          game.player1.serve = 1;
+          game.player2.serve = 0;
           resetBall(game,ang);
           game.ball.space = 0;
       }
       else if(game.ball.x + game.ball.radius > table.width){
-          player1.score++;
-          if (player1.score === 3)
+          game.player1.score++;
+          if (game.player1.score === 3)
             this.server.to(`game-${game.id}`).emit('game.over', game);
-          player2.serve = 1;
-          player1.serve = 0;
+          game.player2.serve = 1;
+          game.player1.serve = 0;
           resetBall(game,ang);
           game.ball.x = table.width / 2;
           game.ball.y = table.height / 2;
@@ -173,14 +206,8 @@ export class GameGateway {
       }
       this.server.to(`game-${game.id}`).emit('game.found', game);
       },15)
-      return 'Game found';
-    }
-    else {
-      queue.push({id: id, mode: mode, socket: client});
-      return 'Added to queue';
     }
   }
-
   @SubscribeMessage('cancel')
   cancelQueue(client: any) {
     const id = client.data.id;
@@ -207,27 +234,19 @@ export class GameGateway {
       } else {
         player.direction = direction;
       }
-
-      //   
-      //   }
-      //   if (game.ia === 0)
-      //       this.server.to(`game-${game.id}`).emit('game.found', game);
-      //   else
-      //     client.emit('game.found',game);
     }
   }
   @SubscribeMessage('play.friend')
   palywithfriend(client: any){
     
   }
-  @SubscribeMessage('play.ia')
+  @SubscribeMessage('play.ai')
   palywithIA(client: Socket, payload: any) {
     
-    console.log(client);
     const id = client.data.id;
     const mode = payload.mode;
-    const player2 = {id:-1, width:10, height:150, x:0, y:(table.height - 150) / 2, score:0, serve:0, direction: null};
-    const player1 = {id:id, width:10, height:150, x:table.width - 10, y:(table.height - 150) / 2, score:0, serve:1, direction: null};
+    const player2 = {id:-1, width:10, height:150, x:4, y:(table.height - 150) / 2, score:0, serve:0, direction: null};
+    const player1 = {id:id, width:10, height:150, x:table.width - 14, y:(table.height - 150) / 2, score:0, serve:1, direction: null};
     const ang = getRandomIntInclusive(-0.785398,0.785398);
     const game : Game = {player1, player2,ball: {
       x: table.width / 2,
@@ -237,12 +256,12 @@ export class GameGateway {
       speed: 5,
       space : 0,
       radius : 16,
-    }, mode: mode, id:++currentGameId, ia:1};
+    }, mode: mode, id:++currentGameId, ia:1,p1ready:true,p2ready:true };
     s.set(player1.id,game);
     client.emit('game.found',game);
     let a = 1;
     let tap = 0;
-    setInterval(() => {
+    game.intervalId = setInterval(() => {
       if (game.ball.space === 1){
         game.ball.x += game.ball.velocityX;
         game.ball.y += game.ball.velocityY;
@@ -253,13 +272,11 @@ export class GameGateway {
           tap = 0;
           console.log(a);
         }
-        
         game.player2.y = (game.ball.y - (game.player2.height / 2)) * a;
         if(game.player2.y < 0)
         game.player2.y = 0;
       else if(game.player2.y + game.player2.height > table.height)
       game.player2.y = table.height - game.player2.height;
-      // moveBot(game.player2, game.ball);
   }
     move(game.player1);
     if(game.ball.y + game.ball.radius > table.height && game.ball.velocityY > 0 || game.ball.y - game.ball.radius < 0 && game.ball.velocityY < 0)
@@ -272,15 +289,11 @@ export class GameGateway {
         let direction = (game.ball.x < table.width/2) ? 1 : -1;
         game.ball.velocityX = direction * (Math.cos(angle) * game.ball.speed);
         game.ball.velocityY = Math.sin(angle) * game.ball.speed;
-        // if (game.ball.speed < 12)
-          game.ball.speed += 0.5
-        // console.log(game.ball.speed);
+        game.ball.speed += 0.5
     }
     else{
       if(game.ball.x - game.ball.radius < 0){
           player2.score++;
-          // player1.serve = 1;
-          // player2.serve = 0;
           if (player2.score === 3)
             this.server.to(`game-${game.id}`).emit('game.over', game);
           a = 1;
@@ -292,13 +305,9 @@ export class GameGateway {
           player1.score++;
           if (player1.score === 3)
             this.server.to(`game-${game.id}`).emit('game.over', game);
-          // player2.serve = 1;
-          // player1.serve = 0;
           a = 1;
           tap = 0;
           resetBall(game,ang);
-          // game.ball.x = table.width / 2;
-          // game.ball.y = table.height / 2;
           game.ball.space = 0;
       }
     }
@@ -307,11 +316,12 @@ export class GameGateway {
     return 'Game found';
     
   }
-  @SubscribeMessage('disconnect')
+  @SubscribeMessage('disconnected')
   handleDisconnect(client: Socket) {
     const id = client.data.id;
     const game = s.get(id);
     if (game) {
+      clearInterval(game.intervalId);
       this.server.to(`game-${game.id}`).emit('game.over', game);
       if (game.player1.id && game.player2.id){
         s.delete(game.player1.id);
@@ -321,62 +331,4 @@ export class GameGateway {
       this.server.to(`game-${game.id}`).emit('game.end', game);
     }
   }
-  // palywithIA(client: Socket, payload: any){
-  //   const id = client.data.id;
-  //   const mode = payload.mode;
-
-  //   const player1  = {id:id, width:10, height:150, x:table.width - 10, y:(table.height - 150) / 2, score:0, serve:1};
-  //   const player2 : player = {width:10, height:150, x:0, y:(table.height - 150) / 2, score:0, serve:0};
-  //   const game : Game = {player1, player2,ball: {...ball}, mode: mode, ia:1};
-  //   s.set(player1.id,game);
-
-  //   client.emit('game.found',game);
-  //   setInterval(() => {
-  //     if (game.ball.space === 1){
-  //       game.ball.x += game.ball.velocityX;
-  //       game.ball.y += game.ball.velocityY;
-  //       game.player2.y = game.ball.y -  (game.player2.height / 2);
-  //   }
-  //   if(game.ball.y + game.ball.radius > table.height || game.ball.y - game.ball.radius < 0)
-  //       game.ball.velocityY *= -1;
-  //   let paddle = (game.ball.x < table.width/2) ? game.player1 : game.player2;
-  //   if(collision(game.ball, paddle)){
-  //       let interPoint = (game.ball.y - (paddle.y + paddle.height/2)) / (paddle.height/2);
-  //       let angle = interPoint * (Math.PI/4);
-  //       let direction = (game.ball.x < table.width/2) ? 1 : -1;
-  //       game.ball.velocityX = direction * (Math.cos(angle) * game.ball.speed);
-  //       game.ball.velocityY = Math.sin(angle) * game.ball.speed;
-  //       game.ball.speed += 0.5
-  //   }
-  //   if(game.ball.x - game.ball.radius < 0){
-  //       player2.score++;
-  //       // player1.serve = 1;
-  //       // player2.serve = 0;
-  //       resetBall(game);
-  //       game.ball.space = 0;
-  //   }
-  //   else if(game.ball.x + game.ball.radius > table.width){
-  //       player1.score++;
-  //       // player2.serve = 1;
-  //       // player1.serve = 0;
-  //       resetBall(game);
-  //       // game.ball.x = table.width / 2;
-  //       // game.ball.y = table.height / 2;
-  //       game.ball.space = 0;
-  //   }
-  //   client.emit('game.found',game);
-    
-  //   },15)
-  //   return 'Game found';
-  // }
-  
-
 }
-
-//crate front end for testing queue
-
-
-// create romm for players and send them game data
-// create game data
-// paddle handler
-
