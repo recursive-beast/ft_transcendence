@@ -4,7 +4,7 @@ import clsx from "clsx";
 import Image from "next/image";
 import { Icon } from "@iconify/react";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect } from "react";
 import { useState, useRef } from "react";
 import { faker } from "@faker-js/faker";
 import useSWR from "swr";
@@ -30,6 +30,7 @@ import AvShoot from "@/images/achievements/shoot.png";
 import { useHorizontalScroll } from "@/hooks/useHorizontalScroll";
 import { usePathname } from "next/navigation";
 import { AvatarImage } from "./AvatarImage";
+import { useSocket } from "@/hooks/useSocket";
 
 const friends = Array(50)
   .fill()
@@ -68,6 +69,16 @@ function Notif(props) {
 }
 
 export function Notificatin() {
+  const { data: notifs } = useSWR("/notifications");
+  const socket = useSocket();
+
+  useEffect(() => {
+    const update = () => mutate("/notification");
+
+    socket.on("notification", update);
+    return () => socket.off("notification", update);
+  }, []);
+
   return (
     <div className="z-10 flex justify-center sm:justify-end lg:sticky ">
       <div className="no-scrollbar absolute h-[30rem] w-full overflow-auto rounded-b-[2rem] border-y border-tx05 border-t-tx02 bg-bg01 shadow-2xl shadow-tx05/40 xs:h-[33rem] sm:w-80 sm:rounded-3xl sm:border sm:border-t-tx05">
@@ -75,85 +86,9 @@ export function Notificatin() {
           Recent Notification
         </div>
         <div className="px-2">
-          <Notif
-            pic={Pic02}
-            title="syakoubi"
-            desc="invited you to a game"
-            time="5min"
-          />
-          <Notif
-            pic={Pic02}
-            title="syakoubi"
-            desc="added you as Friend"
-            time="15min"
-          />
-          <Notif
-            pic={Pic05}
-            title="mmessaou"
-            desc="added you to the group 'zwaml'"
-            time="5min"
-          />
-          <Notif
-            pic={Pic01}
-            title="mel-hous"
-            desc="added you as Friend"
-            time="30min"
-          />
-          <Notif
-            pic={Pic03}
-            title="aait-oma"
-            desc="invited you to a game"
-            time="1h"
-          />
-          <Notif
-            pic={AvCmBack}
-            title="comeback kid"
-            desc="achievement unlocked"
-            time="15min"
-          />
-          <Notif
-            pic={Pic03}
-            title="aait-oma"
-            desc="added you as Friend"
-            time="1h"
-          />
-
-          <Notif
-            pic={Pic02}
-            title="syakoubi"
-            desc="invited you to a game"
-            time="5min"
-          />
-          <Notif
-            pic={Pic02}
-            title="syakoubi"
-            desc="added you as Friend"
-            time="15min"
-          />
-          <Notif
-            pic={Pic05}
-            title="mmessaou"
-            desc="added you to the group 'zwaml'"
-            time="5min"
-          />
-          <Notif
-            pic={Pic01}
-            title="mel-hous"
-            desc="added you as Friend"
-            time="30min"
-          />
-          <Notif
-            pic={Pic03}
-            title="aait-oma"
-            desc="invited you to a game"
-            time="1h"
-          />
-          <Notif
-            pic={AvCmBack}
-            title="comeback kid"
-            desc="achievement unlocked"
-            time="15min"
-          />
+          {/* {notifs?.map((notif, index) => {
+            return <Notif />;
+          })} */}
           <Notif
             pic={Pic03}
             title="aait-oma"
