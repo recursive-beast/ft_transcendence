@@ -438,7 +438,7 @@ function GroupInfo({ onClick, ...props }) {
       </div>
 
       {/* members */}
-      <div className=" bg-bg02">
+      <div className=" bg-bg02 mb-3">
         <div className="mx-3 my-2 text-sm font-light tracking-wide text-tx02 xs:text-base xs:tracking-widest">
           Group -&nbsp; <span>{props.conversation.members.length}</span>
           &nbsp;Members
@@ -486,6 +486,26 @@ function GroupInfo({ onClick, ...props }) {
           );
         })}
       </div>
+
+      {/* exit */}
+      <div className=" bg-bg02 text-pr01">
+        <div
+          className="flex cursor-pointer border-b border-tx02 p-2 hover:bg-tx03"
+        >
+          <div className="flex flex-1 items-center">
+            {/* Icone */}
+            <Icon
+              className="mr-2 h-10 w-10 flex-none rounded-full bg-tx02 xs:mr-3 xs:h-12 xs:w-12 p-2"
+              icon="solar:exit-broken"
+            />
+
+            {/* text */}
+            <div className="truncate text-sm tracking-wide xs:text-base xs:tracking-widest">
+              Exit group
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -516,10 +536,12 @@ function ConversationBox({ onClick, ...props }) {
             {/* Top Bar: Info */}
             <div className="sticky top-0 flex h-14 w-full items-center space-x-2 border-b bg-tx02 py-2 xs:h-16 sm:space-x-4">
               {/* Return Button */}
-              <button onClick={() => {
-                setGrInfo(false);
-                onClick();
-              }}>
+              <button
+                onClick={() => {
+                  setGrInfo(false);
+                  onClick();
+                }}
+              >
                 <Icon
                   className="ml-1 h-8 w-8 text-tx03 xs:ml-2 xs:h-9 xs:w-9 sm:ml-3"
                   icon="solar:arrow-left-broken"
