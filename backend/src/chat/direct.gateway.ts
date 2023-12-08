@@ -1,5 +1,5 @@
 import {
-  BadGatewayException,
+  ParseIntPipe,
   BadRequestException,
   UseFilters,
   UsePipes,
@@ -7,8 +7,10 @@ import {
 } from '@nestjs/common';
 import {
   SubscribeMessage,
+  MessageBody,
   WebSocketGateway,
   WebSocketServer,
+  ConnectedSocket,
 } from '@nestjs/websockets';
 import { instanceToPlain } from 'class-transformer';
 import { Server, Socket } from 'socket.io';
@@ -44,5 +46,13 @@ export class DirectGateway {
     } catch (error) {
       throw new BadRequestException();
     }
+  }
+
+  @SubscribeMessage('join.conversation')
+  async joinConversation(
+    @ConnectedSocket() client: Socket,
+    @MessageBody(ParseIntPipe) convId: number,
+  ) {
+    await this.directconversationService.seenMessage(client.data.id, convId);
   }
 }
