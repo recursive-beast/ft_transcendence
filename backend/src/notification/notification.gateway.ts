@@ -18,7 +18,7 @@ export class NotificationGateway {
     const notification = await this.notificationService.create(
       NotificationType.FRIEND_ADD,
       target.id,
-      { user: { id: user.id } },
+      { user: instanceToPlain(user) },
     );
 
     this.server
