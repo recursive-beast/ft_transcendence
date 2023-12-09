@@ -25,7 +25,7 @@ export class GroupService {
           text: dto.text,
           groupConversation: { connect: { id: dto.groupConversationId } },
         },
-        include: { groupConversation: true },
+        include: { groupConversation: true, sender: true },
       });
       return MessageEntity.fromMessage(message);
     }
@@ -256,7 +256,7 @@ export class GroupService {
         },
       },
       include: {
-        messages: true,
+        messages: { include: { sender: true } },
         members: { include: { user: true } },
       },
     });

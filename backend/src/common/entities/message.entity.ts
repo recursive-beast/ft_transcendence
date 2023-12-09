@@ -2,6 +2,7 @@ import { Message } from '@prisma/client';
 import { Exclude, Expose, Type, plainToInstance } from 'class-transformer';
 import { DirectConversationEntity } from './direct-conversation.entity';
 import { GroupConversationEntity } from './group-conversation.entity';
+import { UserEntity } from './user.entity';
 
 export class MessageEntity implements Message {
   @Exclude()
@@ -26,6 +27,9 @@ export class MessageEntity implements Message {
 
   @Expose()
   senderId: number;
+
+  @Expose()
+  sender: UserEntity;
 
   @Expose()
   text: string;

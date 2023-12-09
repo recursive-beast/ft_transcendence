@@ -82,10 +82,40 @@ const groups = Array(10)
   }));
 
 function GroupMessage(props) {
-  const { data } = useSWR("/chat/group");
+  const { data: groups } = useSWR("/chat/group");
+  const { data: me } = useSWR("/users/me");
+
   return (
     <div>
-      {data?.map((group, index) => {
+      {groups?.map((group, index) => {
+        const members = group.members.filter((member) => member.user.id !== me?.id);
+        console.log(members);
+        const avatars = members.map((member) => member.user.avatar);
+        let avatarList = [];
+
+        const two = avatars
+          .slice(0, 2)
+          .map((avatar) => (
+            <Image
+              src={avatar}
+              className="w-6 rounded-full border border-tx01 object-cover xs:w-8"
+              width={300}
+              height={300}
+            />
+          ));
+
+        avatarList = avatarList.concat(two);
+
+        if (avatars.length > 2) {
+          const count = avatars.length - 2;
+
+          avatarList.push(
+            <div className="flex h-6 w-6 items-center justify-center rounded-full border  border-tx01 bg-tx02 text-tx04 xs:h-8 xs:w-8">
+              +{count}
+            </div>,
+          );
+        }
+
         return (
           <div
             key={index}
@@ -129,32 +159,7 @@ function GroupMessage(props) {
 
             {/* div contain time end nbrMessages */}
             <div className="flex items-center justify-center -space-x-3 xs:-space-x-4 ">
-              <div>
-                <Image
-                  src={Pic05}
-                  className="w-6 rounded-full border border-tx01 object-cover xs:w-8"
-                />
-              </div>
-
-              <div>
-                <Image
-                  src={Pic01}
-                  className="w-6 rounded-full border border-tx01 object-cover xs:w-8"
-                />
-              </div>
-
-              <div>
-                {group.members === 3 ? (
-                  <Image
-                    src={Pic11}
-                    className="h-6 w-6 rounded-full border border-tx01 object-cover xs:h-8 xs:w-8"
-                  />
-                ) : (
-                  <div className="flex h-6 w-6 items-center justify-center rounded-full border  border-tx01 bg-tx02 text-tx04 xs:h-8 xs:w-8">{`+${
-                    group.members.length - 2
-                  }`}</div>
-                )}
-              </div>
+              {avatarList}
             </div>
           </div>
         );
@@ -644,10 +649,10 @@ function ConversationBox({ onClick, ...props }) {
                 props.conversation.messages.map((message) => {
                   return (
                     <div className="my-1 flex items-start">
-                      {props.group && !message.sent && (
+                      {props.group && message.senderId != myID && (
                         <AvatarImage
-                          src={message.avatar}
-                          id={message.id}
+                          src={message.sender.avatar}
+                          id={message.sender.id}
                           className="ml-1 h-7 w-7"
                         />
                       )}
@@ -894,7 +899,7 @@ function NewGroup({ onGroupClick, ...props }) {
       <button
         className={`sticky bottom-5 left-[80%] flex h-11 w-11 flex-none items-center justify-center rounded-full ${
           selectedFriends.length === 0
-            ? "bg-tx02 cursor-not-allowed"
+            ? "cursor-not-allowed bg-tx02"
             : "bg-tx01"
         }`}
         disabled={selectedFriends.length === 0}
