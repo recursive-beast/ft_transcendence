@@ -27,11 +27,11 @@ const gameOver = () => {
     // console.log("rendered");
     socket.on("game.found", getGmaeData);
     socket.on("game.over", gameOver);
-    const mode = "mode 2";
-    socket.emit("play.ai", { mode });
+    socket.emit("play.ai");
     return () => {
       // TODO: cleanup socket listeners
-      socket.emit("disconnected");
+      // socket.emit("disconnected");
+      socket.emit("kill.interval");
       socket.off("game.found", getGmaeData);
       socket.off("game.over", gameOver);
     };

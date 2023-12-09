@@ -36,7 +36,7 @@ const obj = {
     netColor: "#625d53",
     bordercolor: "border-[#625d53]",
   },
-  "Glacier" : {
+  "snow" : {
     img: "img ",
     canvasbackground: "#e0fdff",
     paddleColor: "#17816a",
@@ -45,7 +45,7 @@ const obj = {
     bordercolor: "border-[#625d53]",
     
   },
-  "StellarShowdown" : {
+  "space" : {
     img: "img ",
     paddleColor: "#7b469d",
     canvasbackground: "#262522",

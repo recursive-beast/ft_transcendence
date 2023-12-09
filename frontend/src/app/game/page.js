@@ -71,6 +71,9 @@ function Modes(props) {
   const router = useRouter();
   const socket = useSocket();
 
+  console.log("friend: ", friend);
+  console.log("breack: ", breack);
+
   useEffect(() => {
     if (!users || mode !== "queue") return;
 
@@ -92,10 +95,8 @@ function Modes(props) {
   }, [mode, users]);
 
   useEffect(() => {
-    socket.on("game.found", ({ mode, id }) => {
-      if (mode === "queue") {
-        router.push(`/game/playground/${mode}`);
-      }
+    socket.on("setup", () => {
+      router.push(`/game/playground/${props.theme}`);
     });
 
     return () => {
@@ -119,7 +120,7 @@ function Modes(props) {
               icon="bxs:bot"
               title="play with bot"
               onClick={() =>{
-                router.push("/game/playground/bot");
+                router.push(`/game/playground/bot/${props.theme}`);
               }}
             />
             <Mode
@@ -127,7 +128,8 @@ function Modes(props) {
               title="join a queue"
               onClick={() =>{
                 setMode("queue");
-                socket.emit("queue");
+                const mode2 = props.theme;
+                socket.emit("game.queue");
             } }
             />
           </div>
@@ -265,6 +267,7 @@ function Modes(props) {
           setMode("");
           setFriend(null);
           setBreack("");
+          socket.emit("cancel");
         }}
         className={clsx(
           "z-10 mx-auto my-2 rounded-full border border-tx05 px-4 py-1 text-center text-sm font-light uppercase tracking-wider",
@@ -302,7 +305,7 @@ function Slide(props) {
         <div className="mb-3 text-center text-xs font-extralight tracking-wide text-tx04 xs:text-sm sm:text-2xl">
           {props.des}
         </div>
-        <Modes pic={props.pic} />
+        <Modes theme={props.theme} pic={props.pic} />
       </div>
     </div>
   );
@@ -342,6 +345,7 @@ export default function Home({ params }) {
 
             <SwiperSlide>
               <Slide
+                theme="classic"
                 title="classic"
                 des="Traditional Paddle Clash"
                 className="text-tx01"
@@ -352,6 +356,7 @@ export default function Home({ params }) {
 
             <SwiperSlide>
               <Slide
+                theme="beach"
                 title="beach"
                 des="Beachfront Clash Fiesta"
                 className="text-[#EAD2AC]"
@@ -362,6 +367,7 @@ export default function Home({ params }) {
 
             <SwiperSlide>
               <Slide
+                theme="snow"
                 title="snow"
                 des="Frosty Paddle Blizzard"
                 className="text-tx05"
@@ -372,6 +378,7 @@ export default function Home({ params }) {
 
             <SwiperSlide>
               <Slide
+                theme="sahara"
                 title="sahara"
                 des="Sahara Sand Paddle Duel"
                 className="text-tx02"
@@ -382,6 +389,7 @@ export default function Home({ params }) {
 
             <SwiperSlide>
               <Slide
+                theme="space"
                 title="space"
                 des="Cosmic Paddle Encounter"
                 className="text-tx05"
@@ -392,6 +400,7 @@ export default function Home({ params }) {
 
             <SwiperSlide>
               <Slide
+                theme="jungle"
                 title="jungle"
                 des="Jungle Canopy Paddle Safari"
                 className="text-[#1C4226]"
