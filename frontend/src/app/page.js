@@ -299,7 +299,7 @@ function DescriptionSectionHover(props) {
 
 function Feature(props) {
   return (
-    <div className="pt-4 pb-6 border-b border-tx02 hover:bg-pr01 text-4xl font-semibold sm:text-5xl md:text-6xl 2xl:text-7xl group">
+    <div className="pt-4 pb-6 border-b border-tx02 hover:bg-pr01 text-4xl font-semibold sm:text-5xl md:text-6xl 2xl:text-7xl group transition-colors">
       <MaskedLines className="first:text-tx02 last:text-tx01 group-hover:first:text-tx04 group-hover:last:text-tx04 transition-colors">
         {props.txt1}
         <br />
