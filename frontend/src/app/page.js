@@ -299,8 +299,8 @@ function DescriptionSectionHover(props) {
 
 function Feature(props) {
   return (
-    <div className="pt-4 pb-6 border-b border-tx02 hover:bg-pr01 text-4xl font-semibold sm:text-5xl md:text-6xl 2xl:text-7xl group transition-colors">
-      <MaskedLines className="first:text-tx02 last:text-tx01 group-hover:first:text-tx04 group-hover:last:text-tx04 transition-colors">
+    <div className="group border-b border-tx02 pb-6 pt-4 text-4xl font-semibold transition-colors hover:bg-pr01 sm:text-5xl md:text-6xl 2xl:text-7xl">
+      <MaskedLines className="transition-colors first:text-tx02 last:text-tx01 group-hover:first:text-tx04 group-hover:last:text-tx04">
         {props.txt1}
         <br />
         {props.txt2}
@@ -702,7 +702,7 @@ function LoginSection({ onClick, ...props }) {
       <div className="no-scrollbar relative flex h-3/5 max-h-[45rem] w-11/12 flex-col items-center justify-between overflow-auto rounded-2xl border-[1.5px] border-tx05 bg-bg01 sm:h-2/3 sm:w-[30rem]">
         <button onClick={onClick}>
           <Icon
-            className="absolute right-6 top-6 h-7 w-7 xs:h-8 xs:w-8 text-tx05"
+            className="absolute right-6 top-6 h-7 w-7 text-tx05 xs:h-8 xs:w-8"
             icon="icon-park-outline:close"
             width="36"
           />
@@ -832,7 +832,7 @@ export default function Home() {
       />
       <motion.div
         id="masked"
-        className="bg-pr01 absolute pb-64 z-20 descendant:!text-tx04 descendant:!border-tx04"
+        className="absolute z-20 bg-pr01 pb-64 descendant:!border-tx04 descendant:!text-tx04"
         animate={{
           "--x": `${mouse.x}px`,
           "--y": `${scroll.y + mouse.y}px`,
