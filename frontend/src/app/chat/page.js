@@ -303,6 +303,36 @@ function Options() {
   );
 }
 
+function GroupInfOptions() {
+  const [options, setOptions] = useState(false);
+  return (
+    <div>
+      <button
+        onClick={() => {
+          setOptions(!options);
+        }}
+      >
+        <Icon
+          className="mr-3 h-6 w-6 text-tx02 sm:h-7 sm:w-8"
+          icon="circum:menu-kebab"
+        />
+      </button>
+      <div
+        className={clsx(
+          "absolute right-5 top-full rounded-lg border border-tx01 bg-bg02 z-10",
+          options ? "block" : "hidden",
+        )}
+      >
+        {/* New Game */}
+        <Option title="new game" icon="solar:gamepad-broken" />
+
+        {/* Block */}
+        <Option title="block" icon="solar:user-block-rounded-broken" />
+      </div>
+    </div>
+  );
+}
+
 function GroupInfo({ onClick, ...props }) {
   const [newTitle, setNewTitle] = useState(false);
   return (
@@ -437,12 +467,13 @@ function GroupInfo({ onClick, ...props }) {
         </div>
       </div>
 
-      {/* members */}
+      {/* members & add new*/}
       <div className=" mb-3 bg-bg02">
         <div className="mx-3 my-2 text-sm font-light tracking-wide text-tx02 xs:text-base xs:tracking-widest">
           Group -&nbsp; <span>{props.conversation.members.length}</span>
           &nbsp;Members
         </div>
+        {/* Add New Freind */}
         <div
           className="flex cursor-pointer border-b border-tx02 p-2 hover:bg-tx03"
           // onClick={() => setNewGroup(true)}
@@ -461,10 +492,11 @@ function GroupInfo({ onClick, ...props }) {
           </div>
         </div>
 
+        {/* Friends List */}
         {props.conversation.members.map((member, index) => {
           return (
             <div
-              className="flex cursor-pointer border-b border-tx02 p-2 hover:bg-tx03"
+              className="relative flex items-center border-b border-tx02 p-2 hover:bg-tx03"
               key={index}
             >
               {console.log(member.id)}
@@ -482,6 +514,9 @@ function GroupInfo({ onClick, ...props }) {
                   {member.user.displayName}
                 </div>
               </div>
+
+              {/* Options Menu */}
+              <GroupInfOptions />
             </div>
           );
         })}
@@ -832,6 +867,24 @@ function NewGroup({ onGroupClick, ...props }) {
         <CustomizeGroup />
       ) : (
         <div className="flex-grow">
+          {data?.length === 0 && (
+            <div className="flex h-full flex-col items-center justify-center gap-6">
+              <Image
+                src={logoPic}
+                alt="Logo of the game"
+                className="h-52 w-52"
+              />
+
+              <div className="text-center text-3xl font-extralight">
+                Add Friends
+              </div>
+
+              <div className="w-4/5 text-center text-sm text-tx02">
+                You have no Friends yet, Find new friends by using the search
+                bar at the home page
+              </div>
+            </div>
+          )}
           {/* Friends */}
           {data?.map((friend, index) => {
             return (
@@ -870,7 +923,7 @@ function NewGroup({ onGroupClick, ...props }) {
       <button
         className={`sticky bottom-5 left-[80%] flex h-11 w-11 flex-none items-center justify-center rounded-full ${
           selectedFriends.length === 0
-            ? "bg-tx02 cursor-not-allowed"
+            ? "cursor-not-allowed bg-tx02"
             : "bg-tx01"
         }`}
         disabled={selectedFriends.length === 0}

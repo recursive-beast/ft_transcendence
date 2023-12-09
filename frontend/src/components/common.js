@@ -440,7 +440,6 @@ export function Friends(props) {
         </div>
       )}
 
-      {/* No Friends */}
       {data?.length === 0 ? (
         <div className="flex h-full flex-col items-center justify-center gap-6">
           <Image src={logoPic} alt="Logo of the game" className="h-52 w-52" />
@@ -450,7 +449,8 @@ export function Friends(props) {
           </div>
 
           <div className="w-4/5 text-center text-sm text-tx02">
-            Find new friends by using the search bar at the top of the page
+            You have no Friends yet, Find new friends by using the search bar at
+            the home page
           </div>
         </div>
       ) : (
@@ -464,7 +464,7 @@ export function Friends(props) {
               <Component
                 {...componentProps}
                 key={index}
-                className="flex w-full border-b border-tx03 p-2 hover:bg-tx03 cursor-pointer"
+                className="flex w-full cursor-pointer border-b border-tx03 p-2 hover:bg-tx03"
               >
                 {/* Flex container for avatar and name */}
                 <div className="flex flex-1 items-center">
