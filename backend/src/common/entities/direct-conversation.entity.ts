@@ -5,12 +5,18 @@ import { UserEntity } from './user.entity';
 
 export class DirectConversationEntity implements DirectConversation {
   @Expose()
+  isGroup: boolean;
+
+  @Expose()
+  isDirect: boolean;
+
+  @Expose()
   id: number;
 
   @Expose()
   @Type(() => MessageEntity)
   messages?: MessageEntity[];
-  
+
   @Expose()
   @Type(() => UserEntity)
   members?: UserEntity[];

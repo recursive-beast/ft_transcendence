@@ -61,6 +61,8 @@ model DirectConversation {
     id        Int       @id @default(autoincrement())
     messages  Message[]
     members   User[]
+    isGroup   Boolean   @default(false)
+    isDirect  Boolean   @default(true)
     createdAt DateTime  @default(now())
     updatedAt DateTime  @updatedAt
 }
@@ -99,6 +101,8 @@ model GroupConversation {
     banned    User[]
     members   GroupMember[]
     messages  Message[]
+    isGroup   Boolean       @default(true)
+    isDirect  Boolean       @default(false)
     createdAt DateTime      @default(now())
     updatedAt DateTime      @updatedAt
 }

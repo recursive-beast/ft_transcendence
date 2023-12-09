@@ -6,7 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Icon } from "@iconify/react";
 
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 
 import { useEffect, useState, useRef } from "react";
 
@@ -41,6 +41,7 @@ import {
 } from "date-fns";
 import { AvatarImage } from "@/components/AvatarImage";
 import { useRouter } from "next/navigation";
+import { useSocket } from "@/hooks/useSocket";
 
 faker.seed(2);
 
@@ -438,7 +439,7 @@ function GroupInfo({ onClick, ...props }) {
       </div>
 
       {/* members */}
-      <div className=" bg-bg02 mb-3">
+      <div className=" mb-3 bg-bg02">
         <div className="mx-3 my-2 text-sm font-light tracking-wide text-tx02 xs:text-base xs:tracking-widest">
           Group -&nbsp; <span>{props.conversation.members.length}</span>
           &nbsp;Members
@@ -489,13 +490,11 @@ function GroupInfo({ onClick, ...props }) {
 
       {/* exit */}
       <div className=" bg-bg02 text-pr01">
-        <div
-          className="flex cursor-pointer border-b border-tx02 p-2 hover:bg-tx03"
-        >
+        <div className="flex cursor-pointer border-b border-tx02 p-2 hover:bg-tx03">
           <div className="flex flex-1 items-center">
             {/* Icone */}
             <Icon
-              className="mr-2 h-10 w-10 flex-none rounded-full bg-tx02 xs:mr-3 xs:h-12 xs:w-12 p-2"
+              className="mr-2 h-10 w-10 flex-none rounded-full bg-tx02 p-2 xs:mr-3 xs:h-12 xs:w-12"
               icon="solar:exit-broken"
             />
 
@@ -519,8 +518,31 @@ function ConversationBox({ onClick, ...props }) {
   const { data: data1 } = useSWR("/users/me");
   const [myID, setMyId] = useState(0);
   const router = useRouter();
+  const socket = useSocket();
 
   if (data1 && !myID) setMyId(data1.id);
+
+  useEffect(() => {
+    const updateDirect = () => mutate("/chat/direct");
+    const updateGroup = () => mutate("/chat/group");
+
+    socket.on("direct.message", updateDirect);
+    socket.on("direct.message.seen", updateDirect);
+    socket.on("channel.message", updateGroup);
+
+    return () => {
+      socket.off("direct.message", updateDirect);
+      socket.off("direct.message.seen", updateDirect);
+      socket.off("channel.message", updateGroup);
+    };
+  }, []);
+
+  const conversation = props.conversation;
+
+  useEffect(() => {
+    if (conversation && conversation.isDirect)
+      socket.emit("join.conversation", conversation.id);
+  }, [conversation]);
 
   return (
     <div className="flex flex-1">
