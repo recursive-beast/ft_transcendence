@@ -24,7 +24,7 @@ export class MessageEntity implements Message {
   @Expose()
   seen: boolean;
 
-  @Exclude()
+  @Expose()
   senderId: number;
 
   @Expose()
