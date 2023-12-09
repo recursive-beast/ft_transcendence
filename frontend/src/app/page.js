@@ -69,7 +69,6 @@ function Title(props) {
 }
 
 function HeroSection({ animate, ...props }) {
-  const [on, setOn] = useState(true);
   return (
     <>
       <header className="relative mb-36 flex h-screen items-stretch">
@@ -180,22 +179,6 @@ function HeroSection({ animate, ...props }) {
                 start
               </div>
             </button>
-          </div>
-        </div>
-
-        {/* right side sound button */}
-        <div
-          className="fixed bottom-0 right-0 -mr-6 mb-20 mt-auto flex -rotate-90 space-x-2 xl:mr-1 2xl:mb-28"
-          {...props}
-        >
-          <button
-            onClick={() => setOn(!on)}
-            className=" text-xs font-medium uppercase tracking-normal text-tx02 lg:text-sm 2xl:text-base"
-          >
-            sound
-          </button>
-          <div className=" w-10 text-xs font-medium uppercase tracking-normal text-tx01 lg:text-sm 2xl:text-base">
-            {on ? "on" : "off"}
           </div>
         </div>
       </section>
