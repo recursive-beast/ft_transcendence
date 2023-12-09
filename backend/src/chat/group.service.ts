@@ -7,6 +7,7 @@ import { GroupConversationEntity } from 'src/common/entities/group-conversation.
 import { GroupMemberEntity } from 'src/common/entities/group-member.entity';
 import { MessageEntity } from 'src/common/entities/message.entity';
 import { GroupMessageDTO } from './dto/group-message.dto';
+import { GroupUpdateDTO } from './dto/group-update.dto';
 
 @Injectable()
 export class GroupService {
@@ -359,5 +360,68 @@ export class GroupService {
     );
 
     return GroupConversationEntity.fromGroupConversation(channel);
+  }
+
+  async updateChannelTitle(
+    userId: number,
+    channelId: number,
+    newTitle: string,
+  ) {
+    const member = await this.findMember(channelId, userId);
+    if (member.role !== roleType.MEMBER) {
+      await this.prismaService.groupConversation.update({
+        where: { id: channelId },
+        data: { title: newTitle },
+      });
+    }
+  }
+
+  async updateChannelType(userId: number, dto: GroupUpdateDTO) {
+    const member = await this.findMember(dto.id, userId);
+    const channel = await this.findChannel(userId, dto.id);
+    if (channel && member.role !== roleType.MEMBER) {
+      if (channel.type !== groupType.PROTECTED) {
+        if (dto.type === groupType.PROTECTED) {
+          if (dto.newPassword) {
+            await this.prismaService.groupConversation.update({
+              where: { id: dto.id },
+              data: {
+                type: dto.type,
+                password: await bcrypt.hash(dto.newPassword, 10),
+              },
+            });
+          }
+        } else {
+          await this.prismaService.groupConversation.update({
+            where: { id: dto.id },
+            data: { type: dto.type },
+          });
+        }
+      } else {
+        if (dto.type != groupType.PROTECTED) {
+          await this.prismaService.groupConversation.update({
+            where: { id: dto.id },
+            data: {
+              type: dto.type,
+              password: null,
+            },
+          });
+        } else {
+          if (
+            !dto.currentPassword ||
+            !dto.newPassword ||
+            (channel.password &&
+              !(await bcrypt.compare(dto.currentPassword, channel.password)))
+          )
+            throw new BadRequestException();
+          await this.prismaService.groupConversation.update({
+            where: { id: dto.id },
+            data: {
+              password: await bcrypt.hash(dto.newPassword, 10),
+            },
+          });
+        }
+      }
+    }
   }
 }

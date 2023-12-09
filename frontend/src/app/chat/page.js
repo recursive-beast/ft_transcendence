@@ -6,7 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Icon } from "@iconify/react";
 
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 
 import { useEffect, useState, useRef } from "react";
 
@@ -41,6 +41,7 @@ import {
 } from "date-fns";
 import { AvatarImage } from "@/components/AvatarImage";
 import { useRouter } from "next/navigation";
+import { useSocket } from "@/hooks/useSocket";
 
 faker.seed(2);
 
@@ -517,8 +518,31 @@ function ConversationBox({ onClick, ...props }) {
   const { data: data1 } = useSWR("/users/me");
   const [myID, setMyId] = useState(0);
   const router = useRouter();
+  const socket = useSocket();
 
   if (data1 && !myID) setMyId(data1.id);
+
+  useEffect(() => {
+    const updateDirect = () => mutate("/chat/direct");
+    const updateGroup = () => mutate("/chat/group");
+
+    socket.on("direct.message", updateDirect);
+    socket.on("direct.message.seen", updateDirect);
+    socket.on("channel.message", updateGroup);
+
+    return () => {
+      socket.off("direct.message", updateDirect);
+      socket.off("direct.message.seen", updateDirect);
+      socket.off("channel.message", updateGroup);
+    };
+  }, []);
+
+  const conversation = props.conversation;
+
+  useEffect(() => {
+    if (conversation && conversation.isDirect)
+      socket.emit("join.conversation", conversation.id);
+  }, [conversation]);
 
   return (
     <div className="flex flex-1">
