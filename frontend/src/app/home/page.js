@@ -525,12 +525,12 @@ function SettingSection({ onClick, ...props }) {
 
                   <div className="flex flex-col items-center">
                     <div className="mb-5 flex space-x-1 xs:mb-12">
-                      <input className="h-10 w-7 rounded-lg bg-tx01 xs:h-14 xs:w-10 xs:rounded-2xl" />
-                      <input className="h-10 w-7 rounded-lg bg-tx01 xs:h-14 xs:w-10 xs:rounded-2xl" />
-                      <input className="h-10 w-7 rounded-lg bg-tx01 xs:h-14 xs:w-10 xs:rounded-2xl" />
-                      <input className="h-10 w-7 rounded-lg bg-tx01 xs:h-14 xs:w-10 xs:rounded-2xl" />
-                      <input className="h-10 w-7 rounded-lg bg-tx01 xs:h-14 xs:w-10 xs:rounded-2xl" />
-                      <input className="h-10 w-7 rounded-lg bg-tx01 xs:h-14 xs:w-10 xs:rounded-2xl" />
+                      <input className="h-10 w-7 rounded-lg bg-tx01 xs:h-14 xs:w-10 xs:rounded-2xl border-none outline-none focus:border-none" />
+                      <input className="h-10 w-7 rounded-lg bg-tx01 xs:h-14 xs:w-10 xs:rounded-2xl border-none outline-none focus:border-none" />
+                      <input className="h-10 w-7 rounded-lg bg-tx01 xs:h-14 xs:w-10 xs:rounded-2xl border-none outline-none focus:border-none" />
+                      <input className="h-10 w-7 rounded-lg bg-tx01 xs:h-14 xs:w-10 xs:rounded-2xl border-none outline-none focus:border-none" />
+                      <input className="h-10 w-7 rounded-lg bg-tx01 xs:h-14 xs:w-10 xs:rounded-2xl border-none outline-none focus:border-none" />
+                      <input className="h-10 w-7 rounded-lg bg-tx01 xs:h-14 xs:w-10 xs:rounded-2xl border-none outline-none focus:border-none" />
                     </div>
 
                     <div>

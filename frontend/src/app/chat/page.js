@@ -342,10 +342,10 @@ function GroupInfo({ onClick, ...props }) {
           {/* Set Avatar Button */}
           <button
             className="absolute flex h-full w-1/3 flex-col items-center justify-center gap-2 rounded-full border border-dashed border-tx01
-           opacity-0 hover:bg-bg02/80 hover:opacity-100 sm:w-2/5"
+           opacity-0 hover:bg-bg02/80 hover:opacity-100 sm:w-2/5 touch:bg-bg02/80 touch:opacity-100"
           >
             <Icon className="h-10 w-10 text-tx02" icon="solar:upload-broken" />
-            <div className="text-xs font-light tracking-wider sm:text-sm">
+            <div className="text-[9px] font-light tracking-wider xs:text-xs sm:text-sm">
               UPLOAD NEW
             </div>
           </button>
@@ -413,19 +413,19 @@ function GroupInfo({ onClick, ...props }) {
         >
           <label>Current Password:</label>
           <input
-            className="mb-2 h-6 w-full rounded-sm border-b bg-bg03 px-1 text-tx01 xs:h-8 sm:rounded-md"
+            className="mb-2 h-6 w-full rounded-sm border-b border-none bg-bg03 px-1 text-tx01 outline-none focus:border-none xs:h-8 sm:rounded-md"
             type="password"
           ></input>
 
           <label>New Password:</label>
           <input
-            className="mb-2 h-6 w-full rounded-sm border-b bg-bg03 px-1 text-tx01 xs:h-8 sm:rounded-md"
+            className="mb-2 h-6 w-full rounded-sm border-b border-none bg-bg03 px-1 text-tx01 outline-none focus:border-none xs:h-8 sm:rounded-md"
             type="password"
           ></input>
 
           <label>Confirm:</label>
           <input
-            className="h-6 w-full rounded-sm border-b bg-bg03 px-1 text-tx01 xs:h-8 sm:rounded-md"
+            className="h-6 w-full rounded-sm border-b border-none bg-bg03 px-1 text-tx01 outline-none focus:border-none xs:h-8 sm:rounded-md"
             type="password"
           ></input>
 
@@ -490,7 +490,7 @@ function GroupInfo({ onClick, ...props }) {
 
       {/* exit */}
       <div className=" bg-bg02 text-pr01">
-        <div className="flex cursor-pointer border-b border-tx02 p-2 hover:bg-tx03">
+        <div className="flex cursor-pointer p-2 hover:bg-tx03">
           <div className="flex flex-1 items-center">
             {/* Icone */}
             <Icon
@@ -643,7 +643,7 @@ function ConversationBox({ onClick, ...props }) {
               {props.conversation &&
                 props.conversation.messages.map((message) => {
                   return (
-                    <div className="my-3 flex items-start">
+                    <div className="my-1 flex items-start">
                       {props.group && !message.sent && (
                         <AvatarImage
                           src={message.avatar}
@@ -694,7 +694,7 @@ function ConversationBox({ onClick, ...props }) {
 
             {/* Input Message Section */}
             <div className="sticky bottom-0 flex w-full  items-center space-x-3 bg-bg03 px-3 py-2 xs:py-3 sm:px-5">
-              <input className="h-7 flex-1 rounded-xl bg-tx02 px-2 text-base font-extralight xs:h-8 xs:text-xl lg:px-3" />
+              <input className="h-7 flex-1 rounded-xl border-none bg-tx02 px-2 text-base outline-none focus:border-none xs:h-8 xs:text-xl lg:px-3" />
 
               <button>
                 <Icon
@@ -765,7 +765,7 @@ function CustomizeGroup() {
           {/* Group Name Input */}
           <div>
             <label>Group Name:</label>
-            <input className="h-6 w-full rounded-sm border-b bg-bg03 px-1 text-tx01 xs:h-8 sm:rounded-md"></input>
+            <input className="h-6 w-full rounded-sm border-b border-none bg-bg03 px-1 text-tx01 outline-none focus:border-none xs:h-8 sm:rounded-md"></input>
           </div>
 
           {/* Group Type Dropdown */}
@@ -790,13 +790,13 @@ function CustomizeGroup() {
           >
             <label>Password:</label>
             <input
-              className="mb-2 h-6 w-full rounded-sm border-b bg-bg03 px-1 text-tx01 xs:h-8 sm:rounded-md"
+              className="mb-2 h-6 w-full rounded-sm border-b border-none bg-bg03 px-1 text-tx01 outline-none focus:border-none xs:h-8 sm:rounded-md"
               type="password"
             ></input>
 
             <label>Confirm:</label>
             <input
-              className="h-6 w-full rounded-sm border-b bg-bg03 px-1 text-tx01 xs:h-8 sm:rounded-md"
+              className="h-6 w-full rounded-sm border-b border-none bg-bg03 px-1 text-tx01 outline-none focus:border-none xs:h-8 sm:rounded-md"
               type="password"
             ></input>
           </div>
@@ -809,6 +809,16 @@ function CustomizeGroup() {
 function NewGroup({ onGroupClick, ...props }) {
   // State to track the progress to the next step
   const [next, setNext] = useState(false);
+  const { data } = useSWR("/users/friends");
+  const [selectedFriends, setSelectedFriends] = useState([]);
+
+  const handleChange = (e, friend) => {
+    if (e.target.checked) {
+      setSelectedFriends([...selectedFriends, friend]);
+    } else {
+      setSelectedFriends(selectedFriends.filter((f) => f.id !== friend.id));
+    }
+  };
 
   return (
     <div
@@ -846,13 +856,48 @@ function NewGroup({ onGroupClick, ...props }) {
         <CustomizeGroup />
       ) : (
         <div className="flex-grow">
-          <Friends group={true} />
+          {/* Friends */}
+          {data?.map((friend, index) => {
+            return (
+              <div
+                key={index}
+                className="flex w-full border-b border-tx03 p-2 hover:bg-tx03"
+              >
+                {/* Flex container for avatar and name */}
+                <div className="flex flex-1 items-center">
+                  {/* Avatar */}
+                  <AvatarImage
+                    src={friend.avatar}
+                    id={friend.id}
+                    className="mr-2 h-12 w-12 xs:mr-3 xs:h-14 xs:w-14"
+                  />
+
+                  {/* Friend Name */}
+                  <div className="truncate text-sm tracking-wide xs:text-base xs:tracking-widest">
+                    {friend.displayName}
+                  </div>
+                </div>
+
+                {/* Checkbox for friend selection */}
+                <input
+                  className=" m-3"
+                  type="checkbox"
+                  onChange={(e) => handleChange(e, friend)}
+                />
+              </div>
+            );
+          })}
         </div>
       )}
 
       {/* Next Button */}
       <button
-        className="sticky bottom-5 left-[80%] flex h-11 w-11 flex-none items-center justify-center rounded-full bg-tx01"
+        className={`sticky bottom-5 left-[80%] flex h-11 w-11 flex-none items-center justify-center rounded-full ${
+          selectedFriends.length === 0
+            ? "bg-tx02 cursor-not-allowed"
+            : "bg-tx01"
+        }`}
+        disabled={selectedFriends.length === 0}
         onClick={
           !next
             ? () => {
