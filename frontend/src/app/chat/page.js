@@ -319,7 +319,7 @@ function GroupInfOptions() {
       </button>
       <div
         className={clsx(
-          "absolute right-5 top-full rounded-lg border border-tx01 bg-bg02 z-10",
+          "absolute right-5 top-full z-10 rounded-lg border border-tx01 bg-bg02",
           options ? "block" : "hidden",
         )}
       >
@@ -335,6 +335,13 @@ function GroupInfOptions() {
 
 function GroupInfo({ onClick, ...props }) {
   const [newTitle, setNewTitle] = useState(false);
+  // State to track the selected group type
+  const [groupType, setGroupType] = useState(props.conversation.type);
+
+  //Handles the change event when the user selects a group type.
+  const handleGroupTypeChange = (event) => {
+    setGroupType(event.target.value);
+  };
   return (
     <div className="no-scrollbar flex flex-grow flex-col overflow-auto border-tx03 bg-bg03 sm:w-1/2 sm:max-w-[25rem] sm:border-l xl:flex-none">
       {/* Header and close */}
@@ -423,7 +430,8 @@ function GroupInfo({ onClick, ...props }) {
         <div>
           <label>Group Type:</label>
           <select
-            value={props.conversation.type}
+            value={groupType}
+            onChange={handleGroupTypeChange}
             className="h-6 w-full rounded-sm border-b bg-bg03 px-1 text-tx01 xs:h-8 sm:rounded-md"
           >
             <option value="PUBLIC">PUBLIC</option>
@@ -436,15 +444,19 @@ function GroupInfo({ onClick, ...props }) {
         <div
           className={clsx(
             "flex flex-col",
-            props.conversation.type === "PROTECTED" ? "block" : "hidden",
+            groupType === "PROTECTED" ? "block" : "hidden",
           )}
           // className=
         >
-          <label>Current Password:</label>
-          <input
-            className="mb-2 h-6 w-full rounded-sm border-b border-none bg-bg03 px-1 text-tx01 outline-none focus:border-none xs:h-8 sm:rounded-md"
-            type="password"
-          ></input>
+          {props.conversation.type === "PROTECTED" && (
+            <label>Current Password:</label>
+          )}
+          {props.conversation.type === "PROTECTED" && (
+            <input
+              className="mb-2 h-6 w-full rounded-sm border-b border-none bg-bg03 px-1 text-tx01 outline-none focus:border-none xs:h-8 sm:rounded-md"
+              type="password"
+            ></input>
+          )}
 
           <label>New Password:</label>
           <input
@@ -516,7 +528,7 @@ function GroupInfo({ onClick, ...props }) {
               </div>
 
               {/* Options Menu */}
-              <GroupInfOptions />
+              {<GroupInfOptions />}
             </div>
           );
         })}
