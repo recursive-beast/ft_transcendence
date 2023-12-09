@@ -870,18 +870,17 @@ function NewGroup({ onGroupClick, ...props }) {
       <button
         className={`sticky bottom-5 left-[80%] flex h-11 w-11 flex-none items-center justify-center rounded-full ${
           selectedFriends.length === 0
-            ? "bg-gray-400 cursor-not-allowed"
+            ? "bg-tx02 cursor-not-allowed"
             : "bg-tx01"
         }`}
         disabled={selectedFriends.length === 0}
-        onClick={() => {
-          if (selectedFriends.length === 0) return;
+        onClick={
           !next
             ? () => {
                 setNext(true);
               }
-            : onGroupClick;
-        }}
+            : onGroupClick
+        }
       >
         <Icon
           className="h-8 w-8 text-tx03"
