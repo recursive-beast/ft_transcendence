@@ -489,7 +489,7 @@ function TeamSection(props) {
   const [activeIndex, setActiveIndex] = useState(0);
 
   return (
-    <section className="mb-36">
+    <section className="mb-36" {...props}>
       <div className="mx-auto w-11/12 border-b border-tx02 pb-2  sm:w-10/12 lg:w-3/4 xl:w-8/12">
         <Title text="team" />
       </div>
@@ -856,7 +856,10 @@ export default function Home() {
         />
         <FeaturesSection hover />
         <TechnologySection hover />
-        <TeamSection />
+        <TeamSection
+          onMouseEnter={() => setIsHidden(true)}
+          onMouseLeave={() => setIsHidden(false)}
+        />
         <FooterSectionHover
           onMouseEnter={() => setIsHover(true)}
           onMouseLeave={() => setIsHover(false)}
