@@ -18,6 +18,8 @@ const net = {
   height: 10,
   color: "black",
 };
+let ballx= 0;
+let bally= 0;
 
 const obj = {
   "classic" : {
@@ -117,8 +119,21 @@ export const DrawGame = ({data}) => {
     //   data.current.player2.height,
     //   );
     // }
+    // if (data.current.ball.space === 0){
+    //   ballx = data.current.ball.x;
+    //   bally = data.current.ball.y;
+    // }
+    // if (data.current.ball.space === 1){
+    //   if (ballx <= 0 || ballx > width)
+    //     data.current.ball.velocityX *= -1;
+    //     if (ballx <= 0 || ballx > height)
+    //     data.current.ball.velocityY *= -1;
+    //   ballx +=  data.current.ball.velocityX;
+    //   bally +=  data.current.ball.velocityY;
+    // }
 
-    drawCircle(context,data.current.ball.x,data.current.ball.y, 16, color.ballColor);
+    drawCircle(context,data.current.ball.x,data.current.ball.y, 16, color.ballColor);    
+    // console.log("x = " ,Math.round(data.current.ball.x), "y   ===  ",Math.round(data.current.ball.y));
     // console.log(Math.sqrt((0.0981*(height * width)/100)*(1/Math.PI)));
     //   context.fillRect(width - paddle.width - 2, 100, paddle.width, paddle.height);
   }

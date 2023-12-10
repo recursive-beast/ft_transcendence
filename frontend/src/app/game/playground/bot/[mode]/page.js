@@ -21,6 +21,7 @@ function Name(){
   setReady(true);
 }
 const gameOver = () => {
+  socket.emit("end");
   router.push("/game/over");
 }
   useEffect(() => {
@@ -30,7 +31,6 @@ const gameOver = () => {
     socket.emit("play.ai");
     return () => {
       // TODO: cleanup socket listeners
-      // socket.emit("disconnected");
       socket.emit("kill.interval");
       socket.off("game.found", getGmaeData);
       socket.off("game.over", gameOver);

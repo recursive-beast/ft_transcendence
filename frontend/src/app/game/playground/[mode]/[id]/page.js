@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import io from "socket.io-client";
-import { DrawGame } from "../DrawGame";
+import { DrawGame } from "../../DrawGame";
 import { useWindowSize } from "@uidotdev/usehooks";
 import { useRouter } from "next/navigation";
 import { useSocket } from "@/hooks/useSocket";
@@ -28,6 +28,7 @@ const gameOver = () => {
     // console.log("rendered");
     socket.on("game.found", getGmaeData);
     socket.on("game.over", gameOver);
+    socket.emit("due");
     socket.emit("ready");
     socket.emit("start");
     return () => {

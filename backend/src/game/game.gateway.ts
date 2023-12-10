@@ -1,4 +1,5 @@
 import { SubscribeMessage,WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { omit } from 'lodash';
 import { Server, Socket } from 'socket.io';
 
 interface Queue {
@@ -34,6 +35,7 @@ interface Game {
   intervalId?: ReturnType<typeof setInterval>;
   p1ready: false | true;
   p2ready: false | true;
+  scoretowin: number;
 };
 function getRandomIntInclusive(min : number, max : number) {
   return Math.random() * (max - min) + min;
@@ -87,9 +89,11 @@ function resetBall(game:Game, ang: number){
   game.player2.y = (table.height/2) - (((25 * table.height) / 100)/2);
 }
 const queue: Queue[] = []; 
+const oneVoneQueue: Queue[] = []; 
 let currentGameId = -1;
 
 const games = new Map<string,Game>();
+const oneVone = new Map<string,Game>();
 const playersInGame = new Map<number,Game>();
 @WebSocketGateway()
 export class GameGateway {
@@ -117,7 +121,7 @@ export class GameGateway {
         speed: 5,
         space : 0,
         radius : 16,
-      }, id:++currentGameId, ia:0,p1ready:false,p2ready:false};
+      }, id:++currentGameId, ia:0,p1ready:false,p2ready:false,scoretowin:7};
       playersInGame.set(player1.id,game);
       playersInGame.set(player2.id,game);
       games.set(`game-${game.id}`,game);
@@ -175,8 +179,8 @@ export class GameGateway {
       }
       if(game.ball.x - game.ball.radius < 0){
           game.player2.score++;
-          if (game.player2.score === 3)
-            this.server.to(`game-${game.id}`).emit('game.over', game);
+          if (game.player2.score === game.scoretowin)
+            this.server.to(`game-${game.id}`).emit('game.over', omit(game, ["intervalId"]));
           game.player1.serve = 1;
           game.player2.serve = 0;
           resetBall(game,ang);
@@ -184,15 +188,14 @@ export class GameGateway {
       }
       else if(game.ball.x + game.ball.radius > table.width){
           game.player1.score++;
-          if (game.player1.score === 3)
-            this.server.to(`game-${game.id}`).emit('game.over', game);
+          if (game.player1.score === game.scoretowin)
+            this.server.to(`game-${game.id}`).emit('game.over', omit(game, ["intervalId"]));
           game.player2.serve = 1;
           game.player1.serve = 0;
           resetBall(game,ang);
           game.ball.space = 0;
       }
-      const {intervalId, ...rest} = game;
-      this.server.to(`game-${game.id}`).emit('game.found', rest);
+      this.server.to(`game-${game.id}`).emit('game.found', omit(game, ["intervalId"]));
       },15)
     }
   }
@@ -243,15 +246,15 @@ export class GameGateway {
       speed: 5,
       space : 0,
       radius : 16,
-    }, id:++currentGameId, ia:1,p1ready:true,p2ready:true };
+    }, id:++currentGameId, ia:1,p1ready:true,p2ready:true, scoretowin:7 };
     playersInGame.set(player1.id,game);
     client.emit('game.found',game);
     let a = 1;
     let tap = 0;
     game.intervalId = setInterval(() => {
       if (game.ball.space === 1){
-        game.ball.x += game.ball.velocityX;
-        game.ball.y += game.ball.velocityY;
+        game.ball.x +=  game.ball.velocityX;
+        game.ball.y +=  game.ball.velocityY;
         if (tap === 5){
           if (a <= 0.8)
             a = 1;
@@ -274,9 +277,9 @@ export class GameGateway {
         let interPoint = (game.ball.y - (paddle.y + paddle.height/2)) / (paddle.height/2);
         let angle = interPoint * (Math.PI/4);
         let direction = (game.ball.x < table.width/2) ? 1 : -1;
+        game.ball.speed += 0.5
         game.ball.velocityX = direction * (Math.cos(angle) * game.ball.speed);
         game.ball.velocityY = Math.sin(angle) * game.ball.speed;
-        game.ball.speed += 0.5
     }
     else{
       if(game.ball.x - game.ball.radius < 0){
@@ -299,12 +302,14 @@ export class GameGateway {
       }
     }
     client.emit('game.found',game);
-    },15)
+    },1000/60)
     return 'Game found';
     
   }
-  @SubscribeMessage('disconnected')
+  @SubscribeMessage('end')
   handleDisconnect(client: Socket) {
+    // const sockets = await this.server.in("room.game").fetchSockets();
+    // sockets[0]
     const id = client.data.id;
     const game = playersInGame.get(id);
     if (game) {
@@ -324,6 +329,37 @@ export class GameGateway {
     const game = playersInGame.get(id);
     if (game) {
       clearInterval(game.intervalId);
+    }
+  }
+  @SubscribeMessage('due')
+  creatClash(client: Socket) {
+    const id = client.data.id;
+    if(oneVoneQueue.length >= 1){
+      const toFind = oneVoneQueue[oneVoneQueue.length - 1];
+      oneVoneQueue.splice(oneVoneQueue.indexOf(toFind), 1);
+      const player1 = {id:toFind.id, width:10, height:150, x:4, y:(table.height - 150) / 2, score:0, serve:1,direction:null};
+      const player2 = {id:id, width:10, height:150, x:table.width - 14, y:(table.height - 150) / 2, score:0, serve:0,direction:null};
+      const ang = getRandomIntInclusive(-0.785398,0.785398);
+      const game : Game = {player1, player2,ball: {
+        x: table.width / 2,
+        y: table.height / 2,
+        velocityX: Math.cos(ang) * 5,
+        velocityY:  Math.sin(ang) * 5,
+        speed: 5,
+        space : 0,
+        radius : 16,
+      }, id:++currentGameId, ia:0,p1ready:false,p2ready:false,scoretowin:7};
+      playersInGame.set(player1.id,game);
+      playersInGame.set(player2.id,game);
+      oneVone.set(`game-${game.id}`,game);
+      this.server.in(`user-${player1.id}`).socketsJoin(`game-${game.id}`);
+      this.server.in(`user-${player2.id}`).socketsJoin(`game-${game.id}`);
+      this.server.to(`game-${game.id}`).emit('setup');
+      // return 'Game found';
+    }
+    else {
+      oneVoneQueue.push({id: id, socket: client});
+      return 'Added to queue';
     }
   }
 }

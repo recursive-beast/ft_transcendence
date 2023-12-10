@@ -18,6 +18,7 @@ import { Navigation } from "swiper/modules";
 import { useRouter } from "next/navigation";
 // import { useWindowSize } from "@uidotdev/usehooks";
 // import { useRouter } from "next/navigation";
+import {v4 as uuidv4} from 'uuid';
 
 
 import { Title, Header, Search, Friends } from "@/components/common";
@@ -71,9 +72,6 @@ function Modes(props) {
   const router = useRouter();
   const socket = useSocket();
 
-  console.log("friend: ", friend);
-  console.log("breack: ", breack);
-
   useEffect(() => {
     if (!users || mode !== "queue") return;
 
@@ -93,7 +91,7 @@ function Modes(props) {
 
     return () => clearTimeout(id);
   }, [mode, users]);
-
+  console.log(friend);
   useEffect(() => {
     socket.on("setup", () => {
       router.push(`/game/playground/${props.theme}`);
@@ -114,7 +112,9 @@ function Modes(props) {
             <Mode
               icon="fa6-solid:user-group"
               title="invite friend"
-              onClick={() => setMode("friend")}
+              onClick={() => {
+                setMode("friend")
+            }}
             />
             <Mode
               icon="bxs:bot"
