@@ -65,7 +65,7 @@ function Modes(props) {
   const { data: me } = useSWR("/users/me");
   const { data: fr } = useSWR("/users/friends");
   const [friend, setFriend] = useState(null);
-  const [breack, setBreack] = useState("");
+  const [breack, setBreack] = useState(0);
   const [mode, setMode] = useState("");
   const { data: users } = useSWR("/users");
   const [src, setSrc] = useState(Pic01);
@@ -91,10 +91,15 @@ function Modes(props) {
 
     return () => clearTimeout(id);
   }, [mode, users]);
-  console.log(friend);
-  useEffect(() => {
+    useEffect(() => {
     socket.on("setup", () => {
       router.push(`/game/playground/${props.theme}`);
+    });
+    socket.on("aa", (url) => {
+      console.log(url);
+    });
+    socket.on("come", (uid) => {
+      router.push(`/game/playground/${props.theme}/${uid}`);
     });
 
     return () => {
@@ -120,7 +125,7 @@ function Modes(props) {
               icon="bxs:bot"
               title="play with bot"
               onClick={() =>{
-                router.push(`/game/playground/bot/${props.theme}`);
+                router.push(`/game/playground/bot/${uuidv4()}/${props.theme}`);
               }}
             />
             <Mode
@@ -155,7 +160,7 @@ function Modes(props) {
                 ) : (
                   <>
                     {/* if no Breack point selected >> select a breck point and move to waiting friend */}
-                    {!breack ? (
+                    {breack === 0 ? (
                       <div className="flex h-full w-full flex-col items-center justify-center gap-8 text-xs sm:gap-5 sm:text-sm xl:text-base">
                         <div className="text-center text-xl font-extralight tracking-widest sm:text-2xl xl:text-3xl">
                           Break Point
@@ -168,18 +173,21 @@ function Modes(props) {
 
                         <div className="flex gap-3 sm:gap-5 xl:gap-7">
                           {[
-                            { value: "3" },
-                            { value: "5" },
-                            { value: "7" },
-                            { value: "9" },
-                          ].map((v) => {
+                            3,
+                            5,
+                            7,
+                            9,
+                          ].map((value) => {
                             return (
                               <button
                                 className="h-6 w-6 rounded-lg border text-tx05 hover:bg-tx05 hover:text-tx04 sm:h-8 sm:w-8 xl:h-10 xl:w-10"
-                                key={v.value}
-                                onClick={() => setBreack(v.value)}
+                                key={value}
+                                onClick={() =>{
+                                  setBreack(value);
+                                  socket.emit("invite", {id: friend.id, mode: props.theme, uid: uuidv4(),value });
+                                }}
                               >
-                                {v.value}
+                                {value}
                               </button>
                             );
                           })}

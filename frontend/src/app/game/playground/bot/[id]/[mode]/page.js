@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import io from "socket.io-client";
-import { DrawGame } from "../../DrawGame";
+import { DrawGame } from "../../../DrawGame";
 import { useWindowSize } from "@uidotdev/usehooks";
 import { useRouter } from "next/navigation";
 import { useSocket } from "@/hooks/useSocket";
@@ -31,7 +31,7 @@ const gameOver = () => {
     socket.emit("play.ai");
     return () => {
       // TODO: cleanup socket listeners
-      socket.emit("kill.interval");
+      // socket.emit("kill.interval");
       socket.off("game.found", getGmaeData);
       socket.off("game.over", gameOver);
     };

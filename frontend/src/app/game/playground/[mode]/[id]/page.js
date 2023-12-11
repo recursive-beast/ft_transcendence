@@ -7,7 +7,7 @@ import { useWindowSize } from "@uidotdev/usehooks";
 import { useRouter } from "next/navigation";
 import { useSocket } from "@/hooks/useSocket";
 
-function Name(){
+function Name({params}){
   const [ready, setReady] = useState(false);
   const windowSize = useWindowSize();
   const ref = useRef(null);
@@ -16,7 +16,6 @@ function Name(){
 
   const isSmallDevice = windowSize.width <= 768;
   const getGmaeData = (data) => {
-    console.log(data);
   ref.current = data;
   setReady(true);
 }
@@ -25,10 +24,9 @@ const gameOver = () => {
   router.push("/game/over");
 }
   useEffect(() => {
-    // console.log("rendered");
     socket.on("game.found", getGmaeData);
     socket.on("game.over", gameOver);
-    socket.emit("due");
+    socket.emit("in", params.id);
     socket.emit("ready");
     socket.emit("start");
     return () => {
@@ -63,7 +61,6 @@ const gameOver = () => {
 
     const handleKeyUp = (event) => {
       let direction;
-      console.log(13);
       if (event.key === "ArrowUp" && !isSmallDevice) direction = "up";
       if (event.key === "ArrowDown" && !isSmallDevice) direction = "down";
       if (event.key === "ArrowLeft" && isSmallDevice) direction = "down";
