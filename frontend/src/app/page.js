@@ -594,7 +594,7 @@ function FooterSectionHover(props) {
 }
 
 const StartButton = forwardRef(function StartButton({ onClick }, ref) {
-  const { data } = useSWR("/users/me");
+  const { data, error } = useSWR("/users/me");
 
   const className =
     "text-center text-tx01 text-xl lg:text-2xl font-extralight tracking-[4.80px] uppercase border border-tx01 rounded-full px-10 py-1 lg:px-14 lg:py-2 2xl:px-16 hover:text-tx03 hover:bg-tx01 ease-linear transition-colors duration-[400ms]  z-30 mt-10 lg:mt-48";
@@ -605,7 +605,7 @@ const StartButton = forwardRef(function StartButton({ onClick }, ref) {
         ref={ref}
         className="absolute bottom-full h-1/3 w-full bg-gradient-to-t from-bg01 via-bg01/60"
       />
-      {data ? (
+      {data && !error ? (
         <Link href="/home" className={className}>
           Start
         </Link>
