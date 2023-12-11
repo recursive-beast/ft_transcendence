@@ -45,12 +45,12 @@
 }
 
 #masked {
-	--size: 250px;
+	--size: 200px;
 }
 
 @screen lg {
 	#masked {
-		--size: 500px;
+		--size: 400px;
 	}
 }
 

@@ -69,7 +69,6 @@ function Title(props) {
 }
 
 function HeroSection({ animate, ...props }) {
-  const [on, setOn] = useState(true);
   return (
     <>
       <header className="relative mb-36 flex h-screen items-stretch">
@@ -180,22 +179,6 @@ function HeroSection({ animate, ...props }) {
                 start
               </div>
             </button>
-          </div>
-        </div>
-
-        {/* right side sound button */}
-        <div
-          className="fixed bottom-0 right-0 -mr-6 mb-20 mt-auto flex -rotate-90 space-x-2 xl:mr-1 2xl:mb-28"
-          {...props}
-        >
-          <button
-            onClick={() => setOn(!on)}
-            className=" text-xs font-medium uppercase tracking-normal text-tx02 lg:text-sm 2xl:text-base"
-          >
-            sound
-          </button>
-          <div className=" w-10 text-xs font-medium uppercase tracking-normal text-tx01 lg:text-sm 2xl:text-base">
-            {on ? "on" : "off"}
           </div>
         </div>
       </section>
@@ -316,8 +299,8 @@ function DescriptionSectionHover(props) {
 
 function Feature(props) {
   return (
-    <div className="pt-4 pb-6 border-b border-tx02 hover:bg-pr01 text-4xl font-semibold sm:text-5xl md:text-6xl 2xl:text-7xl group">
-      <MaskedLines className="first:text-tx02 last:text-tx01 group-hover:first:text-tx04 group-hover:last:text-tx04 transition-colors">
+    <div className="group border-b border-tx02 pb-6 pt-4 text-4xl font-semibold transition-colors hover:bg-pr01 sm:text-5xl md:text-6xl 2xl:text-7xl">
+      <MaskedLines className="transition-colors first:text-tx02 last:text-tx01 group-hover:first:text-tx04 group-hover:last:text-tx04">
         {props.txt1}
         <br />
         {props.txt2}
@@ -506,7 +489,7 @@ function TeamSection(props) {
   const [activeIndex, setActiveIndex] = useState(0);
 
   return (
-    <section className="mb-36">
+    <section className="mb-36" {...props}>
       <div className="mx-auto w-11/12 border-b border-tx02 pb-2  sm:w-10/12 lg:w-3/4 xl:w-8/12">
         <Title text="team" />
       </div>
@@ -575,13 +558,6 @@ function FooterSection({ hover, ...props }) {
           </div>
         </div>
       </div>
-      <div
-        className={clsx(
-          "absolute bottom-0 h-1/3  w-full bg-gradient-to-t from-bg01  via-bg01/60",
-          hover && "z-30",
-        )}
-        {...props}
-      ></div>
     </footer>
   );
 }
@@ -617,19 +593,19 @@ function FooterSectionHover(props) {
   );
 }
 
-function StartButton({ onClick, onMouseEnter, onMouseLeave }) {
-  const { data } = useSWR("/users/me");
+const StartButton = forwardRef(function StartButton({ onClick }, ref) {
+  const { data, error } = useSWR("/users/me");
 
   const className =
     "text-center text-tx01 text-xl lg:text-2xl font-extralight tracking-[4.80px] uppercase border border-tx01 rounded-full px-10 py-1 lg:px-14 lg:py-2 2xl:px-16 hover:text-tx03 hover:bg-tx01 ease-linear transition-colors duration-[400ms]  z-30 mt-10 lg:mt-48";
 
   return (
-    <div
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-      className="flex w-screen flex-col items-center justify-center bg-bg01 pb-40  lg:pb-64"
-    >
-      {data ? (
+    <div className="relative flex w-screen flex-col items-center justify-center bg-bg01 pb-40  lg:pb-64">
+      <div
+        ref={ref}
+        className="absolute bottom-full h-1/3 w-full bg-gradient-to-t from-bg01 via-bg01/60"
+      />
+      {data && !error ? (
         <Link href="/home" className={className}>
           Start
         </Link>
@@ -640,7 +616,7 @@ function StartButton({ onClick, onMouseEnter, onMouseLeave }) {
       )}
     </div>
   );
-}
+});
 
 const PressButton = forwardRef(function PressButton(props, ref) {
   function preventContextMenu(e) {
@@ -719,7 +695,7 @@ function LoginSection({ onClick, ...props }) {
       <div className="no-scrollbar relative flex h-3/5 max-h-[45rem] w-11/12 flex-col items-center justify-between overflow-auto rounded-2xl border-[1.5px] border-tx05 bg-bg01 sm:h-2/3 sm:w-[30rem]">
         <button onClick={onClick}>
           <Icon
-            className="absolute right-6 top-6 h-7 w-7 xs:h-8 xs:w-8 text-tx05"
+            className="absolute right-6 top-6 h-7 w-7 text-tx05 xs:h-8 xs:w-8"
             icon="icon-park-outline:close"
             width="36"
           />
@@ -776,17 +752,33 @@ function LoginSection({ onClick, ...props }) {
   );
 }
 
+function getDocumentTopOffset(element) {
+  const rect = element.getBoundingClientRect();
+  const scrollTop = window.scrollY || document.documentElement.scrollTop;
+
+  const offsetTop = rect.top + scrollTop;
+
+  return offsetTop;
+}
+
 export default function Home() {
   const [overlay, setOverlay] = useState(true);
   const [slideUp, setSlideUp] = useState(false);
-  const ref = useRef(null);
-  const rect = ref.current?.getBoundingClientRect() || {};
+  const pressButtonRef = useRef(null);
+  const rect = pressButtonRef.current?.getBoundingClientRect() || {};
   const [isPressed, setIsPressed] = useState(false);
   const [isHover, setIsHover] = useState(false);
   const [isHidden, setIsHidden] = useState(true);
   const mouse = useMouse();
   const [scroll] = useWindowScroll();
   const [login, setLogin] = useState(false);
+  const startButtonRef = useRef(null);
+
+  const blackBlur = startButtonRef.current;
+  let isForceHidden = false;
+
+  if (blackBlur)
+    isForceHidden = scroll.y + mouse.y > getDocumentTopOffset(blackBlur);
 
   return (
     <main
@@ -826,11 +818,7 @@ export default function Home() {
           onMouseEnter={() => setIsHidden(true)}
           onMouseLeave={() => setIsHidden(false)}
         />
-        <StartButton
-          onClick={() => setLogin(true)}
-          onMouseEnter={() => setIsHidden(true)}
-          onMouseLeave={() => setIsHidden(false)}
-        />
+        <StartButton onClick={() => setLogin(true)} ref={startButtonRef} />
         {login && (
           <LoginSection
             onClick={() => setLogin(false)}
@@ -841,7 +829,7 @@ export default function Home() {
         <Blur />
       </div>
       <PressButton
-        ref={ref}
+        ref={pressButtonRef}
         onMouseDown={() => setIsPressed(true)}
         onMouseUp={() => setIsPressed(false)}
         onTouchStart={() => setIsPressed(true)}
@@ -849,11 +837,11 @@ export default function Home() {
       />
       <motion.div
         id="masked"
-        className="bg-pr01 absolute pb-64 z-20 descendant:!text-tx04 descendant:!border-tx04"
+        className="absolute z-20 bg-pr01 pb-64 descendant:!border-tx04 descendant:!text-tx04"
         animate={{
           "--x": `${mouse.x}px`,
           "--y": `${scroll.y + mouse.y}px`,
-          "--scale": isHidden ? 0 : isHover ? 1 : 0.1,
+          "--scale": isHidden || isForceHidden ? 0 : isHover ? 1 : 0.1,
           "--scale-touch": isPressed ? 1 : 0,
         }}
         style={{
@@ -873,7 +861,10 @@ export default function Home() {
         />
         <FeaturesSection hover />
         <TechnologySection hover />
-        <TeamSection />
+        <TeamSection
+          onMouseEnter={() => setIsHidden(true)}
+          onMouseLeave={() => setIsHidden(false)}
+        />
         <FooterSectionHover
           onMouseEnter={() => setIsHover(true)}
           onMouseLeave={() => setIsHover(false)}

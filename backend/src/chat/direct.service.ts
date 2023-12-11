@@ -39,6 +39,7 @@ export class DirectService {
       throw new BadRequestException();
     }
   }
+
   async sendMessage(senderId: number, dto: DirectMessageDTO) {
     let conversation = await this.prismaService.directConversation.findFirst({
       where: {
@@ -49,7 +50,8 @@ export class DirectService {
         },
       },
     });
-
+    if (senderId === dto.recieverId)
+      throw new BadRequestException();
     if (!conversation) {
       conversation = await this.prismaService.directConversation.create({
         data: {
@@ -59,7 +61,6 @@ export class DirectService {
         },
       });
     }
-
     const message = await this.prismaService.message.create({
       data: {
         sender: { connect: { id: senderId } },
@@ -70,6 +71,20 @@ export class DirectService {
     });
 
     return MessageEntity.fromMessage(message);
+  }
+
+  async seenMessage(userId: number, dmId: number) {
+    const dm = await this.findConversation(userId, dmId);
+
+    if (dm) {
+      await this.prismaService.message.updateMany({
+        where: {
+          senderId: { not: userId },
+          directConversationId: dmId
+        },
+        data: { seen: true },
+      });
+    }
   }
 
   async findConversation(userId: number, conversationId: number) {

@@ -4,7 +4,7 @@ import clsx from "clsx";
 import Image from "next/image";
 import { Icon } from "@iconify/react";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect } from "react";
 import { useState, useRef } from "react";
 import { faker } from "@faker-js/faker";
 import useSWR from "swr";
@@ -29,6 +29,8 @@ import AvUnsto from "@/images/achievements/unsto.png";
 import AvShoot from "@/images/achievements/shoot.png";
 import { useHorizontalScroll } from "@/hooks/useHorizontalScroll";
 import { usePathname } from "next/navigation";
+import { AvatarImage } from "./AvatarImage";
+import { useSocket } from "@/hooks/useSocket";
 
 const friends = Array(50)
   .fill()
@@ -67,6 +69,16 @@ function Notif(props) {
 }
 
 export function Notificatin() {
+  const { data: notifs } = useSWR("/notifications");
+  const socket = useSocket();
+
+  useEffect(() => {
+    const update = () => mutate("/notification");
+
+    socket.on("notification", update);
+    return () => socket.off("notification", update);
+  }, []);
+
   return (
     <div className="z-10 flex justify-center sm:justify-end lg:sticky ">
       <div className="no-scrollbar absolute h-[30rem] w-full overflow-auto rounded-b-[2rem] border-y border-tx05 border-t-tx02 bg-bg01 shadow-2xl shadow-tx05/40 xs:h-[33rem] sm:w-80 sm:rounded-3xl sm:border sm:border-t-tx05">
@@ -74,85 +86,9 @@ export function Notificatin() {
           Recent Notification
         </div>
         <div className="px-2">
-          <Notif
-            pic={Pic02}
-            title="syakoubi"
-            desc="invited you to a game"
-            time="5min"
-          />
-          <Notif
-            pic={Pic02}
-            title="syakoubi"
-            desc="added you as Friend"
-            time="15min"
-          />
-          <Notif
-            pic={Pic05}
-            title="mmessaou"
-            desc="added you to the group 'zwaml'"
-            time="5min"
-          />
-          <Notif
-            pic={Pic01}
-            title="mel-hous"
-            desc="added you as Friend"
-            time="30min"
-          />
-          <Notif
-            pic={Pic03}
-            title="aait-oma"
-            desc="invited you to a game"
-            time="1h"
-          />
-          <Notif
-            pic={AvCmBack}
-            title="comeback kid"
-            desc="achievement unlocked"
-            time="15min"
-          />
-          <Notif
-            pic={Pic03}
-            title="aait-oma"
-            desc="added you as Friend"
-            time="1h"
-          />
-
-          <Notif
-            pic={Pic02}
-            title="syakoubi"
-            desc="invited you to a game"
-            time="5min"
-          />
-          <Notif
-            pic={Pic02}
-            title="syakoubi"
-            desc="added you as Friend"
-            time="15min"
-          />
-          <Notif
-            pic={Pic05}
-            title="mmessaou"
-            desc="added you to the group 'zwaml'"
-            time="5min"
-          />
-          <Notif
-            pic={Pic01}
-            title="mel-hous"
-            desc="added you as Friend"
-            time="30min"
-          />
-          <Notif
-            pic={Pic03}
-            title="aait-oma"
-            desc="invited you to a game"
-            time="1h"
-          />
-          <Notif
-            pic={AvCmBack}
-            title="comeback kid"
-            desc="achievement unlocked"
-            time="15min"
-          />
+          {/* {notifs?.map((notif, index) => {
+            return <Notif />;
+          })} */}
           <Notif
             pic={Pic03}
             title="aait-oma"
@@ -347,12 +283,18 @@ export function Rank({ index, first, ...props }) {
       >
         <Image
           className={clsx(
-            "mr-2 h-7 w-7 rounded-full object-cover xs:m-1 xs:h-10 xs:w-10  sm:mr-12 sm-h:h-12 sm-h:w-12 md-h:h-14 md-h:w-14",
+            "mr-2 h-7 w-7 rounded-full border border-tx02 object-cover p-[2px]  xs:m-1 xs:h-10 xs:w-10 sm:mr-12 sm-h:h-12 sm-h:w-12 md-h:h-14 md-h:w-14",
             first && "invisible",
           )}
           src={props.pic}
           quality={100}
         />
+        {/* <AvatarImage
+          src={user.avatar}
+          id={user.id}
+          className="mx-2 h-10 w-10"
+        /> */}
+
         <div className="w-20 text-left sm:w-28">{props.name}</div>
         <div className="w-9 text-center xs:w-11 sm:w-16">{props.rate}</div>
         <div className="w-9 text-center xs:w-11 sm:w-16">{props.games}</div>
@@ -366,17 +308,14 @@ export const status = {
   ONLINE: {
     name: "octicon:dot-fill-16",
     color: "text-[#24E5A5]",
-    border: "border-[1.5px] border-[#24E5A5]",
   },
   OFFLINE: {
     name: "octicon:dot-fill-16",
     color: "text-tx03",
-    border: "border-[1.5px] border-tx01",
   },
   INGAME: {
     name: "arcticons:gameturbo",
     color: "text-[#EB5A3A]",
-    border: "border-[1.5px] border-[#EB5A3A]",
   },
 };
 
@@ -460,12 +399,10 @@ export function Search(props) {
                   key={index}
                   className="flex cursor-pointer items-center border-b border-bg03 hover:bg-bg03"
                 >
-                  <Image
-                    className="mx-2 h-10 w-10 flex-none rounded-full border-[1.5px] border-tx02 object-cover p-[2px]"
+                  <AvatarImage
                     src={user.avatar}
-                    quality={100}
-                    width={56}
-                    height={56}
+                    id={user.id}
+                    className="mx-2 h-10 w-10"
                   />
 
                   <div
@@ -527,20 +464,15 @@ export function Friends(props) {
               <Component
                 {...componentProps}
                 key={index}
-                className={clsx(
-                  "flex w-full border-b border-tx03 p-2 hover:bg-tx03",
-                  !props.group && "cursor-pointer",
-                )}
+                className="flex w-full border-b border-tx03 p-2 hover:bg-tx03 cursor-pointer"
               >
                 {/* Flex container for avatar and name */}
                 <div className="flex flex-1 items-center">
                   {/* Avatar */}
-                  <Image
-                    className="mr-2 h-12 w-12 flex-none rounded-full border-[1.5px] border-tx02 object-cover p-[2px] xs:mr-3 xs:h-14 xs:w-14"
+                  <AvatarImage
                     src={friend.avatar}
-                    quality={100}
-                    width={56}
-                    height={56}
+                    id={friend.id}
+                    className="mr-2 h-12 w-12 xs:mr-3 xs:h-14 xs:w-14"
                   />
 
                   {/* Friend Name */}
@@ -548,9 +480,6 @@ export function Friends(props) {
                     {friend.displayName}
                   </div>
                 </div>
-
-                {/* Checkbox for friend selection */}
-                {props.group && <input className=" m-3" type="checkbox" />}
               </Component>
             );
           })}

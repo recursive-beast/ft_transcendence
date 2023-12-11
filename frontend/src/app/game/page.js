@@ -149,7 +149,7 @@ function Modes(props) {
                 </div>
 
                 <div className="w-4/5 text-center text-sm text-tx02">
-                  Find new friends by using the search bar at Home page
+                  You have no friends yet, Find new friends by using the search bar at Home page
                 </div>
               </div>
             ) : (

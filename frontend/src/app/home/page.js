@@ -14,7 +14,7 @@ import { Icon } from "@iconify/react";
 import Link from "next/link";
 import { useState } from "react";
 import clsx from "clsx";
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 
 import qrCode from "@/images/pics/qrcode.jpeg";
 //Profils
@@ -39,6 +39,8 @@ import { useHorizontalScroll } from "@/hooks/useHorizontalScroll";
 import { AvatarInput } from "@/components/AvatarInput";
 import { fetcher, fetcherRaw } from "@/common";
 import { useRouter } from "next/navigation";
+import { useSocket } from "@/hooks/useSocket";
+import { AvatarImage } from "@/components/AvatarImage";
 
 function MenuButton({ onClick, ...props }) {
   return (
@@ -57,6 +59,7 @@ function MenuButton({ onClick, ...props }) {
 function HomeMenu({ onClick }) {
   const [notif, setNotif] = useState(false);
   const router = useRouter();
+  const socket = useSocket();
 
   return (
     <div className="z-10 flex h-full flex-1 flex-col justify-between gap-2 sm:gap-3">
@@ -99,8 +102,10 @@ function HomeMenu({ onClick }) {
         <MenuButton
           icon="fluent-mdl2:navigate-back"
           title="log out"
-          onClick={async () => { 
+          onClick={async () => {
             await fetcherRaw("/auth/logout");
+            await mutate("/users/me");
+            socket.disconnect();
             router.push("/");
           }}
         />
@@ -114,17 +119,15 @@ function HomeMenu({ onClick }) {
 
 function ProfileInfo() {
   // import data
-  const { data } = useSWR("/users/me");
+  const { data: me } = useSWR("/users/me");
 
   return (
     <section className="relative my-2 flex items-center justify-between xs:my-4">
       <div className="flex items-center">
-        <Image
-          className="mr-4 h-14 w-14 rounded-full border-2 border-tx02 object-cover p-1 xs:ml-2 xs:mr-6 xs:h-20 xs:w-20 sm:ml-4 sm:mr-10 sm:h-28 sm:w-28"
-          src={data?.avatar}
-          quality={100}
-          width={56}
-          height={56}
+        <AvatarImage
+          src={me?.avatar}
+          id={me?.id}
+          className="mr-4 h-14 w-14 xs:ml-2 xs:mr-6 xs:h-20 xs:w-20 sm:ml-4 sm:mr-10 sm:h-28 sm:w-28"
         />
 
         <div className="flex flex-col">
@@ -133,7 +136,7 @@ function ProfileInfo() {
           </div>
 
           <div className="text-base font-semibold capitalize tracking-widest text-tx05 xs:text-lg sm:text-xl sm:tracking-[3px]">
-            {data?.displayName}
+            {me?.displayName}
           </div>
 
           <div className="text-[8px] font-light capitalize xs:text-xs sm:text-lg">
@@ -523,12 +526,12 @@ function SettingSection({ onClick, ...props }) {
 
                   <div className="flex flex-col items-center">
                     <div className="mb-5 flex space-x-1 xs:mb-12">
-                      <input className="h-10 w-7 rounded-lg bg-tx01 xs:h-14 xs:w-10 xs:rounded-2xl" />
-                      <input className="h-10 w-7 rounded-lg bg-tx01 xs:h-14 xs:w-10 xs:rounded-2xl" />
-                      <input className="h-10 w-7 rounded-lg bg-tx01 xs:h-14 xs:w-10 xs:rounded-2xl" />
-                      <input className="h-10 w-7 rounded-lg bg-tx01 xs:h-14 xs:w-10 xs:rounded-2xl" />
-                      <input className="h-10 w-7 rounded-lg bg-tx01 xs:h-14 xs:w-10 xs:rounded-2xl" />
-                      <input className="h-10 w-7 rounded-lg bg-tx01 xs:h-14 xs:w-10 xs:rounded-2xl" />
+                      <input className="h-10 w-7 rounded-lg border-none bg-tx01 outline-none focus:border-none xs:h-14 xs:w-10 xs:rounded-2xl" />
+                      <input className="h-10 w-7 rounded-lg border-none bg-tx01 outline-none focus:border-none xs:h-14 xs:w-10 xs:rounded-2xl" />
+                      <input className="h-10 w-7 rounded-lg border-none bg-tx01 outline-none focus:border-none xs:h-14 xs:w-10 xs:rounded-2xl" />
+                      <input className="h-10 w-7 rounded-lg border-none bg-tx01 outline-none focus:border-none xs:h-14 xs:w-10 xs:rounded-2xl" />
+                      <input className="h-10 w-7 rounded-lg border-none bg-tx01 outline-none focus:border-none xs:h-14 xs:w-10 xs:rounded-2xl" />
+                      <input className="h-10 w-7 rounded-lg border-none bg-tx01 outline-none focus:border-none xs:h-14 xs:w-10 xs:rounded-2xl" />
                     </div>
 
                     <div>
