@@ -558,13 +558,6 @@ function FooterSection({ hover, ...props }) {
           </div>
         </div>
       </div>
-      <div
-        className={clsx(
-          "absolute bottom-0 h-1/3  w-full bg-gradient-to-t from-bg01  via-bg01/60",
-          hover && "z-30",
-        )}
-        {...props}
-      ></div>
     </footer>
   );
 }
@@ -600,18 +593,18 @@ function FooterSectionHover(props) {
   );
 }
 
-function StartButton({ onClick, onMouseEnter, onMouseLeave }) {
+const StartButton = forwardRef(function StartButton({ onClick }, ref) {
   const { data } = useSWR("/users/me");
 
   const className =
     "text-center text-tx01 text-xl lg:text-2xl font-extralight tracking-[4.80px] uppercase border border-tx01 rounded-full px-10 py-1 lg:px-14 lg:py-2 2xl:px-16 hover:text-tx03 hover:bg-tx01 ease-linear transition-colors duration-[400ms]  z-30 mt-10 lg:mt-48";
 
   return (
-    <div
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-      className="flex w-screen flex-col items-center justify-center bg-bg01 pb-40  lg:pb-64"
-    >
+    <div className="relative flex w-screen flex-col items-center justify-center bg-bg01 pb-40  lg:pb-64">
+      <div
+        ref={ref}
+        className="absolute bottom-full h-1/3 w-full bg-gradient-to-t from-bg01 via-bg01/60"
+      />
       {data ? (
         <Link href="/home" className={className}>
           Start
@@ -623,7 +616,7 @@ function StartButton({ onClick, onMouseEnter, onMouseLeave }) {
       )}
     </div>
   );
-}
+});
 
 const PressButton = forwardRef(function PressButton(props, ref) {
   function preventContextMenu(e) {
@@ -759,17 +752,33 @@ function LoginSection({ onClick, ...props }) {
   );
 }
 
+function getDocumentTopOffset(element) {
+  const rect = element.getBoundingClientRect();
+  const scrollTop = window.scrollY || document.documentElement.scrollTop;
+
+  const offsetTop = rect.top + scrollTop;
+
+  return offsetTop;
+}
+
 export default function Home() {
   const [overlay, setOverlay] = useState(true);
   const [slideUp, setSlideUp] = useState(false);
-  const ref = useRef(null);
-  const rect = ref.current?.getBoundingClientRect() || {};
+  const pressButtonRef = useRef(null);
+  const rect = pressButtonRef.current?.getBoundingClientRect() || {};
   const [isPressed, setIsPressed] = useState(false);
   const [isHover, setIsHover] = useState(false);
   const [isHidden, setIsHidden] = useState(true);
   const mouse = useMouse();
   const [scroll] = useWindowScroll();
   const [login, setLogin] = useState(false);
+  const startButtonRef = useRef(null);
+
+  const blackBlur = startButtonRef.current;
+  let isForceHidden = false;
+
+  if (blackBlur)
+    isForceHidden = scroll.y + mouse.y > getDocumentTopOffset(blackBlur);
 
   return (
     <main
@@ -809,11 +818,7 @@ export default function Home() {
           onMouseEnter={() => setIsHidden(true)}
           onMouseLeave={() => setIsHidden(false)}
         />
-        <StartButton
-          onClick={() => setLogin(true)}
-          onMouseEnter={() => setIsHidden(true)}
-          onMouseLeave={() => setIsHidden(false)}
-        />
+        <StartButton onClick={() => setLogin(true)} ref={startButtonRef} />
         {login && (
           <LoginSection
             onClick={() => setLogin(false)}
@@ -824,7 +829,7 @@ export default function Home() {
         <Blur />
       </div>
       <PressButton
-        ref={ref}
+        ref={pressButtonRef}
         onMouseDown={() => setIsPressed(true)}
         onMouseUp={() => setIsPressed(false)}
         onTouchStart={() => setIsPressed(true)}
@@ -836,7 +841,7 @@ export default function Home() {
         animate={{
           "--x": `${mouse.x}px`,
           "--y": `${scroll.y + mouse.y}px`,
-          "--scale": isHidden ? 0 : isHover ? 1 : 0.1,
+          "--scale": isHidden || isForceHidden ? 0 : isHover ? 1 : 0.1,
           "--scale-touch": isPressed ? 1 : 0,
         }}
         style={{
