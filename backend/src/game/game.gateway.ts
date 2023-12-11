@@ -183,6 +183,16 @@ export class GameGateway {
   @SubscribeMessage('ready')
   playerReady(client: Socket) {
     const id = client.data.id;
+
+
+
+
+
+
+
+
+
+    
     const game = playersInGame.get(id);
     if (game) {
       if (game.player1.id === id) {

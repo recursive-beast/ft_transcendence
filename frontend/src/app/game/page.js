@@ -18,8 +18,7 @@ import { Navigation } from "swiper/modules";
 import { useRouter } from "next/navigation";
 // import { useWindowSize } from "@uidotdev/usehooks";
 // import { useRouter } from "next/navigation";
-import {v4 as uuidv4} from 'uuid';
-
+import { v4 as uuidv4 } from "uuid";
 
 import { Title, Header, Search, Friends } from "@/components/common";
 import { History } from "@/app/user/[id]/page";
@@ -37,10 +36,7 @@ import space_bg from "@/images/thems/space_bg.png";
 import jungle_bg from "@/images/thems/jungle_bg.png";
 import sahara_bg from "@/images/thems/sahara_bg.png";
 import Pic01 from "@/images/profils/01.jpg";
-
-
-
-
+import { useStatus } from "@/hooks/useStatus";
 
 function Mode({ onClick, ...props }) {
   return (
@@ -57,20 +53,22 @@ function Mode({ onClick, ...props }) {
   );
 }
 // function Rdr(){
-  
+
 //   return <div></div>;
 // }
 
 function Modes(props) {
   const { data: me } = useSWR("/users/me");
   const { data: fr } = useSWR("/users/friends");
+  const { data: users } = useSWR("/users");
   const [friend, setFriend] = useState(null);
   const [breack, setBreack] = useState(0);
   const [mode, setMode] = useState("");
-  const { data: users } = useSWR("/users");
   const [src, setSrc] = useState(Pic01);
   const router = useRouter();
   const socket = useSocket();
+  const status = useStatus(me?.id);
+  const statusfr = useStatus(fr?.id);
 
   useEffect(() => {
     if (!users || mode !== "queue") return;
@@ -91,7 +89,7 @@ function Modes(props) {
 
     return () => clearTimeout(id);
   }, [mode, users]);
-    useEffect(() => {
+  useEffect(() => {
     socket.on("setup", () => {
       router.push(`/game/playground/${props.theme}`);
     });
@@ -105,7 +103,7 @@ function Modes(props) {
     return () => {
       socket.off("game.start");
     };
-  })
+  }, []);
   return (
     <>
       {" "}
@@ -118,24 +116,25 @@ function Modes(props) {
               icon="fa6-solid:user-group"
               title="invite friend"
               onClick={() => {
-                setMode("friend")
-            }}
+                setMode("friend");
+              }}
             />
             <Mode
               icon="bxs:bot"
               title="play with bot"
-              onClick={() =>{
-                router.push(`/game/playground/bot/${uuidv4()}/${props.theme}`);
+              onClick={() => {
+                if (status !== 'INGAME')
+                    router.push(`/game/playground/bot/${uuidv4()}/${props.theme}`);
               }}
             />
             <Mode
               icon="bxs:time-five"
               title="join a queue"
-              onClick={() =>{
+              onClick={() => {
                 setMode("queue");
                 const mode2 = props.theme;
                 socket.emit("game.queue");
-            } }
+              }}
             />
           </div>
         )}
@@ -149,7 +148,8 @@ function Modes(props) {
                 </div>
 
                 <div className="w-4/5 text-center text-sm text-tx02">
-                  You have no friends yet, Find new friends by using the search bar at Home page
+                  You have no friends yet, Find new friends by using the search
+                  bar at Home page
                 </div>
               </div>
             ) : (
@@ -172,19 +172,19 @@ function Modes(props) {
                         </div>
 
                         <div className="flex gap-3 sm:gap-5 xl:gap-7">
-                          {[
-                            3,
-                            5,
-                            7,
-                            9,
-                          ].map((value) => {
+                          {[3, 5, 7, 9].map((value) => {
                             return (
                               <button
                                 className="h-6 w-6 rounded-lg border text-tx05 hover:bg-tx05 hover:text-tx04 sm:h-8 sm:w-8 xl:h-10 xl:w-10"
                                 key={value}
-                                onClick={() =>{
-                                  setBreack(value);
-                                  socket.emit("invite", {id: friend.id, mode: props.theme, uid: uuidv4(),value });
+                                onClick={() => {
+                                    setBreack(value);
+                                    socket.emit("invite", {
+                                      id: friend.id,
+                                      mode: props.theme,
+                                      uid: uuidv4(),
+                                      value,
+                                    });
                                 }}
                               >
                                 {value}
@@ -268,7 +268,6 @@ function Modes(props) {
              <rdr />
        </div>
         )} */}
-
       </div>
       <button
         onClick={() => {

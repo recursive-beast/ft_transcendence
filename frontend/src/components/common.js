@@ -31,6 +31,7 @@ import { useHorizontalScroll } from "@/hooks/useHorizontalScroll";
 import { usePathname } from "next/navigation";
 import { AvatarImage } from "./AvatarImage";
 import { useSocket } from "@/hooks/useSocket";
+import { useStatus } from "@/hooks/useStatus";
 
 const friends = Array(50)
   .fill()
@@ -423,6 +424,38 @@ export function Search(props) {
   );
 }
 
+function Friend({ friend, game }) {
+  const status = useStatus(friend.id);
+  const Component = game ? "button" : Link;
+  const componentProps = game
+    ? { onClick: () => props?.onClick(friend) }
+    : { href: `/user/${friend.id}` };
+
+  if (game && status !== "ONLINE") return null;
+
+  return (
+    <Component
+      {...componentProps}
+      className="flex w-full cursor-pointer border-b border-tx03 p-2 hover:bg-tx03"
+    >
+      {/* Flex container for avatar and name */}
+      <div className="flex flex-1 items-center">
+        {/* Avatar */}
+        <AvatarImage
+          src={friend.avatar}
+          id={friend.id}
+          className="mr-2 h-12 w-12 xs:mr-3 xs:h-14 xs:w-14"
+        />
+
+        {/* Friend Name */}
+        <div className="truncate text-sm tracking-wide xs:text-base xs:tracking-widest">
+          {friend.displayName}
+        </div>
+      </div>
+    </Component>
+  );
+}
+
 export function Friends(props) {
   const { data } = useSWR("/users/friends");
   return (
@@ -455,34 +488,9 @@ export function Friends(props) {
         </div>
       ) : (
         <>
-          {data?.map((friend, index) => {
-            const Component = props.game ? "button" : Link;
-            const componentProps = props.game
-              ? { onClick: () => props?.onClick(friend) }
-              : { href: `/user/${friend.id}` };
-            return (
-              <Component
-                {...componentProps}
-                key={index}
-                className="flex w-full border-b border-tx03 p-2 hover:bg-tx03 cursor-pointer"
-              >
-                {/* Flex container for avatar and name */}
-                <div className="flex flex-1 items-center">
-                  {/* Avatar */}
-                  <AvatarImage
-                    src={friend.avatar}
-                    id={friend.id}
-                    className="mr-2 h-12 w-12 xs:mr-3 xs:h-14 xs:w-14"
-                  />
-
-                  {/* Friend Name */}
-                  <div className="truncate text-sm tracking-wide xs:text-base xs:tracking-widest">
-                    {friend.displayName}
-                  </div>
-                </div>
-              </Component>
-            );
-          })}
+          {data?.map((friend) => (
+            <Friend friend={friend} game={props.game} key={friend.id} />
+          ))}
         </>
       )}
     </div>
