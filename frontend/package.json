@@ -20,6 +20,7 @@
     "next": "latest",
     "react": "latest",
     "react-dom": "latest",
+    "react-router-dom": "^6.20.1",
     "sass": "^1.69.3",
     "sharp": "^0.32.6",
     "socket.io-client": "^4.7.2",
@@ -27,6 +28,7 @@
     "swiper": "^11.0.5",
     "swr": "^2.2.4",
     "utf-8-validate": "^5.0.10",
+    "uuid": "^9.0.1",
     "ws": "^8.14.2"
   },
   "devDependencies": {

@@ -5,6 +5,12 @@ import { GroupMemberEntity } from './group-member.entity';
 
 export class GroupConversationEntity implements GroupConversation {
   @Expose()
+  isGroup: boolean;
+
+  @Expose()
+  isDirect: boolean;
+
+  @Expose()
   avatar: string;
 
   @Expose()

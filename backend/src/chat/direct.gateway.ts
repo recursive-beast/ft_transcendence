@@ -54,5 +54,8 @@ export class DirectGateway {
     @MessageBody(ParseIntPipe) convId: number,
   ) {
     await this.directconversationService.seenMessage(client.data.id, convId);
+    this.server
+        .in(`user-${client.data.id}`)
+        .emit('direct.message.seen');
   }
 }
