@@ -4,11 +4,11 @@ import useSWR, { mutate } from "swr";
 import Image from "next/image";
 import { Icon } from "@iconify/react";
 import { useState } from "react";
+import axios from "axios";
 
 import { Title, Header, RightBar } from "@/components/common";
 import { PlayRate, Achievement, Ranking } from "@/app/home/page";
 import { Option } from "@/app/chat/page";
-import { fetcher } from "@/common";
 
 import Pic01 from "@/images/profils/01.jpg";
 import Pic02 from "@/images/profils/02.jpg";
@@ -47,12 +47,12 @@ function ProfileInfo({ id }) {
 
   // Handle Add friend
   const addFriend = async () => {
-    const res = await fetcher(`/users/friends/${id}`, { method: "PUT" });
+    await axios.put(`/users/friends/${id}`);
     mutate(`/users/${id}`);
   };
   // Handle remove friend
   const removeFriend = async () => {
-    const res = await fetcher(`/users/friends/${id}`, { method: "DELETE" });
+    await axios.delete(`/users/friends/${id}`);
     mutate(`/users/${id}`);
   };
   return (
