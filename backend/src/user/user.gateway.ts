@@ -24,16 +24,23 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody(ParseIntPipe) id: number,
   ) {
     const sockets = await this.server.in(`user-${id}`).fetchSockets();
-    const status = sockets.length > 0 ? UserStatus.ONLINE : UserStatus.OFFLINE;
+    const isOnline = sockets.length > 0;
+    const isInGame = sockets.some((socket) =>
+      Array.from(socket.rooms).some((room) => room.startsWith('game-')),
+    );
+    const status = isInGame
+      ? UserStatus.INGAME
+      : isOnline
+      ? UserStatus.ONLINE
+      : UserStatus.OFFLINE;
 
     client.emit('user.status', { id, status });
   }
 
   async handleConnection(client: Socket) {
     const id = client.data.id;
-    const room = `user-${id}`;
 
-    await client.join(room);
+    await client.join(`user-${id}`);
     this.server.emit('user.status', { id, status: UserStatus.ONLINE });
   }
 

@@ -1,26 +1,11 @@
 "use client";
 
-import { useSocket } from "@/hooks/useSocket";
+import { useStatus } from "@/hooks/useStatus";
 import clsx from "clsx";
 import Image from "next/image";
-import { useEffect, useState } from "react";
 
 export function AvatarImage({ src, className, id }) {
-  const socket = useSocket();
-  const [status, setStatus] = useState("OFFLINE");
-
-  function update(data) {
-    if (data.id === id) setStatus(data.status);
-  }
-
-  useEffect(() => {
-    socket.on("user.status", update);
-    socket.emit("user.status", id);
-
-    return () => {
-      socket.off("user.status", update);
-    };
-  }, [id]);
+  const status = useStatus(id);
 
   return (
     <Image
