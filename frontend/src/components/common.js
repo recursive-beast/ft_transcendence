@@ -424,11 +424,11 @@ export function Search(props) {
   );
 }
 
-function Friend({ friend, game }) {
+function Friend({ friend, game, onClick }) {
   const status = useStatus(friend.id);
   const Component = game ? "button" : Link;
   const componentProps = game
-    ? { onClick: () => props?.onClick(friend) }
+    ? { onClick: () => onClick(friend) }
     : { href: `/user/${friend.id}` };
 
   if (game && status !== "ONLINE") return null;
@@ -489,7 +489,7 @@ export function Friends(props) {
       ) : (
         <>
           {data?.map((friend) => (
-            <Friend friend={friend} game={props.game} key={friend.id} />
+            <Friend friend={friend} onClick={props.onClick} game={props.game} key={friend.id} />
           ))}
         </>
       )}

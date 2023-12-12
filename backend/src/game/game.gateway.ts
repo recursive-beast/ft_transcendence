@@ -11,6 +11,7 @@ import { Server, Socket } from 'socket.io';
 interface Queue {
   id: number;
   socket: Socket;
+  mode: string;
 }
 interface player {
   id?: number;
@@ -21,6 +22,7 @@ interface player {
   score: number;
   serve: number;
   direction: 'up' | 'down' | null;
+  mode? : string;
 }
 
 interface Ball {
@@ -115,7 +117,7 @@ export class GameGateway {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   @SubscribeMessage('game.queue')
-  handleMessage(client: Socket) {
+  handleMessage(client: Socket, mode: string) {
     const id = client.data.id;
     if (queue.find((q) => q.id === id)) {
       return 'Already in queue';
@@ -134,6 +136,7 @@ export class GameGateway {
         score: 0,
         serve: 1,
         direction: null,
+        mode : toFind.mode,
       };
       const player2 = {
         id: id,
@@ -144,6 +147,7 @@ export class GameGateway {
         score: 0,
         serve: 0,
         direction: null,
+        mode: mode,
       };
       const ang = getRandomIntInclusive(-0.785398, 0.785398);
       const game: Game = {
@@ -168,10 +172,11 @@ export class GameGateway {
       playersInGame.set(player2.id, game);
       this.server.in(`user-${player1.id}`).socketsJoin(`game-${game.id}`);
       this.server.in(`user-${player2.id}`).socketsJoin(`game-${game.id}`);
-      this.server.to(`game-${game.id}`).emit('setup');
+      this.server.to(`user-${player1.id}`).emit('setup', player1.mode);
+      this.server.to(`user-${player2.id}`).emit('setup', player2 .mode);
       // return 'Game found';
     } else {
-      queue.push({ id: id, socket: client });
+      queue.push({ id: id, socket: client, mode : mode });
       return 'Added to queue';
     }
   }
@@ -316,7 +321,7 @@ export class GameGateway {
     const game = playersInGame.get(id);
     if (game) {
       this.server.in(`user-${client.data.id}`).socketsJoin(`game-${game.id}`);
-        this.server.to(`user-${game.player1.id}`).emit('come',uid);
+        this.server.to(`user-${game.player1.id}`).emit('come',{id:uid,mode:game.player1.mode});
     }
   }
 
@@ -488,6 +493,7 @@ export class GameGateway {
       score: 0,
       serve: 1,
       direction: null,
+      mode: body.mode,
     };
     const player2 = {
       id: body.id,
@@ -498,6 +504,7 @@ export class GameGateway {
       score: 0,
       serve: 0,
       direction: null,
+      mode: body.mode,
     };
     const ang = getRandomIntInclusive(-0.785398, 0.785398);
     const game: Game = {

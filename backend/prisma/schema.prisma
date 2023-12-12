@@ -41,6 +41,7 @@ model Notification {
 
 enum NotificationType {
     FRIEND_ADD
+    GAME_INVITE
 }
 
 model Message {

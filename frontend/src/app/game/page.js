@@ -89,21 +89,17 @@ function Modes(props) {
 
     return () => clearTimeout(id);
   }, [mode, users]);
-  useEffect(() => {
-    socket.on("setup", () => {
-      router.push(`/game/playground/${props.theme}`);
-    });
-    socket.on("aa", (url) => {
-      console.log(url);
-    });
-    socket.on("come", (uid) => {
-      router.push(`/game/playground/${props.theme}/${uid}`);
-    });
 
-    return () => {
-      socket.off("game.start");
-    };
-  }, []);
+  // useEffect(() => {
+  //   socket.on("setup", (mode2) => {
+  //     router.push(`/game/playground/${mode2}`);
+  //   });
+
+  //   return () => {
+  //     socket.off("setup");
+  //   };
+  // }, []);
+
   return (
     <>
       {" "}
@@ -133,7 +129,7 @@ function Modes(props) {
               onClick={() => {
                 setMode("queue");
                 const mode2 = props.theme;
-                socket.emit("game.queue");
+                socket.emit("game.queue", mode2);
               }}
             />
           </div>
@@ -319,6 +315,27 @@ function Slide(props) {
 }
 
 export default function Home({ params }) {
+  const socket = useSocket();
+  const router = useRouter();
+
+  useEffect(() => {
+    socket.on("setup", (mode2) => {
+      router.push(`/game/playground/${mode2}`);
+    });
+    socket.on("aa", (url) => {
+      console.log(url);
+    });
+    socket.on("come", (body) => {
+      router.push(`/game/playground/${body.mode}/${body.id}`);
+    });
+
+    return () => {
+      socket.off("come");
+      socket.off("aa", );
+      socket.off("setup");
+    };
+  }, []);
+
   return (
     <main className="flex h-screen max-h-screen flex-col bg-bg01 text-tx01 ">
       {/* top of the window */}
