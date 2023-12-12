@@ -15,6 +15,7 @@ import Link from "next/link";
 import { useState } from "react";
 import clsx from "clsx";
 import useSWR, { mutate } from "swr";
+import axios from "axios";
 
 import qrCode from "@/images/pics/qrcode.jpeg";
 //Profils
@@ -37,7 +38,6 @@ import AvUnsto from "@/images/achievements/unsto.png";
 import AvShoot from "@/images/achievements/shoot.png";
 import { useHorizontalScroll } from "@/hooks/useHorizontalScroll";
 import { AvatarInput } from "@/components/AvatarInput";
-import { fetcher, fetcherRaw } from "@/common";
 import { useRouter } from "next/navigation";
 import { useSocket } from "@/hooks/useSocket";
 import { AvatarImage } from "@/components/AvatarImage";
@@ -103,7 +103,7 @@ function HomeMenu({ onClick }) {
           icon="fluent-mdl2:navigate-back"
           title="log out"
           onClick={async () => {
-            await fetcherRaw("/auth/logout");
+            await axios.get("/auth/logout");
             await mutate("/users/me");
             socket.disconnect();
             router.push("/");
