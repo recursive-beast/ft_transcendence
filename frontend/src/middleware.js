@@ -5,7 +5,7 @@ import { redirect } from "./common";
 export async function middleware(request) {
   const cookie = request.cookies.get("authorization");
 
-  if (!cookie) return redirect(request, "/");
+  if (!cookie) return redirect("/");
 
   const res = await fetch(`${process.env.BACKEND_URL}/users/me`, {
     headers: {
@@ -13,7 +13,7 @@ export async function middleware(request) {
     },
   });
 
-  if (!res.ok) return redirect(request, "/");
+  if (!res.ok) return redirect("/");
 
   return NextResponse.next();
 }

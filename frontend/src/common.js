@@ -5,8 +5,8 @@ import { NextRequest, NextResponse } from "next/server";
  * @param {string} pathname
  * @returns {NextResponse}
  */
-export function redirect(request, pathname) {
-  const url = new URL(pathname, request.nextUrl.origin);
+export function redirect(pathname) {
+  const url = new URL(pathname, process.env.FRONTEND_URL);
 
   return NextResponse.redirect(url);
 }
