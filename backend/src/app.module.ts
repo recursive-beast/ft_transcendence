@@ -12,6 +12,8 @@ import { ChatModule } from './chat/chat.module';
 import { NotificationModule } from './notification/notification.module';
 import { SearchModule } from './search/search.module';
 import { UserModule } from './user/user.module';
+import { GameModule } from './game/game.module';
+import { GamelogicService } from './gamelogic/gamelogic.service';
 
 @Module({
   imports: [
@@ -41,6 +43,7 @@ import { UserModule } from './user/user.module';
     NotificationModule,
     ChatModule,
     SearchModule,
+    GameModule,
   ],
   providers: [
     providePrismaClientExceptionFilter(),
@@ -52,6 +55,7 @@ import { UserModule } from './user/user.module';
       provide: APP_PIPE,
       useValue: new ValidationPipe({ transform: true, whitelist: true }),
     },
+    GamelogicService,
   ],
 })
 export class AppModule {}

@@ -20,12 +20,7 @@ function draw(context) {
     paddle.width,
     paddle.height,
   );
-  context.fillRect(
-    width - paddle.width - 2,
-    (height - paddle.height) / 2,
-    paddle.width,
-    paddle.height,
-  );
+  context.fillRect(width - paddle.width - 2, (height - paddle.height) / 2, paddle.width, paddle.height,);
 
   context.fillRect(width - paddle.width - 2, 100, paddle.width, paddle.height);
 }

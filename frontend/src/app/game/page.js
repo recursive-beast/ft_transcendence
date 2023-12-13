@@ -2,7 +2,8 @@
 import Image from "next/image";
 import clsx from "clsx";
 import { Icon } from "@iconify/react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { useSocket } from "@/hooks/useSocket";
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
 // Import Swiper styles
@@ -12,6 +13,12 @@ import "./styles.css";
 import useSWR from "swr";
 // import required modules
 import { Navigation } from "swiper/modules";
+// import { DrawGame } from "./playground/DrawGame";
+// import { Name } from "./playground/page";
+import { useRouter } from "next/navigation";
+// import { useWindowSize } from "@uidotdev/usehooks";
+// import { useRouter } from "next/navigation";
+import { v4 as uuidv4 } from "uuid";
 
 import { Title, Header, Search, Friends } from "@/components/common";
 import { History } from "@/app/user/[id]/page";
@@ -29,6 +36,7 @@ import space_bg from "@/images/thems/space_bg.png";
 import jungle_bg from "@/images/thems/jungle_bg.png";
 import sahara_bg from "@/images/thems/sahara_bg.png";
 import Pic01 from "@/images/profils/01.jpg";
+import { useStatus } from "@/hooks/useStatus";
 
 function Mode({ onClick, ...props }) {
   return (
@@ -44,15 +52,23 @@ function Mode({ onClick, ...props }) {
     </button>
   );
 }
+// function Rdr(){
+
+//   return <div></div>;
+// }
 
 function Modes(props) {
   const { data: me } = useSWR("/users/me");
   const { data: fr } = useSWR("/users/friends");
-  const [friend, setFriend] = useState(null);
-  const [breack, setBreack] = useState("");
-  const [mode, setMode] = useState("");
   const { data: users } = useSWR("/users");
+  const [friend, setFriend] = useState(null);
+  const [breack, setBreack] = useState(0);
+  const [mode, setMode] = useState("");
   const [src, setSrc] = useState(Pic01);
+  const router = useRouter();
+  const socket = useSocket();
+  const status = useStatus(me?.id);
+  const statusfr = useStatus(fr?.id);
 
   useEffect(() => {
     if (!users || mode !== "queue") return;
@@ -74,6 +90,16 @@ function Modes(props) {
     return () => clearTimeout(id);
   }, [mode, users]);
 
+  // useEffect(() => {
+  //   socket.on("setup", (mode2) => {
+  //     router.push(`/game/playground/${mode2}`);
+  //   });
+
+  //   return () => {
+  //     socket.off("setup");
+  //   };
+  // }, []);
+
   return (
     <>
       {" "}
@@ -85,17 +111,28 @@ function Modes(props) {
             <Mode
               icon="fa6-solid:user-group"
               title="invite friend"
-              onClick={() => setMode("friend")}
+              onClick={() => {
+                setMode("friend");
+              }}
             />
             <Mode
               icon="bxs:bot"
               title="play with bot"
-              onClick={() => setMode("bot")}
+              onClick={() => {
+                if (status !== "INGAME")
+                  router.push(
+                    `/game/playground/bot/${uuidv4()}/${props.theme}`,
+                  );
+              }}
             />
             <Mode
               icon="bxs:time-five"
               title="join a queue"
-              onClick={() => setMode("queue")}
+              onClick={() => {
+                setMode("queue");
+                const mode2 = props.theme;
+                socket.emit("game.queue", mode2);
+              }}
             />
           </div>
         )}
@@ -109,7 +146,8 @@ function Modes(props) {
                 </div>
 
                 <div className="w-4/5 text-center text-sm text-tx02">
-                  You have no friends yet, Find new friends by using the search bar at Home page
+                  You have no friends yet, Find new friends by using the search
+                  bar at Home page
                 </div>
               </div>
             ) : (
@@ -120,7 +158,7 @@ function Modes(props) {
                 ) : (
                   <>
                     {/* if no Breack point selected >> select a breck point and move to waiting friend */}
-                    {!breack ? (
+                    {breack === 0 ? (
                       <div className="flex h-full w-full flex-col items-center justify-center gap-8 text-xs sm:gap-5 sm:text-sm xl:text-base">
                         <div className="text-center text-xl font-extralight tracking-widest sm:text-2xl xl:text-3xl">
                           Break Point
@@ -132,19 +170,22 @@ function Modes(props) {
                         </div>
 
                         <div className="flex gap-3 sm:gap-5 xl:gap-7">
-                          {[
-                            { value: "3" },
-                            { value: "5" },
-                            { value: "7" },
-                            { value: "9" },
-                          ].map((v) => {
+                          {[3, 5, 7, 9].map((value) => {
                             return (
                               <button
                                 className="h-6 w-6 rounded-lg border text-tx05 hover:bg-tx05 hover:text-tx04 sm:h-8 sm:w-8 xl:h-10 xl:w-10"
-                                key={v.value}
-                                onClick={() => setBreack(v.value)}
+                                key={value}
+                                onClick={() => {
+                                  setBreack(value);
+                                  socket.emit("invite", {
+                                    id: friend.id,
+                                    mode: props.theme,
+                                    uid: uuidv4(),
+                                    value,
+                                  });
+                                }}
                               >
-                                {v.value}
+                                {value}
                               </button>
                             );
                           })}
@@ -220,12 +261,18 @@ function Modes(props) {
             </div>
           </div>
         )}
+        {/* {mode === "bot" && (
+         <div className="page flex h-screen flex-col items-center justify-center text-pr01">
+             <rdr />
+       </div>
+        )} */}
       </div>
       <button
         onClick={() => {
           setMode("");
           setFriend(null);
           setBreack("");
+          socket.emit("cancel");
         }}
         className={clsx(
           "z-10 mx-auto my-2 rounded-full border border-tx05 px-4 py-1 text-center text-sm font-light uppercase tracking-wider",
@@ -263,13 +310,34 @@ function Slide(props) {
         <div className="mb-3 text-center text-xs font-extralight tracking-wide text-tx04 xs:text-sm sm:text-2xl">
           {props.des}
         </div>
-        <Modes pic={props.pic} />
+        <Modes theme={props.theme} pic={props.pic} />
       </div>
     </div>
   );
 }
 
 export default function Home({ params }) {
+  const socket = useSocket();
+  const router = useRouter();
+
+  useEffect(() => {
+    socket.on("setup", (mode2) => {
+      router.push(`/game/playground/${mode2}`);
+    });
+    socket.on("aa", (url) => {
+      console.log(url);
+    });
+    socket.on("come", (body) => {
+      router.push(`/game/playground/${body.mode}/${body.id}`);
+    });
+
+    return () => {
+      socket.off("come");
+      socket.off("aa");
+      socket.off("setup");
+    };
+  }, []);
+
   return (
     <main className="flex h-screen max-h-screen flex-col bg-bg01 text-tx01 ">
       {/* top of the window */}
@@ -303,6 +371,7 @@ export default function Home({ params }) {
 
             <SwiperSlide>
               <Slide
+                theme="classic"
                 title="classic"
                 des="Traditional Paddle Clash"
                 className="text-tx01"
@@ -313,6 +382,7 @@ export default function Home({ params }) {
 
             <SwiperSlide>
               <Slide
+                theme="beach"
                 title="beach"
                 des="Beachfront Clash Fiesta"
                 className="text-[#EAD2AC]"
@@ -323,6 +393,7 @@ export default function Home({ params }) {
 
             <SwiperSlide>
               <Slide
+                theme="snow"
                 title="snow"
                 des="Frosty Paddle Blizzard"
                 className="text-tx05"
@@ -333,6 +404,7 @@ export default function Home({ params }) {
 
             <SwiperSlide>
               <Slide
+                theme="sahara"
                 title="sahara"
                 des="Sahara Sand Paddle Duel"
                 className="text-tx02"
@@ -343,6 +415,7 @@ export default function Home({ params }) {
 
             <SwiperSlide>
               <Slide
+                theme="space"
                 title="space"
                 des="Cosmic Paddle Encounter"
                 className="text-tx05"
@@ -353,6 +426,7 @@ export default function Home({ params }) {
 
             <SwiperSlide>
               <Slide
+                theme="jungle"
                 title="jungle"
                 des="Jungle Canopy Paddle Safari"
                 className="text-[#1C4226]"
@@ -361,8 +435,6 @@ export default function Home({ params }) {
               />
             </SwiperSlide>
 
-            {/* <div className="absolute right-0 top-0 z-10 hidden h-full w-36 bg-gradient-to-l from-bg01 from-5% via-bg01/60 xl:block"></div>
-            <div className="absolute left-0 top-0 z-10 hidden h-full w-36 bg-gradient-to-r from-bg01 from-5% via-bg01/60 xl:block"></div> */}
             <button
               id="navigation-left"
               className="absolute left-2 top-1/2 z-10 -translate-y-1/2 text-tx05 disabled:text-tx02 sm:left-5 xl:left-10"

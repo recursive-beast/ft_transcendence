@@ -32,6 +32,7 @@ import { useHorizontalScroll } from "@/hooks/useHorizontalScroll";
 import { usePathname } from "next/navigation";
 import { AvatarImage } from "./AvatarImage";
 import { useSocket } from "@/hooks/useSocket";
+import { useStatus } from "@/hooks/useStatus";
 
 const friends = Array(50)
   .fill()
@@ -434,6 +435,38 @@ export function Search(props) {
   );
 }
 
+function Friend({ friend, game, onClick }) {
+  const status = useStatus(friend.id);
+  const Component = game ? "button" : Link;
+  const componentProps = game
+    ? { onClick: () => onClick(friend) }
+    : { href: `/user/${friend.id}` };
+
+  if (game && status !== "ONLINE") return null;
+
+  return (
+    <Component
+      {...componentProps}
+      className="flex w-full cursor-pointer border-b border-tx03 p-2 hover:bg-tx03"
+    >
+      {/* Flex container for avatar and name */}
+      <div className="flex flex-1 items-center">
+        {/* Avatar */}
+        <AvatarImage
+          src={friend.avatar}
+          id={friend.id}
+          className="mr-2 h-12 w-12 xs:mr-3 xs:h-14 xs:w-14"
+        />
+
+        {/* Friend Name */}
+        <div className="truncate text-sm tracking-wide xs:text-base xs:tracking-widest">
+          {friend.displayName}
+        </div>
+      </div>
+    </Component>
+  );
+}
+
 export function Friends(props) {
   const { data } = useSWR("/users/friends");
   return (
@@ -451,7 +484,6 @@ export function Friends(props) {
         </div>
       )}
 
-      {/* No Friends */}
       {data?.length === 0 ? (
         <div className="flex h-full flex-col items-center justify-center gap-6">
           <Image src={logoPic} alt="Logo of the game" className="h-52 w-52" />
@@ -461,39 +493,15 @@ export function Friends(props) {
           </div>
 
           <div className="w-4/5 text-center text-sm text-tx02">
-            Find new friends by using the search bar at the top of the page
+            You have no Friends yet, Find new friends by using the search bar at
+            the home page
           </div>
         </div>
       ) : (
         <>
-          {data?.map((friend, index) => {
-            const Component = props.game ? "button" : Link;
-            const componentProps = props.game
-              ? { onClick: () => props?.onClick(friend) }
-              : { href: `/user/${friend.id}` };
-            return (
-              <Component
-                {...componentProps}
-                key={index}
-                className="flex w-full cursor-pointer border-b border-tx03 p-2 hover:bg-tx03"
-              >
-                {/* Flex container for avatar and name */}
-                <div className="flex flex-1 items-center">
-                  {/* Avatar */}
-                  <AvatarImage
-                    src={friend.avatar}
-                    id={friend.id}
-                    className="mr-2 h-12 w-12 xs:mr-3 xs:h-14 xs:w-14"
-                  />
-
-                  {/* Friend Name */}
-                  <div className="truncate text-sm tracking-wide xs:text-base xs:tracking-widest">
-                    {friend.displayName}
-                  </div>
-                </div>
-              </Component>
-            );
-          })}
+          {data?.map((friend) => (
+            <Friend friend={friend} onClick={props.onClick} game={props.game} key={friend.id} />
+          ))}
         </>
       )}
     </div>
