@@ -325,10 +325,13 @@ function GroupInfOptions() {
         )}
       >
         {/* New Game */}
-        <Option title="new game" icon="solar:gamepad-broken" />
+        <Option title="Mute" icon="solar:muted-broken" />
 
         {/* Block */}
-        <Option title="block" icon="solar:user-block-rounded-broken" />
+        <Option title="kick" icon="ion:log-out-outline" />
+
+        {/* Block */}
+        <Option title="ban" icon="solar:user-block-rounded-broken" />
       </div>
     </div>
   );
