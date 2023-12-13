@@ -85,14 +85,14 @@ function Name() {
   return (
     <div className="flex h-screen flex-col items-center justify-center text-tx01">
       {ready && (
-        <div className="flex w-full flex-1 items-center justify-center relative">
+        <>
           {/* game over */}
           <div className="hidden absolute text-8xl top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-14
           bg-bg01/80 backdrop-blur-sm text-tx01 rounded-xl z-20">Game over</div>
 
           {/* draw canvas */}
           <DrawGame data={ref} />
-        </div>
+        </>
       )}
     </div>
   );
