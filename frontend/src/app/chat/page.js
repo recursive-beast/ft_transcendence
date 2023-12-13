@@ -791,6 +791,7 @@ function CustomizeGroup({
   title,
   password,
   passwordConfirm,
+  avatar,
 }) {
   return (
     <div className="mx-2">
@@ -809,10 +810,19 @@ function CustomizeGroup({
         {/* Set Avatar Button */}
         <AvatarInput
           onChange={onAvatarChange}
-          className="flex h-28 w-28 flex-col items-center justify-center gap-2 rounded-full border border-dashed border-tx01"
+          className="flex h-28 w-28 flex-col items-center justify-center gap-2 overflow-hidden rounded-full border border-dashed border-tx01"
         >
-          <Icon className="h-10 w-10 text-tx02" icon="solar:upload-broken" />
-          <div className="font-light tracking-wider">UPLOAD</div>
+          {avatar ? (
+            <img className="object-cover" src={URL.createObjectURL(avatar)} />
+          ) : (
+            <>
+              <Icon
+                className="h-10 w-10 text-tx02"
+                icon="solar:upload-broken"
+              />
+              <div className="font-light tracking-wider">UPLOAD</div>
+            </>
+          )}
         </AvatarInput>
 
         <div className="flex w-full flex-col space-y-6 px-5 text-xs font-light tracking-wider text-tx02 xs:space-y-8 xs:text-sm md:space-y-10">
@@ -982,6 +992,7 @@ function NewGroup({ onGroupClick, ...props }) {
           title={title}
           password={password}
           passwordConfirm={passwordConfirm}
+          avatar={avatar}
         />
       ) : (
         <div className="flex-grow">
