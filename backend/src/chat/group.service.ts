@@ -252,7 +252,12 @@ export class GroupService {
         },
       },
       include: {
-        messages: { include: { sender: true } },
+        messages: {
+          orderBy: {
+            createdAt: 'asc',
+          },
+          include: { sender: true },
+        },
         members: { include: { user: true } },
       },
     });
@@ -269,7 +274,12 @@ export class GroupService {
           },
         },
         include: {
-          messages: true,
+          messages: {
+            orderBy: {
+              createdAt: 'asc',
+            },
+            include: { sender: true },
+          },
           members: { include: { user: true } },
         },
       });

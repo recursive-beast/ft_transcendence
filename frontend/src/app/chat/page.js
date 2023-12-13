@@ -86,6 +86,15 @@ const groups = Array(10)
 function GroupMessage(props) {
   const { data: groups } = useSWR("/chat/group");
   const { data: me } = useSWR("/users/me");
+  const socket = useSocket();
+
+  useEffect(() => {
+    if (!groups) return;
+
+    for (const group of groups) {
+      socket.emit("room.join", group.id);
+    }
+  }, [groups]);
 
   return (
     <div>
@@ -524,16 +533,31 @@ function ConversationBox({ onClick, ...props }) {
   // State to control the visibility of group informations
   const [grInfo, setGrInfo] = useState(false);
 
-  const { data: data1 } = useSWR("/users/me");
+  const id = props.conversation?.id;
+  const isDirect = props.conversation?.isDirect;
+  const isGroup = props.conversation?.isGroup;
+
+  const { data: me } = useSWR("/users/me");
+  const { data: direct } = useSWR(isDirect ? `/chat/direct/${id}` : null);
+  const { data: group } = useSWR(isGroup ? `/chat/group/${id}` : null);
   const [myID, setMyId] = useState(0);
   const router = useRouter();
   const socket = useSocket();
+  const [msgInput, setMsgInput] = useState("");
 
-  if (data1 && !myID) setMyId(data1.id);
+  const conversation = isDirect ? direct : isGroup ? group : null;
+
+  if (me && !myID) setMyId(me.id);
 
   useEffect(() => {
-    const updateDirect = () => mutate("/chat/direct");
-    const updateGroup = () => mutate("/chat/group");
+    const updateDirect = () => {
+      mutate("/chat/direct");
+      mutate(`/chat/direct/${id}`);
+    };
+    const updateGroup = () => {
+      mutate("/chat/group");
+      mutate(`/chat/group/${id}`);
+    };
 
     socket.on("direct.message", updateDirect);
     socket.on("direct.message.seen", updateDirect);
@@ -544,25 +568,44 @@ function ConversationBox({ onClick, ...props }) {
       socket.off("direct.message.seen", updateDirect);
       socket.off("channel.message", updateGroup);
     };
-  }, []);
-
-  const conversation = props.conversation;
+  }, [id]);
 
   useEffect(() => {
-    if (conversation && conversation.isDirect)
-      socket.emit("join.conversation", conversation.id);
-  }, [conversation]);
+    if (isDirect) socket.emit("join.conversation", id);
+  }, [id, isDirect]);
+
+  function onMessageSend() {
+    if (isGroup) {
+      socket.emit("channel.message", {
+        groupConversationId: id,
+        text: msgInput,
+      });
+    }
+
+    if (isDirect) {
+      const recieverId = conversation.members.filter(
+        (member) => member.id !== me.id,
+      )[0].id;
+
+      socket.emit("direct.message", {
+        recieverId,
+        text: msgInput,
+      });
+    }
+
+    setMsgInput("");
+  }
 
   return (
     <div className="flex flex-1">
       {/* conversation */}
       <div
         className={clsx(
-          (!props.conversation || grInfo) && "hidden sm:flex",
+          (!conversation || grInfo) && "hidden sm:flex",
           "no-scrollbar flex h-full w-full flex-1 flex-col justify-between overflow-auto bg-bg02",
         )}
       >
-        {props.conversation ? (
+        {conversation ? (
           <div className="flex flex-1 flex-col">
             {/* Top Bar: Info */}
             <div className="sticky top-0 flex h-14 w-full items-center space-x-2 border-b bg-tx02 py-2 xs:h-16 sm:space-x-4">
@@ -587,9 +630,7 @@ function ConversationBox({ onClick, ...props }) {
                     setGrInfo(false);
                     router.push(
                       `/user/${
-                        props.conversation?.members.find(
-                          (obj) => obj.id !== myID,
-                        ).id
+                        conversation?.members.find((obj) => obj.id !== myID).id
                       }`,
                     );
                   }
@@ -599,27 +640,22 @@ function ConversationBox({ onClick, ...props }) {
                 <AvatarImage
                   src={
                     props.group
-                      ? props.conversation?.avatar
-                      : props.conversation?.members.find(
-                          (obj) => obj.id !== myID,
-                        ).avatar
+                      ? conversation?.avatar
+                      : conversation?.members.find((obj) => obj.id !== myID)
+                          .avatar
                   }
-                  id={
-                    props.conversation?.members.find((obj) => obj.id !== myID)
-                      .id
-                  }
+                  id={conversation?.members.find((obj) => obj.id !== myID).id}
                   className="my-1 mr-2 h-11 w-11 xs:h-[52px] xs:w-[52px] xs:p-[2px] lg:mr-3"
                 />
 
                 <div className="flex w-20 grow flex-col items-start">
                   {/* Full Name */}
                   <div className="w-full truncate text-left text-sm font-semibold capitalize tracking-[widest] text-tx05 xs:text-base sm:tracking-[3px]">
-                    {props.conversation &&
+                    {conversation &&
                       (props.group
-                        ? props.conversation.title
-                        : props.conversation.members.find(
-                            (obj) => obj.id != myID,
-                          ).fullName)}
+                        ? conversation.title
+                        : conversation.members.find((obj) => obj.id != myID)
+                            .fullName)}
                   </div>
 
                   <div className="text-[8px] capitalize text-tx03 xs:text-[10px] sm:text-[14px]">
@@ -649,8 +685,8 @@ function ConversationBox({ onClick, ...props }) {
 
             {/* Conversation Section */}
             <div className="flex grow flex-col justify-end">
-              {props.conversation &&
-                props.conversation.messages.map((message) => {
+              {conversation &&
+                conversation.messages.map((message) => {
                   return (
                     <div className="my-1 flex items-start">
                       {props.group && message.senderId != myID && (
@@ -703,9 +739,13 @@ function ConversationBox({ onClick, ...props }) {
 
             {/* Input Message Section */}
             <div className="sticky bottom-0 flex w-full  items-center space-x-3 bg-bg03 px-3 py-2 xs:py-3 sm:px-5">
-              <input className="h-7 flex-1 rounded-xl border-none bg-tx02 px-2 text-base outline-none focus:border-none xs:h-8 xs:text-xl lg:px-3" />
+              <input
+                value={msgInput}
+                onChange={(event) => setMsgInput(event.target.value)}
+                className="h-7 flex-1 rounded-xl border-none bg-tx02 px-2 text-base outline-none focus:border-none xs:h-8 xs:text-xl lg:px-3"
+              />
 
-              <button>
+              <button onClick={onMessageSend} disabled={msgInput.length === 0}>
                 <Icon
                   className="h-6 w-6 text-tx01 sm:h-7 sm:w-7"
                   icon="fluent:send-32-filled"
@@ -734,7 +774,7 @@ function ConversationBox({ onClick, ...props }) {
       {grInfo && props.group && (
         <GroupInfo
           onClick={() => setGrInfo(false)}
-          conversation={props.conversation}
+          conversation={conversation}
         />
       )}
     </div>
