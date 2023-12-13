@@ -15,6 +15,7 @@ import bot from "@/images/profils/bot.png";
 import Image from "next/image";
 import useSWR from "swr";
 import clsx from "clsx";
+import { Icon } from "@iconify/react";
 
 function Side(props) {
   const points = Array.from({ length: props.breakpoint }, (_, i) => i + 1);
@@ -64,6 +65,15 @@ function Scoor(props) {
   const { data: me } = useSWR("/users/me");
   return (
     <section className="my-3 flex items-baseline xs:my-5 sm:my-7 sm:items-center sm:space-x-6 xl:space-x-8">
+      {/* leave */}
+      <button className="absolute top-2 left-3 flex group space-x-2 sm:top-5 md:top-auto sm:left-5 items-center">
+        <Icon
+          className="sm:h-7 sm:w-7 w-6 h-6 lg:h-8 lg:w-8 text-tx01 group-hover:text-[#E55F61] "
+          icon="solar:arrow-left-broken"
+        />
+        <div className="hidden sm:group-hover:block font-light tracking-widest text-tx02">Leave</div>
+      </button>
+
       {/* opponent */}
       <Side name="BOT" src={bot} breakpoint={7} />
 
@@ -162,9 +172,14 @@ function Name() {
       <Scoor />
 
       {ready && (
-        <div className="relative flex flex-1 w-full items-center justify-center p-8">
-          <Image className="opacity-60 object-cover" src={beach_bg} quality={100} fill />
-          <div className="z-10 p-4 xs:p-6 sm:p-8 lg:p-10 rounded-lg bg-bg03/30 border border-tx02 backdrop-blur-sm">
+        <div className="relative flex w-full flex-1 items-center justify-center p-8">
+          <Image
+            className="object-cover opacity-60"
+            src={beach_bg}
+            quality={100}
+            fill
+          />
+          <div className="z-10 rounded-lg border border-tx02 bg-bg03/30 p-4 backdrop-blur-sm xs:p-6 sm:p-8 lg:p-10">
             <DrawGame data={ref} />
           </div>
         </div>
@@ -172,5 +187,4 @@ function Name() {
     </div>
   );
 }
-
 export default Name;
