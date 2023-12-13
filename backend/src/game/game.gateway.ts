@@ -100,7 +100,6 @@ function resetBall(game: Game, ang: number) {
 }
 const queue: Queue[] = [];
 let currentGameId = -1;
-let bootId = -1;
 
 const playersInGame = new Map<number, Game>();
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -188,16 +187,6 @@ export class GameGateway {
   @SubscribeMessage('ready')
   playerReady(client: Socket) {
     const id = client.data.id;
-
-
-
-
-
-
-
-
-
-    
     const game = playersInGame.get(id);
     if (game) {
       if (game.player1.id === id) {
@@ -230,8 +219,9 @@ export class GameGateway {
         move(game.player1);
         move(game.player2);
         if (
-          game.ball.y + game.ball.radius > table.height ||
-          game.ball.y - game.ball.radius < 0
+          (game.ball.y + game.ball.radius > table.height &&
+            game.ball.velocityY > 0) ||
+          (game.ball.y - game.ball.radius < 0 && game.ball.velocityY < 0)
         )
           game.ball.velocityY *= -1;
         let paddle =
@@ -335,7 +325,6 @@ export class GameGateway {
     if (playersInGame.get(id))
       return 'Already in game';
     const player2 = {
-      id: bootId--,
       width: 10,
       height: 150,
       x: 4,
@@ -452,11 +441,17 @@ export class GameGateway {
     if (game) {
       clearInterval(game.intervalId);
       this.server.to(`game-${game.id}`).emit('game.over', game);
-      if (game.player1.id && game.player2.id) {
+      if (game.player1.id ) {
         playersInGame.delete(game.player1.id);
-        playersInGame.delete(game.player2.id);
+        this.server.to(`game-${game.id}`).emit('game.end', game);
+        this.server.in(`user-${game.player1.id}`).socketsLeave(`game-${game.id}`);
       }
-      this.server.to(`game-${game.id}`).emit('game.end', game);
+      if (game.player2.id)
+      {
+        this.server.in(`user-${game.player2.id}`).socketsLeave(`game-${game.id}`);
+        playersInGame.delete(game.player2.id);
+
+      }
     }
   }
 
