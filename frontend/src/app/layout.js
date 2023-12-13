@@ -12,6 +12,7 @@ import clsx from "clsx";
 import { SWRConfig } from "swr";
 import axios from "axios";
 import { SocketProvider } from "@/components/SocketProvider";
+import { SnackbarProvider } from "notistack";
 
 const exa = Poppins({
   subsets: ["latin"],
@@ -37,7 +38,11 @@ export default function RootLayout({ children }) {
           <body
             className={clsx(exa.className, "no-scrollbar select-none bg-bg01")}
           >
-            {children}
+            <SnackbarProvider
+              anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+            >
+              {children}
+            </SnackbarProvider>
           </body>
         </html>
       </SWRConfig>

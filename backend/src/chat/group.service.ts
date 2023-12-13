@@ -25,7 +25,7 @@ export class GroupService {
           text: dto.text,
           groupConversation: { connect: { id: dto.groupConversationId } },
         },
-        include: { groupConversation: true },
+        include: { groupConversation: true, sender: true },
       });
       return MessageEntity.fromMessage(message);
     }
@@ -216,36 +216,32 @@ export class GroupService {
     members = [...members, ownerId];
     members = Array.from(new Set(members));
 
-    try {
-      if (!password && type === groupType.PROTECTED)
-        throw new BadRequestException();
-      if (password && type === groupType.PROTECTED)
-        password = await bcrypt.hash(password, 10);
+    if (!password && type === groupType.PROTECTED)
+      throw new BadRequestException();
+    if (password && type === groupType.PROTECTED)
+      password = await bcrypt.hash(password, 10);
 
-      const channel = await this.prismaService.groupConversation.create({
-        data: {
-          title: title,
-          type: type,
-          password: password,
-          members: {
-            createMany: {
-              data: members.map((id) => ({
-                userId: id,
-                role: id === ownerId ? roleType.OWNER : roleType.MEMBER,
-              })),
-            },
+    const channel = await this.prismaService.groupConversation.create({
+      data: {
+        title: title,
+        type: type,
+        password: password,
+        members: {
+          createMany: {
+            data: members.map((id) => ({
+              userId: id,
+              role: id === ownerId ? roleType.OWNER : roleType.MEMBER,
+            })),
           },
         },
-        include: {
-          messages: true,
-          members: { include: { user: true } },
-        },
-      });
+      },
+      include: {
+        messages: true,
+        members: { include: { user: true } },
+      },
+    });
 
-      return GroupConversationEntity.fromGroupConversation(channel);
-    } catch {
-      return null;
-    }
+    return GroupConversationEntity.fromGroupConversation(channel);
   }
 
   async findManyChannels(userId: number) {
@@ -256,7 +252,12 @@ export class GroupService {
         },
       },
       include: {
-        messages: true,
+        messages: {
+          orderBy: {
+            createdAt: 'asc',
+          },
+          include: { sender: true },
+        },
         members: { include: { user: true } },
       },
     });
@@ -273,7 +274,12 @@ export class GroupService {
           },
         },
         include: {
-          messages: true,
+          messages: {
+            orderBy: {
+              createdAt: 'asc',
+            },
+            include: { sender: true },
+          },
           members: { include: { user: true } },
         },
       });

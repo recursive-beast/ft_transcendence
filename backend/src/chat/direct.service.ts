@@ -50,8 +50,7 @@ export class DirectService {
         },
       },
     });
-    if (senderId === dto.recieverId)
-      throw new BadRequestException();
+    if (senderId === dto.recieverId) throw new BadRequestException();
     if (!conversation) {
       conversation = await this.prismaService.directConversation.create({
         data: {
@@ -80,7 +79,7 @@ export class DirectService {
       await this.prismaService.message.updateMany({
         where: {
           senderId: { not: userId },
-          directConversationId: dmId
+          directConversationId: dmId,
         },
         data: { seen: true },
       });
@@ -97,7 +96,14 @@ export class DirectService {
           },
         },
         include: {
-          messages: true,
+          messages: {
+            orderBy: {
+              createdAt: 'asc',
+            },
+            include: {
+              sender: true,
+            },
+          },
           members: true,
         },
       });
@@ -113,7 +119,11 @@ export class DirectService {
         },
       },
       include: {
-        messages: true,
+        messages: {
+          orderBy: {
+            createdAt: 'asc',
+          },
+        },
         members: true,
       },
     });
