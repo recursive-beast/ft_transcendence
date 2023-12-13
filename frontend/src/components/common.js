@@ -7,7 +7,8 @@ import Link from "next/link";
 import React, { useEffect } from "react";
 import { useState, useRef } from "react";
 import { faker } from "@faker-js/faker";
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
+import ms from "ms";
 
 import logoPic from "@/images/logos/logo.png";
 //Profils
@@ -42,29 +43,45 @@ const friends = Array(50)
     status: faker.helpers.arrayElement(["ONLINE", "OFFLINE", "INGAME"]),
   }));
 
-function Notif(props) {
+function Notif({ notification }) {
+  const { type, data, createdAt } = notification;
+  const createdAtDate = new Date(createdAt);
+
   return (
     <div className="m-3 flex items-center justify-between">
       <div className="flex items-center">
         {/* image */}
         <Image
           className="mr-4 h-12 w-12 rounded-full border border-tx05 object-cover"
-          src={props.pic}
+          src={data.user.avatar}
           quality={100}
+          width={300}
+          height={300}
         />
 
         {/* title & descriiption */}
         <div className="text-tx01">
           <div className="w-36 truncate capitalize tracking-widest xs:w-52 sm:w-40 lg:w-36">
-            {props.title}
+            {data.user.displayName}
           </div>
           <div className="w-36 truncate text-xs font-extralight xs:w-52 sm:w-40 lg:w-36">
-            {props.desc}
+            {type === "FRIEND_ADD" && "added you as Friend"}
+            {type === "GAME_INVITE" && "Invited you to a game"}
           </div>
+          {type === "GAME_INVITE" && (
+            <Link
+              className="mt-1 flex w-fit items-center rounded-lg border px-2 py-1 text-xs tracking-widest hover:bg-tx01 hover:text-tx04"
+              href={data.url}
+            >
+              join
+            </Link>
+          )}
         </div>
       </div>
       {/* time */}
-      <div className="w-8 text-center text-xs text-tx02">{props.time}</div>
+      <div className="w-8 text-center text-xs text-tx02">
+        {ms(Date.now() - createdAtDate)}
+      </div>
     </div>
   );
 }
@@ -87,15 +104,9 @@ export function Notificatin() {
           Recent Notification
         </div>
         <div className="px-2">
-          {/* {notifs?.map((notif, index) => {
-            return <Notif />;
-          })} */}
-          <Notif
-            pic={Pic03}
-            title="aait-oma"
-            desc="added you as Friend"
-            time="1h"
-          />
+          {notifs?.map((notification) => (
+            <Notif key={notification.id} notification={notification} />
+          ))}
         </div>
       </div>
     </div>
@@ -248,7 +259,7 @@ export function MenuBar(props) {
   return (
     <div className="z-10 flex justify-center sm:justify-end lg:sticky lg:items-center">
       <div
-        className="absolute h-[80vh] w-full rounded-b-[2rem] border-y border-tx05 border-t-tx02 
+        className="absolute h-[80vh] w-full rounded-b-[2rem] border-y border-tx05 border-t-tx02
     bg-bg01 px-2 py-5 shadow-2xl shadow-tx05/40 xs:px-5 sm:right-0 sm:w-96 sm:rounded-tl-[2rem] sm:border-l sm:border-t-tx05 sm:py-8"
       >
         {props.menu}
@@ -473,7 +484,6 @@ export function Friends(props) {
         </div>
       )}
 
-      {/* No Friends */}
       {data?.length === 0 ? (
         <div className="flex h-full flex-col items-center justify-center gap-6">
           <Image src={logoPic} alt="Logo of the game" className="h-52 w-52" />
@@ -483,7 +493,8 @@ export function Friends(props) {
           </div>
 
           <div className="w-4/5 text-center text-sm text-tx02">
-            Find new friends by using the search bar at the top of the page
+            You have no Friends yet, Find new friends by using the search bar at
+            the home page
           </div>
         </div>
       ) : (

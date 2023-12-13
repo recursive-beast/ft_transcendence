@@ -198,7 +198,7 @@ export const DrawGame = ({data}) => {
   }
 
   return (
-    <div className="mx-auto aspect-video-portrait max-h-screen md:aspect-video">
+    <div className="mx-auto aspect-video-portrait max-h-[70vh] md:aspect-video">
       <CanvasHorizontal />
       <CanvasVertical />
     </div>

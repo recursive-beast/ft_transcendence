@@ -5,10 +5,9 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Icon } from "@iconify/react";
-
 import useSWR, { mutate } from "swr";
-
 import { useEffect, useState, useRef } from "react";
+import * as Joi from "joi";
 
 import logoPic from "@/images/logos/logo.png";
 //Profils
@@ -42,6 +41,9 @@ import {
 import { AvatarImage } from "@/components/AvatarImage";
 import { useRouter } from "next/navigation";
 import { useSocket } from "@/hooks/useSocket";
+import axios from "axios";
+import { AvatarInput } from "@/components/AvatarInput";
+import { useSnackbar } from "notistack";
 
 faker.seed(2);
 
@@ -82,10 +84,51 @@ const groups = Array(10)
   }));
 
 function GroupMessage(props) {
-  const { data } = useSWR("/chat/group");
+  const { data: groups } = useSWR("/chat/group");
+  const { data: me } = useSWR("/users/me");
+  const socket = useSocket();
+
+  useEffect(() => {
+    if (!groups) return;
+
+    for (const group of groups) {
+      socket.emit("room.join", group.id);
+    }
+  }, [groups]);
+
   return (
     <div>
-      {data?.map((group, index) => {
+      {groups?.map((group, index) => {
+        const members = group.members.filter(
+          (member) => member.user.id !== me?.id,
+        );
+        console.log(members);
+        const avatars = members.map((member) => member.user.avatar);
+        let avatarList = [];
+
+        const two = avatars
+          .slice(0, 2)
+          .map((avatar) => (
+            <Image
+              src={avatar}
+              className="w-6 rounded-full border border-tx01 object-cover xs:w-8"
+              width={300}
+              height={300}
+            />
+          ));
+
+        avatarList = avatarList.concat(two);
+
+        if (avatars.length > 2) {
+          const count = avatars.length - 2;
+
+          avatarList.push(
+            <div className="flex h-6 w-6 items-center justify-center rounded-full border  border-tx01 bg-tx02 text-tx04 xs:h-8 xs:w-8">
+              +{count}
+            </div>,
+          );
+        }
+
         return (
           <div
             key={index}
@@ -129,32 +172,7 @@ function GroupMessage(props) {
 
             {/* div contain time end nbrMessages */}
             <div className="flex items-center justify-center -space-x-3 xs:-space-x-4 ">
-              <div>
-                <Image
-                  src={Pic05}
-                  className="w-6 rounded-full border border-tx01 object-cover xs:w-8"
-                />
-              </div>
-
-              <div>
-                <Image
-                  src={Pic01}
-                  className="w-6 rounded-full border border-tx01 object-cover xs:w-8"
-                />
-              </div>
-
-              <div>
-                {group.members === 3 ? (
-                  <Image
-                    src={Pic11}
-                    className="h-6 w-6 rounded-full border border-tx01 object-cover xs:h-8 xs:w-8"
-                  />
-                ) : (
-                  <div className="flex h-6 w-6 items-center justify-center rounded-full border  border-tx01 bg-tx02 text-tx04 xs:h-8 xs:w-8">{`+${
-                    group.members.length - 2
-                  }`}</div>
-                )}
-              </div>
+              {avatarList}
             </div>
           </div>
         );
@@ -304,8 +322,48 @@ function Options() {
   );
 }
 
+function GroupInfOptions() {
+  const [options, setOptions] = useState(false);
+  return (
+    <div>
+      <button
+        onClick={() => {
+          setOptions(!options);
+        }}
+      >
+        <Icon
+          className="mr-3 h-6 w-6 text-tx02 sm:h-7 sm:w-8"
+          icon="circum:menu-kebab"
+        />
+      </button>
+      <div
+        className={clsx(
+          "absolute right-5 top-full z-10 rounded-lg border border-tx01 bg-bg02",
+          options ? "block" : "hidden",
+        )}
+      >
+        {/* New Game */}
+        <Option title="Mute" icon="solar:muted-broken" />
+
+        {/* Block */}
+        <Option title="kick" icon="ion:log-out-outline" />
+
+        {/* Block */}
+        <Option title="ban" icon="solar:user-block-rounded-broken" />
+      </div>
+    </div>
+  );
+}
+
 function GroupInfo({ onClick, ...props }) {
   const [newTitle, setNewTitle] = useState(false);
+  // State to track the selected group type
+  const [groupType, setGroupType] = useState(props.conversation.type);
+
+  //Handles the change event when the user selects a group type.
+  const handleGroupTypeChange = (event) => {
+    setGroupType(event.target.value);
+  };
   return (
     <div className="no-scrollbar flex flex-grow flex-col overflow-auto border-tx03 bg-bg03 sm:w-1/2 sm:max-w-[25rem] sm:border-l xl:flex-none">
       {/* Header and close */}
@@ -394,7 +452,8 @@ function GroupInfo({ onClick, ...props }) {
         <div>
           <label>Group Type:</label>
           <select
-            value={props.conversation.type}
+            value={groupType}
+            onChange={handleGroupTypeChange}
             className="h-6 w-full rounded-sm border-b bg-bg03 px-1 text-tx01 xs:h-8 sm:rounded-md"
           >
             <option value="PUBLIC">PUBLIC</option>
@@ -407,15 +466,19 @@ function GroupInfo({ onClick, ...props }) {
         <div
           className={clsx(
             "flex flex-col",
-            props.conversation.type === "PROTECTED" ? "block" : "hidden",
+            groupType === "PROTECTED" ? "block" : "hidden",
           )}
           // className=
         >
-          <label>Current Password:</label>
-          <input
-            className="mb-2 h-6 w-full rounded-sm border-b border-none bg-bg03 px-1 text-tx01 outline-none focus:border-none xs:h-8 sm:rounded-md"
-            type="password"
-          ></input>
+          {props.conversation.type === "PROTECTED" && (
+            <label>Current Password:</label>
+          )}
+          {props.conversation.type === "PROTECTED" && (
+            <input
+              className="mb-2 h-6 w-full rounded-sm border-b border-none bg-bg03 px-1 text-tx01 outline-none focus:border-none xs:h-8 sm:rounded-md"
+              type="password"
+            ></input>
+          )}
 
           <label>New Password:</label>
           <input
@@ -438,12 +501,13 @@ function GroupInfo({ onClick, ...props }) {
         </div>
       </div>
 
-      {/* members */}
+      {/* members & add new*/}
       <div className=" mb-3 bg-bg02">
         <div className="mx-3 my-2 text-sm font-light tracking-wide text-tx02 xs:text-base xs:tracking-widest">
           Group -&nbsp; <span>{props.conversation.members.length}</span>
           &nbsp;Members
         </div>
+        {/* Add New Freind */}
         <div
           className="flex cursor-pointer border-b border-tx02 p-2 hover:bg-tx03"
           // onClick={() => setNewGroup(true)}
@@ -462,10 +526,11 @@ function GroupInfo({ onClick, ...props }) {
           </div>
         </div>
 
+        {/* Friends List */}
         {props.conversation.members.map((member, index) => {
           return (
             <div
-              className="flex cursor-pointer border-b border-tx02 p-2 hover:bg-tx03"
+              className="relative flex items-center border-b border-tx02 p-2 hover:bg-tx03"
               key={index}
             >
               {console.log(member.id)}
@@ -483,6 +548,9 @@ function GroupInfo({ onClick, ...props }) {
                   {member.user.displayName}
                 </div>
               </div>
+
+              {/* Options Menu */}
+              {<GroupInfOptions />}
             </div>
           );
         })}
@@ -515,16 +583,31 @@ function ConversationBox({ onClick, ...props }) {
   // State to control the visibility of group informations
   const [grInfo, setGrInfo] = useState(false);
 
-  const { data: data1 } = useSWR("/users/me");
+  const id = props.conversation?.id;
+  const isDirect = props.conversation?.isDirect;
+  const isGroup = props.conversation?.isGroup;
+
+  const { data: me } = useSWR("/users/me");
+  const { data: direct } = useSWR(isDirect ? `/chat/direct/${id}` : null);
+  const { data: group } = useSWR(isGroup ? `/chat/group/${id}` : null);
   const [myID, setMyId] = useState(0);
   const router = useRouter();
   const socket = useSocket();
+  const [msgInput, setMsgInput] = useState("");
 
-  if (data1 && !myID) setMyId(data1.id);
+  const conversation = isDirect ? direct : isGroup ? group : null;
+
+  if (me && !myID) setMyId(me.id);
 
   useEffect(() => {
-    const updateDirect = () => mutate("/chat/direct");
-    const updateGroup = () => mutate("/chat/group");
+    const updateDirect = () => {
+      mutate("/chat/direct");
+      mutate(`/chat/direct/${id}`);
+    };
+    const updateGroup = () => {
+      mutate("/chat/group");
+      mutate(`/chat/group/${id}`);
+    };
 
     socket.on("direct.message", updateDirect);
     socket.on("direct.message.seen", updateDirect);
@@ -535,25 +618,44 @@ function ConversationBox({ onClick, ...props }) {
       socket.off("direct.message.seen", updateDirect);
       socket.off("channel.message", updateGroup);
     };
-  }, []);
-
-  const conversation = props.conversation;
+  }, [id]);
 
   useEffect(() => {
-    if (conversation && conversation.isDirect)
-      socket.emit("join.conversation", conversation.id);
-  }, [conversation]);
+    if (isDirect) socket.emit("join.conversation", id);
+  }, [id, isDirect]);
+
+  function onMessageSend() {
+    if (isGroup) {
+      socket.emit("channel.message", {
+        groupConversationId: id,
+        text: msgInput,
+      });
+    }
+
+    if (isDirect) {
+      const recieverId = conversation.members.filter(
+        (member) => member.id !== me.id,
+      )[0].id;
+
+      socket.emit("direct.message", {
+        recieverId,
+        text: msgInput,
+      });
+    }
+
+    setMsgInput("");
+  }
 
   return (
     <div className="flex flex-1">
       {/* conversation */}
       <div
         className={clsx(
-          (!props.conversation || grInfo) && "hidden sm:flex",
+          (!conversation || grInfo) && "hidden sm:flex",
           "no-scrollbar flex h-full w-full flex-1 flex-col justify-between overflow-auto bg-bg02",
         )}
       >
-        {props.conversation ? (
+        {conversation ? (
           <div className="flex flex-1 flex-col">
             {/* Top Bar: Info */}
             <div className="sticky top-0 flex h-14 w-full items-center space-x-2 border-b bg-tx02 py-2 xs:h-16 sm:space-x-4">
@@ -578,9 +680,7 @@ function ConversationBox({ onClick, ...props }) {
                     setGrInfo(false);
                     router.push(
                       `/user/${
-                        props.conversation?.members.find(
-                          (obj) => obj.id !== myID,
-                        ).id
+                        conversation?.members.find((obj) => obj.id !== myID).id
                       }`,
                     );
                   }
@@ -590,27 +690,22 @@ function ConversationBox({ onClick, ...props }) {
                 <AvatarImage
                   src={
                     props.group
-                      ? props.conversation?.avatar
-                      : props.conversation?.members.find(
-                          (obj) => obj.id !== myID,
-                        ).avatar
+                      ? conversation?.avatar
+                      : conversation?.members.find((obj) => obj.id !== myID)
+                          .avatar
                   }
-                  id={
-                    props.conversation?.members.find((obj) => obj.id !== myID)
-                      .id
-                  }
+                  id={conversation?.members.find((obj) => obj.id !== myID).id}
                   className="my-1 mr-2 h-11 w-11 xs:h-[52px] xs:w-[52px] xs:p-[2px] lg:mr-3"
                 />
 
                 <div className="flex w-20 grow flex-col items-start">
                   {/* Full Name */}
                   <div className="w-full truncate text-left text-sm font-semibold capitalize tracking-[widest] text-tx05 xs:text-base sm:tracking-[3px]">
-                    {props.conversation &&
+                    {conversation &&
                       (props.group
-                        ? props.conversation.title
-                        : props.conversation.members.find(
-                            (obj) => obj.id != myID,
-                          ).fullName)}
+                        ? conversation.title
+                        : conversation.members.find((obj) => obj.id != myID)
+                            .fullName)}
                   </div>
 
                   <div className="text-[8px] capitalize text-tx03 xs:text-[10px] sm:text-[14px]">
@@ -640,14 +735,14 @@ function ConversationBox({ onClick, ...props }) {
 
             {/* Conversation Section */}
             <div className="flex grow flex-col justify-end">
-              {props.conversation &&
-                props.conversation.messages.map((message) => {
+              {conversation &&
+                conversation.messages.map((message) => {
                   return (
                     <div className="my-1 flex items-start">
-                      {props.group && !message.sent && (
+                      {props.group && message.senderId != myID && (
                         <AvatarImage
-                          src={message.avatar}
-                          id={message.id}
+                          src={message.sender.avatar}
+                          id={message.sender.id}
                           className="ml-1 h-7 w-7"
                         />
                       )}
@@ -694,9 +789,13 @@ function ConversationBox({ onClick, ...props }) {
 
             {/* Input Message Section */}
             <div className="sticky bottom-0 flex w-full  items-center space-x-3 bg-bg03 px-3 py-2 xs:py-3 sm:px-5">
-              <input className="h-7 flex-1 rounded-xl border-none bg-tx02 px-2 text-base outline-none focus:border-none xs:h-8 xs:text-xl lg:px-3" />
+              <input
+                value={msgInput}
+                onChange={(event) => setMsgInput(event.target.value)}
+                className="h-7 flex-1 rounded-xl border-none bg-tx02 px-2 text-base outline-none focus:border-none xs:h-8 xs:text-xl lg:px-3"
+              />
 
-              <button>
+              <button onClick={onMessageSend} disabled={msgInput.length === 0}>
                 <Icon
                   className="h-6 w-6 text-tx01 sm:h-7 sm:w-7"
                   icon="fluent:send-32-filled"
@@ -725,22 +824,25 @@ function ConversationBox({ onClick, ...props }) {
       {grInfo && props.group && (
         <GroupInfo
           onClick={() => setGrInfo(false)}
-          conversation={props.conversation}
+          conversation={conversation}
         />
       )}
     </div>
   );
 }
 
-function CustomizeGroup() {
-  // State to track the selected group type
-  const [groupType, setGroupType] = useState("");
-
-  //Handles the change event when the user selects a group type.
-  const handleGroupTypeChange = (event) => {
-    setGroupType(event.target.value);
-  };
-
+function CustomizeGroup({
+  onGroupTypeChange,
+  onTitleChange,
+  onPasswordChange,
+  onPasswordConfirmChange,
+  onAvatarChange,
+  groupType,
+  title,
+  password,
+  passwordConfirm,
+  avatar,
+}) {
   return (
     <div className="mx-2">
       <div className="flex h-full flex-col items-center justify-center gap-7">
@@ -756,16 +858,32 @@ function CustomizeGroup() {
         </div>
 
         {/* Set Avatar Button */}
-        <button className="flex h-28 w-28 flex-col items-center justify-center gap-2 rounded-full border border-dashed border-tx01">
-          <Icon className="h-10 w-10 text-tx02" icon="solar:upload-broken" />
-          <div className="font-light tracking-wider">UPLOAD</div>
-        </button>
+        <AvatarInput
+          onChange={onAvatarChange}
+          className="flex h-28 w-28 flex-col items-center justify-center gap-2 overflow-hidden rounded-full border border-dashed border-tx01"
+        >
+          {avatar ? (
+            <img className="object-cover" src={URL.createObjectURL(avatar)} />
+          ) : (
+            <>
+              <Icon
+                className="h-10 w-10 text-tx02"
+                icon="solar:upload-broken"
+              />
+              <div className="font-light tracking-wider">UPLOAD</div>
+            </>
+          )}
+        </AvatarInput>
 
         <div className="flex w-full flex-col space-y-6 px-5 text-xs font-light tracking-wider text-tx02 xs:space-y-8 xs:text-sm md:space-y-10">
           {/* Group Name Input */}
           <div>
             <label>Group Name:</label>
-            <input className="h-6 w-full rounded-sm border-b border-none bg-bg03 px-1 text-tx01 outline-none focus:border-none xs:h-8 sm:rounded-md"></input>
+            <input
+              onChange={(event) => onTitleChange?.(event.target.value)}
+              value={title}
+              className="h-6 w-full rounded-sm border-b border-none bg-bg03 px-1 text-tx01 outline-none focus:border-none xs:h-8 sm:rounded-md"
+            ></input>
           </div>
 
           {/* Group Type Dropdown */}
@@ -773,29 +891,35 @@ function CustomizeGroup() {
             <label>Select Group Type:</label>
             <select
               value={groupType}
-              onChange={handleGroupTypeChange}
+              onChange={(event) => onGroupTypeChange?.(event.target.value)}
               className="h-6 w-full rounded-sm border-b bg-bg03 px-1 text-tx01 xs:h-8 sm:rounded-md"
             >
-              <option value="public">Public</option>
-              <option value="private">Private</option>
-              <option value="protected">Protected</option>
+              <option value="PUBLIC">Public</option>
+              <option value="PRIVATE">Private</option>
+              <option value="PROTECTED">Protected</option>
             </select>
           </div>
 
           {/* {/* Password Input Section (visible if group type is 'protected') */}
           <div
             className={clsx(
-              groupType === "protected" ? "visible" : "invisible",
+              groupType === "PROTECTED" ? "visible" : "invisible",
             )}
           >
             <label>Password:</label>
             <input
+              onChange={(event) => onPasswordChange?.(event.target.value)}
+              value={password}
               className="mb-2 h-6 w-full rounded-sm border-b border-none bg-bg03 px-1 text-tx01 outline-none focus:border-none xs:h-8 sm:rounded-md"
               type="password"
             ></input>
 
             <label>Confirm:</label>
             <input
+              onChange={(event) =>
+                onPasswordConfirmChange?.(event.target.value)
+              }
+              value={passwordConfirm}
               className="h-6 w-full rounded-sm border-b border-none bg-bg03 px-1 text-tx01 outline-none focus:border-none xs:h-8 sm:rounded-md"
               type="password"
             ></input>
@@ -806,11 +930,66 @@ function CustomizeGroup() {
   );
 }
 
+const createGroupSchema = Joi.object({
+  groupType: Joi.string().valid("PUBLIC", "PRIVATE", "PROTECTED").required(),
+  title: Joi.string().required(),
+  password: Joi.when("groupType", {
+    is: Joi.valid("PROTECTED"),
+    then: Joi.string().required(),
+  }),
+  passwordConfirm: Joi.when("groupType", {
+    is: Joi.valid("PROTECTED"),
+    then: Joi.valid(Joi.ref("password")),
+  }),
+  avatar: Joi.invalid(null),
+});
+
 function NewGroup({ onGroupClick, ...props }) {
   // State to track the progress to the next step
   const [next, setNext] = useState(false);
-  const { data } = useSWR("/users/friends");
+  const { data: friends } = useSWR("/users/friends");
   const [selectedFriends, setSelectedFriends] = useState([]);
+
+  const [groupType, setGroupType] = useState("PUBLIC");
+  const [title, setTitle] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [avatar, setAvatar] = useState(null);
+
+  const { enqueueSnackbar } = useSnackbar();
+
+  const data = {
+    groupType,
+    title,
+    password,
+    passwordConfirm,
+    members: selectedFriends.map((friend) => friend.id),
+    avatar,
+  };
+
+  async function createGroup() {
+    const { error, value } = createGroupSchema.validate(data, {
+      allowUnknown: true,
+    });
+
+    if (error) return enqueueSnackbar("Invalid input", { variant: "error" });
+
+    const response = await axios.post("/chat/group", {
+      type: value.groupType,
+      title: value.title,
+      members: value.members,
+      password: value.password,
+    });
+
+    const formData = new FormData();
+
+    formData.append("avatar", value.avatar);
+
+    await axios.post(`/chat/group/${response.data.id}`, formData);
+    await mutate("/chat/group");
+
+    enqueueSnackbar("Success", { variant: "success" });
+  }
 
   const handleChange = (e, friend) => {
     if (e.target.checked) {
@@ -853,11 +1032,40 @@ function NewGroup({ onGroupClick, ...props }) {
       </div>
       {/* Render either CustomizeGroup or FrList based on the 'next' state */}
       {next ? (
-        <CustomizeGroup />
+        <CustomizeGroup
+          onGroupTypeChange={setGroupType}
+          onTitleChange={setTitle}
+          onPasswordChange={setPassword}
+          onPasswordConfirmChange={setPasswordConfirm}
+          onAvatarChange={setAvatar}
+          groupType={groupType}
+          title={title}
+          password={password}
+          passwordConfirm={passwordConfirm}
+          avatar={avatar}
+        />
       ) : (
         <div className="flex-grow">
+          {data?.length === 0 && (
+            <div className="flex h-full flex-col items-center justify-center gap-6">
+              <Image
+                src={logoPic}
+                alt="Logo of the game"
+                className="h-52 w-52"
+              />
+
+              <div className="text-center text-3xl font-extralight">
+                Add Friends
+              </div>
+
+              <div className="w-4/5 text-center text-sm text-tx02">
+                You have no Friends yet, Find new friends by using the search
+                bar at the home page
+              </div>
+            </div>
+          )}
           {/* Friends */}
-          {data?.map((friend, index) => {
+          {friends?.map((friend, index) => {
             return (
               <div
                 key={index}
@@ -894,7 +1102,7 @@ function NewGroup({ onGroupClick, ...props }) {
       <button
         className={`sticky bottom-5 left-[80%] flex h-11 w-11 flex-none items-center justify-center rounded-full ${
           selectedFriends.length === 0
-            ? "bg-tx02 cursor-not-allowed"
+            ? "cursor-not-allowed bg-tx02"
             : "bg-tx01"
         }`}
         disabled={selectedFriends.length === 0}
@@ -903,7 +1111,7 @@ function NewGroup({ onGroupClick, ...props }) {
             ? () => {
                 setNext(true);
               }
-            : onGroupClick
+            : () => createGroup()
         }
       >
         <Icon

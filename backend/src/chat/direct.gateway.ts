@@ -43,6 +43,9 @@ export class DirectGateway {
       this.server
         .in(`user-${dto.recieverId}`)
         .emit('direct.message', instanceToPlain(message));
+        this.server
+        .in(`user-${client.data.id}`)
+        .emit('direct.message', instanceToPlain(message));
     } catch (error) {
       throw new BadRequestException();
     }
