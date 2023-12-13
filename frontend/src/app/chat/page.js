@@ -5,10 +5,9 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Icon } from "@iconify/react";
-
 import useSWR, { mutate } from "swr";
-
 import { useEffect, useState, useRef } from "react";
+import * as Joi from "joi";
 
 import logoPic from "@/images/logos/logo.png";
 //Profils
@@ -42,6 +41,9 @@ import {
 import { AvatarImage } from "@/components/AvatarImage";
 import { useRouter } from "next/navigation";
 import { useSocket } from "@/hooks/useSocket";
+import axios from "axios";
+import { AvatarInput } from "@/components/AvatarInput";
+import { useSnackbar } from "notistack";
 
 faker.seed(2);
 
@@ -88,7 +90,9 @@ function GroupMessage(props) {
   return (
     <div>
       {groups?.map((group, index) => {
-        const members = group.members.filter((member) => member.user.id !== me?.id);
+        const members = group.members.filter(
+          (member) => member.user.id !== me?.id,
+        );
         console.log(members);
         const avatars = members.map((member) => member.user.avatar);
         let avatarList = [];
@@ -737,15 +741,17 @@ function ConversationBox({ onClick, ...props }) {
   );
 }
 
-function CustomizeGroup() {
-  // State to track the selected group type
-  const [groupType, setGroupType] = useState("");
-
-  //Handles the change event when the user selects a group type.
-  const handleGroupTypeChange = (event) => {
-    setGroupType(event.target.value);
-  };
-
+function CustomizeGroup({
+  onGroupTypeChange,
+  onTitleChange,
+  onPasswordChange,
+  onPasswordConfirmChange,
+  onAvatarChange,
+  groupType,
+  title,
+  password,
+  passwordConfirm,
+}) {
   return (
     <div className="mx-2">
       <div className="flex h-full flex-col items-center justify-center gap-7">
@@ -761,16 +767,23 @@ function CustomizeGroup() {
         </div>
 
         {/* Set Avatar Button */}
-        <button className="flex h-28 w-28 flex-col items-center justify-center gap-2 rounded-full border border-dashed border-tx01">
+        <AvatarInput
+          onChange={onAvatarChange}
+          className="flex h-28 w-28 flex-col items-center justify-center gap-2 rounded-full border border-dashed border-tx01"
+        >
           <Icon className="h-10 w-10 text-tx02" icon="solar:upload-broken" />
           <div className="font-light tracking-wider">UPLOAD</div>
-        </button>
+        </AvatarInput>
 
         <div className="flex w-full flex-col space-y-6 px-5 text-xs font-light tracking-wider text-tx02 xs:space-y-8 xs:text-sm md:space-y-10">
           {/* Group Name Input */}
           <div>
             <label>Group Name:</label>
-            <input className="h-6 w-full rounded-sm border-b border-none bg-bg03 px-1 text-tx01 outline-none focus:border-none xs:h-8 sm:rounded-md"></input>
+            <input
+              onChange={(event) => onTitleChange?.(event.target.value)}
+              value={title}
+              className="h-6 w-full rounded-sm border-b border-none bg-bg03 px-1 text-tx01 outline-none focus:border-none xs:h-8 sm:rounded-md"
+            ></input>
           </div>
 
           {/* Group Type Dropdown */}
@@ -778,29 +791,35 @@ function CustomizeGroup() {
             <label>Select Group Type:</label>
             <select
               value={groupType}
-              onChange={handleGroupTypeChange}
+              onChange={(event) => onGroupTypeChange?.(event.target.value)}
               className="h-6 w-full rounded-sm border-b bg-bg03 px-1 text-tx01 xs:h-8 sm:rounded-md"
             >
-              <option value="public">Public</option>
-              <option value="private">Private</option>
-              <option value="protected">Protected</option>
+              <option value="PUBLIC">Public</option>
+              <option value="PRIVATE">Private</option>
+              <option value="PROTECTED">Protected</option>
             </select>
           </div>
 
           {/* {/* Password Input Section (visible if group type is 'protected') */}
           <div
             className={clsx(
-              groupType === "protected" ? "visible" : "invisible",
+              groupType === "PROTECTED" ? "visible" : "invisible",
             )}
           >
             <label>Password:</label>
             <input
+              onChange={(event) => onPasswordChange?.(event.target.value)}
+              value={password}
               className="mb-2 h-6 w-full rounded-sm border-b border-none bg-bg03 px-1 text-tx01 outline-none focus:border-none xs:h-8 sm:rounded-md"
               type="password"
             ></input>
 
             <label>Confirm:</label>
             <input
+              onChange={(event) =>
+                onPasswordConfirmChange?.(event.target.value)
+              }
+              value={passwordConfirm}
               className="h-6 w-full rounded-sm border-b border-none bg-bg03 px-1 text-tx01 outline-none focus:border-none xs:h-8 sm:rounded-md"
               type="password"
             ></input>
@@ -811,11 +830,66 @@ function CustomizeGroup() {
   );
 }
 
+const createGroupSchema = Joi.object({
+  groupType: Joi.string().valid("PUBLIC", "PRIVATE", "PROTECTED").required(),
+  title: Joi.string().required(),
+  password: Joi.when("groupType", {
+    is: Joi.valid("PROTECTED"),
+    then: Joi.string().required(),
+  }),
+  passwordConfirm: Joi.when("groupType", {
+    is: Joi.valid("PROTECTED"),
+    then: Joi.valid(Joi.ref("password")),
+  }),
+  avatar: Joi.invalid(null),
+});
+
 function NewGroup({ onGroupClick, ...props }) {
   // State to track the progress to the next step
   const [next, setNext] = useState(false);
-  const { data } = useSWR("/users/friends");
+  const { data: friends } = useSWR("/users/friends");
   const [selectedFriends, setSelectedFriends] = useState([]);
+
+  const [groupType, setGroupType] = useState("PUBLIC");
+  const [title, setTitle] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [avatar, setAvatar] = useState(null);
+
+  const { enqueueSnackbar } = useSnackbar();
+
+  const data = {
+    groupType,
+    title,
+    password,
+    passwordConfirm,
+    members: selectedFriends.map((friend) => friend.id),
+    avatar,
+  };
+
+  async function createGroup() {
+    const { error, value } = createGroupSchema.validate(data, {
+      allowUnknown: true,
+    });
+
+    if (error) return enqueueSnackbar("Invalid input", { variant: "error" });
+
+    const response = await axios.post("/chat/group", {
+      type: value.groupType,
+      title: value.title,
+      members: value.members,
+      password: value.password,
+    });
+
+    const formData = new FormData();
+
+    formData.append("avatar", value.avatar);
+
+    await axios.post(`/chat/group/${response.data.id}`, formData);
+    await mutate("/chat/group");
+
+    enqueueSnackbar("Success", { variant: "success" });
+  }
 
   const handleChange = (e, friend) => {
     if (e.target.checked) {
@@ -858,11 +932,21 @@ function NewGroup({ onGroupClick, ...props }) {
       </div>
       {/* Render either CustomizeGroup or FrList based on the 'next' state */}
       {next ? (
-        <CustomizeGroup />
+        <CustomizeGroup
+          onGroupTypeChange={setGroupType}
+          onTitleChange={setTitle}
+          onPasswordChange={setPassword}
+          onPasswordConfirmChange={setPasswordConfirm}
+          onAvatarChange={setAvatar}
+          groupType={groupType}
+          title={title}
+          password={password}
+          passwordConfirm={passwordConfirm}
+        />
       ) : (
         <div className="flex-grow">
           {/* Friends */}
-          {data?.map((friend, index) => {
+          {friends?.map((friend, index) => {
             return (
               <div
                 key={index}
@@ -908,7 +992,7 @@ function NewGroup({ onGroupClick, ...props }) {
             ? () => {
                 setNext(true);
               }
-            : onGroupClick
+            : () => createGroup()
         }
       >
         <Icon

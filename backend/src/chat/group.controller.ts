@@ -26,15 +26,13 @@ export class GroupController {
 
   @Post()
   async create(@CurrentUser() user: UserEntity, @Body() dto: GroupCreateDTO) {
-    return {
-      data: await this.groupService.createChannel(
-        user.id,
-        dto.title,
-        dto.type,
-        dto.members,
-        dto.password,
-      ),
-    };
+    return this.groupService.createChannel(
+      user.id,
+      dto.title,
+      dto.type,
+      dto.members,
+      dto.password,
+    );
   }
 
   @UseInterceptors(FileInterceptor('avatar'))
@@ -43,9 +41,7 @@ export class GroupController {
     @UploadedFile(ParseFilePipe) file: Express.Multer.File,
     @Param('id', ParseIntPipe) id: number,
   ) {
-    return {
-      data: await this.groupService.setChannelAvatar(id, file),
-    };
+    return this.groupService.setChannelAvatar(id, file);
   }
 
   @Get(':id')

@@ -1,5 +1,5 @@
 import { groupType } from '@prisma/client';
-import { IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class GroupCreateDTO {
   @IsNotEmpty()
@@ -7,6 +7,7 @@ export class GroupCreateDTO {
   title: string;
 
   @IsNotEmpty()
+  @IsEnum(groupType)
   type: groupType;
 
   @IsOptional()
