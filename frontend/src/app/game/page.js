@@ -119,8 +119,10 @@ function Modes(props) {
               icon="bxs:bot"
               title="play with bot"
               onClick={() => {
-                if (status !== 'INGAME')
-                    router.push(`/game/playground/bot/${uuidv4()}/${props.theme}`);
+                if (status !== "INGAME")
+                  router.push(
+                    `/game/playground/bot/${uuidv4()}/${props.theme}`,
+                  );
               }}
             />
             <Mode
@@ -174,13 +176,13 @@ function Modes(props) {
                                 className="h-6 w-6 rounded-lg border text-tx05 hover:bg-tx05 hover:text-tx04 sm:h-8 sm:w-8 xl:h-10 xl:w-10"
                                 key={value}
                                 onClick={() => {
-                                    setBreack(value);
-                                    socket.emit("invite", {
-                                      id: friend.id,
-                                      mode: props.theme,
-                                      uid: uuidv4(),
-                                      value,
-                                    });
+                                  setBreack(value);
+                                  socket.emit("invite", {
+                                    id: friend.id,
+                                    mode: props.theme,
+                                    uid: uuidv4(),
+                                    value,
+                                  });
                                 }}
                               >
                                 {value}
@@ -331,7 +333,7 @@ export default function Home({ params }) {
 
     return () => {
       socket.off("come");
-      socket.off("aa", );
+      socket.off("aa");
       socket.off("setup");
     };
   }, []);
@@ -433,8 +435,6 @@ export default function Home({ params }) {
               />
             </SwiperSlide>
 
-            {/* <div className="absolute right-0 top-0 z-10 hidden h-full w-36 bg-gradient-to-l from-bg01 from-5% via-bg01/60 xl:block"></div>
-            <div className="absolute left-0 top-0 z-10 hidden h-full w-36 bg-gradient-to-r from-bg01 from-5% via-bg01/60 xl:block"></div> */}
             <button
               id="navigation-left"
               className="absolute left-2 top-1/2 z-10 -translate-y-1/2 text-tx05 disabled:text-tx02 sm:left-5 xl:left-10"
