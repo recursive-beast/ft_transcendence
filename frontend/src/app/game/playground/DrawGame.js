@@ -13,8 +13,6 @@ import useSWR from "swr";
 import { Icon } from "@iconify/react";
 import { useState } from "react";
 
-
-
 const height = 700;
 const width = height * (16 / 9);
 const paddle = {
@@ -247,7 +245,7 @@ export const DrawGame = ({ data }) => {
           >
             {props.name}
           </div>
-  
+
           {/* scoor */}
           <div className="flex items-center justify-between">
             {points.map((item) => (
@@ -261,7 +259,7 @@ export const DrawGame = ({ data }) => {
             ))}
           </div>
         </div>
-  
+
         {/* BOT avatar */}
         <Image
           className="w-12 flex-none rounded-full border border-tx05 object-cover sm:w-16 xl:w-20"
@@ -273,7 +271,7 @@ export const DrawGame = ({ data }) => {
       </div>
     );
   }
-  
+
   function Scoor(props) {
     const { data: me } = useSWR("/users/me");
     return (
@@ -291,10 +289,10 @@ export const DrawGame = ({ data }) => {
             Leave
           </div>
         </button>
-  
+
         {/* opponent */}
         <Side name="BOT" src={bot} breakpoint={7} points={score} />
-  
+
         {/* theme logo */}
         <Image
           className="w-14 flex-none rounded-lg border border-tx05 object-cover sm:w-20 xl:w-24"
@@ -303,7 +301,7 @@ export const DrawGame = ({ data }) => {
           width={300}
           height={300}
         />
-  
+
         {/* ME */}
         <Side
           name={me?.displayName}
@@ -317,7 +315,7 @@ export const DrawGame = ({ data }) => {
   }
 
   return (
-    <div className="flex h-screen w-full flex-col items-center overflow-hidden text-tx01">
+    <div className="flex flex-1 flex-col items-center text-tx01 overflow-hidden w-full">
       <Scoor />
 
       <div className="relative flex w-full flex-1 items-center justify-center p-8">
@@ -328,8 +326,10 @@ export const DrawGame = ({ data }) => {
           fill
         />
         <div className="z-10 rounded-lg border border-tx02 bg-bg03/30 p-4 backdrop-blur-sm xs:p-6 sm:p-8 lg:p-10">
-          <CanvasHorizontal />
-          <CanvasVertical />
+          <div className="aspect-video-portrait max-h-[60vh] md:aspect-video">
+            <CanvasHorizontal />
+            <CanvasVertical />
+          </div>
         </div>
       </div>
     </div>
