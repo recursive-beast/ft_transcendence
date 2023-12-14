@@ -37,7 +37,7 @@ export class AuthService {
   async disableOTP(id: number) {
     const updated = await this.prismaService.user.update({
       where: { id },
-      data: { otpIsEnabled: false, otpSecret: null },
+      data: { otpIsEnabled: false },
     });
 
     return UserEntity.fromUser(updated);
