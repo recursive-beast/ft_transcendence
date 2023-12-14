@@ -5,8 +5,22 @@ import { useParams } from "next/navigation";
 import clsx from "clsx";
 
 // mmessaou
-import beach from "@/images/thems/logos/sumerr.png";
+// logo's
+import classic from "@/images/thems/logos/classic.png";
+import beach from "@/images/thems/logos/beach.png";
+import snow from "@/images/thems/logos/snow.png";
+import sahara from "@/images/thems/logos/sahara.png";
+import space from "@/images/thems/logos/space.png";
+import jungle from "@/images/thems/logos/jungle.png";
+
+// backgound's
 import beach_bg from "@/images/thems/game/beach.jpg";
+import snow_bg from "@/images/thems/game/snow.jpg";
+import jungle_bg from "@/images/thems/game/jungle_.jpg";
+import classic_bg from "@/images/thems/game/classic_.jpg";
+import sahara_bg from "@/images/thems/game/sahara.jpg";
+import space_bg from "@/images/thems/game/space.jpg";
+
 import bot from "@/images/profils/bot.png";
 import Image from "next/image";
 import useSWR from "swr";
@@ -31,40 +45,64 @@ let bally = 0;
 
 const obj = {
   classic: {
-    img: "img url",
-    canvasbackground: "#262522",
-    paddleColor: "#b7ab98",
-    ballColor: "#f2937d",
-    netColor: "#625d53",
-    bordercolor: "border-[#ffffff]",
-    bgImage: beach_bg,
+    canvasbackground: "#aa8462",
+    paddleColor: "#1c6746",
+    ballColor: "#b9503d",
+    netColor: "#66442c",
+    bordercolor: "border-[#1c6746]",
+    bgPoints: "bg-[#b9503d]",
+    logoImage: classic,
+    bgImage: classic_bg,
   },
   beach: {
-    img: "img ",
-    canvasbackground: "#f0ebd8",
-    paddleColor: "#2d95b5",
-    ballColor: "#ffcc5d",
-    netColor: "#625d53",
-    bordercolor: "border-[#625d53]",
+    canvasbackground: "#d6bb9d",
+    paddleColor: "#54c5ca",
+    ballColor: "#ffd20c",
+    netColor: "#d2d2ce",
+    bordercolor: "border-[#d6bb9d]",
+    bgPoints: "bg-[#ffd20c]",
+    logoImage: beach,
     bgImage: beach_bg,
   },
   snow: {
-    img: "img ",
-    canvasbackground: "#e0fdff",
-    paddleColor: "#17816a",
-    ballColor: "#a1d0fc",
-    netColor: "#00aeb0",
-    bordercolor: "border-[#625d53]",
-    bgImage: beach_bg,
+    canvasbackground: "#f7f9fc",
+    paddleColor: "#936444",
+    ballColor: "#7ebfe1",
+    netColor: "#00AEB0",
+    bordercolor: "border-[#7ebfe1]",
+    bgPoints: "bg-[#f7f9fc]",
+    logoImage: snow,
+    bgImage: snow_bg,
+  },
+  sahara: {
+    canvasbackground: "#d18c56",
+    paddleColor: "#7d3c1e",
+    ballColor: "#e8dac2",
+    netColor: "#E0C7A7",
+    bordercolor: "border-[#d18c56]",
+    bgPoints: "bg-[#7d3c1e]",
+    logoImage: sahara,
+    bgImage: sahara_bg,
   },
   space: {
-    img: "img ",
-    paddleColor: "#7b469d",
-    canvasbackground: "#262522",
+    canvasbackground: "#000000",
+    paddleColor: "#7B469D",
     ballColor: "#ffb320",
     netColor: "#ffffff",
-    bordercolor: "border-[#625d53]",
-    bgImage: beach_bg,
+    bordercolor: "border-[#7B469D]",
+    bgPoints: "bg-[#ffb320]",
+    logoImage: space,
+    bgImage: space_bg,
+  },
+  jungle: {
+    canvasbackground: "#1F3F2B",
+    paddleColor: "#749C62",
+    ballColor: "#E9ED60",
+    netColor: "#17816A",
+    bordercolor: "border-[#17816A]",
+    bgPoints: "bg-[#749C62]",
+    logoImage: jungle,
+    bgImage: jungle_bg,
   },
 };
 
@@ -187,7 +225,7 @@ export const DrawGame = ({ data }) => {
         height={height}
         ref={ref}
         className={clsx(
-          "hidden h-full w-full overflow-hidden rounded-md border object-contain md:block",
+          "hidden h-full w-full overflow-hidden rounded-md border  md:block",
           color.bordercolor,
         )}
       />
@@ -221,7 +259,7 @@ export const DrawGame = ({ data }) => {
         height={width}
         ref={ref}
         className={clsx(
-          "h-full w-full overflow-hidden rounded-md border object-contain md:hidden",
+          "h-full w-full overflow-hidden rounded-md border md:hidden",
           color.bordercolor,
         )}
       />
@@ -252,8 +290,9 @@ export const DrawGame = ({ data }) => {
               <div
                 key={item}
                 className={clsx(
-                  "h-2 w-2 rounded-full border border-tx05 sm:h-3 sm:w-3 xl:h-4 xl:w-4",
-                  item <= props.points ? "bg-tx01" : "bg-bg03",
+                  "h-2 w-2 rounded-full border sm:h-3 sm:w-3 xl:h-4 xl:w-4",
+                  color.bordercolor,
+                  item <= props.points ? color.bgPoints : "bg-bg03",
                 )}
               />
             ))}
@@ -262,7 +301,10 @@ export const DrawGame = ({ data }) => {
 
         {/* BOT avatar */}
         <Image
-          className="w-12 flex-none rounded-full border border-tx05 object-cover sm:w-16 xl:w-20"
+          className={clsx(
+            "w-12 flex-none rounded-full border object-cover p-[3px] sm:w-16 xl:w-20",
+            color.bordercolor,
+          )}
           src={props.src}
           quality={100}
           width={300}
@@ -291,12 +333,15 @@ export const DrawGame = ({ data }) => {
         </button>
 
         {/* opponent */}
-        <Side name="BOT" src={bot} breakpoint={7} points={score} />
+        <Side name="BOT" src={bot} breakpoint={9} points={score} />
 
         {/* theme logo */}
         <Image
-          className="w-14 flex-none rounded-lg border border-tx05 object-cover sm:w-20 xl:w-24"
-          src={beach}
+          className={clsx(
+            "w-16 flex-none rounded-lg object-cover xs:w-20 sm:w-24 xl:w-28",
+            color.bordercolor,
+          )}
+          src={color.logoImage}
           quality={100}
           width={300}
           height={300}
@@ -307,7 +352,7 @@ export const DrawGame = ({ data }) => {
           name={me?.displayName}
           src={me?.avatar}
           me={true}
-          breakpoint={7}
+          breakpoint={9}
           points={myScore}
         />
       </section>
@@ -315,12 +360,12 @@ export const DrawGame = ({ data }) => {
   }
 
   return (
-    <div className="flex flex-1 flex-col items-center text-tx01 overflow-hidden w-full">
+    <div className="flex w-full flex-1 flex-col items-center overflow-hidden text-tx01">
       <Scoor />
 
       <div className="relative flex w-full flex-1 items-center justify-center p-8">
         <Image
-          className="object-cover opacity-60"
+          className="object-cover opacity-90"
           src={color.bgImage}
           quality={100}
           fill
