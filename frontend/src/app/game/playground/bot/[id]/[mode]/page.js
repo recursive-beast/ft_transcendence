@@ -91,7 +91,7 @@ function Name() {
           bg-bg01/80 backdrop-blur-sm text-tx01 rounded-xl z-20">Game over</div>
 
           {/* draw canvas */}
-          <DrawGame data={ref} />
+          <DrawGame data={ref} bot={true}/>
         </>
       )}
     </div>

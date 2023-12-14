@@ -334,7 +334,7 @@ export class GameGateway {
     const id = client.data.id;
     if (playersInGame.get(id))
       return 'Already in game';
-    const player2 = {
+    const player1 = {
       id: bootId--,
       width: 10,
       height: 150,
@@ -344,7 +344,7 @@ export class GameGateway {
       serve: 0,
       direction: null,
     };
-    const player1 = {
+    const player2 = {
       id: id,
       width: 10,
       height: 150,
@@ -373,8 +373,8 @@ export class GameGateway {
       p2ready: true,
       scoretowin: 7,
     };
-    this.server.in(`user-${player1.id}`).socketsJoin(`game-${game.id}`);
-    playersInGame.set(player1.id, game);
+    this.server.in(`user-${player2.id}`).socketsJoin(`game-${game.id}`);
+    playersInGame.set(player2.id, game);
     this.server
           .to(`game-${game.id}`)
           .emit('game.found', omit(game, ['intervalId']));
@@ -391,19 +391,19 @@ export class GameGateway {
           tap = 0;
           console.log(a);
         }
-        game.player2.y = (game.ball.y - game.player2.height / 2) * a;
-        if (game.player2.y < 0) game.player2.y = 0;
-        else if (game.player2.y + game.player2.height > table.height)
-          game.player2.y = table.height - game.player2.height;
+        game.player1.y = (game.ball.y - game.player2.height / 2) * a;
+        if (game.player1.y < 0) game.player1.y = 0;
+        else if (game.player1.y + game.player1.height > table.height)
+          game.player1.y = table.height - game.player1.height;
       }
-      move(game.player1);
+      move(game.player2);
       if (
         (game.ball.y + game.ball.radius > table.height &&
           game.ball.velocityY > 0) ||
         (game.ball.y - game.ball.radius < 0 && game.ball.velocityY < 0)
       )
         game.ball.velocityY *= -1;
-      let paddle = game.ball.x < table.width / 2 ? game.player2 : game.player1;
+      let paddle = game.ball.x < table.width / 2 ? game.player1 : game.player2;
       if (collision(game.ball, paddle)) {
         tap++;
         let interPoint =
@@ -416,7 +416,7 @@ export class GameGateway {
       } else {
         if (game.ball.x - game.ball.radius < 0) {
           player2.score++;
-          if (player2.score === 3)
+          if (player2.score === game.scoretowin)
             this.server.to(`game-${game.id}`).emit('game.over', game);
           a = 1;
           tap = 0;
@@ -424,7 +424,7 @@ export class GameGateway {
           game.ball.space = 0;
         } else if (game.ball.x + game.ball.radius > table.width) {
           player1.score++;
-          if (player1.score === 3)
+          if (player1.score === game.scoretowin)
             this.server.to(`game-${game.id}`).emit('game.over', game);
           a = 1;
           tap = 0;
