@@ -555,7 +555,7 @@ function SettingSection({ onClick, ...props }) {
                 </div>
 
                 <div className="text-justify text-[0.5rem] capitalize text-tx02 xs:text-[0.65rem] sm:text-xs lg:text-sm">
-                  to be able to authorize transactions you need to scane this QR
+                  to be able to authorize transactions you need to scan this QR
                   code with your authentication app and enter the verification
                   code below
                 </div>
@@ -584,7 +584,7 @@ function SettingSection({ onClick, ...props }) {
                     <div>
                       <Link className="mb-3" href={"../profile"}>
                         <div className="text-xl font-extralight tracking-[6px] xs:text-3xl">
-                          virify
+                          verify
                         </div>
                       </Link>
                     </div>
