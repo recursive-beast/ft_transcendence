@@ -318,13 +318,10 @@ export const DrawGame = ({ data, ...props}) => {
 
   function Scoor(props) {
     const { data: me } = useSWR("/users/me");
-<<<<<<< HEAD
-    const socket = useSocket();
-    const router = useRouter();
-=======
     const { data: user1 } = useSWR(`/users/${data.current.player1.id}`);
     const { data: user2 } = useSWR(`/users/${data.current.player2.id}`);
->>>>>>> a4c2666e558df5351d5bf2a6f049fde8595f8181
+    const socket = useSocket();
+    const router = useRouter();
     return (
       <section className="my-3 flex items-baseline xs:my-5 sm:my-7 sm:items-center sm:space-x-6 xl:space-x-8">
         {/* leave */}
