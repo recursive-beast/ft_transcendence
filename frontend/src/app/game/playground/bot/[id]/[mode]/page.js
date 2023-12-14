@@ -49,20 +49,22 @@ function Name() {
       }
 
       let direction;
+      // console.log(event.key);
+      // console.log("window.width =====",event.touches[0].screenX);
       
-      if (event.targetTouches.clientX < event.targetTouches.screenX/2)direction = "down";
       if (event.key === "ArrowUp" && !isSmallDevice) direction = "up";
       if (event.key === "ArrowDown" && !isSmallDevice) direction = "down";
       if (event.key === "ArrowLeft" && isSmallDevice) direction = "down";
       if (event.key === "ArrowRight" && isSmallDevice) direction = "up";
-
+      // if (!event.key && event.touches[0].clientX < event.touches[0].screenX/2)direction = "down";
+      
       directions.unshift(direction);
       socket.emit("game.move", direction);
     };
 
     const handleKeyUp = (event) => {
       let direction;
-      console.log(event.targetTouches);//screenX  clientX
+      // console.log(event.targetTouches);//screenX  clientX
       if (event.key === "ArrowUp" && !isSmallDevice) direction = "up";
       if (event.key === "ArrowDown" && !isSmallDevice) direction = "down";
       if (event.key === "ArrowLeft" && isSmallDevice) direction = "down";
@@ -76,8 +78,8 @@ function Name() {
 
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("keyup", handleKeyUp);
-    window.addEventListener("touchstart", handleKeyUp);
-    window.addEventListener("touchmove", handleKeyUp);
+    // window.addEventListener("touchstart", handleKeyDown);
+    // window.addEventListener("touchmove", handleKeyUp);
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);

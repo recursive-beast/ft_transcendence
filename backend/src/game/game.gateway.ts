@@ -6,6 +6,7 @@ import {
 } from '@nestjs/websockets';
 import { GatewayMetadataExplorer } from '@nestjs/websockets/gateway-metadata-explorer';
 import { omit } from 'lodash';
+// import { PrismaService } from 'nestjs-prisma';
 import { Server, Socket } from 'socket.io';
 
 interface Queue {
@@ -22,7 +23,7 @@ interface player {
   score: number;
   serve: number;
   direction: 'up' | 'down' | null;
-  mode? : string;
+  mode?: string;
 }
 
 interface Ball {
@@ -109,7 +110,10 @@ const playersInGame = new Map<number, Game>();
 export class GameGateway {
   @WebSocketServer() server: Server;
 
-  constructor(private configService: ConfigService) {}
+  constructor(
+    private configService: ConfigService,
+    // private prismaService: PrismaService,
+  ) {}
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   //     QUEUE       ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -120,9 +124,7 @@ export class GameGateway {
     const id = client.data.id;
     if (queue.find((q) => q.id === id)) {
       return 'Already in queue';
-    }
-    else if (playersInGame.get(id))
-      return 'Already in game';
+    } else if (playersInGame.get(id)) return 'Already in game';
     if (queue.length >= 1) {
       const toFind = queue[queue.length - 1];
       queue.splice(queue.indexOf(toFind), 1);
@@ -135,7 +137,7 @@ export class GameGateway {
         score: 0,
         serve: 1,
         direction: null,
-        mode : toFind.mode,
+        mode: toFind.mode,
       };
       const player2 = {
         id: id,
@@ -172,10 +174,10 @@ export class GameGateway {
       this.server.in(`user-${player1.id}`).socketsJoin(`game-${game.id}`);
       this.server.in(`user-${player2.id}`).socketsJoin(`game-${game.id}`);
       this.server.to(`user-${player1.id}`).emit('setup', player1.mode);
-      this.server.to(`user-${player2.id}`).emit('setup', player2 .mode);
+      this.server.to(`user-${player2.id}`).emit('setup', player2.mode);
       // return 'Game found';
     } else {
-      queue.push({ id: id, socket: client, mode : mode });
+      queue.push({ id: id, socket: client, mode: mode });
       return 'Added to queue';
     }
   }
@@ -311,7 +313,9 @@ export class GameGateway {
     const game = playersInGame.get(id);
     if (game) {
       this.server.in(`user-${client.data.id}`).socketsJoin(`game-${game.id}`);
-        this.server.to(`user-${game.player1.id}`).emit('come',{id:uid,mode:game.player1.mode});
+      this.server
+        .to(`user-${game.player1.id}`)
+        .emit('come', { id: uid, mode: game.player1.mode });
     }
   }
 
@@ -322,8 +326,7 @@ export class GameGateway {
   @SubscribeMessage('play.ai')
   palywithIA(client: Socket) {
     const id = client.data.id;
-    if (playersInGame.get(id))
-      return 'Already in game';
+    if (playersInGame.get(id)) return 'Already in game';
     const player2 = {
       width: 10,
       height: 150,
@@ -365,11 +368,11 @@ export class GameGateway {
     this.server.in(`user-${player1.id}`).socketsJoin(`game-${game.id}`);
     playersInGame.set(player1.id, game);
     this.server
-          .to(`game-${game.id}`)
-          .emit('game.found', omit(game, ['intervalId']));
+      .to(`game-${game.id}`)
+      .emit('game.found', omit(game, ['intervalId']));
     let a = 1;
     let tap = 0;
-
+    client.emit('user.status', {id, status:"INGAME"});
     game.intervalId = setInterval(() => {
       if (game.ball.space === 1) {
         game.ball.x += game.ball.velocityX;
@@ -422,8 +425,8 @@ export class GameGateway {
         }
       }
       this.server
-          .to(`game-${game.id}`)
-          .emit('game.found', omit(game, ['intervalId']));
+        .to(`game-${game.id}`)
+        .emit('game.found', omit(game, ['intervalId']));
     }, 1000 / 60);
     return 'Game found';
   }
@@ -438,19 +441,29 @@ export class GameGateway {
     // sockets[0]
     const id = client.data.id;
     const game = playersInGame.get(id);
+
+    // this.prismaService.win.create({
+    //   data: {
+    //     userId: 1,
+    //     gameId: 4,
+    //   }
+    // })
+
     if (game) {
       clearInterval(game.intervalId);
       this.server.to(`game-${game.id}`).emit('game.over', game);
-      if (game.player1.id ) {
+      if (game.player1.id) {
         playersInGame.delete(game.player1.id);
         this.server.to(`game-${game.id}`).emit('game.end', game);
-        this.server.in(`user-${game.player1.id}`).socketsLeave(`game-${game.id}`);
+        this.server
+          .in(`user-${game.player1.id}`)
+          .socketsLeave(`game-${game.id}`);
       }
-      if (game.player2.id)
-      {
-        this.server.in(`user-${game.player2.id}`).socketsLeave(`game-${game.id}`);
+      if (game.player2.id) {
+        this.server
+          .in(`user-${game.player2.id}`)
+          .socketsLeave(`game-${game.id}`);
         playersInGame.delete(game.player2.id);
-
       }
     }
   }
@@ -473,7 +486,10 @@ export class GameGateway {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   @SubscribeMessage('invite')
-  creatClash(client: Socket, body: {id: number, mode: string, uid: string,value: number}) {
+  creatClash(
+    client: Socket,
+    body: { id: number; mode: string; uid: string; value: number },
+  ) {
     const check = playersInGame.get(client.data.id);
     // const id = client.data.id;
     if (check) {
@@ -528,7 +544,7 @@ export class GameGateway {
     console.log(player2);
     this.server
       .to(`user-${player2.id}`)
-      .emit('aa',`${frontend_url}/game/playground/${body.mode}/${body.uid}`);
+      .emit('aa', `${frontend_url}/game/playground/${body.mode}/${body.uid}`);
     // return 'Game found';
   }
 }
