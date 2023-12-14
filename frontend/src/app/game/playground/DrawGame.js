@@ -108,7 +108,7 @@ const obj = {
   },
 };
 
-export const DrawGame = ({ data }) => {
+export const DrawGame = ({ data, ...props}) => {
   const [myScore, setMyScore] = useState(0);
   const [score, setScore] = useState(0);
   const { mode } = useParams();
@@ -269,7 +269,7 @@ export const DrawGame = ({ data }) => {
   }
 
   function Side(props) {
-    const points = Array.from({ length: props.breakpoint }, (_, i) => i + 1);
+    const points = Array.from({ length: data.current.scoretowin }, (_, i) => i + 1);
     return (
       <div
         className={clsx(
@@ -318,8 +318,13 @@ export const DrawGame = ({ data }) => {
 
   function Scoor(props) {
     const { data: me } = useSWR("/users/me");
+<<<<<<< HEAD
     const socket = useSocket();
     const router = useRouter();
+=======
+    const { data: user1 } = useSWR(`/users/${data.current.player1.id}`);
+    const { data: user2 } = useSWR(`/users/${data.current.player2.id}`);
+>>>>>>> a4c2666e558df5351d5bf2a6f049fde8595f8181
     return (
       <section className="my-3 flex items-baseline xs:my-5 sm:my-7 sm:items-center sm:space-x-6 xl:space-x-8">
         {/* leave */}
@@ -340,7 +345,11 @@ export const DrawGame = ({ data }) => {
         </button>
 
         {/* opponent */}
-        <Side name="BOT" src={bot} breakpoint={9} points={score} />
+        {props.bot ? (
+          <Side name="BOT" src={bot} points={score} />
+        ) : (
+          <Side name={user1?.displayName} src={user1?.avatar} points={score} />
+        )}
 
         {/* theme logo */}
         <Image
@@ -356,10 +365,9 @@ export const DrawGame = ({ data }) => {
 
         {/* ME */}
         <Side
-          name={me?.displayName}
-          src={me?.avatar}
+          name={user2?.displayName}
+          src={user2?.avatar}
           me={true}
-          breakpoint={9}
           points={myScore}
         />
       </section>
@@ -368,7 +376,7 @@ export const DrawGame = ({ data }) => {
 
   return (
     <div className="flex w-full flex-1 flex-col items-center overflow-hidden text-tx01">
-      <Scoor />
+      <Scoor bot={props.bot}/>
 
       <div className="relative flex w-full flex-1 items-center justify-center p-8">
         <Image
