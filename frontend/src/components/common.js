@@ -507,3 +507,33 @@ export function Friends(props) {
     </div>
   );
 }
+
+export function OTPInput({ onChange, fullValue, index, className }) {
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const indexToFocus = Math.max(0, fullValue.length - 1);
+
+    if (indexToFocus === index) ref.current.focus();
+  }, [fullValue, index]);
+
+  function onInputChange(event) {
+    const updated = event.target.value;
+    const left = fullValue.substring(0, index);
+    const right = fullValue.substring(index + 1);
+    let result = left + updated + right;
+
+    result = result.replace(/\D+/g, "");
+
+    if (result.length <= 6) onChange(result);
+  }
+
+  return (
+    <input
+      ref={ref}
+      onChange={onInputChange}
+      value={fullValue[index] || ""}
+      className={className}
+    />
+  );
+}

@@ -102,7 +102,6 @@ function GroupMessage(props) {
         const members = group.members.filter(
           (member) => member.user.id !== me?.id,
         );
-        console.log(members);
         const avatars = members.map((member) => member.user.avatar);
         let avatarList = [];
 
@@ -322,8 +321,33 @@ function Options() {
   );
 }
 
-function GroupInfOptions() {
+function GroupInfOptions({ member, memberMe, conversation }) {
   const [options, setOptions] = useState(false);
+  const socket = useSocket();
+
+  function onBanClick() {
+    socket.emit("channel.ban", {
+      channelId: conversation.id,
+      userId: member.user.id,
+    });
+  }
+  function onMuteClick() {
+    socket.emit("channel.mute", {
+      channelId: conversation.id,
+      userId: member.user.id,
+    });
+  }
+  function onKickClick() {
+    socket.emit("channel.kick", {
+      channelId: conversation.id,
+      userId: member.user.id,
+    });
+  }
+
+  if (memberMe.id === member.id) return null;
+  if (memberMe.role === "MEMBER") return null;
+  if (memberMe.role === "ADMIN" && member.role !== "MEMBER") return null;
+
   return (
     <div>
       <button
@@ -342,28 +366,58 @@ function GroupInfOptions() {
           options ? "block" : "hidden",
         )}
       >
-        {/* New Game */}
-        <Option title="Mute" icon="solar:muted-broken" />
+        {/* Mute */}
+        <Option title="Mute" icon="solar:muted-broken" onClick={onMuteClick} />
+
+        {/* Kick */}
+        <Option title="kick" icon="ion:log-out-outline" onClick={onKickClick} />
 
         {/* Block */}
-        <Option title="kick" icon="ion:log-out-outline" />
-
-        {/* Block */}
-        <Option title="ban" icon="solar:user-block-rounded-broken" />
+        <Option
+          title="ban"
+          icon="solar:user-block-rounded-broken"
+          onClick={onBanClick}
+        />
       </div>
     </div>
   );
 }
 
-function GroupInfo({ onClick, ...props }) {
+function GroupInfo({ onClick, conversation, ...props }) {
   const [newTitle, setNewTitle] = useState(false);
+  const [title, setTitle] = useState(conversation.title);
   // State to track the selected group type
-  const [groupType, setGroupType] = useState(props.conversation.type);
+  const [groupType, setGroupType] = useState(conversation?.type);
+  const { data: me } = useSWR("/users/me");
 
   //Handles the change event when the user selects a group type.
   const handleGroupTypeChange = (event) => {
     setGroupType(event.target.value);
   };
+
+  const members = conversation.members;
+  const memberMe = members.find((member) => member.user.id === me.id);
+  const socket = useSocket();
+
+  function onExitClick() {
+    socket.emit("channel.leave", conversation.id);
+  }
+
+  function onSetNewTitle() {
+    socket.emit("channel.title", {
+      channelId: conversation.id,
+      newTitle: title,
+    });
+  }
+
+  async function onAvatarChange(avatar) {
+    const id = conversation.id;
+
+    await axios.postForm(`/chat/group/${id}`, { avatar });
+    mutate("/chat/group");
+    mutate(`/chat/group/${id}`);
+  }
+
   return (
     <div className="no-scrollbar flex flex-grow flex-col overflow-auto border-tx03 bg-bg03 sm:w-1/2 sm:max-w-[25rem] sm:border-l xl:flex-none">
       {/* Header and close */}
@@ -391,14 +445,15 @@ function GroupInfo({ onClick, ...props }) {
         <div className="relative flex items-center justify-center">
           <Image
             className="w-1/3 flex-none rounded-full sm:w-2/5"
-            src={props.conversation.avatar}
+            src={conversation.avatar}
             quality={100}
             width={56}
             height={56}
           />
 
           {/* Set Avatar Button */}
-          <button
+          <AvatarInput
+            onChange={onAvatarChange}
             className="absolute flex h-full w-1/3 flex-col items-center justify-center gap-2 rounded-full border border-dashed border-tx01
            opacity-0 hover:bg-bg02/80 hover:opacity-100 sm:w-2/5 touch:bg-bg02/80 touch:opacity-100"
           >
@@ -406,7 +461,7 @@ function GroupInfo({ onClick, ...props }) {
             <div className="text-[9px] font-light tracking-wider xs:text-xs sm:text-sm">
               UPLOAD NEW
             </div>
-          </button>
+          </AvatarInput>
         </div>
 
         {/* title */}
@@ -414,11 +469,17 @@ function GroupInfo({ onClick, ...props }) {
           <div className="relative mx-3 flex items-end justify-center gap-2 border-b-2 sm:mx-5">
             <input
               className="w-full border-none bg-bg02 outline-none focus:border-none"
-              value={props.conversation.title}
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
             />
 
             {/* Set Avatar Button */}
-            <button onClick={() => setNewTitle(false)}>
+            <button
+              onClick={() => {
+                onSetNewTitle();
+                setNewTitle(false);
+              }}
+            >
               <Icon
                 className="h-5 w-5 text-tx02 xs:h-6 xs:w-6"
                 icon="solar:check-read-broken"
@@ -427,9 +488,7 @@ function GroupInfo({ onClick, ...props }) {
           </div>
         ) : (
           <div className="relative flex items-end justify-center gap-2">
-            <div className="text-base xs:text-lg">
-              {props.conversation.title}
-            </div>
+            <div className="text-base xs:text-lg">{conversation.title}</div>
 
             {/* Set Avatar Button */}
             <button onClick={() => setNewTitle(true)}>
@@ -443,7 +502,7 @@ function GroupInfo({ onClick, ...props }) {
 
         {/* type */}
         <div className="relative -m-3 flex items-center justify-center font-light tracking-widest text-tx02">
-          Group:&nbsp; <span>{props.conversation.type}</span>
+          Group:&nbsp; <span>{conversation.type}</span>
         </div>
       </div>
 
@@ -470,10 +529,10 @@ function GroupInfo({ onClick, ...props }) {
           )}
           // className=
         >
-          {props.conversation.type === "PROTECTED" && (
+          {conversation.type === "PROTECTED" && (
             <label>Current Password:</label>
           )}
-          {props.conversation.type === "PROTECTED" && (
+          {conversation.type === "PROTECTED" && (
             <input
               className="mb-2 h-6 w-full rounded-sm border-b border-none bg-bg03 px-1 text-tx01 outline-none focus:border-none xs:h-8 sm:rounded-md"
               type="password"
@@ -504,7 +563,7 @@ function GroupInfo({ onClick, ...props }) {
       {/* members & add new*/}
       <div className=" mb-3 bg-bg02">
         <div className="mx-3 my-2 text-sm font-light tracking-wide text-tx02 xs:text-base xs:tracking-widest">
-          Group -&nbsp; <span>{props.conversation.members.length}</span>
+          Group -&nbsp; <span>{conversation.members.length}</span>
           &nbsp;Members
         </div>
         {/* Add New Freind */}
@@ -527,13 +586,12 @@ function GroupInfo({ onClick, ...props }) {
         </div>
 
         {/* Friends List */}
-        {props.conversation.members.map((member, index) => {
+        {conversation.members.map((member, index) => {
           return (
             <div
               className="relative flex items-center border-b border-tx02 p-2 hover:bg-tx03"
               key={index}
             >
-              {console.log(member.id)}
               {/* Flex container for avatar and name */}
               <div className="flex flex-1 items-center">
                 {/* Avatar */}
@@ -550,14 +608,20 @@ function GroupInfo({ onClick, ...props }) {
               </div>
 
               {/* Options Menu */}
-              {<GroupInfOptions />}
+              {
+                <GroupInfOptions
+                  member={member}
+                  memberMe={memberMe}
+                  conversation={conversation}
+                />
+              }
             </div>
           );
         })}
       </div>
 
       {/* exit */}
-      <div className=" bg-bg02 text-pr01">
+      <div className=" bg-bg02 text-pr01" onClick={onExitClick}>
         <div className="flex cursor-pointer p-2 hover:bg-tx03">
           <div className="flex flex-1 items-center">
             {/* Icone */}
@@ -612,11 +676,13 @@ function ConversationBox({ onClick, ...props }) {
     socket.on("direct.message", updateDirect);
     socket.on("direct.message.seen", updateDirect);
     socket.on("channel.message", updateGroup);
+    socket.on("channel.updated", updateGroup);
 
     return () => {
       socket.off("direct.message", updateDirect);
       socket.off("direct.message.seen", updateDirect);
       socket.off("channel.message", updateGroup);
+      socket.off("channel.updated", updateGroup);
     };
   }, [id]);
 
@@ -981,11 +1047,9 @@ function NewGroup({ onGroupClick, ...props }) {
       password: value.password,
     });
 
-    const formData = new FormData();
-
-    formData.append("avatar", value.avatar);
-
-    await axios.post(`/chat/group/${response.data.id}`, formData);
+    await axios.postForm(`/chat/group/${response.data.id}`, {
+      avatar: value.avatar,
+    });
     await mutate("/chat/group");
 
     enqueueSnackbar("Success", { variant: "success" });

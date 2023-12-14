@@ -69,13 +69,24 @@ export class AuthController {
 
   @skipOTP()
   @Patch('otp/enable')
-  async otpEnable(@Body() body: OTPDTO, @CurrentUser() user: UserEntity) {
+  async otpEnable(
+    @Body() body: OTPDTO,
+    @CurrentUser() user: UserEntity,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     if (user.otpIsEnabled || !user.otpSecret) throw new ConflictException();
 
     const success = this.authService.verifyOTP(user, body.otp);
 
     if (!success) throw new UnprocessableEntityException();
+
     await this.authService.enableOTP(user.id);
+
+    const token = await this.authService.generateJWT(user, true);
+
+    this.sendAuthCookie(res, token);
+
+    return { token, otp: { enabled: true, verified: true } };
   }
 
   @Patch('otp/disable')
