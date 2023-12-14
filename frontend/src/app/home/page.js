@@ -41,6 +41,7 @@ import { AvatarInput } from "@/components/AvatarInput";
 import { useRouter } from "next/navigation";
 import { useSocket } from "@/hooks/useSocket";
 import { AvatarImage } from "@/components/AvatarImage";
+import { enqueueSnackbar } from "notistack";
 
 function MenuButton({ onClick, ...props }) {
   return (
@@ -401,15 +402,16 @@ function SettingButton({ label, className, ...props }) {
   );
 }
 
-function SettingInput({ long, ...props }) {
+function SettingInput({ long, label, ...props }) {
   return (
     <div className="space-y-1 xs:space-y-2">
-      <div className="text-xs tracking-normal xs:text-sm ">{props.label}</div>
+      <div className="text-xs tracking-normal xs:text-sm ">{label}</div>
       <input
         className={clsx(
           "h-6 w-24 rounded-sm border-none bg-tx02 px-2 outline-none focus:border-none xs:h-8 xs:w-36 sm:h-10 sm:w-44 sm:rounded-md lg:w-60",
           long && "w-40 xs:w-56 sm:w-80 lg:w-80",
         )}
+        {...props}
       ></input>
     </div>
   );
@@ -418,6 +420,26 @@ function SettingInput({ long, ...props }) {
 function SettingSection({ onClick, ...props }) {
   const { data: me } = useSWR("/users/me");
   const [active, setActive] = useState("profile");
+  const [avatar, setAvatar] = useState(null);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [displayName, setDisplayName] = useState("");
+
+  async function onSave() {
+    try {
+      await axios.patch("/users/me", {
+        displayName,
+        fullName: firstName + " " + lastName,
+      });
+
+      if (avatar) await axios.postForm("users/me/avatar", { avatar });
+
+      mutate("/users/me");
+      enqueueSnackbar("Success", { variant: "success" });
+    } catch (error) {
+      enqueueSnackbar("Error", { variant: "error" });
+    }
+  }
 
   return (
     <section className="fixed inset-0 z-20 flex items-center justify-center bg-bg01/90">
@@ -429,7 +451,10 @@ function SettingSection({ onClick, ...props }) {
             <div>account settings</div>
             <div className="flex justify-center space-x-2 xs:space-x-4 lg:space-x-6">
               {/* save button */}
-              <button className="w-12 rounded-lg border border-tx01 xs:w-16 sm:w-20 sm:p-0">
+              <button
+                onClick={onSave}
+                className="w-12 rounded-lg border border-tx01 xs:w-16 sm:w-20 sm:p-0"
+              >
                 <div className="font-light">Save</div>
               </button>
 
@@ -469,13 +494,16 @@ function SettingSection({ onClick, ...props }) {
                 <div className="flex items-end">
                   <Image
                     className="mr-4 h-16 w-16 rounded-full object-cover xs:ml-2 xs:mr-6 xs:h-20 xs:w-20 sm:ml-4 sm:mr-10 sm:h-28 sm:w-28"
-                    src={me?.avatar}
+                    src={avatar ? URL.createObjectURL(avatar) : me?.avatar}
                     quality={100}
                     width={56}
                     height={56}
                   />
                   <div>
-                    <AvatarInput className="w-28 rounded-lg border border-tx01 py-1 tracking-widest text-tx05 transition-colors duration-[400ms] ease-linear hover:bg-tx01 hover:text-tx03 xs:w-36 lg:w-48">
+                    <AvatarInput
+                      onChange={setAvatar}
+                      className="w-28 rounded-lg border border-tx01 py-1 tracking-widest text-tx05 transition-colors duration-[400ms] ease-linear hover:bg-tx01 hover:text-tx03 xs:w-36 lg:w-48"
+                    >
                       Upload New
                     </AvatarInput>
                     <div className="text-[0.51rem] font-light tracking-normal xs:text-[0.67rem] lg:mt-2 lg:text-xs">
@@ -490,10 +518,29 @@ function SettingSection({ onClick, ...props }) {
               <div>
                 <div className="mb-3 xs:mb-6">Your Informatin</div>
                 <div className="mb-4 flex justify-between xs:mb-7 lg:mb-10">
-                  <SettingInput label="First Name" />
-                  <SettingInput label="Last Name" />
+                  <SettingInput
+                    label="First Name"
+                    value={firstName}
+                    onChange={(e) =>
+                      setFirstName(e.target.value.trimStart().replace(/ +/g, " "))
+                    }
+                  />
+                  <SettingInput
+                    label="Last Name"
+                    value={lastName}
+                    onChange={(e) =>
+                      setLastName(e.target.value.trimStart().replace(/ +/g, " "))
+                    }
+                  />
                 </div>
-                <SettingInput label="User Name" long />
+                <SettingInput
+                  label="User Name"
+                  long
+                  value={displayName}
+                  onChange={(e) =>
+                    setDisplayName(e.target.value.trimStart().replace(/ +/g, " "))
+                  }
+                />
               </div>
             </div>
           )}
