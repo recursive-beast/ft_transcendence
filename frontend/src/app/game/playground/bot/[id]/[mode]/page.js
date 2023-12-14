@@ -49,7 +49,8 @@ function Name() {
       }
 
       let direction;
-
+      
+      if (event.targetTouches.clientX < event.targetTouches.screenX/2)direction = "down";
       if (event.key === "ArrowUp" && !isSmallDevice) direction = "up";
       if (event.key === "ArrowDown" && !isSmallDevice) direction = "down";
       if (event.key === "ArrowLeft" && isSmallDevice) direction = "down";
@@ -61,7 +62,7 @@ function Name() {
 
     const handleKeyUp = (event) => {
       let direction;
-
+      console.log(event.targetTouches);//screenX  clientX
       if (event.key === "ArrowUp" && !isSmallDevice) direction = "up";
       if (event.key === "ArrowDown" && !isSmallDevice) direction = "down";
       if (event.key === "ArrowLeft" && isSmallDevice) direction = "down";
@@ -75,6 +76,8 @@ function Name() {
 
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("keyup", handleKeyUp);
+    window.addEventListener("touchstart", handleKeyUp);
+    window.addEventListener("touchmove", handleKeyUp);
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
