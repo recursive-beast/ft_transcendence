@@ -8,16 +8,16 @@ import {
   Notificatin,
   Rank,
   Search,
+  OTPInput,
 } from "@/components/common";
 import Image from "next/image";
 import { Icon } from "@iconify/react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import clsx from "clsx";
 import useSWR, { mutate } from "swr";
 import axios from "axios";
 
-import qrCode from "@/images/pics/qrcode.jpeg";
 //Profils
 import Pic01 from "@/images/profils/01.jpg";
 import Pic02 from "@/images/profils/02.jpg";
@@ -42,6 +42,7 @@ import { useRouter } from "next/navigation";
 import { useSocket } from "@/hooks/useSocket";
 import { AvatarImage } from "@/components/AvatarImage";
 import { enqueueSnackbar } from "notistack";
+import { StatusCodes } from "http-status-codes";
 
 function MenuButton({ onClick, ...props }) {
   return (
@@ -424,6 +425,8 @@ function SettingSection({ onClick, ...props }) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [displayName, setDisplayName] = useState("");
+  const [qrcode, setQrCode] = useState();
+  const [otp, setOTP] = useState("");
 
   async function onSave() {
     try {
@@ -440,6 +443,37 @@ function SettingSection({ onClick, ...props }) {
       enqueueSnackbar("Error", { variant: "error" });
     }
   }
+
+  async function onOTPEnable() {
+    try {
+      await axios.patch("/auth/otp/enable", { otp });
+      await mutate("/users/me");
+      enqueueSnackbar("Success", { variant: "success" });
+      setOTP("");
+    } catch (error) {
+      const status = error.response.status;
+      const isInvalidOTP = status === StatusCodes.UNPROCESSABLE_ENTITY;
+      const message = isInvalidOTP ? "Invalid one time password" : "Error";
+
+      enqueueSnackbar(message, { variant: "error" });
+    }
+  }
+
+  async function onOTPDisable() {
+    try {
+      await axios.patch("/auth/otp/disable");
+      await mutate("/users/me");
+      enqueueSnackbar("Success", { variant: "success" });
+    } catch (error) {
+      enqueueSnackbar("Error", { variant: "error" });
+    }
+  }
+
+  useEffect(() => {
+    axios
+      .patch("/auth/otp/generate")
+      .then((res) => setQrCode(res.data.qr_code));
+  }, []);
 
   return (
     <section className="fixed inset-0 z-20 flex items-center justify-center bg-bg01/90">
@@ -522,14 +556,18 @@ function SettingSection({ onClick, ...props }) {
                     label="First Name"
                     value={firstName}
                     onChange={(e) =>
-                      setFirstName(e.target.value.trimStart().replace(/ +/g, " "))
+                      setFirstName(
+                        e.target.value.trimStart().replace(/ +/g, " "),
+                      )
                     }
                   />
                   <SettingInput
                     label="Last Name"
                     value={lastName}
                     onChange={(e) =>
-                      setLastName(e.target.value.trimStart().replace(/ +/g, " "))
+                      setLastName(
+                        e.target.value.trimStart().replace(/ +/g, " "),
+                      )
                     }
                   />
                 </div>
@@ -538,7 +576,9 @@ function SettingSection({ onClick, ...props }) {
                   long
                   value={displayName}
                   onChange={(e) =>
-                    setDisplayName(e.target.value.trimStart().replace(/ +/g, " "))
+                    setDisplayName(
+                      e.target.value.trimStart().replace(/ +/g, " "),
+                    )
                   }
                 />
               </div>
@@ -563,30 +603,43 @@ function SettingSection({ onClick, ...props }) {
                 <div className="flex flex-col items-center justify-center">
                   <Image
                     className="my-5 h-32 w-32 rounded-xl xs:h-40 xs:w-40 sm:my-6 sm:h-44 sm:w-44 lg:my-9 lg:h-52 lg:w-52"
-                    src={qrCode}
+                    src={qrcode}
                     quality={100}
+                    width={300}
+                    height={300}
                   />
 
-                  <div className="mb-3 text-xs capitalize xs:text-sm xs:tracking-widest sm:text-lg lg:mb-5 lg:text-xl">
-                    verification code
-                  </div>
+                  {!me.otpIsEnabled && (
+                    <div className="mb-3 text-xs capitalize xs:text-sm xs:tracking-widest sm:text-lg lg:mb-5 lg:text-xl">
+                      verification code
+                    </div>
+                  )}
 
                   <div className="flex flex-col items-center">
-                    <div className="mb-5 flex space-x-1 xs:mb-12">
-                      <input className="h-10 w-7 rounded-lg border-none bg-tx01 outline-none focus:border-none xs:h-14 xs:w-10 xs:rounded-2xl" />
-                      <input className="h-10 w-7 rounded-lg border-none bg-tx01 outline-none focus:border-none xs:h-14 xs:w-10 xs:rounded-2xl" />
-                      <input className="h-10 w-7 rounded-lg border-none bg-tx01 outline-none focus:border-none xs:h-14 xs:w-10 xs:rounded-2xl" />
-                      <input className="h-10 w-7 rounded-lg border-none bg-tx01 outline-none focus:border-none xs:h-14 xs:w-10 xs:rounded-2xl" />
-                      <input className="h-10 w-7 rounded-lg border-none bg-tx01 outline-none focus:border-none xs:h-14 xs:w-10 xs:rounded-2xl" />
-                      <input className="h-10 w-7 rounded-lg border-none bg-tx01 outline-none focus:border-none xs:h-14 xs:w-10 xs:rounded-2xl" />
-                    </div>
+                    {!me.otpIsEnabled && (
+                      <div className="mb-5 flex space-x-1 xs:mb-12">
+                        {Array(6)
+                          .fill()
+                          .map((_, index) => (
+                            <OTPInput
+                              key={index}
+                              onChange={setOTP}
+                              fullValue={otp}
+                              index={index}
+                              className="h-10 w-7 rounded-lg border-none bg-tx01 text-center text-tx04 outline-none focus:border-none xs:h-14 xs:w-10 xs:rounded-2xl"
+                            />
+                          ))}
+                      </div>
+                    )}
 
                     <div>
-                      <Link className="mb-3" href={"../profile"}>
-                        <div className="text-xl font-extralight tracking-[6px] xs:text-3xl">
-                          verify
-                        </div>
-                      </Link>
+                      <button
+                        disabled={!me.otpIsEnabled && !otp}
+                        onClick={me.otpIsEnabled ? onOTPDisable : onOTPEnable}
+                        className="mb-3 text-xl font-extralight tracking-[6px] xs:text-3xl"
+                      >
+                        {me.otpIsEnabled ? "disable" : "enable"}
+                      </button>
                     </div>
                   </div>
                 </div>
