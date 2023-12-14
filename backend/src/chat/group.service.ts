@@ -56,7 +56,7 @@ export class GroupService {
         await this.prismaService.groupConversation.update({
           where: { id: channelId },
           data: {
-            banned: { connect: { id: toBan.id } },
+            banned: { connect: { id: toBanId } },
           },
         });
         await this.prismaService.groupMember.delete({
@@ -71,7 +71,7 @@ export class GroupService {
         await this.prismaService.groupConversation.update({
           where: { id: channelId },
           data: {
-            banned: { connect: { id: toBan.id } },
+            banned: { connect: { id: toBanId } },
           },
         });
         await this.prismaService.groupMember.delete({

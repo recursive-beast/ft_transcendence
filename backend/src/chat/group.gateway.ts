@@ -45,6 +45,7 @@ export class GroupGateway {
     @ConnectedSocket() client: Socket,
     @MessageBody(ParseIntPipe) id: number,
   ) {
+    //TODO: PROTECT IT
     client.join(`channel-${id}`);
   }
 
@@ -63,10 +64,11 @@ export class GroupGateway {
   }
 
   @SubscribeMessage('channel.leave')
-  leaveRoom(
+  async leaveRoom(
     @ConnectedSocket() client: Socket,
     @MessageBody(ParseIntPipe) id: number,
   ) {
+    await this.groupconversationService.leaveChannel(client.data.id, id);
     client.leave(`channel-${id}`);
   }
 
@@ -197,5 +199,19 @@ export class GroupGateway {
     } catch {
       this.server.to(`user-${client.data.id}`).emit('channel.found', null);
     }
+  }
+
+  @SubscribeMessage('channel.title')
+  async changeTitle(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: { channelId: number; newTitle: string },
+  ) {
+    await this.groupconversationService.updateChannelTitle(
+      client.data.id,
+      data.channelId,
+      data.newTitle,
+      );
+      
+    this.server.to(`channel-${data.channelId}`).emit('channel.updated');
   }
 }
