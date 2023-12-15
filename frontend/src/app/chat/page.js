@@ -1514,15 +1514,6 @@ function Theme({ onBreakClick, id, ...props }) {
   const socket = useSocket();
   const [breack, setBreack] = useState(0);
   const router = useRouter();
-  useEffect(() => {
-    socket.on("come", (body) => {
-      router.push(`/game/playground/${body.mode}/${body.id}`);
-    });
-
-    return () => {
-      socket.off("come");
-    };
-  }, []);
   return (
     <div className="flex w-full items-center border-b p-2 last:border-0">
       {/* Avatar */}
@@ -1562,7 +1553,19 @@ function Theme({ onBreakClick, id, ...props }) {
 }
 
 export function NewGame({ id, onClick }) {
+  const socket = useSocket();
+  const router = useRouter();
   const [waiting, setWaiting] = useState(false);
+  useEffect(() => {
+    socket.on("come", (body) => {
+      console.log("IM COMING");
+      router.push(`/game/playground/${body.mode}/${body.id}`);
+    });
+
+    return () => {
+      socket.off("come");
+    };
+  }, []);
   return (
     <div
       className="absolute right-10 top-full flex h-fit w-48 flex-none flex-col rounded-lg
