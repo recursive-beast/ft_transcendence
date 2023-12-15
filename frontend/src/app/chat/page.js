@@ -45,6 +45,7 @@ import { useSocket } from "@/hooks/useSocket";
 import axios from "axios";
 import { AvatarInput } from "@/components/AvatarInput";
 import { useSnackbar } from "notistack";
+import { differenceBy } from "lodash";
 
 faker.seed(2);
 
@@ -313,7 +314,7 @@ export function Option({ onClick, ...props }) {
 function NavOptions({ onClick, ...props }) {
   return (
     <button
-      className="group flex h-full w-fit items-center border-r px-3 text-tx02 hover:bg-bg02"
+      className="group flex h-full w-fit items-center rounded-l-md border-r px-3 text-tx02 hover:bg-bg02"
       onClick={onClick}
     >
       {/* button icon */}
@@ -330,11 +331,11 @@ function NavOptions({ onClick, ...props }) {
   );
 }
 
-function Options() {
+function Options({ id }) {
   const [options, setOptions] = useState(false);
   const [newGm, setNewGame] = useState(false);
   return (
-    <div className="absolute right-0 flex h-full items-center justify-center rounded-l-md bg-bg03">
+    <div className="absolute right-0 flex h-full items-center justify-center rounded-l-md border-l bg-bg03">
       {options && (
         <div className="flex h-full items-center">
           <NavOptions
@@ -347,7 +348,7 @@ function Options() {
       )}
 
       <button
-        className="h-full px-2 hover:bg-bg02"
+        className="h-full rounded-l-md px-2 hover:bg-bg02"
         onClick={() => {
           setOptions(!options);
           setNewGame(false);
@@ -355,7 +356,7 @@ function Options() {
       >
         {/* options buttion */}
         <Icon
-          className="h-6 w-6 text-tx02 sm:h-7 sm:w-8"
+          className="h-6 w-6 text-tx01 sm:h-7 sm:w-8"
           icon={
             !options
               ? "solar:alt-arrow-left-broken"
@@ -364,7 +365,7 @@ function Options() {
         />
       </button>
 
-      {newGm && <NewGame onClick={() => setNewGame(!false)} />}
+      {newGm && <NewGame id={id} onClick={() => setNewGame(!false)} />}
     </div>
   );
 }
@@ -412,7 +413,7 @@ function GroupInfOptions({ member, memberMe, conversation }) {
       </button>
       <div
         className={clsx(
-          "absolute right-5 top-full z-10 w-36 rounded-lg border border-tx01 bg-bg01",
+          "absolute right-5 top-full z-10 w-36 overflow-hidden rounded-lg border border-tx01 bg-bg01",
           options ? "block" : "hidden",
         )}
       >
@@ -691,7 +692,11 @@ function GroupInfo({ onClick, conversation, ...props }) {
 
         {/* add Friends list */}
         {addMbr &&
-          friends?.map((friend, index) => {
+          differenceBy(
+            friends,
+            conversation.members.map((member) => member.user),
+            "id",
+          ).map((friend, index) => {
             return (
               <div
                 key={index}
@@ -714,7 +719,7 @@ function GroupInfo({ onClick, conversation, ...props }) {
 
                 {/* Checkbox for friend selection */}
                 <button
-                  className="h-fit rounded-lg border px-2 font-extralight text-tx02 
+                  className="h-fit rounded-lg border px-2 font-extralight text-tx02
                             transition-colors duration-[400ms] ease-linear hover:bg-tx01 hover:text-tx03"
                 >
                   Add
@@ -803,6 +808,9 @@ function ConversationBox({ onClick, ...props }) {
   const [msgInput, setMsgInput] = useState("");
 
   const conversation = isDirect ? direct : isGroup ? group : null;
+
+  const isDifferentId = (user) => user.id !== me?.id;
+  const userId = conversation?.members.find(isDifferentId).id;
 
   if (me && !myID) setMyId(me.id);
 
@@ -904,7 +912,11 @@ function ConversationBox({ onClick, ...props }) {
                       : conversation?.members.find((obj) => obj.id !== myID)
                           .avatar
                   }
-                  id={conversation?.members.find((obj) => obj.id !== myID).id}
+                  id={
+                    props.group
+                      ? -1
+                      : conversation?.members.find((obj) => obj.id !== myID).id
+                  }
                   className="my-1 mr-2 h-11 w-11 xs:h-[52px] xs:w-[52px] xs:p-[2px] lg:mr-3"
                 />
 
@@ -927,7 +939,7 @@ function ConversationBox({ onClick, ...props }) {
               </button>
 
               {/* Options Menu */}
-              {!props.group && <Options />}
+              {!props.group && <Options id={userId} />}
             </div>
 
             {/* Conversation Section */}
@@ -989,6 +1001,7 @@ function ConversationBox({ onClick, ...props }) {
               <input
                 value={msgInput}
                 onChange={(event) => setMsgInput(event.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && onMessageSend()}
                 className="h-7 flex-1 rounded-xl border-none bg-tx02 px-2 text-base outline-none focus:border-none xs:h-8 xs:text-xl lg:px-3"
               />
 
@@ -1028,6 +1041,86 @@ function ConversationBox({ onClick, ...props }) {
   );
 }
 
+function DirectConversationBox({ onClick, id, onConversation }) {
+  const { data: user } = useSWR(`/users/${id}`);
+  const socket = useSocket();
+  const [msgInput, setMsgInput] = useState("");
+
+  useEffect(() => {
+    const onMessageRecieve = (message) => {
+      onConversation(message.directConversation);
+      mutate("/chat/direct");
+    };
+
+    socket.on("direct.message", onMessageRecieve);
+
+    return () => {
+      socket.off("direct.message", onMessageRecieve);
+    };
+  }, [id]);
+
+  function onMessageSend() {
+    socket.emit("direct.message", {
+      recieverId: id,
+      text: msgInput,
+    });
+  }
+
+  return (
+    <div className="flex flex-1">
+      <div className="no-scrollbar flex h-full w-full flex-1 flex-col justify-between overflow-auto bg-bg02">
+        <div className="flex flex-1 flex-col">
+          <div className="sticky top-0 flex h-14 w-full items-center space-x-2 border-b bg-tx02 py-2 xs:h-16 sm:space-x-4">
+            <button onClick={() => onClick()}>
+              <Icon
+                className="ml-1 h-8 w-8 text-tx03 xs:ml-2 xs:h-9 xs:w-9 sm:ml-3"
+                icon="solar:arrow-left-broken"
+              />
+            </button>
+
+            <Link href={`/user/${id}`} className="flex flex-grow items-center">
+              <AvatarImage
+                src={user?.avatar}
+                id={id}
+                className="my-1 mr-2 h-11 w-11 xs:h-[52px] xs:w-[52px] xs:p-[2px] lg:mr-3"
+              />
+
+              <div className="flex w-20 grow flex-col items-start">
+                <div className="w-full truncate text-left text-sm font-semibold capitalize tracking-[widest] text-tx05 xs:text-base sm:tracking-[3px]">
+                  {user?.fullName}
+                </div>
+
+                <div className="text-[8px] capitalize text-tx03 xs:text-[10px] sm:text-[14px]">
+                  Click here to visit profile
+                </div>
+              </div>
+            </Link>
+            <Options id={id} />
+          </div>
+
+          <div className="flex grow flex-col justify-end" />
+
+          <div className="sticky bottom-0 flex w-full  items-center space-x-3 bg-bg03 px-3 py-2 xs:py-3 sm:px-5">
+            <input
+              value={msgInput}
+              onChange={(event) => setMsgInput(event.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && onMessageSend()}
+              className="h-7 flex-1 rounded-xl border-none bg-tx02 px-2 text-base outline-none focus:border-none xs:h-8 xs:text-xl lg:px-3"
+            />
+
+            <button onClick={onMessageSend} disabled={msgInput.length === 0}>
+              <Icon
+                className="h-6 w-6 text-tx01 sm:h-7 sm:w-7"
+                icon="fluent:send-32-filled"
+              />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function CustomizeGroup({
   onGroupTypeChange,
   onTitleChange,
@@ -1060,7 +1153,10 @@ function CustomizeGroup({
           className="flex h-28 w-28 flex-col items-center justify-center gap-2 overflow-hidden rounded-full border border-dashed border-tx01"
         >
           {avatar ? (
-            <img className="object-cover" src={URL.createObjectURL(avatar)} />
+            <img
+              className="h-full w-full object-cover"
+              src={URL.createObjectURL(avatar)}
+            />
           ) : (
             <>
               <Icon
@@ -1141,7 +1237,7 @@ const createGroupSchema = Joi.object({
   avatar: Joi.invalid(null),
 });
 
-function NewGroup({ onGroupClick, ...props }) {
+function NewGroup({ onGroupClick, onNewGroup, ...props }) {
   // State to track the progress to the next step
   const [next, setNext] = useState(false);
   const { data: friends } = useSWR("/users/friends");
@@ -1165,25 +1261,25 @@ function NewGroup({ onGroupClick, ...props }) {
   };
 
   async function createGroup() {
-    const { error, value } = createGroupSchema.validate(data, {
-      allowUnknown: true,
-    });
+    const result = createGroupSchema.validate(data, { allowUnknown: true });
+    const { error, value } = result;
+    const { groupType, title, members, password } = value;
 
     if (error) return enqueueSnackbar("Invalid input", { variant: "error" });
 
-    const response = await axios.post("/chat/group", {
-      type: value.groupType,
-      title: value.title,
-      members: value.members,
-      password: value.password,
+    let response = await axios.post("/chat/group", {
+      type: groupType,
+      title,
+      members,
+      password,
     });
 
-    await axios.postForm(`/chat/group/${response.data.id}`, {
-      avatar: value.avatar,
-    });
+    const id = response.data.id;
+    response = await axios.postForm(`/chat/group/${id}`, { avatar });
+
     await mutate("/chat/group");
-
     enqueueSnackbar("Success", { variant: "success" });
+    onNewGroup(response.data);
   }
 
   const handleChange = (e, friend) => {
@@ -1318,12 +1414,15 @@ function NewGroup({ onGroupClick, ...props }) {
   );
 }
 
-function NewChat({ onChatClick }) {
+function NewChat({ onChatClick, onNewGroup, onFriendClick }) {
   const [newGroup, setNewGroup] = useState(false);
   return (
     <>
       {newGroup ? (
-        <NewGroup onGroupClick={() => setNewGroup(false)} />
+        <NewGroup
+          onNewGroup={onNewGroup}
+          onGroupClick={() => setNewGroup(false)}
+        />
       ) : (
         <div className="no-scrollbar flex w-full flex-grow flex-col overflow-auto border-tx03 bg-bg02 sm:w-1/2 sm:max-w-[25rem] sm:border-r  xl:flex-none">
           <div
@@ -1368,7 +1467,7 @@ function NewChat({ onChatClick }) {
           </div>
 
           {/* <FrList /> */}
-          <Friends />
+          <Friends onClick={onFriendClick} />
         </div>
       )}
     </>
@@ -1411,7 +1510,7 @@ function Messages(props) {
   );
 }
 
-function Theme({ onBreakClick, ...props }) {
+function Theme({ onBreakClick, id, ...props }) {
   const socket = useSocket();
   const [breack, setBreack] = useState(0);
   const router = useRouter();
@@ -1445,7 +1544,7 @@ function Theme({ onBreakClick, ...props }) {
               onClick={() => {
                 setBreack(value);
                 socket.emit("invite", {
-                  id: 1,
+                  id,
                   mode: props.theme,
                   uid: uuidv4(),
                   value,
@@ -1462,41 +1561,47 @@ function Theme({ onBreakClick, ...props }) {
   );
 }
 
-function NewGame({ onClick }) {
+export function NewGame({ id, onClick }) {
   const [waiting, setWaiting] = useState(false);
   return (
     <div
-      className="absolute right-10 top-full flex h-fit w-48 flex-none flex-col rounded-lg 
+      className="absolute right-10 top-full flex h-fit w-48 flex-none flex-col rounded-lg
     border-2 bg-bg03 xs:w-56 sm:w-64"
     >
       {!waiting ? (
         <>
           <Theme
+            id={id}
             src={classic}
             theme="classic"
             onBreakClick={() => setWaiting(true)}
           />
           <Theme
+            id={id}
             src={beach}
             theme="beach"
             onBreakClick={() => setWaiting(true)}
           />
           <Theme
+            id={id}
             src={snow}
             theme="snow"
             onBreakClick={() => setWaiting(true)}
           />
           <Theme
+            id={id}
             src={sahara}
             theme="sahara"
             onBreakClick={() => setWaiting(true)}
           />
           <Theme
+            id={id}
             src={space}
             theme="space"
             onBreakClick={() => setWaiting(true)}
           />
           <Theme
+            id={id}
             src={jungle}
             theme="jungle"
             onBreakClick={() => setWaiting(true)}
@@ -1528,9 +1633,11 @@ function NewGame({ onClick }) {
 
 export default function Home() {
   const { data } = useSWR("/users/me");
+  const { data: direct } = useSWR("/chat/direct");
   const [group, setGroup] = useState(false);
   const [newChat, setNewChat] = useState(false);
   const [conversation, setConversation] = useState(null);
+  const [id, setId] = useState(null);
 
   return (
     <main className="flex h-screen max-h-screen flex-col bg-bg01 text-tx01">
@@ -1555,6 +1662,26 @@ export default function Home() {
                 onChatClick={() => {
                   setNewChat(false);
                 }}
+                onNewGroup={(group) => {
+                  setNewChat(false);
+                  setConversation(group);
+                  setGroup(true);
+                }}
+                onFriendClick={(friend) => {
+                  setNewChat(false);
+
+                  const isSameId = (user) => user.id === friend.id;
+                  const isMember = (elem) => elem.members.some(isSameId);
+                  const conversation = direct?.find(isMember);
+
+                  if (conversation) {
+                    setId(null);
+                    setConversation(conversation);
+                  } else {
+                    setId(friend.id);
+                    setConversation(null);
+                  }
+                }}
               />
             ) : (
               <div
@@ -1576,7 +1703,7 @@ export default function Home() {
                   />
 
                   {/* Search */}
-                  <Search />
+                  <Search chat={true} />
 
                   {/* new Chat */}
                   <button
@@ -1598,10 +1725,12 @@ export default function Home() {
                     onDirectConversation={(conversation) => {
                       setConversation(conversation);
                       setGroup(false);
+                      setId(null);
                     }}
                     onGroupConversation={(conversation) => {
                       setConversation(conversation);
                       setGroup(true);
+                      setId(null);
                     }}
                   />
                 </div>
@@ -1609,13 +1738,25 @@ export default function Home() {
             )}
 
             {/* conversation */}
-            <ConversationBox
-              conversation={conversation}
-              group={group}
-              onClick={() => {
-                setConversation(null);
-              }}
-            />
+            {id === null && (
+              <ConversationBox
+                conversation={conversation}
+                group={group}
+                onClick={() => {
+                  setConversation(null);
+                }}
+              />
+            )}
+            {id !== null && (
+              <DirectConversationBox
+                onConversation={(conversation) => {
+                  setId(null);
+                  setConversation(conversation);
+                }}
+                id={id}
+                onClick={() => setId(null)}
+              />
+            )}
           </div>
         </div>
 

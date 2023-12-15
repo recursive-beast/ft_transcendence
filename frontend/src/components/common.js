@@ -46,6 +46,13 @@ const friends = Array(50)
 function Notif({ notification }) {
   const { type, data, createdAt } = notification;
   const createdAtDate = new Date(createdAt);
+  const { data: group } = useSWR(
+    type === "GROUP_ADD" ? `/chat/group/${data.group.id}` : null,
+  );
+
+  let avatar = type === "GROUP_ADD" ? group?.avatar : data.user.avatar;
+
+  avatar = avatar || undefined; // in case of null, replace with undefined
 
   return (
     <div className="m-3 flex items-center justify-between">
@@ -53,7 +60,7 @@ function Notif({ notification }) {
         {/* image */}
         <Image
           className="mr-4 h-12 w-12 rounded-full border border-tx05 object-cover"
-          src={data.user.avatar}
+          src={avatar}
           quality={100}
           width={300}
           height={300}
@@ -62,11 +69,12 @@ function Notif({ notification }) {
         {/* title & descriiption */}
         <div className="text-tx01">
           <div className="w-36 truncate capitalize tracking-widest xs:w-52 sm:w-40 lg:w-36">
-            {data.user.displayName}
+            {type === "GROUP_ADD" ? data.group.title : data.user.displayName}
           </div>
           <div className="w-36 truncate text-xs font-extralight xs:w-52 sm:w-40 lg:w-36">
-            {type === "FRIEND_ADD" && "added you as Friend"}
+            {type === "FRIEND_ADD" && "Added you as Friend"}
             {type === "GAME_INVITE" && "Invited you to a game"}
+            {type === "GROUP_ADD" && "You joined a group chat"}
           </div>
           {type === "GAME_INVITE" && (
             // <Link
@@ -76,11 +84,11 @@ function Notif({ notification }) {
             //   join
             // </Link>
             <Link
-            className="h-fit rounded-lg border px-2 font-extralight text-tx02 
+              className="h-fit rounded-lg border px-2 font-extralight text-tx02
                       transition-colors duration-[400ms] ease-linear hover:bg-tx01 hover:text-tx03"
-          >
-            Add
-          </Link>
+            >
+              Add
+            </Link>
           )}
         </div>
       </div>
@@ -339,7 +347,10 @@ export const status = {
 
 export function Search(props) {
   const [text, setText] = useState("");
-  const { data } = useSWR(encodeURI(`/search/users?search=${text}`));
+  const uri = props.home
+    ? `/search/users?search=${text}`
+    : `/search/groups?search=${text}`;
+  const { data } = useSWR(encodeURI(uri));
   const [search, setSearch] = useState(false);
   const inputRef = useRef(null);
 
@@ -410,30 +421,57 @@ export function Search(props) {
               props.game && "max-h-44",
             )}
           >
-            {data?.map((user, index) => {
-              return (
-                <Link
-                  href={`/user/${user.id}`}
-                  key={index}
-                  className="flex cursor-pointer items-center border-b border-bg03 hover:bg-bg03"
+            {props.home &&
+              data?.map((user, index) => {
+                return (
+                  <Link
+                    href={`/user/${user.id}`}
+                    key={index}
+                    className="flex cursor-pointer items-center border-b border-bg03 hover:bg-bg03"
+                  >
+                    <AvatarImage
+                      src={user.avatar}
+                      id={user.id}
+                      className="mx-2 h-10 w-10"
+                    />
+
+                    <div
+                      key={user.id}
+                      className="truncate py-3 pr-2 text-base font-light text-tx01"
+                    >
+                      <div>{user.displayName}</div>
+
+                      <div className="text-sm text-tx02">{user.fullName}</div>
+                    </div>
+                  </Link>
+                );
+              })}
+
+            {props.chat &&
+              data?.map((group) => (
+                <button
+                  key={group.id}
+                  className="flex w-full cursor-pointer items-center border-b border-bg03 hover:bg-bg03"
                 >
-                  <AvatarImage
-                    src={user.avatar}
-                    id={user.id}
-                    className="mx-2 h-10 w-10"
+                  <Image
+                    className={
+                      "mx-2 h-10 w-10 flex-none rounded-full border-[1.5px] object-cover p-[2px]"
+                    }
+                    src={group.avatar}
+                    quality={100}
+                    width={300}
+                    height={300}
                   />
 
-                  <div
-                    key={user.id}
-                    className="truncate py-3 pr-2 text-base font-light text-tx01"
-                  >
-                    <div>{user.displayName}</div>
+                  <div className="truncate py-3 pr-2 text-base font-light text-tx01">
+                    <div>{group.title}</div>
 
-                    <div className="text-sm text-tx02">{user.fullName}</div>
+                    <div className="text-left text-sm text-tx02">
+                      {group.type.toLowerCase()}
+                    </div>
                   </div>
-                </Link>
-              );
-            })}
+                </button>
+              ))}
           </div>
         </div>
       )}
@@ -443,16 +481,12 @@ export function Search(props) {
 
 function Friend({ friend, game, onClick }) {
   const status = useStatus(friend.id);
-  const Component = game ? "button" : Link;
-  const componentProps = game
-    ? { onClick: () => onClick(friend) }
-    : { href: `/user/${friend.id}` };
 
   if (game && status !== "ONLINE") return null;
 
   return (
-    <Component
-      {...componentProps}
+    <button
+      onClick={() => onClick(friend)}
       className="flex w-full cursor-pointer border-b border-tx03 p-2 hover:bg-tx03"
     >
       {/* Flex container for avatar and name */}
@@ -469,7 +503,7 @@ function Friend({ friend, game, onClick }) {
           {friend.displayName}
         </div>
       </div>
-    </Component>
+    </button>
   );
 }
 
@@ -506,7 +540,12 @@ export function Friends(props) {
       ) : (
         <>
           {data?.map((friend) => (
-            <Friend friend={friend} onClick={props.onClick} game={props.game} key={friend.id} />
+            <Friend
+              friend={friend}
+              onClick={props.onClick}
+              game={props.game}
+              key={friend.id}
+            />
           ))}
         </>
       )}

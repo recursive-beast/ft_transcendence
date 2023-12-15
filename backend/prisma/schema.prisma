@@ -70,6 +70,7 @@ model Notification {
 enum NotificationType {
     FRIEND_ADD
     GAME_INVITE
+    GROUP_ADD
 }
 
 model Message {
