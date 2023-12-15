@@ -204,7 +204,7 @@ export default function Home({ params }) {
           </div>
 
           <div className="no-scrollbar flex flex-1 flex-col justify-between overflow-auto px-2 xs:px-3 sm:px-5 lg:px-8">
-            <ProfileInfo id={params.id} />
+            <ProfileInfo id={params?.id} />
             <PlayRate />
             <Ranking />
             <div>
