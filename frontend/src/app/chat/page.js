@@ -314,7 +314,7 @@ export function Option({ onClick, ...props }) {
 function NavOptions({ onClick, ...props }) {
   return (
     <button
-      className="group flex h-full w-fit items-center border-r px-3 text-tx02 hover:bg-bg02"
+      className="group flex h-full w-fit items-center rounded-l-md border-r px-3 text-tx02 hover:bg-bg02"
       onClick={onClick}
     >
       {/* button icon */}
@@ -335,7 +335,7 @@ function Options() {
   const [options, setOptions] = useState(false);
   const [newGm, setNewGame] = useState(false);
   return (
-    <div className="absolute right-0 flex h-full items-center justify-center overflow-hidden rounded-l-md border-l bg-bg03">
+    <div className="absolute right-0 flex h-full items-center justify-center rounded-l-md border-l bg-bg03">
       {options && (
         <div className="flex h-full items-center">
           <NavOptions
@@ -348,7 +348,7 @@ function Options() {
       )}
 
       <button
-        className="h-full px-2 hover:bg-bg02"
+        className="h-full rounded-l-md px-2 hover:bg-bg02"
         onClick={() => {
           setOptions(!options);
           setNewGame(false);
@@ -1038,6 +1038,86 @@ function ConversationBox({ onClick, ...props }) {
   );
 }
 
+function DirectConversationBox({ onClick, id, onConversation }) {
+  const { data: user } = useSWR(`/users/${id}`);
+  const socket = useSocket();
+  const [msgInput, setMsgInput] = useState("");
+
+  useEffect(() => {
+    const onMessageRecieve = (message) => {
+      onConversation(message.directConversation);
+      mutate("/chat/direct");
+    };
+
+    socket.on("direct.message", onMessageRecieve);
+
+    return () => {
+      socket.off("direct.message", onMessageRecieve);
+    };
+  }, [id]);
+
+  function onMessageSend() {
+    socket.emit("direct.message", {
+      recieverId: id,
+      text: msgInput,
+    });
+  }
+
+  return (
+    <div className="flex flex-1">
+      <div className="no-scrollbar flex h-full w-full flex-1 flex-col justify-between overflow-auto bg-bg02">
+        <div className="flex flex-1 flex-col">
+          <div className="sticky top-0 flex h-14 w-full items-center space-x-2 border-b bg-tx02 py-2 xs:h-16 sm:space-x-4">
+            <button onClick={() => onClick()}>
+              <Icon
+                className="ml-1 h-8 w-8 text-tx03 xs:ml-2 xs:h-9 xs:w-9 sm:ml-3"
+                icon="solar:arrow-left-broken"
+              />
+            </button>
+
+            <Link href={`/user/${id}`} className="flex flex-grow items-center">
+              <AvatarImage
+                src={user?.avatar}
+                id={id}
+                className="my-1 mr-2 h-11 w-11 xs:h-[52px] xs:w-[52px] xs:p-[2px] lg:mr-3"
+              />
+
+              <div className="flex w-20 grow flex-col items-start">
+                <div className="w-full truncate text-left text-sm font-semibold capitalize tracking-[widest] text-tx05 xs:text-base sm:tracking-[3px]">
+                  {user?.fullName}
+                </div>
+
+                <div className="text-[8px] capitalize text-tx03 xs:text-[10px] sm:text-[14px]">
+                  Click here to visit profile
+                </div>
+              </div>
+            </Link>
+            <Options />
+          </div>
+
+          <div className="flex grow flex-col justify-end" />
+
+          <div className="sticky bottom-0 flex w-full  items-center space-x-3 bg-bg03 px-3 py-2 xs:py-3 sm:px-5">
+            <input
+              value={msgInput}
+              onChange={(event) => setMsgInput(event.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && onMessageSend()}
+              className="h-7 flex-1 rounded-xl border-none bg-tx02 px-2 text-base outline-none focus:border-none xs:h-8 xs:text-xl lg:px-3"
+            />
+
+            <button onClick={onMessageSend} disabled={msgInput.length === 0}>
+              <Icon
+                className="h-6 w-6 text-tx01 sm:h-7 sm:w-7"
+                icon="fluent:send-32-filled"
+              />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function CustomizeGroup({
   onGroupTypeChange,
   onTitleChange,
@@ -1331,7 +1411,7 @@ function NewGroup({ onGroupClick, onNewGroup, ...props }) {
   );
 }
 
-function NewChat({ onChatClick, onNewGroup }) {
+function NewChat({ onChatClick, onNewGroup, onFriendClick }) {
   const [newGroup, setNewGroup] = useState(false);
   return (
     <>
@@ -1384,7 +1464,7 @@ function NewChat({ onChatClick, onNewGroup }) {
           </div>
 
           {/* <FrList /> */}
-          <Friends />
+          <Friends onClick={onFriendClick} />
         </div>
       )}
     </>
@@ -1544,9 +1624,11 @@ export function NewGame({ onClick }) {
 
 export default function Home() {
   const { data } = useSWR("/users/me");
+  const { data: direct } = useSWR("/chat/direct");
   const [group, setGroup] = useState(false);
   const [newChat, setNewChat] = useState(false);
   const [conversation, setConversation] = useState(null);
+  const [id, setId] = useState(null);
 
   return (
     <main className="flex h-screen max-h-screen flex-col bg-bg01 text-tx01">
@@ -1575,6 +1657,21 @@ export default function Home() {
                   setNewChat(false);
                   setConversation(group);
                   setGroup(true);
+                }}
+                onFriendClick={(friend) => {
+                  setNewChat(false);
+
+                  const isSameId = (user) => user.id === friend.id;
+                  const isMember = (elem) => elem.members.some(isSameId);
+                  const conversation = direct?.find(isMember);
+
+                  if (conversation) {
+                    setId(null);
+                    setConversation(conversation);
+                  } else {
+                    setId(friend.id);
+                    setConversation(null);
+                  }
                 }}
               />
             ) : (
@@ -1619,10 +1716,12 @@ export default function Home() {
                     onDirectConversation={(conversation) => {
                       setConversation(conversation);
                       setGroup(false);
+                      setId(null);
                     }}
                     onGroupConversation={(conversation) => {
                       setConversation(conversation);
                       setGroup(true);
+                      setId(null);
                     }}
                   />
                 </div>
@@ -1630,13 +1729,25 @@ export default function Home() {
             )}
 
             {/* conversation */}
-            <ConversationBox
-              conversation={conversation}
-              group={group}
-              onClick={() => {
-                setConversation(null);
-              }}
-            />
+            {id === null && (
+              <ConversationBox
+                conversation={conversation}
+                group={group}
+                onClick={() => {
+                  setConversation(null);
+                }}
+              />
+            )}
+            {id !== null && (
+              <DirectConversationBox
+                onConversation={(conversation) => {
+                  setId(null);
+                  setConversation(conversation);
+                }}
+                id={id}
+                onClick={() => setId(null)}
+              />
+            )}
           </div>
         </div>
 

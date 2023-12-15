@@ -481,16 +481,12 @@ export function Search(props) {
 
 function Friend({ friend, game, onClick }) {
   const status = useStatus(friend.id);
-  const Component = game ? "button" : Link;
-  const componentProps = game
-    ? { onClick: () => onClick(friend) }
-    : { href: `/user/${friend.id}` };
 
   if (game && status !== "ONLINE") return null;
 
   return (
-    <Component
-      {...componentProps}
+    <button
+      onClick={() => onClick(friend)}
       className="flex w-full cursor-pointer border-b border-tx03 p-2 hover:bg-tx03"
     >
       {/* Flex container for avatar and name */}
@@ -507,7 +503,7 @@ function Friend({ friend, game, onClick }) {
           {friend.displayName}
         </div>
       </div>
-    </Component>
+    </button>
   );
 }
 
