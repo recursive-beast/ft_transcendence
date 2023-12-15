@@ -295,6 +295,7 @@ export class GameGateway {
 
   @SubscribeMessage('cancel')
   cancelQueue(client: any) {
+    console.log("cancel");
     const id = client.data.id;
     const index = queue.findIndex((q) => q.id === id);
     if (index !== -1) {
@@ -332,6 +333,7 @@ export class GameGateway {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   @SubscribeMessage('in')
   palywithfriend(client: any, uid: string) {
+    console.log("in");
     const id = client.data.id;
     const game = playersInGame.get(id);
     if (game) {
@@ -339,6 +341,11 @@ export class GameGateway {
       this.server
         .to(`user-${game.player1.id}`)
         .emit('come', { id: uid, mode: game.player1.mode });
+    }
+    else{
+      this.server
+      .to(`user-${id}`)
+      .emit('friend.left');
     }
   }
 
@@ -469,6 +476,7 @@ export class GameGateway {
   async handleDisconnect(client: Socket) {
     const id = client.data.id;
     const game = playersInGame.get(id);
+    
 
     // if (game?.id && game.player1?.id && game.player2?.id) {
     //   const winnerPlayer = game.player1.win ? game.player1 : game.player2.win ? game.player2 : null;

@@ -27,9 +27,16 @@ const handleGameOver = (data) => {
   setGameOver(true);
   socket.emit("end");
 }
+const handlefriendleft = () => {
+  console.log("friend.left");
+  router.push(
+    "/game",
+  );
+}
   useEffect(() => {
     socket.on("game.found", getGmaeData);
     socket.on("game.over", handleGameOver);
+    socket.on("friend.left", handlefriendleft);
     socket.emit("in", params.id);
     socket.emit("ready");
     socket.emit("start");
@@ -38,6 +45,7 @@ const handleGameOver = (data) => {
       socket.emit("kill.interval");
       socket.off("game.found", getGmaeData);
       socket.off("game.over", handleGameOver);
+      socket.off("friend.left", handlefriendleft);
     };
   }, []);
 

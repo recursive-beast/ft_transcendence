@@ -269,10 +269,18 @@ function Modes(props) {
       </div>
       <button
         onClick={() => {
-          setMode("");
-          setFriend(null);
-          setBreack("");
-          socket.emit("cancel");
+          if(mode === "queue"){
+            setMode("");
+            setFriend(null);
+            setBreack("");
+            socket.emit("cancel");
+          }
+          else{
+            setMode("");
+            setFriend(null);
+            setBreack("");
+            socket.emit("end");
+          }
         }}
         className={clsx(
           "z-10 mx-auto my-2 rounded-full border border-tx05 px-4 py-1 text-center text-sm font-light uppercase tracking-wider",
