@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
+import { PrismaModule } from 'nestjs-prisma';
 import { GameGateway } from './game.gateway';
 
-
 @Module({
-  providers: [GameGateway]
+  imports: [PrismaModule],
+  providers: [GameGateway],
 })
 export class GameModule {}

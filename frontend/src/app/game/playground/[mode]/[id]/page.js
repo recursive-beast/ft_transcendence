@@ -22,13 +22,11 @@ function Name({params}){
   setReady(true);
 }
 const handleGameOver = (data) => {
-  console.log(data);
   setWinner(data)
   setGameOver(true);
   socket.emit("end");
 }
 const handlefriendleft = () => {
-  console.log("friend.left");
   router.push(
     "/game",
   );
