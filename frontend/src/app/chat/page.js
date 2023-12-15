@@ -299,11 +299,11 @@ function BoxMessages({ onGroupClick, onClick, ...props }) {
 export function Option({ onClick, ...props }) {
   return (
     <button
-      className="flex w-full items-center border-b border-tx02 py-3 text-tx02 last:border-0 hover:text-tx01"
+      className="flex w-full items-center border-b border-tx02 py-3 text-tx02 last:border-0 hover:bg-bg02 hover:text-tx01"
       onClick={onClick}
     >
-      <Icon className="ml-4 mr-3 h-6 w-6" icon={props.icon} />
-      <div className="mr-4 grow text-left font-light uppercase tracking-wider">
+      <Icon className="ml-4 mr-3 h-6 w-6 flex-none" icon={props.icon} />
+      <div className="truncatee mr-4 grow text-left font-light uppercase tracking-wider">
         {props.title}
       </div>
     </button>
@@ -348,7 +348,10 @@ function Options() {
 
       <button
         className="h-full px-2 hover:bg-bg02"
-        onClick={() => setOptions(!options)}
+        onClick={() => {
+          setOptions(!options);
+          setNewGame(false);
+        }}
       >
         {/* options buttion */}
         <Icon
@@ -361,7 +364,7 @@ function Options() {
         />
       </button>
 
-      {newGm && <NewGame />}
+      {newGm && <NewGame onClick={() => setNewGame(!false)} />}
     </div>
   );
 }
@@ -369,7 +372,7 @@ function Options() {
 function GroupInfOptions({ member, memberMe, conversation }) {
   const [options, setOptions] = useState(false);
   const [mute, setMute] = useState(false);
-  const [ban, setBan] = useState(false);
+  const [admin, setAdmin] = useState(false);
   const socket = useSocket();
 
   function onBanClick() {
@@ -409,10 +412,31 @@ function GroupInfOptions({ member, memberMe, conversation }) {
       </button>
       <div
         className={clsx(
-          "absolute right-5 top-full z-10 w-36 rounded-lg border border-tx01 bg-bg02",
+          "absolute right-5 top-full z-10 w-36 rounded-lg border border-tx01 bg-bg01",
           options ? "block" : "hidden",
         )}
       >
+        {/* admin */}
+        {admin ? (
+          <Option
+            title="rm admin"
+            icon="solar:shield-user-broken"
+            onClick={() => {
+              setAdmin(!admin);
+              onMuteClick;
+            }}
+          />
+        ) : (
+          <Option
+            title="set admin"
+            icon="solar:shield-user-broken"
+            onClick={() => {
+              setAdmin(!admin);
+              onMuteClick;
+            }}
+          />
+        )}
+
         {/* Mute */}
         {mute ? (
           <Option
@@ -434,27 +458,6 @@ function GroupInfOptions({ member, memberMe, conversation }) {
           />
         )}
 
-        {/* Block */}
-        {ban ? (
-          <Option
-            title="unban"
-            icon="solar:user-block-rounded-broken"
-            onClick={() => {
-              setBan(!ban);
-              onBanClick;
-            }}
-          />
-        ) : (
-          <Option
-            title="ban"
-            icon="solar:user-block-rounded-broken"
-            onClick={() => {
-              setBan(!ban);
-              onBanClick;
-            }}
-          />
-        )}
-
         {/* Kick */}
         <Option
           title="kick"
@@ -462,6 +465,16 @@ function GroupInfOptions({ member, memberMe, conversation }) {
           onClick={() => {
             setOptions(false);
             onKickClick;
+          }}
+        />
+
+        {/* Block */}
+        <Option
+          title="ban"
+          icon="solar:user-block-rounded-broken"
+          onClick={() => {
+            setOptions(false);
+            onBanClick;
           }}
         />
       </div>
@@ -914,7 +927,7 @@ function ConversationBox({ onClick, ...props }) {
               </button>
 
               {/* Options Menu */}
-              {props.group && <Options />}
+              {!props.group && <Options />}
             </div>
 
             {/* Conversation Section */}
@@ -1398,12 +1411,11 @@ function Messages(props) {
   );
 }
 
-function Theme(props) {
+function Theme({ onBreakClick, ...props }) {
   const socket = useSocket();
   const [breack, setBreack] = useState(0);
   const router = useRouter();
   useEffect(() => {
-   
     socket.on("come", (body) => {
       router.push(`/game/playground/${body.mode}/${body.id}`);
     });
@@ -1438,6 +1450,7 @@ function Theme(props) {
                   uid: uuidv4(),
                   value,
                 });
+                onBreakClick();
               }}
             >
               {value}
@@ -1449,18 +1462,66 @@ function Theme(props) {
   );
 }
 
-function NewGame() {
+function NewGame({ onClick }) {
+  const [waiting, setWaiting] = useState(false);
   return (
     <div
       className="absolute right-10 top-full flex h-fit w-48 flex-none flex-col rounded-lg 
     border-2 bg-bg03 xs:w-56 sm:w-64"
     >
-      <Theme src={classic} theme="classic"/>
-      <Theme src={beach} theme="beach"/>
-      <Theme src={snow} theme="snow"/>
-      <Theme src={sahara} theme="sahara"/>
-      <Theme src={space} theme="space"/>
-      <Theme src={jungle} theme="jungle"/>
+      {!waiting ? (
+        <>
+          <Theme
+            src={classic}
+            theme="classic"
+            onBreakClick={() => setWaiting(true)}
+          />
+          <Theme
+            src={beach}
+            theme="beach"
+            onBreakClick={() => setWaiting(true)}
+          />
+          <Theme
+            src={snow}
+            theme="snow"
+            onBreakClick={() => setWaiting(true)}
+          />
+          <Theme
+            src={sahara}
+            theme="sahara"
+            onBreakClick={() => setWaiting(true)}
+          />
+          <Theme
+            src={space}
+            theme="space"
+            onBreakClick={() => setWaiting(true)}
+          />
+          <Theme
+            src={jungle}
+            theme="jungle"
+            onBreakClick={() => setWaiting(true)}
+          />
+        </>
+      ) : (
+        <div className="my-3 flex h-full w-full flex-col items-center justify-center gap-8 text-xs sm:gap-4 sm:text-sm 2xl:gap-6 2xl:text-base">
+          <div className="text-center text-lg font-extralight tracking-widest">
+            Game pending
+          </div>
+
+          <div className="w-4/5 text-center font-light tracking-wide text-tx02">
+            waiting for your friend to join the game, Make sure that your friend
+            is present.
+          </div>
+
+          <Image
+            className="mr-2 h-12 w-12 flex-none animate-pulse rounded-full border-[1.5px] border-tx02 object-cover p-[2px] xs:mr-3 xs:h-14 xs:w-14"
+            src={classic}
+            quality={100}
+            width={300}
+            height={300}
+          />
+        </div>
+      )}
     </div>
   );
 }
