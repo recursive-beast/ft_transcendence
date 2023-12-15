@@ -334,7 +334,7 @@ function Options() {
   const [options, setOptions] = useState(false);
   const [newGm, setNewGame] = useState(false);
   return (
-    <div className="absolute right-0 flex h-full items-center justify-center overflow-hidden rounded-l-md bg-bg03 border-l">
+    <div className="absolute right-0 flex h-full items-center justify-center overflow-hidden rounded-l-md border-l bg-bg03">
       {options && (
         <div className="flex h-full items-center">
           <NavOptions
@@ -1145,7 +1145,7 @@ const createGroupSchema = Joi.object({
   avatar: Joi.invalid(null),
 });
 
-function NewGroup({ onGroupClick, ...props }) {
+function NewGroup({ onGroupClick, onNewGroup, ...props }) {
   // State to track the progress to the next step
   const [next, setNext] = useState(false);
   const { data: friends } = useSWR("/users/friends");
@@ -1169,25 +1169,25 @@ function NewGroup({ onGroupClick, ...props }) {
   };
 
   async function createGroup() {
-    const { error, value } = createGroupSchema.validate(data, {
-      allowUnknown: true,
-    });
+    const result = createGroupSchema.validate(data, { allowUnknown: true });
+    const { error, value } = result;
+    const { groupType, title, members, password } = value;
 
     if (error) return enqueueSnackbar("Invalid input", { variant: "error" });
 
-    const response = await axios.post("/chat/group", {
-      type: value.groupType,
-      title: value.title,
-      members: value.members,
-      password: value.password,
+    let response = await axios.post("/chat/group", {
+      type: groupType,
+      title,
+      members,
+      password,
     });
 
-    await axios.postForm(`/chat/group/${response.data.id}`, {
-      avatar: value.avatar,
-    });
+    const id = response.data.id;
+    response = await axios.postForm(`/chat/group/${id}`, { avatar });
+
     await mutate("/chat/group");
-
     enqueueSnackbar("Success", { variant: "success" });
+    onNewGroup(response.data);
   }
 
   const handleChange = (e, friend) => {
@@ -1322,12 +1322,15 @@ function NewGroup({ onGroupClick, ...props }) {
   );
 }
 
-function NewChat({ onChatClick }) {
+function NewChat({ onChatClick, onNewGroup }) {
   const [newGroup, setNewGroup] = useState(false);
   return (
     <>
       {newGroup ? (
-        <NewGroup onGroupClick={() => setNewGroup(false)} />
+        <NewGroup
+          onNewGroup={onNewGroup}
+          onGroupClick={() => setNewGroup(false)}
+        />
       ) : (
         <div className="no-scrollbar flex w-full flex-grow flex-col overflow-auto border-tx03 bg-bg02 sm:w-1/2 sm:max-w-[25rem] sm:border-r  xl:flex-none">
           <div
@@ -1558,6 +1561,10 @@ export default function Home() {
               <NewChat
                 onChatClick={() => {
                   setNewChat(false);
+                }}
+                onNewGroup={(group) => {
+                  setNewChat(false);
+                  setConversation(group);
                 }}
               />
             ) : (
