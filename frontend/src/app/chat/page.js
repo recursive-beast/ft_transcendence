@@ -993,6 +993,7 @@ function ConversationBox({ onClick, ...props }) {
               <input
                 value={msgInput}
                 onChange={(event) => setMsgInput(event.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && onMessageSend()}
                 className="h-7 flex-1 rounded-xl border-none bg-tx02 px-2 text-base outline-none focus:border-none xs:h-8 xs:text-xl lg:px-3"
               />
 
