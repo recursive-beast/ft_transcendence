@@ -21,7 +21,13 @@ export class SearchService {
   }
 
   async filterGroupConversations(search: string) {
-    const groups = await this.prismaService.groupConversation.findMany();
+    const groups = await this.prismaService.groupConversation.findMany({
+      where: {
+        type: {
+          not: 'PRIVATE',
+        },
+      },
+    });
     const keys: (keyof GroupConversation)[] = ['title'];
     const fuse = new Fuse(groups, { keys, threshold: 0.3 });
     const filtered = fuse.search(search).map((elem) => elem.item);

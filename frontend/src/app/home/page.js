@@ -439,6 +439,7 @@ function SettingSection({ onClick, ...props }) {
 
       mutate("/users/me");
       enqueueSnackbar("Success", { variant: "success" });
+      onClick();
     } catch (error) {
       enqueueSnackbar("Error", { variant: "error" });
     }

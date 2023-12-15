@@ -6,6 +6,7 @@ import { Server } from 'socket.io';
 import { UserEntity } from 'src/common/entities/user.entity';
 import { NotificationService } from './notification.service';
 import { PrismaService } from 'nestjs-prisma';
+import { GroupConversationEntity } from 'src/common/entities/group-conversation.entity';
 
 @WebSocketGateway()
 export class NotificationGateway {
@@ -23,14 +24,14 @@ export class NotificationGateway {
       NotificationType.FRIEND_ADD,
       target.id,
       { user: instanceToPlain(user) },
-      );
-      
-      this.server
+    );
+
+    this.server
       .to(`user-${target.id}`)
       .emit('notification', instanceToPlain(notification));
-    }
-    @OnEvent('game.invite')
-    async onGameInvite(userId: number, targetId: number, url: string) {
+  }
+  @OnEvent('game.invite')
+  async onGameInvite(userId: number, targetId: number, url: string) {
     const user = await this.prismaService.user.findUnique({
       where: { id: userId },
     });
@@ -45,6 +46,26 @@ export class NotificationGateway {
 
     this.server
       .to(`user-${targetId}`)
+      .emit('notification', instanceToPlain(notification));
+  }
+
+  @OnEvent('chat.group.add')
+  async onGroupAdd(
+    user: UserEntity,
+    target: UserEntity,
+    group: GroupConversationEntity,
+  ) {
+    const notification = await this.notificationService.create(
+      NotificationType.GROUP_ADD,
+      target.id,
+      {
+        user: instanceToPlain(user),
+        group: instanceToPlain(group),
+      },
+    );
+
+    this.server
+      .to(`user-${target.id}`)
       .emit('notification', instanceToPlain(notification));
   }
 }
