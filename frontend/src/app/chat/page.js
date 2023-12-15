@@ -334,7 +334,7 @@ function Options() {
   const [options, setOptions] = useState(false);
   const [newGm, setNewGame] = useState(false);
   return (
-    <div className="absolute right-0 flex h-full items-center justify-center rounded-l-md bg-bg03">
+    <div className="absolute right-0 flex h-full items-center justify-center overflow-hidden rounded-l-md bg-bg03 border-l">
       {options && (
         <div className="flex h-full items-center">
           <NavOptions
@@ -355,7 +355,7 @@ function Options() {
       >
         {/* options buttion */}
         <Icon
-          className="h-6 w-6 text-tx02 sm:h-7 sm:w-8"
+          className="h-6 w-6 text-tx01 sm:h-7 sm:w-8"
           icon={
             !options
               ? "solar:alt-arrow-left-broken"
@@ -412,7 +412,7 @@ function GroupInfOptions({ member, memberMe, conversation }) {
       </button>
       <div
         className={clsx(
-          "absolute right-5 top-full z-10 w-36 rounded-lg border border-tx01 bg-bg01",
+          "absolute right-5 top-full z-10 w-36 overflow-hidden rounded-lg border border-tx01 bg-bg01",
           options ? "block" : "hidden",
         )}
       >
@@ -904,7 +904,11 @@ function ConversationBox({ onClick, ...props }) {
                       : conversation?.members.find((obj) => obj.id !== myID)
                           .avatar
                   }
-                  id={conversation?.members.find((obj) => obj.id !== myID).id}
+                  id={
+                    props.group
+                      ? -1
+                      : conversation?.members.find((obj) => obj.id !== myID).id
+                  }
                   className="my-1 mr-2 h-11 w-11 xs:h-[52px] xs:w-[52px] xs:p-[2px] lg:mr-3"
                 />
 
@@ -1462,7 +1466,7 @@ function Theme({ onBreakClick, ...props }) {
   );
 }
 
-function NewGame({ onClick }) {
+export function NewGame({ onClick }) {
   const [waiting, setWaiting] = useState(false);
   return (
     <div

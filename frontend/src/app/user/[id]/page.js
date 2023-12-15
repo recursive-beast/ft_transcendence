@@ -8,6 +8,7 @@ import axios from "axios";
 
 import { Title, Header, RightBar } from "@/components/common";
 import { PlayRate, Achievement, Ranking } from "@/app/home/page";
+import { NewGame } from "@/app/chat/page";
 import { Option } from "@/app/chat/page";
 
 import Pic01 from "@/images/profils/01.jpg";
@@ -93,7 +94,7 @@ function ProfileInfo({ id }) {
           </button>
 
           {options && (
-            <div className="absolute right-0 z-10 mt-2 w-52 rounded-lg border bg-bg01">
+            <div className="absolute right-0 z-10 mt-2 w-52 rounded-lg border bg-bg01 overflow-hidden">
               {user?.isFriend ? (
                 <Option
                   title="Remove Friend"
