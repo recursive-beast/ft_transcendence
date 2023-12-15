@@ -45,6 +45,7 @@ import { useSocket } from "@/hooks/useSocket";
 import axios from "axios";
 import { AvatarInput } from "@/components/AvatarInput";
 import { useSnackbar } from "notistack";
+import { differenceBy } from "lodash";
 
 faker.seed(2);
 
@@ -691,7 +692,11 @@ function GroupInfo({ onClick, conversation, ...props }) {
 
         {/* add Friends list */}
         {addMbr &&
-          friends?.map((friend, index) => {
+          differenceBy(
+            friends,
+            conversation.members.map((member) => member.user),
+            "id",
+          ).map((friend, index) => {
             return (
               <div
                 key={index}
