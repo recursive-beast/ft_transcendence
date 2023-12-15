@@ -10,14 +10,13 @@ import { useEffect, useState, useRef } from "react";
 import * as Joi from "joi";
 
 import logoPic from "@/images/logos/logo.png";
-//Profils
-import Pic01 from "@/images/profils/01.jpg";
-import Pic02 from "@/images/profils/02.jpg";
-import Pic03 from "@/images/profils/03.png";
-import Pic11 from "@/images/profils/11.jpg";
-import Pic05 from "@/images/profils/05.jpg";
-import Pic06 from "@/images/profils/06.jpg";
-import Pic15 from "@/images/profils/15.jpg";
+//games
+import classic from "@/images/thems/logos/classic.png";
+import beach from "@/images/thems/logos/beach.png";
+import snow from "@/images/thems/logos/snow.png";
+import sahara from "@/images/thems/logos/sahara.png";
+import space from "@/images/thems/logos/space.png";
+import jungle from "@/images/thems/logos/jungle.png";
 import { faker } from "@faker-js/faker";
 
 import {
@@ -312,19 +311,17 @@ export function Option({ onClick, ...props }) {
 function NavOptions({ onClick, ...props }) {
   return (
     <button
-      className="group flex w-fit items-center text-tx02 border-r h-full px-3 hover:bg-bg02"
+      className="group flex h-full w-fit items-center border-r px-3 text-tx02 hover:bg-bg02"
       onClick={onClick}
     >
       {/* button icon */}
       <Icon
-        className="h-6 w-6 text-tx02 group-hover:text-tx01 2xl:h-8 2xl:w-8 group-hover:mr-2"
+        className="h-6 w-6 text-tx02 group-hover:mr-2 group-hover:text-tx01 2xl:h-8 2xl:w-8"
         icon={props.icon}
       />
 
       {/* button title >> visible in web vertion */}
-      <div
-        className="hidden text-xs font-light transition duration-500 uppercase tracking-wider text-tx01 group-hover:block"
-      >
+      <div className="hidden text-xs font-light uppercase tracking-wider text-tx01 transition duration-500 group-hover:block">
         {props.title}
       </div>
     </button>
@@ -332,26 +329,25 @@ function NavOptions({ onClick, ...props }) {
 }
 
 function Options() {
-  // State to control the visibility of options
   const [options, setOptions] = useState(false);
+  const [newGm, setNewGame] = useState(false);
   return (
-    // <div className="absolute right-5 top-full rounded-lg border border-tx01 bg-bg02 ">
-    //   {/* New Game */}
-    //   <Option title="new game" icon="solar:gamepad-broken" />
-
-    //   {/* Block */}
-    //   <Option title="block" icon="solar:user-block-rounded-broken" />
-    // </div>
-
     <div className="absolute right-0 flex h-full items-center justify-center rounded-l-md bg-bg03">
       {options && (
-        <div className="flex items-center h-full">
-          <NavOptions title="New Game" icon="solar:gamepad-broken" />
+        <div className="flex h-full items-center">
+          <NavOptions
+            title="New Game"
+            icon="solar:gamepad-broken"
+            onClick={() => setNewGame(!newGm)}
+          />
           <NavOptions title="block" icon="solar:user-block-rounded-broken" />
         </div>
       )}
 
-      <button className="h-full px-2 hover:bg-bg02" onClick={() => setOptions(!options)}>
+      <button
+        className="h-full px-2 hover:bg-bg02"
+        onClick={() => setOptions(!options)}
+      >
         {/* options buttion */}
         <Icon
           className="h-6 w-6 text-tx02 sm:h-7 sm:w-8"
@@ -362,6 +358,8 @@ function Options() {
           }
         />
       </button>
+
+      {newGm && <NewGame />}
     </div>
   );
 }
@@ -1394,6 +1392,60 @@ function Messages(props) {
         group={true}
         messages={<GroupMessage onConversation={props.onGroupConversation} />}
       />
+    </div>
+  );
+}
+
+function Theme(props) {
+  return (
+    <div className="flex w-full items-center border-b p-2 last:border-0">
+      {/* Avatar */}
+      <Image
+        src={props.src}
+        className="mr-2 h-12 w-12 object-cover xs:mr-3 xs:h-14 xs:w-14"
+        quality={100}
+        width={300}
+        height={300}
+      />
+
+      {/* Breack point */}
+      <div className="flex flex-grow justify-between">
+        {[3, 5, 7, 9].map((value) => {
+          return (
+            <button
+              className="h-6 w-6 rounded-lg border text-tx05 hover:bg-tx05 hover:text-tx04 sm:h-8 sm:w-8 xl:h-10 xl:w-10"
+              key={value}
+              onClick={() => {
+                setBreack(value);
+                // socket.emit("invite", {
+                //   id: friend.id,
+                //   mode: props.theme,
+                //   uid: uuidv4(),
+                //   value,
+                // });
+              }}
+            >
+              {value}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function NewGame() {
+  return (
+    <div
+      className="absolute right-10 top-full flex h-fit w-48 flex-none flex-col rounded-lg 
+    border-2 bg-bg03 xs:w-56 sm:w-64"
+    >
+      <Theme src={classic} />
+      <Theme src={beach} />
+      <Theme src={snow} />
+      <Theme src={sahara} />
+      <Theme src={space} />
+      <Theme src={jungle} />
     </div>
   );
 }
