@@ -464,7 +464,7 @@ function GroupInfOptions({ member, memberMe, conversation }) {
           icon="ion:log-out-outline"
           onClick={() => {
             setOptions(false);
-            onKickClick;
+            onKickClick();
           }}
         />
 
@@ -474,7 +474,7 @@ function GroupInfOptions({ member, memberMe, conversation }) {
           icon="solar:user-block-rounded-broken"
           onClick={() => {
             setOptions(false);
-            onBanClick;
+            onBanClick();
           }}
         />
       </div>
