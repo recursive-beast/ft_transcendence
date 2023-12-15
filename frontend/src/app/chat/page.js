@@ -7,6 +7,7 @@ import Image from "next/image";
 import { Icon } from "@iconify/react";
 import useSWR, { mutate } from "swr";
 import { useEffect, useState, useRef } from "react";
+// import { useSocket } from "@/hooks/useSocket";
 import * as Joi from "joi";
 
 import logoPic from "@/images/logos/logo.png";
@@ -18,6 +19,7 @@ import sahara from "@/images/thems/logos/sahara.png";
 import space from "@/images/thems/logos/space.png";
 import jungle from "@/images/thems/logos/jungle.png";
 import { faker } from "@faker-js/faker";
+import { v4 as uuidv4 } from "uuid";
 
 import {
   Title,
@@ -1397,6 +1399,19 @@ function Messages(props) {
 }
 
 function Theme(props) {
+  const socket = useSocket();
+  const [breack, setBreack] = useState(0);
+  const router = useRouter();
+  useEffect(() => {
+   
+    socket.on("come", (body) => {
+      router.push(`/game/playground/${body.mode}/${body.id}`);
+    });
+
+    return () => {
+      socket.off("come");
+    };
+  }, []);
   return (
     <div className="flex w-full items-center border-b p-2 last:border-0">
       {/* Avatar */}
@@ -1417,12 +1432,12 @@ function Theme(props) {
               key={value}
               onClick={() => {
                 setBreack(value);
-                // socket.emit("invite", {
-                //   id: friend.id,
-                //   mode: props.theme,
-                //   uid: uuidv4(),
-                //   value,
-                // });
+                socket.emit("invite", {
+                  id: 1,
+                  mode: props.theme,
+                  uid: uuidv4(),
+                  value,
+                });
               }}
             >
               {value}
@@ -1440,12 +1455,12 @@ function NewGame() {
       className="absolute right-10 top-full flex h-fit w-48 flex-none flex-col rounded-lg 
     border-2 bg-bg03 xs:w-56 sm:w-64"
     >
-      <Theme src={classic} />
-      <Theme src={beach} />
-      <Theme src={snow} />
-      <Theme src={sahara} />
-      <Theme src={space} />
-      <Theme src={jungle} />
+      <Theme src={classic} theme="classic"/>
+      <Theme src={beach} theme="beach"/>
+      <Theme src={snow} theme="snow"/>
+      <Theme src={sahara} theme="sahara"/>
+      <Theme src={space} theme="space"/>
+      <Theme src={jungle} theme="jungle"/>
     </div>
   );
 }

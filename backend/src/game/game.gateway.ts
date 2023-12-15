@@ -6,8 +6,10 @@ import {
 } from '@nestjs/websockets';
 import { GatewayMetadataExplorer } from '@nestjs/websockets/gateway-metadata-explorer';
 import { omit } from 'lodash';
-// import { PrismaService } from 'nestjs-prisma';
+import { PrismaService } from 'nestjs-prisma';
+// import { PrismaModule } from 'nestjs-prisma';
 import { Server, Socket } from 'socket.io';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 interface Queue {
   id: number;
@@ -24,6 +26,7 @@ interface player {
   serve: number;
   direction: 'up' | 'down' | null;
   mode?: string;
+  win: false | true;
 }
 
 interface Ball {
@@ -99,6 +102,7 @@ function resetBall(game: Game, ang: number) {
   game.player1.y = table.height / 2 - (25 * table.height) / 100 / 2;
   game.player2.y = table.height / 2 - (25 * table.height) / 100 / 2;
 }
+
 const queue: Queue[] = [];
 let currentGameId = -1;
 
@@ -112,8 +116,9 @@ export class GameGateway {
 
   constructor(
     private configService: ConfigService,
-    // private prismaService: PrismaService,
-  ) {}
+    private eventEmitter: EventEmitter2,
+  ) // private prismaService: PrismaService,
+  {}
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   //     QUEUE       ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -138,6 +143,7 @@ export class GameGateway {
         serve: 1,
         direction: null,
         mode: toFind.mode,
+        win: false,
       };
       const player2 = {
         id: id,
@@ -149,6 +155,7 @@ export class GameGateway {
         serve: 0,
         direction: null,
         mode: mode,
+        win: false,
       };
       const ang = getRandomIntInclusive(-0.785398, 0.785398);
       const game: Game = {
@@ -212,6 +219,14 @@ export class GameGateway {
   startGame(client: Socket) {
     const id = client.data.id;
     const game = playersInGame.get(id);
+    if (game && game.player1.id && game.player2.id) {
+      this.server
+        .to(`user-${game.player1.id}`)
+        .emit('user.status', { id, status: 'INGAME' });
+      this.server
+        .to(`user-${game.player2.id}`)
+        .emit('user.status', { id, status: 'INGAME' });
+    }
     if (game && game.p1ready && game.p2ready) {
       game.intervalId = setInterval(() => {
         if (game.ball.space === 1) {
@@ -240,20 +255,28 @@ export class GameGateway {
         }
         if (game.ball.x - game.ball.radius < 0) {
           game.player2.score++;
-          if (game.player2.score === game.scoretowin)
-            this.server
-              .to(`game-${game.id}`)
-              .emit('game.over', omit(game, ['intervalId']));
+          if (game.player2.score === game.scoretowin) {
+            game.player2.win = true;
+            this.server.in(`user-${game.player2.id}`).emit('game.over', "YOU WIN");
+            this.server.in(`user-${game.player1.id}`).emit('game.over', "YOU LOSE");
+            // this.server
+            //   .to(`game-${game.id}`)
+            //   .emit('game.over', omit(game, ['intervalId']));
+          }
           game.player1.serve = 1;
           game.player2.serve = 0;
           resetBall(game, ang);
           game.ball.space = 0;
         } else if (game.ball.x + game.ball.radius > table.width) {
           game.player1.score++;
-          if (game.player1.score === game.scoretowin)
-            this.server
-              .to(`game-${game.id}`)
-              .emit('game.over', omit(game, ['intervalId']));
+          if (game.player1.score === game.scoretowin) {
+            game.player1.win = true;
+            this.server.in(`user-${game.player1.id}`).emit('game.over', "YOU WIN");
+            this.server.in(`user-${game.player2.id}`).emit('game.over', "YOU LOSE");
+            // this.server
+            //   .to(`game-${game.id}`)
+            //   .emit('game.over', omit(game, ['intervalId']));
+          }
           game.player2.serve = 1;
           game.player1.serve = 0;
           resetBall(game, ang);
@@ -326,8 +349,7 @@ export class GameGateway {
   @SubscribeMessage('play.ai')
   palywithIA(client: Socket) {
     const id = client.data.id;
-    if (playersInGame.get(id))
-      return 'Already in game';
+    if (playersInGame.get(id)) return 'Already in game';
     const player1 = {
       width: 10,
       height: 150,
@@ -336,6 +358,7 @@ export class GameGateway {
       score: 0,
       serve: 0,
       direction: null,
+      win: false,
     };
     const player2 = {
       id: id,
@@ -346,6 +369,7 @@ export class GameGateway {
       score: 0,
       serve: 1,
       direction: null,
+      win: false,
     };
     const ang = getRandomIntInclusive(-0.785398, 0.785398);
     const game: Game = {
@@ -373,7 +397,8 @@ export class GameGateway {
       .emit('game.found', omit(game, ['intervalId']));
     let a = 1;
     let tap = 0;
-    client.emit('user.status', {id, status:"INGAME"});
+    client.emit('user.status', { id, status: 'INGAME' });
+    // this.server.to(`user-${player2.id}`).emit('user.status', {id, status:"INGAME"});
     game.intervalId = setInterval(() => {
       if (game.ball.space === 1) {
         game.ball.x += game.ball.velocityX;
@@ -409,16 +434,21 @@ export class GameGateway {
       } else {
         if (game.ball.x - game.ball.radius < 0) {
           player2.score++;
-          if (player2.score === game.scoretowin)
-            this.server.to(`game-${game.id}`).emit('game.over', game);
+          if (player2.score === game.scoretowin) {
+            player2.win = true;
+            // this.server.in(`user-${player2}`).emit('game.over', game);
+            this.server.to(`game-${game.id}`).emit('game.over', "YOU WIN");
+          }
           a = 1;
           tap = 0;
           resetBall(game, ang);
           game.ball.space = 0;
         } else if (game.ball.x + game.ball.radius > table.width) {
           player1.score++;
-          if (player1.score === game.scoretowin)
-            this.server.to(`game-${game.id}`).emit('game.over', game);
+          if (player1.score === game.scoretowin) {
+            player1.win = true;
+            this.server.to(`game-${game.id}`).emit('game.over', "YOU LOSE");
+          }
           a = 1;
           tap = 0;
           resetBall(game, ang);
@@ -435,24 +465,42 @@ export class GameGateway {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   //     END       ////////////////////////////////////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
   @SubscribeMessage('end')
-  handleDisconnect(client: Socket) {
-    // const sockets = await this.server.in("room.game").fetchSockets();
-    // sockets[0]
+  async handleDisconnect(client: Socket) {
     const id = client.data.id;
     const game = playersInGame.get(id);
 
-    // this.prismaService.win.create({
-    //   data: {
-    //     userId: 1,
-    //     gameId: 4,
+    // if (game?.id && game.player1?.id && game.player2?.id) {
+    //   const winnerPlayer = game.player1.win ? game.player1 : game.player2.win ? game.player2 : null;
+    //   const loserPlayer = winnerPlayer === game.player1 ? game.player2 : game.player1;
+
+    //   if (winnerPlayer && winnerPlayer.id && loserPlayer.id && game.id) {
+    //     await this.prismaService.game.create({
+    //       data: {
+    //         id: game.id,
+    //         userscore: game.player1.score,
+    //         opponentscore: game.player2.score,
+    //         wins: {
+    //           create: {
+    //             userId: winnerPlayer.id,
+    //           },
+    //         },
+    //       },
+    //     });
+
+    //     await this.prismaService.loss.create({
+    //       data: {
+    //         userId: loserPlayer.id,
+    //         gameId: game.id,
+    //       },
+    //     });
     //   }
-    // })
+    // }
 
     if (game) {
       clearInterval(game.intervalId);
-      this.server.to(`game-${game.id}`).emit('game.over', game);
+      // this.server.to(`game-${game.id}`).emit('game.over', game);
+
       if (game.player1.id) {
         playersInGame.delete(game.player1.id);
         this.server.to(`game-${game.id}`).emit('game.end', game);
@@ -460,6 +508,7 @@ export class GameGateway {
           .in(`user-${game.player1.id}`)
           .socketsLeave(`game-${game.id}`);
       }
+
       if (game.player2.id) {
         this.server
           .in(`user-${game.player2.id}`)
@@ -506,6 +555,7 @@ export class GameGateway {
       serve: 1,
       direction: null,
       mode: body.mode,
+      win: false,
     };
     const player2 = {
       id: body.id,
@@ -517,6 +567,7 @@ export class GameGateway {
       serve: 0,
       direction: null,
       mode: body.mode,
+      win: false,
     };
     const ang = getRandomIntInclusive(-0.785398, 0.785398);
     const game: Game = {
@@ -542,10 +593,11 @@ export class GameGateway {
     this.server.in(`user-${player1.id}`).socketsJoin(`game-${game.id}`);
     // this.server.to(`game-${game.id}`).emit('setup');
     const frontend_url = this.configService.get('FRONTEND_URL');
-    console.log(player2);
-    this.server
-      .to(`user-${player2.id}`)
-      .emit('aa', `${frontend_url}/game/playground/${body.mode}/${body.uid}`);
-    // return 'Game found';
+    this.eventEmitter.emit(
+      'game.invite',
+      player1.id,
+      player2.id,
+      `${frontend_url}/game/playground/${body.mode}/${body.uid}`,
+    );
   }
 }

@@ -9,6 +9,8 @@ import { useSocket } from "@/hooks/useSocket";
 
 function Name({params}){
   const [ready, setReady] = useState(false);
+  const [gameOver, setGameOver] = useState(false);
+  const [winner, setWinner] = useState("");
   const windowSize = useWindowSize();
   const ref = useRef(null);
   const router = useRouter();
@@ -19,13 +21,15 @@ function Name({params}){
   ref.current = data;
   setReady(true);
 }
-const gameOver = () => {
+const handleGameOver = (data) => {
+  console.log(data);
+  setWinner(data)
+  setGameOver(true);
   socket.emit("end");
-  router.push("/game/over");
 }
   useEffect(() => {
     socket.on("game.found", getGmaeData);
-    socket.on("game.over", gameOver);
+    socket.on("game.over", handleGameOver);
     socket.emit("in", params.id);
     socket.emit("ready");
     socket.emit("start");
@@ -33,7 +37,7 @@ const gameOver = () => {
       // TODO: cleanup socket listeners
       socket.emit("kill.interval");
       socket.off("game.found", getGmaeData);
-      socket.off("game.over", gameOver);
+      socket.off("game.over", handleGameOver);
     };
   }, []);
 
@@ -84,18 +88,24 @@ const gameOver = () => {
 
   return (
     <div className="flex h-screen flex-col items-center justify-center text-tx01">
-      {ready && (
-        <>
-          {/* game over */}
-          <div className="hidden absolute text-8xl top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-14
-          bg-bg01/80 backdrop-blur-sm text-tx01 rounded-xl z-20">Game over</div>
+    {ready && !gameOver && ( // Render the div only if ready and not game over
+      <>
+        {/* draw canvas */}
+        <DrawGame data={ref}/>
+      </>
+    )}
+    {gameOver && ( // Render the div only if ready and not game over
+      <>
+      {/* game over */}
+      <div className="absolute text-8xl top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-14
+      bg-bg01/80 backdrop-blur-sm text-tx01 text-center rounded-xl z-20">Game over <br/> {winner}</div>
 
-          {/* draw canvas */}
-          <DrawGame data={ref} />
-        </>
-      )}
-    </div>
-  );
+      {/* draw canvas */}
+      <DrawGame data={ref} />
+    </>
+    )}
+  </div>
+);
 };
 
 export default Name;
