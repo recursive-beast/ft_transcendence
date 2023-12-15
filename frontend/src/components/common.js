@@ -83,12 +83,12 @@ function Notif({ notification }) {
             >
               join
             </Link>
-            // <Link
-            //   className="h-fit rounded-lg border px-2 font-extralight text-tx02
-            //           transition-colors duration-[400ms] ease-linear hover:bg-tx01 hover:text-tx03"
-            // >
-            //   Add
-            // </Link>
+          //   <Link
+          //   className="h-fit rounded-lg border px-2 font-extralight text-tx02 
+          //             transition-colors duration-[400ms] ease-linear hover:bg-tx01 hover:text-tx03"
+          // >
+          //   Add
+          // </Link>
           )}
         </div>
       </div>

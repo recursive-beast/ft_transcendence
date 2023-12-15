@@ -10,6 +10,7 @@ import { PrismaService } from 'nestjs-prisma';
 // import { PrismaModule } from 'nestjs-prisma';
 import { Server, Socket } from 'socket.io';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { log } from 'console';
 
 interface Queue {
   id: number;
@@ -117,6 +118,7 @@ export class GameGateway {
   constructor(
     private configService: ConfigService,
     private eventEmitter: EventEmitter2,
+    private prismaService: PrismaService,
   ) // private prismaService: PrismaService,
   {}
 
@@ -333,9 +335,15 @@ export class GameGateway {
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   @SubscribeMessage('in')
   palywithfriend(client: any, uid: string) {
-    console.log("in");
+    // console.log("in"); 
     const id = client.data.id;
     const game = playersInGame.get(id);
+    // if (game && game.intervalId) 
+    // {
+    //   this.server
+    //   .to(`user-${id}`)
+    //   .emit('friend.left');
+    // }
     if (game) {
       this.server.in(`user-${client.data.id}`).socketsJoin(`game-${game.id}`);
       this.server
@@ -476,34 +484,44 @@ export class GameGateway {
   async handleDisconnect(client: Socket) {
     const id = client.data.id;
     const game = playersInGame.get(id);
+    console.log("end");
+    console.log(game);
     
 
-    // if (game?.id && game.player1?.id && game.player2?.id) {
-    //   const winnerPlayer = game.player1.win ? game.player1 : game.player2.win ? game.player2 : null;
-    //   const loserPlayer = winnerPlayer === game.player1 ? game.player2 : game.player1;
+    if (game?.id && game.player1?.id && game.player2?.id) {
+      const winnerPlayer = game.player1.win ? game.player1 : game.player2.win ? game.player2 : null;
+      const loserPlayer = winnerPlayer === game.player1 ? game.player2 : game.player1;
+      console.log("hi");
+      if (winnerPlayer && winnerPlayer.id && loserPlayer.id && game.id) {
+        await this.prismaService.game.create({
+          data: {
+            id: game.id,
+            userscore: game.player1.score,
+            opponentscore: game.player2.score,
+            wins: {
+              create: {
+                userId: winnerPlayer.id,
+              },
+            },
+          },
+        });
 
-    //   if (winnerPlayer && winnerPlayer.id && loserPlayer.id && game.id) {
-    //     await this.prismaService.game.create({
-    //       data: {
-    //         id: game.id,
-    //         userscore: game.player1.score,
-    //         opponentscore: game.player2.score,
-    //         wins: {
-    //           create: {
-    //             userId: winnerPlayer.id,
-    //           },
-    //         },
-    //       },
-    //     });
+        await this.prismaService.loss.create({
+          data: {
+            userId: loserPlayer.id,
+            gameId: game.id,
+          },
+        });
+        
+        const user = await this.prismaService.user.findUnique({
+          where: {
+            id: winnerPlayer.id,
+          },
+        })
 
-    //     await this.prismaService.loss.create({
-    //       data: {
-    //         userId: loserPlayer.id,
-    //         gameId: game.id,
-    //       },
-    //     });
-    //   }
-    // }
+        console.log(user);
+      }
+    }
 
     if (game) {
       clearInterval(game.intervalId);
