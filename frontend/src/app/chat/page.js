@@ -1566,6 +1566,7 @@ export default function Home() {
                 onNewGroup={(group) => {
                   setNewChat(false);
                   setConversation(group);
+                  setGroup(true);
                 }}
               />
             ) : (
