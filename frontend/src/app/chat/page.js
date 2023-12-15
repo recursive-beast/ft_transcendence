@@ -331,7 +331,7 @@ function NavOptions({ onClick, ...props }) {
   );
 }
 
-function Options() {
+function Options({ id }) {
   const [options, setOptions] = useState(false);
   const [newGm, setNewGame] = useState(false);
   return (
@@ -365,7 +365,7 @@ function Options() {
         />
       </button>
 
-      {newGm && <NewGame onClick={() => setNewGame(!false)} />}
+      {newGm && <NewGame id={id} onClick={() => setNewGame(!false)} />}
     </div>
   );
 }
@@ -809,6 +809,9 @@ function ConversationBox({ onClick, ...props }) {
 
   const conversation = isDirect ? direct : isGroup ? group : null;
 
+  const isDifferentId = (user) => user.id !== me?.id;
+  const userId = conversation?.members.find(isDifferentId).id;
+
   if (me && !myID) setMyId(me.id);
 
   useEffect(() => {
@@ -936,7 +939,7 @@ function ConversationBox({ onClick, ...props }) {
               </button>
 
               {/* Options Menu */}
-              {!props.group && <Options />}
+              {!props.group && <Options id={userId} />}
             </div>
 
             {/* Conversation Section */}
@@ -1092,7 +1095,7 @@ function DirectConversationBox({ onClick, id, onConversation }) {
                 </div>
               </div>
             </Link>
-            <Options />
+            <Options id={id} />
           </div>
 
           <div className="flex grow flex-col justify-end" />
@@ -1507,7 +1510,7 @@ function Messages(props) {
   );
 }
 
-function Theme({ onBreakClick, ...props }) {
+function Theme({ onBreakClick, id, ...props }) {
   const socket = useSocket();
   const [breack, setBreack] = useState(0);
   const router = useRouter();
@@ -1541,7 +1544,7 @@ function Theme({ onBreakClick, ...props }) {
               onClick={() => {
                 setBreack(value);
                 socket.emit("invite", {
-                  id: 1,
+                  id,
                   mode: props.theme,
                   uid: uuidv4(),
                   value,
@@ -1558,7 +1561,7 @@ function Theme({ onBreakClick, ...props }) {
   );
 }
 
-export function NewGame({ onClick }) {
+export function NewGame({ id, onClick }) {
   const [waiting, setWaiting] = useState(false);
   return (
     <div
@@ -1568,31 +1571,37 @@ export function NewGame({ onClick }) {
       {!waiting ? (
         <>
           <Theme
+            id={id}
             src={classic}
             theme="classic"
             onBreakClick={() => setWaiting(true)}
           />
           <Theme
+            id={id}
             src={beach}
             theme="beach"
             onBreakClick={() => setWaiting(true)}
           />
           <Theme
+            id={id}
             src={snow}
             theme="snow"
             onBreakClick={() => setWaiting(true)}
           />
           <Theme
+            id={id}
             src={sahara}
             theme="sahara"
             onBreakClick={() => setWaiting(true)}
           />
           <Theme
+            id={id}
             src={space}
             theme="space"
             onBreakClick={() => setWaiting(true)}
           />
           <Theme
+            id={id}
             src={jungle}
             theme="jungle"
             onBreakClick={() => setWaiting(true)}
