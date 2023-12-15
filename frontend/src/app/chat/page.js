@@ -1065,7 +1065,10 @@ function CustomizeGroup({
           className="flex h-28 w-28 flex-col items-center justify-center gap-2 overflow-hidden rounded-full border border-dashed border-tx01"
         >
           {avatar ? (
-            <img className="object-cover" src={URL.createObjectURL(avatar)} />
+            <img
+              className="h-full w-full object-cover"
+              src={URL.createObjectURL(avatar)}
+            />
           ) : (
             <>
               <Icon
