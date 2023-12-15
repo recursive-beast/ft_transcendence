@@ -9,6 +9,7 @@ import {
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CurrentUser } from 'src/auth/current-user.decorator';
 import { UserEntity } from 'src/common/entities/user.entity';
@@ -17,7 +18,10 @@ import { GroupService } from './group.service';
 
 @Controller('chat/group')
 export class GroupController {
-  constructor(private groupService: GroupService) {}
+  constructor(
+    private groupService: GroupService,
+    private eventEmitter: EventEmitter2,
+  ) {}
 
   @Get()
   index(@CurrentUser() user: UserEntity) {
@@ -26,13 +30,22 @@ export class GroupController {
 
   @Post()
   async create(@CurrentUser() user: UserEntity, @Body() dto: GroupCreateDTO) {
-    return this.groupService.createChannel(
+    const group = await this.groupService.createChannel(
       user.id,
       dto.title,
       dto.type,
       dto.members,
       dto.password,
     );
+
+    const members = group.members || [];
+
+    for (const member of members) {
+      if (member.user.id === user.id) continue;
+      this.eventEmitter.emit('chat.group.add', user, member.user, group);
+    }
+
+    return group;
   }
 
   @UseInterceptors(FileInterceptor('avatar'))

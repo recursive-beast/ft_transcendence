@@ -46,6 +46,13 @@ const friends = Array(50)
 function Notif({ notification }) {
   const { type, data, createdAt } = notification;
   const createdAtDate = new Date(createdAt);
+  const { data: group } = useSWR(
+    type === "GROUP_ADD" ? `/chat/group/${data.group.id}` : null,
+  );
+
+  let avatar = type === "GROUP_ADD" ? group?.avatar : data.user.avatar;
+
+  avatar = avatar || undefined; // in case of null, replace with undefined
 
   return (
     <div className="m-3 flex items-center justify-between">
@@ -53,7 +60,7 @@ function Notif({ notification }) {
         {/* image */}
         <Image
           className="mr-4 h-12 w-12 rounded-full border border-tx05 object-cover"
-          src={data.user.avatar}
+          src={avatar}
           quality={100}
           width={300}
           height={300}
@@ -62,11 +69,12 @@ function Notif({ notification }) {
         {/* title & descriiption */}
         <div className="text-tx01">
           <div className="w-36 truncate capitalize tracking-widest xs:w-52 sm:w-40 lg:w-36">
-            {data.user.displayName}
+            {type === "GROUP_ADD" ? data.group.title : data.user.displayName}
           </div>
           <div className="w-36 truncate text-xs font-extralight xs:w-52 sm:w-40 lg:w-36">
-            {type === "FRIEND_ADD" && "added you as Friend"}
+            {type === "FRIEND_ADD" && "Added you as Friend"}
             {type === "GAME_INVITE" && "Invited you to a game"}
+            {type === "GROUP_ADD" && "You joined a group chat"}
           </div>
           {type === "GAME_INVITE" && (
             // <Link
