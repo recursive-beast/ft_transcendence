@@ -714,7 +714,7 @@ function GroupInfo({ onClick, conversation, ...props }) {
 
                 {/* Checkbox for friend selection */}
                 <button
-                  className="h-fit rounded-lg border px-2 font-extralight text-tx02 
+                  className="h-fit rounded-lg border px-2 font-extralight text-tx02
                             transition-colors duration-[400ms] ease-linear hover:bg-tx01 hover:text-tx03"
                 >
                   Add
@@ -1470,7 +1470,7 @@ export function NewGame({ onClick }) {
   const [waiting, setWaiting] = useState(false);
   return (
     <div
-      className="absolute right-10 top-full flex h-fit w-48 flex-none flex-col rounded-lg 
+      className="absolute right-10 top-full flex h-fit w-48 flex-none flex-col rounded-lg
     border-2 bg-bg03 xs:w-56 sm:w-64"
     >
       {!waiting ? (
@@ -1580,7 +1580,7 @@ export default function Home() {
                   />
 
                   {/* Search */}
-                  <Search />
+                  <Search chat={true} />
 
                   {/* new Chat */}
                   <button
