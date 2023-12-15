@@ -7,18 +7,19 @@ import Image from "next/image";
 import { Icon } from "@iconify/react";
 import useSWR, { mutate } from "swr";
 import { useEffect, useState, useRef } from "react";
+// import { useSocket } from "@/hooks/useSocket";
 import * as Joi from "joi";
 
 import logoPic from "@/images/logos/logo.png";
-//Profils
-import Pic01 from "@/images/profils/01.jpg";
-import Pic02 from "@/images/profils/02.jpg";
-import Pic03 from "@/images/profils/03.png";
-import Pic11 from "@/images/profils/11.jpg";
-import Pic05 from "@/images/profils/05.jpg";
-import Pic06 from "@/images/profils/06.jpg";
-import Pic15 from "@/images/profils/15.jpg";
+//games
+import classic from "@/images/thems/logos/classic.png";
+import beach from "@/images/thems/logos/beach.png";
+import snow from "@/images/thems/logos/snow.png";
+import sahara from "@/images/thems/logos/sahara.png";
+import space from "@/images/thems/logos/space.png";
+import jungle from "@/images/thems/logos/jungle.png";
 import { faker } from "@faker-js/faker";
+import { v4 as uuidv4 } from "uuid";
 
 import {
   Title,
@@ -298,11 +299,31 @@ function BoxMessages({ onGroupClick, onClick, ...props }) {
 export function Option({ onClick, ...props }) {
   return (
     <button
-      className="flex w-full items-center border-b border-tx02 py-3 text-tx02 last:border-0 hover:text-tx01"
+      className="flex w-full items-center border-b border-tx02 py-3 text-tx02 last:border-0 hover:bg-bg02 hover:text-tx01"
       onClick={onClick}
     >
-      <Icon className="ml-4 mr-3 h-6 w-6" icon={props.icon} />
-      <div className="mr-4 grow text-left font-light uppercase tracking-wider">
+      <Icon className="ml-4 mr-3 h-6 w-6 flex-none" icon={props.icon} />
+      <div className="truncatee mr-4 grow text-left font-light uppercase tracking-wider">
+        {props.title}
+      </div>
+    </button>
+  );
+}
+
+function NavOptions({ onClick, ...props }) {
+  return (
+    <button
+      className="group flex h-full w-fit items-center border-r px-3 text-tx02 hover:bg-bg02"
+      onClick={onClick}
+    >
+      {/* button icon */}
+      <Icon
+        className="h-6 w-6 text-tx02 group-hover:mr-2 group-hover:text-tx01 2xl:h-8 2xl:w-8"
+        icon={props.icon}
+      />
+
+      {/* button title >> visible in web vertion */}
+      <div className="hidden text-xs font-light uppercase tracking-wider text-tx01 transition duration-500 group-hover:block">
         {props.title}
       </div>
     </button>
@@ -310,19 +331,48 @@ export function Option({ onClick, ...props }) {
 }
 
 function Options() {
+  const [options, setOptions] = useState(false);
+  const [newGm, setNewGame] = useState(false);
   return (
-    <div className="absolute right-5 top-full rounded-lg border border-tx01 bg-bg02 ">
-      {/* New Game */}
-      <Option title="new game" icon="solar:gamepad-broken" />
+    <div className="absolute right-0 flex h-full items-center justify-center overflow-hidden rounded-l-md bg-bg03 border-l">
+      {options && (
+        <div className="flex h-full items-center">
+          <NavOptions
+            title="New Game"
+            icon="solar:gamepad-broken"
+            onClick={() => setNewGame(!newGm)}
+          />
+          <NavOptions title="block" icon="solar:user-block-rounded-broken" />
+        </div>
+      )}
 
-      {/* Block */}
-      <Option title="block" icon="solar:user-block-rounded-broken" />
+      <button
+        className="h-full px-2 hover:bg-bg02"
+        onClick={() => {
+          setOptions(!options);
+          setNewGame(false);
+        }}
+      >
+        {/* options buttion */}
+        <Icon
+          className="h-6 w-6 text-tx01 sm:h-7 sm:w-8"
+          icon={
+            !options
+              ? "solar:alt-arrow-left-broken"
+              : "solar:alt-arrow-right-broken"
+          }
+        />
+      </button>
+
+      {newGm && <NewGame onClick={() => setNewGame(!false)} />}
     </div>
   );
 }
 
 function GroupInfOptions({ member, memberMe, conversation }) {
   const [options, setOptions] = useState(false);
+  const [mute, setMute] = useState(false);
+  const [admin, setAdmin] = useState(false);
   const socket = useSocket();
 
   function onBanClick() {
@@ -362,21 +412,70 @@ function GroupInfOptions({ member, memberMe, conversation }) {
       </button>
       <div
         className={clsx(
-          "absolute right-5 top-full z-10 rounded-lg border border-tx01 bg-bg02",
+          "absolute right-5 top-full z-10 w-36 overflow-hidden rounded-lg border border-tx01 bg-bg01",
           options ? "block" : "hidden",
         )}
       >
+        {/* admin */}
+        {admin ? (
+          <Option
+            title="rm admin"
+            icon="solar:shield-user-broken"
+            onClick={() => {
+              setAdmin(!admin);
+              onMuteClick;
+            }}
+          />
+        ) : (
+          <Option
+            title="set admin"
+            icon="solar:shield-user-broken"
+            onClick={() => {
+              setAdmin(!admin);
+              onMuteClick;
+            }}
+          />
+        )}
+
         {/* Mute */}
-        <Option title="Mute" icon="solar:muted-broken" onClick={onMuteClick} />
+        {mute ? (
+          <Option
+            title="unMute"
+            icon="solar:muted-broken"
+            onClick={() => {
+              setMute(!mute);
+              onMuteClick;
+            }}
+          />
+        ) : (
+          <Option
+            title="Mute"
+            icon="solar:muted-broken"
+            onClick={() => {
+              setMute(!mute);
+              onMuteClick;
+            }}
+          />
+        )}
 
         {/* Kick */}
-        <Option title="kick" icon="ion:log-out-outline" onClick={onKickClick} />
+        <Option
+          title="kick"
+          icon="ion:log-out-outline"
+          onClick={() => {
+            setOptions(false);
+            onKickClick;
+          }}
+        />
 
         {/* Block */}
         <Option
           title="ban"
           icon="solar:user-block-rounded-broken"
-          onClick={onBanClick}
+          onClick={() => {
+            setOptions(false);
+            onBanClick;
+          }}
         />
       </div>
     </div>
@@ -385,10 +484,12 @@ function GroupInfOptions({ member, memberMe, conversation }) {
 
 function GroupInfo({ onClick, conversation, ...props }) {
   const [newTitle, setNewTitle] = useState(false);
+  const [addMbr, setAddMbr] = useState(false);
   const [title, setTitle] = useState(conversation.title);
   // State to track the selected group type
   const [groupType, setGroupType] = useState(conversation?.type);
   const { data: me } = useSWR("/users/me");
+  const { data: friends } = useSWR("/users/friends");
 
   //Handles the change event when the user selects a group type.
   const handleGroupTypeChange = (event) => {
@@ -560,31 +661,75 @@ function GroupInfo({ onClick, conversation, ...props }) {
         </div>
       </div>
 
-      {/* members & add new*/}
-      <div className=" mb-3 bg-bg02">
+      {/* Add New Freind */}
+      <div className="mb-3 flex flex-col bg-bg02">
+        {/* button */}
+        <div
+          className="flex flex-1 cursor-pointer items-center border-b border-tx02 p-2 hover:bg-tx03"
+          onClick={() => setAddMbr(!addMbr)}
+        >
+          {/* Avatar */}
+          <Icon
+            className="mr-2 h-10 w-10 flex-none rounded-full bg-tx02 p-[2px] text-tx04 xs:mr-3 xs:h-12 xs:w-12"
+            icon="solar:user-plus-bold-duotone"
+          />
+
+          {/* Friend Name */}
+          <div className="flex-grow truncate text-sm tracking-wide xs:text-base xs:tracking-widest">
+            Add Members
+          </div>
+
+          <Icon
+            className="mr-2 h-5 w-5 text-tx01 xs:h-6 xs:w-6"
+            icon={
+              addMbr
+                ? "solar:alt-arrow-up-broken"
+                : "solar:alt-arrow-down-broken"
+            }
+          />
+        </div>
+
+        {/* add Friends list */}
+        {addMbr &&
+          friends?.map((friend, index) => {
+            return (
+              <div
+                key={index}
+                className="flex w-full items-center border-b border-tx02 p-2 hover:bg-tx03"
+              >
+                {/* Flex container for avatar and name */}
+                <div className="flex flex-1 items-center">
+                  {/* Avatar */}
+                  <AvatarImage
+                    src={friend.avatar}
+                    id={friend.id}
+                    className="mr-2 h-12 w-12 xs:mr-3 xs:h-14 xs:w-14"
+                  />
+
+                  {/* Friend Name */}
+                  <div className="truncate text-sm tracking-wide xs:text-base xs:tracking-widest">
+                    {friend.displayName}
+                  </div>
+                </div>
+
+                {/* Checkbox for friend selection */}
+                <button
+                  className="h-fit rounded-lg border px-2 font-extralight text-tx02 
+                            transition-colors duration-[400ms] ease-linear hover:bg-tx01 hover:text-tx03"
+                >
+                  Add
+                </button>
+              </div>
+            );
+          })}
+      </div>
+
+      {/* members */}
+      <div className="mb-3 bg-bg02">
         <div className="mx-3 my-2 text-sm font-light tracking-wide text-tx02 xs:text-base xs:tracking-widest">
           Group -&nbsp; <span>{conversation.members.length}</span>
           &nbsp;Members
         </div>
-        {/* Add New Freind */}
-        <div
-          className="flex cursor-pointer border-b border-tx02 p-2 hover:bg-tx03"
-          // onClick={() => setNewGroup(true)}
-        >
-          <div className="flex flex-1 items-center">
-            {/* Avatar */}
-            <Icon
-              className="mr-2 h-10 w-10 flex-none rounded-full bg-tx02 p-[2px] text-tx04 xs:mr-3 xs:h-12 xs:w-12"
-              icon="solar:user-plus-bold-duotone"
-            />
-
-            {/* Friend Name */}
-            <div className="truncate text-sm tracking-wide xs:text-base xs:tracking-widest">
-              Add Member
-            </div>
-          </div>
-        </div>
-
         {/* Friends List */}
         {conversation.members.map((member, index) => {
           return (
@@ -642,8 +787,6 @@ function GroupInfo({ onClick, conversation, ...props }) {
 }
 
 function ConversationBox({ onClick, ...props }) {
-  // State to control the visibility of options
-  const [options, setOptions] = useState(false);
   // State to control the visibility of group informations
   const [grInfo, setGrInfo] = useState(false);
 
@@ -737,6 +880,7 @@ function ConversationBox({ onClick, ...props }) {
                   icon="solar:arrow-left-broken"
                 />
               </button>
+
               {/* Friend or group Info */}
               <button
                 className="flex flex-grow items-center"
@@ -760,7 +904,11 @@ function ConversationBox({ onClick, ...props }) {
                       : conversation?.members.find((obj) => obj.id !== myID)
                           .avatar
                   }
-                  id={conversation?.members.find((obj) => obj.id !== myID).id}
+                  id={
+                    props.group
+                      ? -1
+                      : conversation?.members.find((obj) => obj.id !== myID).id
+                  }
                   className="my-1 mr-2 h-11 w-11 xs:h-[52px] xs:w-[52px] xs:p-[2px] lg:mr-3"
                 />
 
@@ -781,22 +929,9 @@ function ConversationBox({ onClick, ...props }) {
                   </div>
                 </div>
               </button>
+
               {/* Options Menu */}
-              {!props.group && (
-                <div>
-                  <button
-                    onClick={() => {
-                      setOptions(!options);
-                    }}
-                  >
-                    <Icon
-                      className="mr-3 h-6 w-6 text-tx03 sm:h-7 sm:w-8"
-                      icon="circum:menu-kebab"
-                    />
-                  </button>
-                  {options && <Options />}
-                </div>
-              )}
+              {!props.group && <Options />}
             </div>
 
             {/* Conversation Section */}
@@ -1276,6 +1411,121 @@ function Messages(props) {
         group={true}
         messages={<GroupMessage onConversation={props.onGroupConversation} />}
       />
+    </div>
+  );
+}
+
+function Theme({ onBreakClick, ...props }) {
+  const socket = useSocket();
+  const [breack, setBreack] = useState(0);
+  const router = useRouter();
+  useEffect(() => {
+    socket.on("come", (body) => {
+      router.push(`/game/playground/${body.mode}/${body.id}`);
+    });
+
+    return () => {
+      socket.off("come");
+    };
+  }, []);
+  return (
+    <div className="flex w-full items-center border-b p-2 last:border-0">
+      {/* Avatar */}
+      <Image
+        src={props.src}
+        className="mr-2 h-12 w-12 object-cover xs:mr-3 xs:h-14 xs:w-14"
+        quality={100}
+        width={300}
+        height={300}
+      />
+
+      {/* Breack point */}
+      <div className="flex flex-grow justify-between">
+        {[3, 5, 7, 9].map((value) => {
+          return (
+            <button
+              className="h-6 w-6 rounded-lg border text-tx05 hover:bg-tx05 hover:text-tx04 sm:h-8 sm:w-8 xl:h-10 xl:w-10"
+              key={value}
+              onClick={() => {
+                setBreack(value);
+                socket.emit("invite", {
+                  id: 1,
+                  mode: props.theme,
+                  uid: uuidv4(),
+                  value,
+                });
+                onBreakClick();
+              }}
+            >
+              {value}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+export function NewGame({ onClick }) {
+  const [waiting, setWaiting] = useState(false);
+  return (
+    <div
+      className="absolute right-10 top-full flex h-fit w-48 flex-none flex-col rounded-lg 
+    border-2 bg-bg03 xs:w-56 sm:w-64"
+    >
+      {!waiting ? (
+        <>
+          <Theme
+            src={classic}
+            theme="classic"
+            onBreakClick={() => setWaiting(true)}
+          />
+          <Theme
+            src={beach}
+            theme="beach"
+            onBreakClick={() => setWaiting(true)}
+          />
+          <Theme
+            src={snow}
+            theme="snow"
+            onBreakClick={() => setWaiting(true)}
+          />
+          <Theme
+            src={sahara}
+            theme="sahara"
+            onBreakClick={() => setWaiting(true)}
+          />
+          <Theme
+            src={space}
+            theme="space"
+            onBreakClick={() => setWaiting(true)}
+          />
+          <Theme
+            src={jungle}
+            theme="jungle"
+            onBreakClick={() => setWaiting(true)}
+          />
+        </>
+      ) : (
+        <div className="my-3 flex h-full w-full flex-col items-center justify-center gap-8 text-xs sm:gap-4 sm:text-sm 2xl:gap-6 2xl:text-base">
+          <div className="text-center text-lg font-extralight tracking-widest">
+            Game pending
+          </div>
+
+          <div className="w-4/5 text-center font-light tracking-wide text-tx02">
+            waiting for your friend to join the game, Make sure that your friend
+            is present.
+          </div>
+
+          <Image
+            className="mr-2 h-12 w-12 flex-none animate-pulse rounded-full border-[1.5px] border-tx02 object-cover p-[2px] xs:mr-3 xs:h-14 xs:w-14"
+            src={classic}
+            quality={100}
+            width={300}
+            height={300}
+          />
+        </div>
+      )}
     </div>
   );
 }

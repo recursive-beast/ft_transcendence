@@ -2,6 +2,8 @@
 
 import { forwardRef, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
+import { useSocket } from "@/hooks/useSocket";
+import { useRouter } from "next/navigation";
 import clsx from "clsx";
 
 // mmessaou
@@ -106,7 +108,7 @@ const obj = {
   },
 };
 
-export const DrawGame = ({ data }) => {
+export const DrawGame = ({ data, ...props}) => {
   const [myScore, setMyScore] = useState(0);
   const [score, setScore] = useState(0);
   const { mode } = useParams();
@@ -267,7 +269,7 @@ export const DrawGame = ({ data }) => {
   }
 
   function Side(props) {
-    const points = Array.from({ length: props.breakpoint }, (_, i) => i + 1);
+    const points = Array.from({ length: data.current.scoretowin }, (_, i) => i + 1);
     return (
       <div
         className={clsx(
@@ -316,12 +318,19 @@ export const DrawGame = ({ data }) => {
 
   function Scoor(props) {
     const { data: me } = useSWR("/users/me");
+    const { data: user1 } = useSWR(`/users/${data.current.player1.id}`);
+    const { data: user2 } = useSWR(`/users/${data.current.player2.id}`);
+    const socket = useSocket();
+    const router = useRouter();
     return (
       <section className="my-3 flex items-baseline xs:my-5 sm:my-7 sm:items-center sm:space-x-6 xl:space-x-8">
         {/* leave */}
         <button
           className="group absolute left-3 top-2 flex items-center space-x-2 sm:left-5 sm:top-5 md:top-auto"
-          onClick={undefined}
+          onClick={() => {
+            socket.emit("end");
+            router.push(`/game`);
+          }}
         >
           <Icon
             className="h-6 w-6 text-tx01 group-hover:text-[#E55F61] sm:h-7 sm:w-7 lg:h-8 lg:w-8 "
@@ -333,7 +342,11 @@ export const DrawGame = ({ data }) => {
         </button>
 
         {/* opponent */}
-        <Side name="BOT" src={bot} breakpoint={9} points={score} />
+        {props.bot ? (
+          <Side name="BOT" src={bot} points={score} />
+        ) : (
+          <Side name={user1?.displayName} src={user1?.avatar} points={score} />
+        )}
 
         {/* theme logo */}
         <Image
@@ -349,10 +362,9 @@ export const DrawGame = ({ data }) => {
 
         {/* ME */}
         <Side
-          name={me?.displayName}
-          src={me?.avatar}
+          name={user2?.displayName}
+          src={user2?.avatar}
           me={true}
-          breakpoint={9}
           points={myScore}
         />
       </section>
@@ -361,7 +373,7 @@ export const DrawGame = ({ data }) => {
 
   return (
     <div className="flex w-full flex-1 flex-col items-center overflow-hidden text-tx01">
-      <Scoor />
+      <Scoor bot={props.bot}/>
 
       <div className="relative flex w-full flex-1 items-center justify-center p-8">
         <Image

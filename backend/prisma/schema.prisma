@@ -7,6 +7,32 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
+model Win {
+    id        Int      @id @default(autoincrement())
+    gameId    Int
+    createdAt DateTime @default(now())
+    userId    Int
+    user      User     @relation(fields: [userId], references: [id])
+    game      Game     @relation(fields: [gameId], references: [id])
+}
+
+model Loss {
+    id        Int      @id @default(autoincrement())
+    gameId    Int
+    createdAt DateTime @default(now())
+    userId    Int
+    user      User     @relation(fields: [userId], references: [id])
+    game      Game     @relation(fields: [gameId], references: [id])
+}
+
+model Game {
+    id            Int    @id @default(autoincrement())
+    userscore     Int
+    opponentscore Int
+    wins          Win[]
+    losses        Loss[]
+}
+
 model User {
     id                  Int                  @id @default(autoincrement())
     authProviderId      String               @unique
@@ -26,6 +52,8 @@ model User {
     directConversations DirectConversation[]
     GroupMember         GroupMember[]
     bannedFromGroups    GroupConversation[]
+    wins                Win[]
+    losses              Loss[]
 }
 
 model Notification {

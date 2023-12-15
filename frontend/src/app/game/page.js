@@ -233,7 +233,7 @@ function Modes(props) {
                 {/* my avatar */}
                 <Image
                   className="h-12 w-12 flex-none rounded-full border-[1.5px] border-tx05 object-cover p-[2px] xs:h-14 xs:w-14 2xl:h-16 2xl:w-16"
-                  src={me.avatar}
+                  src={me?.avatar}
                   quality={100}
                   width={56}
                   height={56}
@@ -324,16 +324,13 @@ export default function Home({ params }) {
     socket.on("setup", (mode2) => {
       router.push(`/game/playground/${mode2}`);
     });
-    socket.on("aa", (url) => {
-      console.log(url);
-    });
+    
     socket.on("come", (body) => {
       router.push(`/game/playground/${body.mode}/${body.id}`);
     });
 
     return () => {
       socket.off("come");
-      socket.off("aa");
       socket.off("setup");
     };
   }, []);

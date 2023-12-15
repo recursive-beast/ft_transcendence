@@ -69,12 +69,18 @@ function Notif({ notification }) {
             {type === "GAME_INVITE" && "Invited you to a game"}
           </div>
           {type === "GAME_INVITE" && (
+            // <Link
+            //   className="mt-1 flex w-fit items-center rounded-lg border px-2 py-1 text-xs tracking-widest hover:bg-tx01 hover:text-tx04"
+            //   href={data.url}
+            // >
+            //   join
+            // </Link>
             <Link
-              className="mt-1 flex w-fit items-center rounded-lg border px-2 py-1 text-xs tracking-widest hover:bg-tx01 hover:text-tx04"
-              href={data.url}
-            >
-              join
-            </Link>
+            className="h-fit rounded-lg border px-2 font-extralight text-tx02 
+                      transition-colors duration-[400ms] ease-linear hover:bg-tx01 hover:text-tx03"
+          >
+            Add
+          </Link>
           )}
         </div>
       </div>

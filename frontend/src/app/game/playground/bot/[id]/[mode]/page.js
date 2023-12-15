@@ -4,36 +4,35 @@ import { useEffect, useRef, useState } from "react";
 import io from "socket.io-client";
 import { DrawGame } from "../../../DrawGame";
 import { useWindowSize } from "@uidotdev/usehooks";
-import { useRouter } from "next/navigation";
 import { useSocket } from "@/hooks/useSocket";
 
-function Name() {
+export default function Name() {
   const [ready, setReady] = useState(false);
+  const [gameOver, setGameOver] = useState(false); // Add game over state
+  const [winner, setWinner] = useState("");
   const windowSize = useWindowSize();
   const ref = useRef(null);
-  const router = useRouter();
   const socket = useSocket();
 
   const isSmallDevice = windowSize.width <= 768;
-  const getGmaeData = (data) => {
-    // console.log(data);
+  const getGameData = (data) => {
     ref.current = data;
     setReady(true);
   };
-  const gameOver = () => {
+
+  const handleGameOver = (data) => {
+    setWinner(data)
+    setGameOver(true); // Set game over state to true
     socket.emit("end");
-    router.push("/game/over");
   };
+
   useEffect(() => {
-    // console.log("rendered");
-    socket.on("game.found", getGmaeData);
-    // socket.on("game.over", gameOver);
+    socket.on("game.found", getGameData);
+    socket.on("game.over", handleGameOver);
     socket.emit("play.ai");
     return () => {
-      // TODO: cleanup socket listeners
-      // socket.emit("kill.interval");
-      socket.off("game.found", getGmaeData);
-      // socket.off("game.over", gameOver);
+      socket.off("game.found", getGameData);
+      socket.off("game.over", handleGameOver);
     };
   }, []);
 
@@ -49,7 +48,6 @@ function Name() {
       }
 
       let direction;
-
       if (event.key === "ArrowUp" && !isSmallDevice) direction = "up";
       if (event.key === "ArrowDown" && !isSmallDevice) direction = "down";
       if (event.key === "ArrowLeft" && isSmallDevice) direction = "down";
@@ -61,7 +59,6 @@ function Name() {
 
     const handleKeyUp = (event) => {
       let direction;
-
       if (event.key === "ArrowUp" && !isSmallDevice) direction = "up";
       if (event.key === "ArrowDown" && !isSmallDevice) direction = "down";
       if (event.key === "ArrowLeft" && isSmallDevice) direction = "down";
@@ -84,17 +81,23 @@ function Name() {
 
   return (
     <div className="flex h-screen flex-col items-center justify-center text-tx01">
-      {ready && (
+      {ready && !gameOver && ( // Render the div only if ready and not game over
         <>
-          {/* game over */}
-          <div className="hidden absolute text-8xl top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-14
-          bg-bg01/80 backdrop-blur-sm text-tx01 rounded-xl z-20">Game over</div>
-
           {/* draw canvas */}
-          <DrawGame data={ref} />
+          <DrawGame data={ref} bot={true}/>
         </>
+      )}
+      {gameOver && ( // Render the div only if ready and not game over
+        <>
+        {/* game over */}
+        <div className="absolute text-8xl top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-14
+        bg-bg01/80 backdrop-blur-sm text-tx01 text-center rounded-xl z-20">Game over <br/> {winner}</div>
+
+        {/* draw canvas */}
+        <DrawGame data={ref} bot={true}/>
+      </>
       )}
     </div>
   );
 }
-export default Name;
+// export default Name;
