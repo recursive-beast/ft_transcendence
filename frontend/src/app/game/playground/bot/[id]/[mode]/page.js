@@ -6,6 +6,34 @@ import { DrawGame } from "../../../DrawGame";
 import { useWindowSize } from "@uidotdev/usehooks";
 import { useSocket } from "@/hooks/useSocket";
 
+function GameOver(props) {
+  return (
+    <div className="absolute left-0 top-0 z-20 flex h-screen w-full items-center justify-center bg-bg01/30 backdrop-blur-sm">
+      <div className="flex w-48 flex-col gap-3 rounded-md border-2 bg-bg01/50 py-3 text-center backdrop-blur-xl xs:w-56 xs:py-5 sm:w-72 lg:w-96 lg:gap-5">
+        {/* Game over <br /> {props.winner} */}
+        <div className="flex flex-col items-center font-light tracking-wider sm:gap-2">
+          <span className="text-2xl text-tx02 sm:text-4xl lg:text-6xl">
+            GAME OVER
+          </span>
+          <span className="text-xl uppercase sm:text-2xl lg:text-4xl">
+            {props.winner}
+          </span>
+        </div>
+        <button
+          onClick={() => {
+            setWaiting(false);
+            socket.emit("end");
+          }}
+          className="z-10 mx-auto rounded-full border border-tx01 px-3 py-[1px] text-center text-sm font-light uppercase tracking-wider 
+          text-tx01 transition-colors duration-[400ms] ease-linear hover:bg-tx01 hover:text-tx03 sm:text-base lg:text-lg"
+        >
+          leave
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function Name() {
   const [ready, setReady] = useState(false);
   const [gameOver, setGameOver] = useState(false); // Add game over state
@@ -21,7 +49,7 @@ export default function Name() {
   };
 
   const handleGameOver = (data) => {
-    setWinner(data)
+    setWinner(data);
     setGameOver(true); // Set game over state to true
     socket.emit("end");
   };
@@ -81,21 +109,12 @@ export default function Name() {
 
   return (
     <div className="flex h-screen flex-col items-center justify-center text-tx01">
-      {ready && !gameOver && ( // Render the div only if ready and not game over
+      {ready && (
         <>
+          {gameOver && <GameOver winner={winner} />}
           {/* draw canvas */}
-          <DrawGame data={ref} bot={true}/>
+          <DrawGame data={ref} bot={true} />
         </>
-      )}
-      {gameOver && ( // Render the div only if ready and not game over
-        <>
-        {/* game over */}
-        <div className="absolute text-8xl top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-14
-        bg-bg01/80 backdrop-blur-sm text-tx01 text-center rounded-xl z-20">Game over <br/> {winner}</div>
-
-        {/* draw canvas */}
-        <DrawGame data={ref} bot={true}/>
-      </>
       )}
     </div>
   );
