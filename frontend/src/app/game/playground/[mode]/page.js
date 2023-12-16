@@ -6,7 +6,9 @@ import { DrawGame } from "../DrawGame";
 import { useWindowSize } from "@uidotdev/usehooks";
 import { useSocket } from "@/hooks/useSocket";
 
-function Name(){
+import { GameOver } from "../bot/[id]/[mode]/page";
+
+function Name() {
   const [ready, setReady] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [winner, setWinner] = useState("");
@@ -17,15 +19,15 @@ function Name(){
 
   const isSmallDevice = windowSize.width <= 768;
   const getGmaeData = (data) => {
-  ref.current = data;
-  setReady(true);
-}
-const handleGameOver = (data) => {
-  console.log(data);
-  setWinner(data)
-  setGameOver(true);
-  socket.emit("end");
-}
+    ref.current = data;
+    setReady(true);
+  };
+  const handleGameOver = (data) => {
+    console.log(data);
+    setWinner(data);
+    setGameOver(true);
+    socket.emit("end");
+  };
   useEffect(() => {
     // console.log("rendered");
     socket.on("game.found", getGmaeData);
@@ -85,27 +87,17 @@ const handleGameOver = (data) => {
     };
   }, [isSmallDevice]);
 
-
   return (
     <div className="flex h-screen flex-col items-center justify-center text-tx01">
-    {ready && !gameOver && ( // Render the div only if ready and not game over
-      <>
-        {/* draw canvas */}
-        <DrawGame data={ref}/>
-      </>
-    )}
-    {gameOver && ( // Render the div only if ready and not game over
-      <>
-      {/* game over */}
-      <div className="absolute text-8xl top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-14
-      bg-bg01/80 backdrop-blur-sm text-tx01 text-center rounded-xl z-20">Game over <br/> {winner}</div>
-
-      {/* draw canvas */}
-      <DrawGame data={ref} />
-    </>
-    )}
-  </div>
-);
-};
+      {ready && (
+        <>
+          {gameOver && <GameOver winner={winner} />}
+          {/* draw canvas */}
+          <DrawGame data={ref} bot={true} />
+        </>
+      )}
+    </div>
+  );
+}
 
 export default Name;
