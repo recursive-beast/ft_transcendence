@@ -756,6 +756,7 @@ function GroupInfo({ onClick, conversation, ...props }) {
 function ConversationBox({ onClick, ...props }) {
   // State to control the visibility of group informations
   const [grInfo, setGrInfo] = useState(false);
+  const ref = useRef(null);
 
   const id = props.conversation?.id;
   const isDirect = props.conversation?.isDirect;
@@ -803,6 +804,12 @@ function ConversationBox({ onClick, ...props }) {
     if (isDirect) socket.emit("join.conversation", id);
   }, [id, isDirect]);
 
+  useEffect(() => {
+    if (!conversation) return;
+
+    ref.current.scrollTo(0, 99999999999999);
+  }, [conversation]);
+
   function onMessageSend() {
     if (isGroup) {
       socket.emit("channel.message", {
@@ -829,6 +836,7 @@ function ConversationBox({ onClick, ...props }) {
     <div className="flex flex-1">
       {/* conversation */}
       <div
+        ref={ref}
         className={clsx(
           (!conversation || grInfo) && "hidden sm:flex",
           "no-scrollbar flex h-full w-full flex-1 flex-col justify-between overflow-auto bg-bg02",
@@ -932,7 +940,7 @@ function ConversationBox({ onClick, ...props }) {
                             props.group ? "ml-1" : "ml-5",
                           )}
                         >
-                          <span>{message.text}</span>
+                          <div className="break-all">{message.text}</div>
                           <span
                             className={clsx(
                               "ml-auto text-xs",
@@ -959,7 +967,7 @@ function ConversationBox({ onClick, ...props }) {
             </div>
 
             {/* Input Message Section */}
-            <div className="sticky bottom-0 flex w-full  items-center space-x-3 bg-bg03 px-3 py-2 xs:py-3 sm:px-5">
+            <div className="sticky bottom-0 flex w-full items-center space-x-3 bg-bg03 px-3 py-2 xs:py-3 sm:px-5">
               <input
                 value={msgInput}
                 onChange={(event) => setMsgInput(event.target.value)}
