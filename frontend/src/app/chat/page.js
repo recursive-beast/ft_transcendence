@@ -47,44 +47,6 @@ import { AvatarInput } from "@/components/AvatarInput";
 import { useSnackbar } from "notistack";
 import { differenceBy } from "lodash";
 
-faker.seed(2);
-
-const conversations = Array(20)
-  .fill()
-  .map(() => ({
-    avatar: faker.internet.avatar(),
-    messages: Array(30)
-      .fill()
-      .map(() => ({
-        text: faker.lorem.sentence({ min: 3, max: 8 }),
-        sent: faker.datatype.boolean(),
-        date: faker.date.recent({ days: 2 }),
-      })),
-    unseen: faker.number.int({ min: 0, max: 3 }),
-    fullname: faker.person.fullName(),
-    displayName: faker.internet.displayName(),
-    status: faker.helpers.arrayElement(["ONLINE", "OFFLINE", "INGAME"]),
-  }));
-
-const groups = Array(10)
-  .fill()
-  .map(() => ({
-    avatar: faker.internet.avatar(),
-    messages: Array(50)
-      .fill()
-      .map(() => ({
-        text: faker.lorem.sentence({ min: 3, max: 15 }),
-        sent: faker.datatype.boolean(0.3),
-        date: faker.date.recent(),
-        user: faker.internet.displayName(),
-        status: faker.helpers.arrayElement(["ONLINE", "OFFLINE", "INGAME"]),
-        avatar: faker.internet.avatar(),
-      })),
-    members: faker.number.int({ min: 3, max: 8 }),
-    displayName: faker.internet.displayName(),
-    status: "OFFLINE",
-  }));
-
 function GroupMessage(props) {
   const { data: groups } = useSWR("/chat/group");
   const { data: me } = useSWR("/users/me");
