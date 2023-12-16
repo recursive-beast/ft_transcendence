@@ -6,7 +6,6 @@ import { Icon } from "@iconify/react";
 import Link from "next/link";
 import React, { useEffect } from "react";
 import { useState, useRef } from "react";
-import { faker } from "@faker-js/faker";
 import useSWR, { mutate } from "swr";
 import ms from "ms";
 
@@ -33,15 +32,6 @@ import { usePathname } from "next/navigation";
 import { AvatarImage } from "./AvatarImage";
 import { useSocket } from "@/hooks/useSocket";
 import { useStatus } from "@/hooks/useStatus";
-
-const friends = Array(50)
-  .fill()
-  .map(() => ({
-    avatar: faker.internet.avatar(),
-    fullname: faker.person.fullName(),
-    displayName: faker.internet.displayName(),
-    status: faker.helpers.arrayElement(["ONLINE", "OFFLINE", "INGAME"]),
-  }));
 
 function Notif({ notification }) {
   const { type, data, createdAt } = notification;
