@@ -73,12 +73,12 @@ function Notif({ notification }) {
             >
               join
             </Link>
-          //   <Link
-          //   className="h-fit rounded-lg border px-2 font-extralight text-tx02 
-          //             transition-colors duration-[400ms] ease-linear hover:bg-tx01 hover:text-tx03"
-          // >
-          //   Add
-          // </Link>
+            //   <Link
+            //   className="h-fit rounded-lg border px-2 font-extralight text-tx02
+            //             transition-colors duration-[400ms] ease-linear hover:bg-tx01 hover:text-tx03"
+            // >
+            //   Add
+            // </Link>
           )}
         </div>
       </div>
@@ -335,6 +335,59 @@ export const status = {
   },
 };
 
+function Pass({ onClick }) {
+  return (
+    <div className="flex w-full flex-col items-center bg-bg03 p-2">
+      <label className="w-full text-left font-light text-tx02">Password:</label>
+      <div className="flex w-full justify-center space-x-1">
+        <input
+          // onChange={(event) => onPasswordChange?.(event.target.value)}
+          // value={password}
+          className="h-6 w-full rounded-sm border-b border-none bg-bg02 px-1 text-tx01 outline-none focus:border-none xs:h-8 sm:rounded-md"
+          type="password"
+        ></input>
+
+        <button className="a rounded-md hover:bg-bg02" onClick={onClick}>
+          <Icon className="h-8 w-8 text-tx01" icon="solar:arrow-right-broken" />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function RanderGroups({ group }) {
+  const [pass, setPass] = useState(false);
+  return (
+    <>
+      {pass ? (
+        <Pass onClick={() => setPass(false)} />
+      ) : (
+        <button
+          key={group.id}
+          onClick={group.type === "PROTECTED" ? () => setPass(true) : undefined}
+          className="flex w-full cursor-pointer items-center border-b border-bg03 hover:bg-bg03"
+        >
+          <Image
+            className={
+              "mx-2 h-10 w-10 flex-none rounded-full border-[1.5px] object-cover p-[2px]"
+            }
+            src={group.avatar}
+            quality={100}
+            width={300}
+            height={300}
+          />
+
+          <div className="truncate py-3 pr-2 text-left text-base font-light text-tx01">
+            <div>{group.title}</div>
+
+            <div className="text-left text-sm text-tx02">{group.type}</div>
+          </div>
+        </button>
+      )}
+    </>
+  );
+}
+
 export function Search(props) {
   const [text, setText] = useState("");
   const uri = props.home
@@ -385,7 +438,7 @@ export function Search(props) {
               onClick={handleSearchClick}
               className="absolute tracking-widest"
             >
-              Search
+              {props.home ? "Search" : "Search Group"}
             </div>
           )}
           <input
@@ -437,31 +490,7 @@ export function Search(props) {
                 );
               })}
 
-            {props.chat &&
-              data?.map((group) => (
-                <button
-                  key={group.id}
-                  className="flex w-full cursor-pointer items-center border-b border-bg03 hover:bg-bg03"
-                >
-                  <Image
-                    className={
-                      "mx-2 h-10 w-10 flex-none rounded-full border-[1.5px] object-cover p-[2px]"
-                    }
-                    src={group.avatar}
-                    quality={100}
-                    width={300}
-                    height={300}
-                  />
-
-                  <div className="truncate py-3 pr-2 text-base font-light text-tx01">
-                    <div>{group.title}</div>
-
-                    <div className="text-left text-sm text-tx02">
-                      {group.type.toLowerCase()}
-                    </div>
-                  </div>
-                </button>
-              ))}
+            {props.chat && data?.map((group) => <RanderGroups group={group} />)}
           </div>
         </div>
       )}
