@@ -362,10 +362,9 @@ function RanderGroups({ group }) {
       {pass ? (
         <Pass onClick={() => setPass(false)} />
       ) : (
-        <button
+        <div
           key={group.id}
-          onClick={group.type === "PROTECTED" ? () => setPass(true) : undefined}
-          className="flex w-full cursor-pointer items-center border-b border-bg03 hover:bg-bg03"
+          className="flex w-full items-center border-b border-bg03 hover:bg-bg03"
         >
           <Image
             className={
@@ -377,12 +376,21 @@ function RanderGroups({ group }) {
             height={300}
           />
 
-          <div className="truncate py-3 pr-2 text-left text-base font-light text-tx01">
+          <div className="grow truncate py-3 pr-2 text-left text-base font-light text-tx01">
             <div>{group.title}</div>
 
             <div className="text-left text-sm text-tx02">{group.type}</div>
           </div>
-        </button>
+
+          <button
+            className="mx-3 h-fit rounded-lg border px-2 font-extralight text-tx02 transition-colors duration-[400ms] ease-linear hover:bg-tx01 hover:text-tx03"
+            onClick={
+              group.type === "PROTECTED" ? () => setPass(true) : undefined
+            }
+          >
+            Join
+          </button>
+        </div>
       )}
     </>
   );
