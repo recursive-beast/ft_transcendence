@@ -5,8 +5,10 @@ import io from "socket.io-client";
 import { DrawGame } from "../../../DrawGame";
 import { useWindowSize } from "@uidotdev/usehooks";
 import { useSocket } from "@/hooks/useSocket";
+import { useRouter } from "next/navigation";
 
 export function GameOver(props) {
+  const router = useRouter();
   return (
     <div className="absolute left-0 top-0 z-20 flex h-screen w-full items-center justify-center bg-bg01/30 backdrop-blur-sm">
       <div className="flex w-48 flex-col gap-3 rounded-md border-2 bg-bg01/50 py-3 text-center backdrop-blur-xl xs:w-56 xs:py-5 sm:w-72 lg:w-96 lg:gap-5">
@@ -21,8 +23,7 @@ export function GameOver(props) {
         </div>
         <button
           onClick={() => {
-            setWaiting(false);
-            socket.emit("end");
+            router.push("/game");
           }}
           className="z-10 mx-auto rounded-full border border-tx01 px-3 py-[1px] text-center text-sm font-light uppercase tracking-wider 
           text-tx01 transition-colors duration-[400ms] ease-linear hover:bg-tx01 hover:text-tx03 sm:text-base lg:text-lg"
