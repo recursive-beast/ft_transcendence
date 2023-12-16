@@ -1628,6 +1628,19 @@ export function NewGame({ id, onClick }) {
             width={300}
             height={300}
           />
+          {/* cancle button */}
+          <button
+            onClick={() => {
+              setWaiting(false);
+              socket.emit("end");
+            }}
+            className={clsx(
+              "z-10 mx-auto my-2 rounded-full border border-tx01 px-4 py-1 text-center text-sm font-light uppercase tracking-wider",
+              "text-tx01 transition-colors duration-[400ms] ease-linear hover:bg-tx01 hover:text-tx03 sm:text-base",
+            )}
+          >
+            cancel
+          </button>
         </div>
       )}
     </div>
