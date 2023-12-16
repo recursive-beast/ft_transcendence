@@ -6,7 +6,7 @@ import { DrawGame } from "../../../DrawGame";
 import { useWindowSize } from "@uidotdev/usehooks";
 import { useSocket } from "@/hooks/useSocket";
 
-function GameOver(props) {
+export function GameOver(props) {
   return (
     <div className="absolute left-0 top-0 z-20 flex h-screen w-full items-center justify-center bg-bg01/30 backdrop-blur-sm">
       <div className="flex w-48 flex-col gap-3 rounded-md border-2 bg-bg01/50 py-3 text-center backdrop-blur-xl xs:w-56 xs:py-5 sm:w-72 lg:w-96 lg:gap-5">
