@@ -839,7 +839,7 @@ function ConversationBox({ onClick, ...props }) {
         ref={ref}
         className={clsx(
           (!conversation || grInfo) && "hidden sm:flex",
-          "no-scrollbar flex h-full w-full flex-1 flex-col justify-between overflow-auto bg-bg02",
+          "custom-scrl-bar flex h-full w-full flex-1 flex-col justify-between overflow-auto bg-bg02",
         )}
       >
         {conversation ? (
@@ -972,7 +972,7 @@ function ConversationBox({ onClick, ...props }) {
                 value={msgInput}
                 onChange={(event) => setMsgInput(event.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && onMessageSend()}
-                className="h-7 flex-1 rounded-xl border-none bg-tx02 px-2 text-base outline-none focus:border-none xs:h-8 xs:text-xl lg:px-3"
+                className="h-7 flex-1 rounded-xl border-none bg-tx02 px-2 text-base outline-none focus:border-none xs:h-8 xs:text-xl lg:px-3 font-light"
               />
 
               <button onClick={onMessageSend} disabled={msgInput.length === 0}>

@@ -285,7 +285,7 @@ export function Achievement() {
   return (
     <section
       ref={ref}
-      className="no-scrollbar mb-4 grid grid-flow-col gap-2 space-x-3 overflow-x-auto overflow-y-hidden text-tx05 sm:gap-6 lg:pt-5"
+      className="custom-scrl-bar mb-4 grid grid-flow-col gap-2 space-x-3 overflow-x-auto overflow-y-hidden text-tx05 sm:gap-6 lg:pt-5"
     >
       <Achiv
         pic={AvMaster}

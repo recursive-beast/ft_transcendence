@@ -21,19 +21,26 @@
 	}
 
 	/* Chrome, Edge, and Safari */
-	// .custom-scrl-bar::-webkit-scrollbar {
-	// 	width: 12px;
-	//   }
+	.custom-scrl-bar::-webkit-scrollbar {
+		width: 4px;
+		height: 14px;
+		
+	}
 
-	//   .custom-scrl-bar::-webkit-scrollbar-track {
-	// 	background: #000;
-	//   }
+	.custom-scrl-bar::-webkit-scrollbar-track {
+		background: #0d0d0d;
+	}
 
-	//   .custom-scrl-bar::-webkit-scrollbar-thumb {
-	// 	background-color: #8f54a0;
-	// 	border-radius: 10px;
-	// 	border: 3px solid #000;
-	//   }
+	.custom-scrl-bar::-webkit-scrollbar-track-piece {
+		margin-top: 60px;
+		margin-bottom: 52px;
+	}
+
+	.custom-scrl-bar::-webkit-scrollbar-thumb {
+		background-color: #625d53;
+		border-top: 5px solid #0d0d0d;
+		border-bottom: 5px solid #0d0d0d;
+	}
 }
 
 @for $i from 1 through 10 {
