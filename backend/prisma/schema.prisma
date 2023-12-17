@@ -1,138 +1,144 @@
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "postgresql"
-    url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Win {
-    id        Int      @id @default(autoincrement())
-    gameId    Int
-    createdAt DateTime @default(now())
-    userId    Int
-    user      User     @relation(fields: [userId], references: [id])
-    game      Game     @relation(fields: [gameId], references: [id])
+  id            Int      @id @default(autoincrement())
+  gameId        Int
+  createdAt     DateTime @default(now())
+  userId        Int
+  opponentId    Int
+  userscore     Int
+  opponentscore Int
+  user          User     @relation(fields: [userId], references: [id])
 }
 
 model Loss {
-    id        Int      @id @default(autoincrement())
-    gameId    Int
-    createdAt DateTime @default(now())
-    userId    Int
-    user      User     @relation(fields: [userId], references: [id])
-    game      Game     @relation(fields: [gameId], references: [id])
-}
-
-model Game {
-    id            Int    @id @default(autoincrement())
-    userscore     Int
-    opponentscore Int
-    wins          Win[]
-    losses        Loss[]
+  id            Int      @id @default(autoincrement())
+  gameId        Int
+  userscore     Int
+  opponentId    Int
+  opponentscore Int
+  createdAt     DateTime @default(now())
+  userId        Int
+  user          User     @relation(fields: [userId], references: [id])
 }
 
 model User {
-    id                  Int                  @id @default(autoincrement())
-    authProviderId      String               @unique
-    displayName         String               @unique
-    fullName            String
-    avatar              String?
-    otpSecret           String?
-    otpIsEnabled        Boolean              @default(false)
-    createdAt           DateTime             @default(now())
-    updatedAt           DateTime             @updatedAt
-    friends             User[]               @relation("friends")
-    friendOf            User[]               @relation("friends")
-    blocked             User[]               @relation("blocked")
-    blockedBy           User[]               @relation("blocked")
-    notifications       Notification[]
-    messages            Message[]
-    directConversations DirectConversation[]
-    GroupMember         GroupMember[]
-    bannedFromGroups    GroupConversation[]
-    wins                Win[]
-    losses              Loss[]
+  id                  Int                  @id @default(autoincrement())
+  authProviderId      String               @unique
+  displayName         String               @unique
+  firstTime           Boolean              @default(true)
+  fullName            String
+  avatar              String?
+  otpSecret           String?
+  otpIsEnabled        Boolean              @default(false)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  friends             User[]               @relation("friends")
+  friendOf            User[]               @relation("friends")
+  blocked             User[]               @relation("blocked")
+  blockedBy           User[]               @relation("blocked")
+  notifications       Notification[]
+  messages            Message[]
+  directConversations DirectConversation[]
+  GroupMember         GroupMember[]
+  bannedFromGroups    GroupConversation[]
+  wins                Win[]
+  losses              Loss[]
+  PongNovice          Boolean              @default(false)
+  PerfectDefense      Boolean              @default(false)
+  FirstVictory        Boolean              @default(false)
+  RookiePaddler       Boolean              @default(false)
+  SpeedRacer          Boolean              @default(false)
+  PongMaster          Boolean              @default(false)
+  FriendlyMatch       Boolean              @default(false)
 }
 
 model Notification {
-    id          Int              @id @default(autoincrement())
-    type        NotificationType
-    seen        Boolean          @default(false)
-    recipient   User             @relation(fields: [recepientId], references: [id])
-    recepientId Int
-    data        Json
-    createdAt   DateTime         @default(now())
-    updatedAt   DateTime         @updatedAt
+  id          Int              @id @default(autoincrement())
+  type        NotificationType
+  seen        Boolean          @default(false)
+  recipient   User             @relation(fields: [recepientId], references: [id])
+  recepientId Int
+  data        Json
+  isClicked   Boolean          @default(false)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
 }
 
 enum NotificationType {
-    FRIEND_ADD
-    GAME_INVITE
-    GROUP_ADD
+  FRIEND_ADD
+  GAME_INVITE
+  GROUP_ADD
+  ACHIEVEMENT_UNLOCKED
 }
 
 model Message {
-    id                   Int                 @id @default(autoincrement())
-    sender               User                @relation(fields: [senderId], references: [id])
-    senderId             Int
-    text                 String
-    createdAt            DateTime            @default(now())
-    updatedAt            DateTime            @updatedAt
-    seen                 Boolean             @default(false)
-    directConversation   DirectConversation? @relation(fields: [directConversationId], references: [id])
-    directConversationId Int?
-    groupConversation    GroupConversation?  @relation(fields: [groupConversationId], references: [id])
-    groupConversationId  Int?
+  id                   Int                 @id @default(autoincrement())
+  sender               User                @relation(fields: [senderId], references: [id])
+  senderId             Int
+  text                 String
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+  seen                 Boolean             @default(false)
+  directConversation   DirectConversation? @relation(fields: [directConversationId], references: [id])
+  directConversationId Int?
+  groupConversation    GroupConversation?  @relation(fields: [groupConversationId], references: [id])
+  groupConversationId  Int?
 }
 
 model DirectConversation {
-    id        Int       @id @default(autoincrement())
-    messages  Message[]
-    members   User[]
-    isGroup   Boolean   @default(false)
-    isDirect  Boolean   @default(true)
-    createdAt DateTime  @default(now())
-    updatedAt DateTime  @updatedAt
+  id        Int       @id @default(autoincrement())
+  messages  Message[]
+  members   User[]
+  isGroup   Boolean   @default(false)
+  isDirect  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 enum roleType {
-    OWNER
-    ADMIN
-    MEMBER
+  OWNER
+  ADMIN
+  MEMBER
 }
 
 model GroupMember {
-    id                  Int               @id @default(autoincrement())
-    user                User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId              Int
-    role                roleType          @default(MEMBER)
-    mutedUntil          DateTime?
-    groupConversation   GroupConversation @relation(fields: [groupConversationId], references: [id], onDelete: Cascade)
-    groupConversationId Int
-    createdAt           DateTime          @default(now())
-    updatedAt           DateTime          @updatedAt
-    seenAt              DateTime          @default(now())
+  id                  Int               @id @default(autoincrement())
+  user                User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId              Int
+  role                roleType          @default(MEMBER)
+  mutedUntil          DateTime          @default(now())
+  groupConversation   GroupConversation @relation(fields: [groupConversationId], references: [id], onDelete: Cascade)
+  groupConversationId Int
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+  seenAt              DateTime          @default(now())
 }
 
 enum groupType {
-    PUBLIC
-    PROTECTED
-    PRIVATE
+  PUBLIC
+  PROTECTED
+  PRIVATE
 }
 
 model GroupConversation {
-    id        Int           @id @default(autoincrement())
-    title     String        @unique()
-    avatar    String?
-    type      groupType     @default(PUBLIC)
-    password  String?
-    banned    User[]
-    members   GroupMember[]
-    messages  Message[]
-    isGroup   Boolean       @default(true)
-    isDirect  Boolean       @default(false)
-    createdAt DateTime      @default(now())
-    updatedAt DateTime      @updatedAt
+  id        Int           @id @default(autoincrement())
+  title     String        @unique()
+  avatar    String?
+  type      groupType     @default(PUBLIC)
+  password  String?
+  banned    User[]
+  members   GroupMember[]
+  messages  Message[]
+  isGroup   Boolean       @default(true)
+  isDirect  Boolean       @default(false)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
 }

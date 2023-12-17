@@ -104,7 +104,12 @@ export class DirectService {
               sender: true,
             },
           },
-          members: true,
+          members: {
+            include: {
+              blocked: true,
+              blockedBy: true,
+            },
+          },
         },
       });
 

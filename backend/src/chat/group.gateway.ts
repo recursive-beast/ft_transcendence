@@ -17,13 +17,20 @@ import { HttpToWsFilter } from 'src/common/http-to-ws.filter';
 import { PrismaIgnoreFilter } from 'src/common/prisma-ignore.filter';
 import { GroupMessageDTO } from './dto/group-message.dto';
 import { GroupService } from './group.service';
+import { GroupUpdateDTO } from './dto/group-update.dto';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
+import { PrismaService } from 'nestjs-prisma';
 
 @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
 @UseFilters(HttpToWsFilter)
 @UseFilters(PrismaIgnoreFilter)
 @WebSocketGateway()
 export class GroupGateway {
-  constructor(private groupconversationService: GroupService) {}
+  constructor(
+    private groupconversationService: GroupService,
+    private eventEmitter: EventEmitter2,
+    private prismaService: PrismaService,
+  ) {}
 
   @WebSocketServer()
   server: Server;
@@ -49,6 +56,11 @@ export class GroupGateway {
     client.join(`channel-${id}`);
   }
 
+  @OnEvent('channel.join')
+  onJoin(groupId: number) {
+    this.server.to(`channel-${groupId}`).emit('channel.join');
+  }
+
   @SubscribeMessage('channel.join')
   async joinChannel(
     @ConnectedSocket() client: Socket,
@@ -69,7 +81,9 @@ export class GroupGateway {
     @MessageBody(ParseIntPipe) id: number,
   ) {
     await this.groupconversationService.leaveChannel(client.data.id, id);
+    this.server.to(`user-${client.data.id}`).emit('channel.exit', id);
     client.leave(`channel-${id}`);
+    this.server.to(`channel-${id}`).emit('channel.updated');
   }
 
   @SubscribeMessage('channel.ban')
@@ -83,11 +97,12 @@ export class GroupGateway {
       data.channelId,
     );
     this.server
-      .in(`channel-${data.channelId}`)
-      .socketsLeave(`user-${data.userId}`);
+      .in(`user-${data.userId}`)
+      .socketsLeave(`channel-${data.channelId}`);
     this.server
       .to(`user-${data.userId}`)
       .emit('channel.banned', data.channelId);
+    this.server.to(`channel-${data.channelId}`).emit('channel.updated');
   }
 
   @SubscribeMessage('channel.unban')
@@ -101,8 +116,8 @@ export class GroupGateway {
       data.channelId,
     );
     this.server
-      .in(`channel-${data.channelId}`)
-      .socketsLeave(`user-${data.userId}`);
+      .in(`user-${data.userId}`)
+      .socketsLeave(`channel-${data.channelId}`);
     this.server
       .to(`user-${data.userId}`)
       .emit('channel.unbanned', data.channelId);
@@ -120,9 +135,23 @@ export class GroupGateway {
     );
     for (let index = 0; index < data.members.length; index++) {
       this.server
-        .to(`user-${data.members[index]}`)
+        .to(`channel-${data.channelId}`)
         .emit('channel.added', data.channelId);
     }
+
+    const source = await this.prismaService.user.findFirstOrThrow({
+      where: { id: client.data.id },
+    });
+
+    const target = await this.prismaService.user.findFirstOrThrow({
+      where: { id: data.members[0] },
+    });
+
+    const group = await this.prismaService.groupConversation.findFirstOrThrow({
+      where: { id: data.channelId },
+    });
+
+    this.eventEmitter.emit('chat.group.add', source, target, group);
   }
 
   @SubscribeMessage('channel.kick')
@@ -136,11 +165,13 @@ export class GroupGateway {
       data.channelId,
     );
     this.server
-      .in(`channel-${data.channelId}`)
-      .socketsLeave(`user-${data.userId}`);
+      .in(`user-${data.userId}`)
+      .socketsLeave(`channel-${data.channelId}`);
     this.server
       .to(`user-${data.userId}`)
       .emit('channel.kicked', data.channelId);
+
+    this.server.to(`channel-${data.channelId}`).emit('channel.updated');
   }
 
   @SubscribeMessage('channel.mute')
@@ -148,12 +179,44 @@ export class GroupGateway {
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { channelId: number; userId: number },
   ) {
-    await this.groupconversationService.muteSomeone(
+    const member = await this.groupconversationService.muteSomeone(
       client.data.id,
       data.userId,
       data.channelId,
     );
-    this.server.to(`user-${data.userId}`).emit('channel.muted', data.channelId);
+
+    const ms = member.mutedUntil.getTime() - Date.now() + 5000;
+
+    setTimeout(async () => {
+      await this.groupconversationService.unmuteSomeone(
+        client.data.id,
+        data.userId,
+        data.channelId,
+      );
+
+      this.server
+        .to(`channel-${data.channelId}`)
+        .emit('channel.unmuted', data.channelId);
+    }, ms);
+
+    this.server
+      .to(`channel-${data.channelId}`)
+      .emit('channel.muted', data.channelId);
+  }
+
+  @SubscribeMessage('channel.unmute')
+  async getUnmutedFromChannel(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: { channelId: number; userId: number },
+  ) {
+    await this.groupconversationService.unmuteSomeone(
+      client.data.id,
+      data.userId,
+      data.channelId,
+    );
+    this.server
+      .to(`channel-${data.channelId}`)
+      .emit('channel.unmuted', data.channelId);
   }
 
   @SubscribeMessage('channel.upgrade')
@@ -210,8 +273,15 @@ export class GroupGateway {
       client.data.id,
       data.channelId,
       data.newTitle,
-      );
-      
+    );
+
     this.server.to(`channel-${data.channelId}`).emit('channel.updated');
+  }
+
+  @SubscribeMessage('channel.type')
+  async changeType(client: Socket, dto: GroupUpdateDTO) {
+    await this.groupconversationService.updateChannelType(client.data.id, dto);
+
+    this.server.to(`channel-${dto.id}`).emit('channel.updated');
   }
 }

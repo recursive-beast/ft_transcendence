@@ -11,7 +11,7 @@ async function bootstrap() {
   const cookie_secret = configService.get('COOKIE_SECRET');
 
   app.enableCors({
-    origin: configService.get('FRONTEND_URL'),
+    origin: configService.get('FRONTEND_ORIGIN'),
     credentials: true,
   });
   app.useStaticAssets('static', { prefix: '/static' });

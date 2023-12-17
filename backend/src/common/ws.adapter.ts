@@ -23,7 +23,7 @@ export class WSAdapter extends IoAdapter {
     const server: Server = super.createIOServer(port, {
       ...options,
       cors: {
-        origin: this.configService.get('FRONTEND_URL'),
+        origin: this.configService.get('FRONTEND_ORIGIN'),
         credentials: true,
       },
     });

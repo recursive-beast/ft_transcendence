@@ -34,7 +34,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect {
       ? UserStatus.ONLINE
       : UserStatus.OFFLINE;
 
-    client.emit('user.status', { id, status });//to add
+    client.emit('user.status', { id, status });
   }
 
   async handleConnection(client: Socket) {

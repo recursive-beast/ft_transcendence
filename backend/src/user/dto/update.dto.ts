@@ -1,16 +1,28 @@
 import { Transform } from 'class-transformer';
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  MaxLength,
+} from 'class-validator';
 
 export class UserUpdateDTO {
   @IsOptional()
   @IsNotEmpty()
   @IsString()
-  @Transform(({ value }) => value.trim().replace(/ +/g, ' ') || undefined)
+  @MaxLength(20)
+  @Transform(({ value }) => value.trim().replace(/ +/g, ' '))
   displayName?: string;
 
   @IsOptional()
   @IsNotEmpty()
   @IsString()
-  @Transform(({ value }) => value.trim().replace(/ +/g, ' ') || undefined)
+  @MaxLength(40)
+  @Transform(({ value }) => value.trim().replace(/ +/g, ' '))
   fullName?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  firstTime?: boolean;
 }

@@ -1,9 +1,10 @@
 FROM node:18-alpine3.18
 WORKDIR /app
 COPY package*.json ./
-RUN npm install -g @nestjs/cli && npm install
-COPY src src/
-COPY prisma prisma/
-COPY *.json *.js .prettierrc ./
-RUN npx prisma generate && nest build
-CMD node dist/src/main.js
+RUN npm install
+COPY nest-cli.json ./nest-cli.json
+COPY prisma ./prisma
+COPY src ./src
+COPY tsconfig.build.json ./tsconfig.build.json
+COPY tsconfig.json ./tsconfig.json
+CMD npx prisma generate && npx prisma migrate deploy && npm run start

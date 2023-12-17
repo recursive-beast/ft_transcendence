@@ -13,7 +13,6 @@ import { NotificationModule } from './notification/notification.module';
 import { SearchModule } from './search/search.module';
 import { UserModule } from './user/user.module';
 import { GameModule } from './game/game.module';
-import { GamelogicService } from './gamelogic/gamelogic.service';
 
 @Module({
   imports: [
@@ -32,7 +31,7 @@ import { GamelogicService } from './gamelogic/gamelogic.service';
         JWT_EXPIRES_IN: Joi.string().default('24h'),
         COOKIE_SECRET: Joi.string().required(),
         APP_NAME: Joi.string().required(),
-        BACKEND_URL: Joi.string().uri().required(),
+        AVATAR_ORIGIN: Joi.string().uri().required(),
         NODE_ENV: Joi.string()
           .valid('production', 'development')
           .default('development'),
@@ -55,7 +54,6 @@ import { GamelogicService } from './gamelogic/gamelogic.service';
       provide: APP_PIPE,
       useValue: new ValidationPipe({ transform: true, whitelist: true }),
     },
-    GamelogicService,
   ],
 })
 export class AppModule {}

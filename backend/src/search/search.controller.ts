@@ -14,8 +14,8 @@ export class SearchController {
   }
 
   @Get('groups')
-  groups(@Query() dto: QueryDto) {
-    return this.searchService.filterGroupConversations(dto.search);
+  groups(@CurrentUser() user: UserEntity, @Query() dto: QueryDto) {
+    return this.searchService.filterGroupConversations(dto.search, user.id);
   }
 
   @Get()
@@ -23,6 +23,7 @@ export class SearchController {
     const users = await this.searchService.filterUsers(dto.search, user.id);
     const groups = await this.searchService.filterGroupConversations(
       dto.search,
+      user.id,
     );
 
     return { users, groups };

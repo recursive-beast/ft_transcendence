@@ -43,6 +43,18 @@ export class NotificationService {
     });
   }
 
+  async markAsClicked(userId: User['id'], notificationId: Notification['id']) {
+    const notification = await this.prismaService.notification.update({
+      where: {
+        recipient: { id: userId },
+        id: notificationId,
+      },
+      data: { isClicked: true },
+    });
+
+    return NotificationEntity.fromNotification(notification);
+  }
+
   async countUnseen(userId: User['id']) {
     return await this.prismaService.notification.count({
       where: {

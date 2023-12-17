@@ -1,4 +1,5 @@
 import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
+import { sortBy } from 'lodash';
 import { CurrentUser } from 'src/auth/current-user.decorator';
 import { UserEntity } from 'src/common/entities/user.entity';
 import { DirectService } from './direct.service';
@@ -8,8 +9,16 @@ export class DirectController {
   constructor(private directService: DirectService) {}
 
   @Get()
-  index(@CurrentUser() user: UserEntity) {
-    return this.directService.findManyConversations(user.id);
+  async index(@CurrentUser() { id }: UserEntity) {
+    const conversations = await this.directService.findManyConversations(id);
+
+    const sorted = sortBy(conversations, (conversation) => {
+      const messages = conversation.messages;
+      if (messages?.length) return messages?.at(-1)?.createdAt;
+      return conversation.createdAt;
+    });
+
+    return sorted.reverse();
   }
 
   @Get(':id')

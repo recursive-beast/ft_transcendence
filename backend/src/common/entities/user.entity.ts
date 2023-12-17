@@ -5,6 +5,33 @@ import { NotificationEntity } from './notification.entity';
 
 export class UserEntity implements User {
   @Expose()
+  firstTime: boolean;
+
+  @Expose()
+  PongMaster: boolean;
+
+  @Expose()
+  PongNovice: boolean;
+
+  @Expose()
+  PerfectDefense: boolean;
+
+  @Expose()
+  FirstVictory: boolean;
+
+  @Expose()
+  RookiePaddler: boolean;
+
+  @Expose()
+  SpeedRacer: boolean;
+
+  @Expose()
+  EasygoingRally: boolean;
+
+  @Expose()
+  FriendlyMatch: boolean;
+
+  @Expose()
   id: number;
 
   @Exclude()

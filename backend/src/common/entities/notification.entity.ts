@@ -4,6 +4,9 @@ import { UserEntity } from './user.entity';
 
 export class NotificationEntity implements Notification {
   @Expose()
+  isClicked: boolean;
+
+  @Expose()
   id: number;
 
   @Expose()

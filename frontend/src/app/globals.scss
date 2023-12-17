@@ -28,18 +28,32 @@
 	}
 
 	.custom-scrl-bar::-webkit-scrollbar-track {
-		background: #0d0d0d;
+		// background: #2E2C29;
+		background: transparent;
 	}
 
-	.custom-scrl-bar::-webkit-scrollbar-track-piece {
-		margin-top: 60px;
-		margin-bottom: 52px;
+	.custom-scrl-bar-chat::-webkit-scrollbar-track-piece {
+		margin-top: 65px;
+		margin-bottom: 58px;
+	}
+
+	.custom-scrl-bar-lead::-webkit-scrollbar-track-piece {
+		margin-top: 72px;
+		margin-bottom: 20px;
+	}
+
+	.custom-scrl-bar-history::-webkit-scrollbar-track-piece {
+		padding-top: 45px;
+		margin-top: 54px;
+		margin-bottom: 5px;
 	}
 
 	.custom-scrl-bar::-webkit-scrollbar-thumb {
 		background-color: #625d53;
-		border-top: 5px solid #0d0d0d;
-		border-bottom: 5px solid #0d0d0d;
+	}
+
+	.custom-scrl-bar-achiv::-webkit-scrollbar-thumb {
+		border: 5px solid #0D0D0D;
 	}
 }
 

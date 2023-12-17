@@ -20,11 +20,18 @@ export class SearchService {
     return UserEntity.fromUser(filtered);
   }
 
-  async filterGroupConversations(search: string) {
+  async filterGroupConversations(search: string, id: User['id']) {
     const groups = await this.prismaService.groupConversation.findMany({
       where: {
         type: {
           not: 'PRIVATE',
+        },
+        members: {
+          none: {
+            user: {
+              id,
+            },
+          },
         },
       },
     });

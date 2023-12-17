@@ -8,6 +8,7 @@ import { GroupMemberEntity } from 'src/common/entities/group-member.entity';
 import { MessageEntity } from 'src/common/entities/message.entity';
 import { GroupMessageDTO } from './dto/group-message.dto';
 import { GroupUpdateDTO } from './dto/group-update.dto';
+import { addMinutes, addSeconds } from 'date-fns';
 
 @Injectable()
 export class GroupService {
@@ -133,14 +134,12 @@ export class GroupService {
   async muteSomeone(admineId: number, toMuteId: number, channelId: number) {
     const admin = await this.findMember(channelId, admineId);
     const toMute = await this.findMember(channelId, toMuteId);
-    const fifteenMinutesFromNow = new Date();
-    fifteenMinutesFromNow.setMinutes(fifteenMinutesFromNow.getMinutes() + 15);
 
     if (admin && toMute) {
       if (admin.role === roleType.OWNER) {
-        await this.prismaService.groupMember.update({
+        return await this.prismaService.groupMember.update({
           where: { id: toMute.id },
-          data: { mutedUntil: fifteenMinutesFromNow },
+          data: { mutedUntil: addMinutes(Date.now(), 15) },
         });
       } else if (
         admin.role === roleType.ADMIN &&
@@ -148,9 +147,36 @@ export class GroupService {
       ) {
         if (admin.mutedUntil && !this.hasMuteExpired(admin.mutedUntil))
           throw new BadRequestException();
-        await this.prismaService.groupMember.update({
+        return await this.prismaService.groupMember.update({
           where: { id: toMute.id },
-          data: { mutedUntil: fifteenMinutesFromNow },
+          data: { mutedUntil: addMinutes(Date.now(), 15) },
+        });
+      } else {
+        throw new BadRequestException('Invalid permissions');
+      }
+    }
+    throw new BadRequestException('Invalid permissions');
+  }
+
+  async unmuteSomeone(admineId: number, toUnmuteId: number, channelId: number) {
+    const admin = await this.findMember(channelId, admineId);
+    const toUnmute = await this.findMember(channelId, toUnmuteId);
+
+    if (admin && toUnmute) {
+      if (admin.role === roleType.OWNER) {
+        await this.prismaService.groupMember.update({
+          where: { id: toUnmute.id },
+          data: { mutedUntil: new Date(0) },
+        });
+      } else if (
+        admin.role === roleType.ADMIN &&
+        toUnmute.role === roleType.MEMBER
+      ) {
+        if (admin.mutedUntil && !this.hasMuteExpired(admin.mutedUntil))
+          throw new BadRequestException();
+        await this.prismaService.groupMember.update({
+          where: { id: toUnmute.id },
+          data: { mutedUntil: new Date(0) },
         });
       } else {
         throw new BadRequestException('Invalid permissions');
@@ -265,6 +291,10 @@ export class GroupService {
   }
 
   async findChannel(userId: number, channelId: number) {
+    const user = await this.prismaService.user.findUnique({
+      where: { id: userId },
+      include: { blockedBy: true, blocked: true },
+    });
     const channel =
       await this.prismaService.groupConversation.findUniqueOrThrow({
         where: {
@@ -280,9 +310,23 @@ export class GroupService {
             },
             include: { sender: true },
           },
-          members: { include: { user: true } },
+          members: {
+            include: {
+              user: {
+                include: {
+                  blocked: true,
+                  blockedBy: true,
+                },
+              },
+            },
+          },
         },
       });
+    channel.messages = channel.messages.filter(
+      (message) =>
+        !user?.blockedBy.map((elem) => elem.id).includes(message.senderId) &&
+        !user?.blocked.map((elem) => elem.id).includes(message.senderId),
+    );
     return GroupConversationEntity.fromGroupConversation(channel);
   }
 
@@ -325,7 +369,12 @@ export class GroupService {
   async joinChannel(userId: number, channelTitle: string, password?: string) {
     const channel = await this.prismaService.groupConversation.findFirstOrThrow(
       {
-        where: { title: channelTitle },
+        where: {
+          title: channelTitle,
+          banned: {
+            none: { id: userId },
+          },
+        },
       },
     );
     const toAdd = await this.prismaService.user.findFirst({
@@ -354,6 +403,8 @@ export class GroupService {
         });
       }
     }
+
+    return GroupConversationEntity.fromGroupConversation(channel);
   }
 
   async searchforChannel(channelTitle: string) {

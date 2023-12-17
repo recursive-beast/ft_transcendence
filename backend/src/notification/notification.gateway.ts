@@ -30,6 +30,7 @@ export class NotificationGateway {
       .to(`user-${target.id}`)
       .emit('notification', instanceToPlain(notification));
   }
+
   @OnEvent('game.invite')
   async onGameInvite(userId: number, targetId: number, url: string) {
     const user = await this.prismaService.user.findUnique({
@@ -42,6 +43,25 @@ export class NotificationGateway {
       NotificationType.GAME_INVITE,
       targetId,
       { user: instanceToPlain(user), url },
+    );
+
+    this.server
+      .to(`user-${targetId}`)
+      .emit('notification', instanceToPlain(notification));
+  }
+
+  @OnEvent('achivement.unlocked')
+  async onAchievement(targetId: number, title: string) {
+    const target = await this.prismaService.user.findUnique({
+      where: { id: targetId },
+    });
+
+    if (!target) return;
+
+    const notification = await this.notificationService.create(
+      NotificationType.ACHIEVEMENT_UNLOCKED,
+      targetId,
+      { user: instanceToPlain(target), title },
     );
 
     this.server

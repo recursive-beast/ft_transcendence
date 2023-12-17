@@ -10,7 +10,7 @@ export class CommonService {
   constructor(private configService: ConfigService) {}
 
   async saveAvatar(prefix: string, file: Express.Multer.File) {
-    const backend_url = this.configService.get('BACKEND_URL');
+    const avatar_origin = this.configService.get('AVATAR_ORIGIN');
     const filename = `${prefix}-${Date.now()}.png`;
     const directory = path.resolve('static/avatars');
     const fullpath = path.join(directory, filename);
@@ -18,7 +18,7 @@ export class CommonService {
 
     await fs.mkdir(directory, { recursive: true });
 
-    try {      
+    try {
       await sharp(file.path).resize(300, 300).toFile(fullpath);
     } catch (error) {
       throw new BadRequestException('Invalid image');
@@ -30,6 +30,6 @@ export class CommonService {
       console.error(error); // print and ignore error
     }
 
-    return new URL(`/static/avatars/${filename}`, backend_url).href;
+    return new URL(`/static/avatars/${filename}`, avatar_origin).href;
   }
 }

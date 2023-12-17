@@ -1,4 +1,11 @@
-import { Controller, Get, Patch } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Put,
+} from '@nestjs/common';
 import { CurrentUser } from 'src/auth/current-user.decorator';
 import { UserEntity } from '../common/entities/user.entity';
 import { NotificationService } from './notification.service';
@@ -15,5 +22,13 @@ export class NotificationController {
   @Patch('seen')
   async seen(@CurrentUser() user: UserEntity) {
     return this.notificationService.markSeen(user.id);
+  }
+
+  @Put(':id/clicked')
+  async clicked(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: UserEntity,
+  ) {
+    return this.notificationService.markAsClicked(user.id, id);
   }
 }
