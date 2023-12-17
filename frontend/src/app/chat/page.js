@@ -928,7 +928,7 @@ function ConversationBox({ onClick, ...props }) {
                       <div className="flex w-full flex-col space-y-1">
                         {props.group && message.senderId != myID && (
                           <div className="ml-1 mt-1 text-xs text-tx05">
-                            {message.senderId.displayName}
+                            {message.sender.displayName}
                           </div>
                         )}
                         <div
